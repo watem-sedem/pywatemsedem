@@ -1,0 +1,26 @@
+/* Adjust sidebar colors */
+.wy-side-nav-search {
+    background-color: #E0DEDC;
+    color: #101112;
+}
+
+.wy-side-nav-search .wy-dropdown > a, .wy-side-nav-search > a {
+    color: #101112;
+}
+
+.wy-nav-side {
+    background-color: #101112;
+}
+
+.wy-side-nav-search > div.version {
+    color: #101112;
+}
+
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+    color: #72B2D1;
+}
+
+/* Adjust background of code blocks */
+.highlight {
+    background-color: #F4F2F0;
+}

@@ -1,0 +1,160 @@
+---
+kind: pipeline
+type: docker
+name: check branch size difference
+# https://git.fluves.net/fluves/infrastructure/src/branch/master/drone/size_tool
+steps:
+  - name: check size
+    image: registry.fluves.net/drone/infrastructure/git-file-size-diff
+
+---
+kind: pipeline
+type: docker
+name: virtualenv-3.11-pipeline
+
+steps:
+  - name: linting and docstring cov on PR
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    failure: ignore
+    commands:
+      - SKIP=no-commit-to-branch tox -e pre-commit
+    when:
+      event: [pull_request]
+
+  - name: unit testing (pinned)
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    commands:
+      - tox -e pinned
+
+  - name: test building docs
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    commands:
+      - git fetch origin --tags
+      - pip install tox setuptools_scm
+      - tox -e docs
+
+  - name: build release
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    commands:
+      - tox -e build
+    when:
+      event: [pull_request]
+
+  - name: report unit test coverage
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    commands:
+      - "coverage3 report -m"
+      - "coverage3 html"
+      - coverage-badge >htmlcov/coverage.svg
+
+  - name: upload test coverage
+    image: drillster/drone-rsync
+    settings:
+      hosts:
+        - 10.28.0.24
+      user: docs
+      key:
+        from_secret: rsync_key
+      source: htmlcov/*
+      recursive: true
+      target: /appdata/static/coverage/pyws
+      secrets: [rsync_key]
+    when:
+      branch:
+        - master
+      event:
+        exclude:
+          - pull_request
+
+---
+kind: pipeline
+type: docker
+name: build & release package
+environment:
+  GIT_LFS_SKIP_SMUDGE: "1"
+depends_on:
+  - virtualenv-3.11-pipeline
+trigger:
+  event:
+    - tag
+
+steps:
+  - name: fetch
+    image: alpine/git
+    commands:
+      - git fetch --tags
+  - name: build release
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    commands:
+      - tox -e build
+
+  - name: gitea release
+    image: plugins/gitea-release
+    settings:
+      api_key:
+        from_secret: release_token
+      base_url: https://git.fluves.net
+      files: "dist/*tar.gz,dist/*whl"
+      prerelease: true
+      note: automatic build
+      title: ${DRONE_TAG}
+
+
+
+---  # master was updated, create and upload docs
+kind: pipeline
+type: docker
+name: create documentation
+trigger:
+  branch: [master]
+  event:
+    exclude: [pull_request]
+steps:
+  - name: build docs
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    commands:
+      - tox -e docs
+
+  - name: rsync-docs
+    image: drillster/drone-rsync
+    settings:
+      hosts:
+        - 10.28.0.24
+      user: docs
+      key:
+        from_secret: rsync_key
+      source: docs/_build/html/
+      recursive: true
+      target: /appdata/static/docs/pyws
+      secrets: [rsync_key]
+
+--- # run unit test with unpinned requirements
+# ... which are allowed to fail
+kind: pipeline
+type: docker
+name: virtualenv-3.11-pipeline-nonpinned
+
+steps:
+  - name: unit-tests
+    image: registry.fluves.net/drone/pyws/venv-3.11
+    failure: ignore
+    commands:
+      - tox -e py
+
+--- # run unit test under windows
+kind: pipeline
+type: docker
+name: win-virtualenv-3.11-pipeline
+platform:
+  os: windows
+  version: "1809"
+clone:
+  disable: true
+steps:
+- name: clone
+  image: registry.fluves.net/drone/infrastructure/drone-git-lfs-windows
+
+- name: install package & run tests
+  image: registry.fluves.net/drone/win-venv-3.11
+  commands:
+  - tox -e py

@@ -1,0 +1,9 @@
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}-bullseye
+RUN apt-get update && apt-get install git-lfs && rm -rf /var/lib/apt/lists/*
+RUN python3 -m pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir tox interrogate coverage-badge
+# add large requirements to have them pre-installed already
+# RUN pip install pandas scipy
+
+# Add label to trace back image origin on registry
+LABEL org.opencontainers.image.source=https://git.fluves.net/fluves/pyws.git

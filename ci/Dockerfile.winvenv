@@ -1,0 +1,7 @@
+FROM winamd64/python:3.11
+COPY --from=registry.fluves.net/drone/infrastructure/drone-git-lfs-windows:ltsc2022 /git /git
+RUN setx  PATH '%PATH%;C:\git\cmd;C:\git\mingw64\bin;C:\git\usr\bin;C:\git\lfs'
+RUN pip install tox==4.11
+
+# Add label to trace back image origin on registry
+LABEL org.opencontainers.image.source=https://git.fluves.net/fluves/pyws.git
