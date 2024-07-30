@@ -1,0 +1,44 @@
+tag_variable,prefix_variable,folder,filename,argument,extension,mandatory,condition,default_value,generate_nodata,postprocess,consider__
+endpoints_id,rst,modelinput,sewers_id,,rst,0,Include sewers,0,1,1,1
+catchment_id,rst,main,catchment_id,,rst,0,,0,0,1,1
+buffers,rst,modelinput,buffers,,rst,0,Include buffers,0,1,1,1
+buffers_nodata,rst,modelinput,buffers_%s_s%s_nodata,"catchment, scenario",rst,0,Include buffers,0,0,1,0
+ckaart,rst,modelinput,cfactor,,rst,0,,,1,1,1
+ckaart_nodata,rst,modelinput,C_spring_%i_%s_s%s_nodata,"year, catchment, scenario",rst,0,,,0,1,0
+dhm,rst,modelinput,dtm,,rst,1,,,0,1,1
+kkaart,rst,modelinput,kfactor,,rst,1,,,0,1,1
+ktckaart,rst,modelinput,ktc_map,,rst,1,,,1,1,1
+ktckaart_nodata,rst,modelinput,ktcmap_%i_%s_s%s_nodata,"year, catchment, scenario",rst,0,,,0,1,0
+pkaart,rst,modelinput,pfactor,,rst,1,,,0,1,1
+prckrt,rst,modelinput,parcels_landuse,,rst,1,,,1,1,1
+prckrt_nodata,rst,modelinput,perceelskaart_%i_%s_s%s_nodata,"year, catchment, scenario",rst,0,,,0,1,0
+riverrouting,rst,modelinput,routing,,rst,0,,0,1,1,1
+riverrouting_nodata,rst,modelinput,Rivierrouting_%s_nodata,catchment,rst,0,,0,0,1,0
+riversegment,rst,modelinput,segments,,rst,0,,0,1,1,1
+riversegment_nodata,rst,modelinput,Riversegmentmap_%s_nodata,catchment,rst,0,,0,0,1,0
+sewers,rst,modelinput,sewers,,rst,0,Include sewers,0,1,1,1
+sewers_nodata,rst,modelinput,sewers_%s_s%s_nodata,"catchment, scenario",rst,0,Include sewers,0,0,1,0
+aspect,rst,modeloutput,AspectMap,,rst,0,Write aspect,,0,1,1
+capacity,rst,modeloutput,Capacity,,rst,0,Write sediment export,,0,1,1
+cumulative,rst,modeloutput,cumulative,,rst,0,,,0,1,1
+LS,rst,modeloutput,LS,,rst,0,Write LS factor,,0,1,1
+routing,txt,modeloutput,routing,,txt,0,Write routing table,,0,1,1
+routing_missing,txt,modeloutput,routing_missing,,txt,1,,,0,1,1
+RUSLE,rst,modeloutput,RUSLE,,rst,0,Write RUSLE,,0,1,1
+sediexport,rst,modeloutput,SediExport_kg,,rst,0,Write sediment export,,0,1,1
+sediin,rst,modeloutput,SediIn_kg,,rst,0,Write sediment export,,0,1,1
+sediout,rst,modeloutput,SediOut_kg,,rst,0,Write sediment export,,0,1,1
+endpoints,rst,modeloutput,sewer_in,,rst,0,Include sewers,0,1,1,1
+slope,rst,modeloutput,SLOPE,,rst,0,Write slope,,0,1,1
+total_sediment,txt,modeloutput,Total sediment,,txt,1,,,0,1,1
+total_sediment_segments,txt,modeloutput,Total sediment segments,,txt,0,,,0,1,1
+uparea,rst,modeloutput,UPAREA,,rst,0,Write upstream area,,0,1,1
+watereros,rst,modeloutput,WATEREROS (kg per gridcel),,rst,0,Write water erosion,,0,1,1
+flow,txt,modeloutput,Discharge,,txt,0,,,0,1,1
+flow_segments,txt,modeloutput,Discharge_segments,,txt,0,,,0,1,1
+buffers,vct,year,buffer_%i_%s_s%s,"year, catchment, scenario",shp,0,Include buffers,0,0,1,1
+grass_strips,rst,year,gras_%i_%s_s%s,"year, catchment, scenario",tif,0,,,0,1,1
+grass_strips,vct,year,gras_%i_%s_s%s,"year, catchment, scenario",shp,0,,,0,1,1
+grass_strips_id,rst,year,grasstripsID_%i_%s_s%s,"year, catchment, scenario",tif,0,UseGras,0,0,1,1
+percelen,vct,year,percelen_%i_%s_s%s,"year, catchment, scenario",shp,1,,,0,1,1
+percelen_prcid,rst,year,percelen_%i_%s_s%s,"year, catchment, scenario",tif,0,,,0,1,1

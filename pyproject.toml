@@ -1,19 +1,8 @@
 [build-system]
 # AVOID CHANGING REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5"]
+requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-# For smarter version schemes and other configuration options,
-# check out https://github.com/pypa/setuptools_scm
+# See configuration details in https://github.com/pypa/setuptools_scm
 version_scheme = "no-guess-dev"
-
-[tool.interrogate]
-ignore-init-method = true
-ignore-init-module = true
-ignore-module = true
-ignore-magic = true
-ignore-property-decorators = true
-fail-under = 90
-ignore-regex = ["^mock_.*", "^Base.*$"]
-verbose = 2 #-vv

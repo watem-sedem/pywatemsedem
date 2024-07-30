@@ -11,8 +11,7 @@
 __pycache__/*
 .cache/*
 .*.swp
-**/.ipynb_checkpoints/*
-
+*/.ipynb_checkpoints/*
 .DS_Store
 
 # Project files
@@ -54,4 +53,11 @@ MANIFEST
 venv*/
 .venv*/
 .conda*/
-.python-version
+env/
+
+# Test data
+*.rst.aux.xml
+
+# Run files
+docs/getting-started/langegracht/*
+**/watemsedem*.exe

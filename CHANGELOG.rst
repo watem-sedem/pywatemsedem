@@ -1,0 +1,7 @@
+=========
+Changelog
+=========
+
+Latest
+******
+- Initial commit
