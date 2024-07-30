@@ -2,82 +2,69 @@ exclude: '^docs/conf.py'
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.0.1
   hooks:
   - id: trailing-whitespace
+    exclude: ^(tests/data|tests/.*/data)
   - id: check-added-large-files
   - id: check-ast
   - id: check-json
   - id: check-merge-conflict
   - id: check-xml
-  - id: check-toml
   - id: check-yaml
     args: ['--allow-multiple-documents']
   - id: debug-statements
   - id: end-of-file-fixer
+    exclude: ^(tests/data|tests/.*/data)
   - id: requirements-txt-fixer
-  - id: no-commit-to-branch
-    args: ['--branch', 'master', '--branch', 'main']
   - id: mixed-line-ending
+    exclude: ^(tests/data|tests/.*/data)
     args: ['--fix=auto']  # replace 'auto' with 'lf' to enforce Linux/Mac line endings or 'crlf' for Windows
 
-## If you want to automatically "modernize" your Python code:
-# - repo: https://github.com/asottile/pyupgrade
-#   rev: v3.7.0
-#   hooks:
-#   - id: pyupgrade
-#     args: ['--py37-plus']
+# If you want to avoid flake8 errors due to unused vars or imports:
+- repo: https://github.com/myint/autoflake.git
+  rev: v1.4
+  hooks:
+  - id: autoflake
+    args: [
+      --in-place,
+      --remove-all-unused-imports,
+      --remove-unused-variables,
+    ]
 
-## If you want to avoid flake8 errors due to unused vars or imports:
-# - repo: https://github.com/PyCQA/autoflake
-#   rev: v2.1.1
-#   hooks:
-#   - id: autoflake
-#     args: [
-#       --in-place,
-#       --remove-all-unused-imports,
-#       --remove-unused-variables,
-#     ]
-
-- repo: https://github.com/PyCQA/isort
+- repo: https://github.com/pycqa/isort
   rev: 5.11.5
   hooks:
   - id: isort
-    args: ["--profile", "black"]
 
 - repo: https://github.com/psf/black
-  rev: stable
+  rev: 22.3.0
   hooks:
   - id: black
     language_version: python3
 
 ## If like to embrace black styles even in the docs:
 # - repo: https://github.com/asottile/blacken-docs
-#   rev: v1.13.0
+#   rev: v1.11.0
 #   hooks:
 #   - id: blacken-docs
 #     additional_dependencies: [black]
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 5.0.4
+  rev: 3.9.2
   hooks:
   - id: flake8
-    additional_dependencies:
-    - flake8-logging
+    args: [
+      '--max-line-length=88',
+      '--ignore=E203,E266,W503,F403,F401',
+      '--max-complexity=18',
+      '--select=B,C,E,F,W,T4,B9'
+    ]
+    exclude: (docs/conf.py|^qgis_plugin/)
+
 
   ## You can add flake8 plugins via `additional_dependencies`:
   #  additional_dependencies: [flake8-bugbear]
-
-## Check for misspells in documentation files:
-# - repo: https://github.com/codespell-project/codespell
-#   rev: v2.2.5
-#   hooks:
-#   - id: codespell
-#     exclude: >
-#       (?x)^(
-#           .*\.json
-#       )$
-
 
 
 # Strip the output of jupyter notebooks
@@ -92,3 +79,4 @@ repos:
   hooks:
     - id: interrogate
       name: check docstring coverage of functions
+      args: [-I, -i, -M, --quiet, --fail-under=85, --verbose]

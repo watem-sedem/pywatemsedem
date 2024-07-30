@@ -1,4 +1,5 @@
 # Include/exclude files from the sdist, see https://packaging.python.org/guides/using-manifest-in/
 # e.g.
 # global-include your_custom_file_which_is_part_of_package
-# prune tests/data  # for test data which should NOT be part of the release
+prune tests/data  # for test data which should NOT be part of the release
+graft src/pyws/data

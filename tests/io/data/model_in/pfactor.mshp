@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SAGA_METADATA>
+  <DATABASE>
+    <FIELDS>
+      <FIELD TYPE="INTEGER">ID</FIELD>
+      <FIELD TYPE="FLOAT">VALUE</FIELD>
+      <FIELD TYPE="STRING">NAME</FIELD>
+    </FIELDS>
+  </DATABASE>
+  <SOURCE></SOURCE>
+  <HISTORY saga-version="7.4.0">
+    <TOOL library="shapes_grid" id="6" name="Vectorising Grid Classes">
+      <OPTION type="grid_system" id="PARAMETERS_GRID_SYSTEM" name="Grid system">
+        <CELLSIZE>20</CELLSIZE>
+        <XMIN>162310</XMIN>
+        <XMAX>167550</XMAX>
+        <YMIN>165770</YMIN>
+        <YMAX>169510</YMAX>
+      </OPTION>
+      <OPTION type="choice" id="CLASS_ALL" name="Class Selection" index="1">all classes</OPTION>
+      <OPTION type="choice" id="SPLIT" name="Vectorised class as..." index="0">one single (multi-)polygon object</OPTION>
+      <OPTION type="boolean" id="ALLVERTICES" name="Keep Vertices on Straight Lines">false</OPTION>
+      <INPUT type="grid" id="GRID" name="Grid" system="PARAMETERS_GRID_SYSTEM">
+        <TOOL library="io_gdal" id="0" name="Import Raster">
+          <OPTION type="file" id="FILES" name="Files">tests\io\data\model_in\P_factor_langegracht.rst</OPTION>
+          <OPTION type="choice" id="MULTIPLE" name="Multiple Bands Output" index="2">automatic</OPTION>
+          <OPTION type="text" id="SELECTION" name="Select from Multiple Bands"/>
+          <OPTION type="boolean" id="TRANSFORM" name="Transformation">true</OPTION>
+          <OPTION type="choice" id="RESAMPLING" name="Resampling" index="0">Nearest Neighbour</OPTION>
+          <OUTPUT type="grid_list" id="GRIDS" name="Grids">P_factor_langegracht</OUTPUT>
+        </TOOL>
+      </INPUT>
+      <OUTPUT type="shapes" id="POLYGONS" name="Polygons">P_factor_langegracht</OUTPUT>
+    </TOOL>
+  </HISTORY>
+  <FILE></FILE>
+  <DESCRIPTION></DESCRIPTION>
+</SAGA_METADATA>
