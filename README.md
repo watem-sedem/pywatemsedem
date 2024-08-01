@@ -1,8 +1,6 @@
 ![image](docs/_static/png/logo_pyws.png)
- :scale: 50 %
 
 # pyws
-====
 
 The pyws package is a Python wrapper for.
 [WaTEM/SEDEM](https://watem-sedem.github.io/watem-sedem/).

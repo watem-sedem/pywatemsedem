@@ -7,14 +7,18 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import inspect
 import os
-import sys
-import sphinx_rtd_theme
 import shutil
+import sys
+
+import sphinx_rtd_theme
 
 # -- Path setup --------------------------------------------------------------
 
-__location__ = os.path.dirname(__file__)
+__location__ = os.path.join(
+    os.getcwd(), os.path.dirname(inspect.getfile(inspect.currentframe()))
+)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -35,7 +39,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../src/fluves")
+module_dir = os.path.join(__location__, "../src/pyws")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -63,9 +67,7 @@ except Exception as e:
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-	'sphinxcontrib.jquery',
-	'myst_parser',
-	'sphinx_copybutton',
+    "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
@@ -76,31 +78,14 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "nbsphinx",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
-
-# Enable markdown
-extensions.append("myst_parser")
-
-# Configure MyST-Parser
-myst_enable_extensions = [
-    "amsmath",
-    "colon_fence",
-    "deflist",
-    "dollarmath",
-    "html_image",
-    "linkify",
-    "replacements",
-    "smartquotes",
-    "substitution",
-    "tasklist",
-]
-
 # The suffix of source filenames.
-source_suffix = [".rst", ".md"]
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -109,7 +94,7 @@ source_suffix = [".rst", ".md"]
 master_doc = "index"
 
 # General information about the project.
-project = "fluves.pyws"
+project = "pyws"
 copyright = "2024, Fluves"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -121,7 +106,7 @@ copyright = "2024, Fluves"
 # If you don’t need the separation provided between version and release,
 # just set them both to the same value.
 try:
-    from fluves.pyws import __version__ as version
+    from pyws import __version__ as version
 except ImportError:
     version = ""
 
@@ -142,7 +127,16 @@ release = version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".venv"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    ".venv",
+    "venv",
+    "flanders/**.ipynb",
+    "getting-started/cn_ws_*.exe",
+    "getting-started/langegracht",
+]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -169,7 +163,6 @@ pygments_style = "sphinx"
 
 # If this is True, todo emits a warning for each TODO entries. The default is False.
 todo_emit_warnings = True
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -205,8 +198,9 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
-html_css_files = ["custom.css"]
-
+html_css_files = [
+    "css/custom.css",
+]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -250,8 +244,11 @@ html_css_files = ["custom.css"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "fluves.pyws-doc"
+htmlhelp_basename = "pyws-doc"
 
+# Options for handling the nbsphinx notebook execution
+nbsphinx_kernel_name = "python"
+nbsphinx_execute = "never"
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -267,7 +264,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ("index", "user_guide.tex", "fluves.pyws Documentation", "Fluves", "manual")
+    ("index", "user_guide.tex", "pyws documentation", "Fluves", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -300,12 +297,17 @@ intersphinx_mapping = {
     "sklearn": ("https://scikit-learn.org/stable", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
-    "setuptools": ("https://setuptools.pypa.io/en/stable/", None),
+    "setuptools": ("https://setuptools.readthedocs.io/en/stable/", None),
     "pyscaffold": ("https://pyscaffold.org/en/stable", None),
+    "geopandas": ("https://geopandas.readthedocs.io/en/latest/", None),
+    "rasterio": ("https://rasterio.readthedocs.io/en/latest/", None),
+    "cnws": ("https://watem-sedem.github.io/watem-sedem/", None),
+    "shapely": ("https://shapely.readthedocs.io/en/stable", None),
 }
 
 print(f"loading configurations for {project} {version} ...", file=sys.stderr)
+
 html_context = {
-    "source_url_prefix": "https://git.fluves.net/fluves/pyws/src/branch/master/docs/",
-    "display_vcs_links": 1
+    "source_url_prefix": "http://watem-sedem.github.io/pyws/src/branch/master/pyws/docs/",
+    "display_vcs_links": 1,
 }
