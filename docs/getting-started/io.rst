@@ -6,7 +6,7 @@ IO-module
 Introduction
 ------------
 The io-module holds a number of basic functionalities for handling the io for
-CN-WS Pascal files.
+WaTEM/SEDEM files.
 
 Ini-file
 --------

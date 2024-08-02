@@ -16,7 +16,7 @@ Contents
    :maxdepth: 1
 
    Data processing<getting-started/api.ipynb>
-   Calibrating CN-WS <getting-started/calibrate.ipynb>
+   Calibrating WaTEM/SEDEM <getting-started/calibrate.ipynb>
    Processing rasters and vector <getting-started/geo.rst>
    User Choices <getting-started/userchoices.rst>
    IO <getting-started/io.rst>

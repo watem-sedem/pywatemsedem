@@ -39,7 +39,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../src/pyws")
+module_dir = os.path.join(__location__, "../src")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -133,8 +133,7 @@ exclude_patterns = [
     ".DS_Store",
     ".venv",
     "venv",
-    "flanders/**.ipynb",
-    "getting-started/cn_ws_*.exe",
+    "getting-started/watemsedem_*.exe",
     "getting-started/langegracht",
 ]
 
@@ -300,7 +299,7 @@ intersphinx_mapping = {
     "setuptools": ("https://setuptools.readthedocs.io/en/stable/", None),
     "pyscaffold": ("https://pyscaffold.org/en/stable", None),
     "geopandas": ("https://geopandas.readthedocs.io/en/latest/", None),
-    "rasterio": ("https://rasterio.readthedocs.io/en/latest/", None),
+    "rasterio": ("https://rasterio.readthedocs.io/en/stable/", None),
     "cnws": ("https://watem-sedem.github.io/watem-sedem/", None),
     "shapely": ("https://shapely.readthedocs.io/en/stable", None),
 }

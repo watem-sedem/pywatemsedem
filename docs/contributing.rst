@@ -47,31 +47,22 @@ folder (`pyws`):
 
 ::
 
-    pytest -m "not end2end"
+    pytest
 
 Or using tox (i.e. in a separate environment)
 
 ::
 
-    tox -m "not end2end"
+    tox --
 
 You will receive information on the test status and the test coverage of the
-unit tests. Make sure you have defined SAGA and CN-WS, see
+unit tests. Make sure you have defined SAGA and WaTEM/SEDEM, see
 :ref:`here <dependencies>`.
-
-With exception of the end-to-end tests, all tests are also run in a drone. To
-run the end-to-end flanders test, make sure to define the source data (see
-:ref:`here <flandersdata>`) and run:
-
-::
-
-    pytest -m "end2end"
-
 
 Documentation with sphinx
 --------------------------
 
-Build the documentation locally with Sphinx:
+Build the documentation locally with Sphinx (tox):
 
 ::
 
@@ -79,6 +70,95 @@ Build the documentation locally with Sphinx:
 
 which will create the docs in the ``docs/_build/html`` folder. The ``docs/_build`` directory itself is
 left out of version control (and we rather keep it as such ;-)).
+
+Drone CI
+--------
+
+Apart from these tools you can run locally, we use drone continuous integration to run these checks also
+on our servers. See https://drone.fluves.net/Fluves/pyws for the results.
+
+Git lfs
+-------
+
+Git lfs, or large file support, is used in this repository to store gis files in
+the repository. To use this functionality you need to install git lfs. See
+https://git-lfs.github.com/ for instructions and more information.
+
+The ``.gitattributes``-file in the root folder contains the file extensions wich are
+stored under lfs. For now, only files within the test folder are stored under
+lfs.
+
+Naming things
+-------------
+
+To provide structure in the naming of methods, functions, classes,... we propose
+to conform the following guidelines.
+
+Class, function/methods names follow the standard naming conventions as defined
+in the `PEP8`_ guidelines. Additionaly, methods/functions start - whenever
+possible - with an active verb on the action they perform (``does_something()``)
+, e.g. ``load_raster()``, ``clip_shape()``, ``transform_rasterprop()``
+
+Variable names follow the `PEP8`_ guidelines, but provide additional context:
+
+- vectorfiles (incl. shapefiles etc):  ``vct_variable``
+- rasterfiles: ``rst_raster``
+- raw tekstfiles (txt): ``txt_variable``
+- numpy array: ``arr_variable``
+- pandas: ``df_variable``
+- geopandas df: ``gdf_variable``
+- files: ```fname_variable``
+
+.. _PEP8: https://www.python.org/dev/peps/pep-0008/#naming-conventions
+
+.. note:
+
+    1. fname states that any extension can be used, checks within code should
+       be implemented to verify whether they are valid!
+    2. The use of "_" in a variable name is only accepted twice, to avoid long
+       and confusing names. For example, naming ``dict_df_variable`` is not
+       encouraged, but accepted. The name ``lst_dict_df_variable`` is not
+       accepted, please think about another structure.
+
+Utilities
+---------
+
+- Load raster: load rasters as numpy arrays. The ``profile`` raster metadata
+  holds all metedata that geograpical defines the array. See
+  :func:`pyws.core.utils.load_raster`:
+
+::
+
+    from pyws.core.utils import load_raster
+    rst = "landuse.tif" # can be any raster extension supported by GDAL
+    arr,profile = load_raster(rst)
+
+- Write raster: write numpy arrays to rasters. See
+  :func:`pyws.core.utils.write_arr_as_rst`:
+
+::
+
+    from pyws.core.utils import write_arr_as_rst
+    rst_out = "landuse_int64.tif"
+    write_arr_as_rst(arr, rst_out, "int64", profile):
+
+
+The dtype of the array and output raster is a required function input
+parameter, and can be used to save disk memory (i.e. use int64 instead of
+float64).
+
+
+Guideline for unified coding style
+----------------------------------
+
+A number of guidelines are given in order to obtain a degree of unified style
+in the pyws code. Following guidelines are given:
+
+ - Pandas: access columns via ``df["test"]`` rather than ``df.test``.
+ - Use Pandas dataframes to transfer non-raster data between modules/functions,
+   use numpy arrays to perform numerical operations. In case of numerical
+   operations (> 1 operation), write independent functions which use numpy
+   arrays as input and output numpy arrays that can be stored in a dataframe.
 
 Describing DataFrames in docstrings
 -----------------------------------
@@ -138,16 +218,16 @@ item, you can use this in the docstring. E.g. a dict
     1. The empty lines are important for sphinx to convert this to a clean
        list.
     2. Detail alert: the format *variable: type* is used as constructor for
-       every variable in the documention (and not *variable : type*).
+       every variable in the documentation (and not *variable : type*).
 
-CN-WS Filestructure Python
+Postprocess file structure
 --------------------------
 
-The  filestructure file used for postprocessing (see src/pyws/data/postprocess_files.csv)
-holds an overview of all files that are used within the CNWS Python package
-(either CNWS-Pascal input data, output data, intermediate processing files,
-etc..). This file can be used to add files to the CNWS package. Do note that
-this table is only used to define the references to files within the CN-WS
+The postprocess filestructure file `src/pyws/data/postprocess_files.csv`
+holds an overview of all files that are used within postprocessing
+(either WaTEM/SEDEM input data, output data, intermediate processing files,
+etc..). This file can be used to add files to the WaTEM/SEDEM package. Do note that
+this table is only used to define the references to files within the WaTEM/SEDEM
 Python code. These references are saved in Python in a dictionary. Each line
 holds the definition for one file:
 
@@ -156,7 +236,7 @@ holds the definition for one file:
 - folder, filename, argument and  extension (str): hold the dictionary value
   and defines the filename. Python string formating is used in filename to
   define the specific arguments needed to recognize the file (e.g. filename:
-  `buffers_%s_s%s` and argument `catchment, scenario` will fill in the catchment
+  `buffers_%s_s%s` and argument `bekken, scenario` will fill in the catchment
   name and scenario number in the filename).
 - mandatory (int): indicates whether a file is mandatory to create/load.
 - condition (str) (only postprocess): indicates the condition which is coupled
@@ -171,20 +251,6 @@ holds the definition for one file:
   modeldomain, but also have 0 in the model domain).
 - postprocess (int) (only postprocess): indicate whether file has to be loaded
   within postprocessing script.
-
-Note: the filesystem is -for now- only implemented for postprocessing.py
-
-Example:
-
-+-------------------+---------------+-----------+------------------------------+----------------------+---------+---------+---------------+-------------+---------------+-----------+
-|   tag_variable    |prefix_variable|  folder   |           filename           |       argument       |extension|mandatory|   condition   |default_value|generate_nodata|postprocess|
-+===================+===============+===========+==============================+======================+=========+=========+===============+=============+===============+===========+
-|aspect             |rst            |modeloutput|AspectMap                     |NaN                   |rst      |        1|NaN            |          NaN|              0|          1|
-+-------------------+---------------+-----------+------------------------------+----------------------+---------+---------+---------------+-------------+---------------+-----------+
-|buffers            |rst            |modelinput |buffers_%s_s%s                |catchment, scenario      |rst      |        0|Include buffers|            0|              1|          1|
-+-------------------+---------------+-----------+------------------------------+----------------------+---------+---------+---------------+-------------+---------------+-----------+
-|buffers_nodata     |rst            |modelinput |buffers_%s_s%s_nodata         |catchment, scenario      |rst      |        0|Include buffers|            0|              0|          1|
-+-------------------+---------------+-----------+------------------------------+----------------------+---------+---------+---------------+-------------+---------------+-----------+
 
 Package release
 ===============
