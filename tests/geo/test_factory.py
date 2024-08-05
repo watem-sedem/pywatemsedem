@@ -3,8 +3,8 @@ from conftest import geodata
 from geopandas import GeoDataFrame
 from numpy import array
 
-from pyws.geo.factory import Factory
-from pyws.geo.valid import PywsInputError
+from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.valid import PywatemsedemInputError
 
 
 class TestFactory:
@@ -53,7 +53,7 @@ class TestFactory:
         f = Factory(self.resolution, self.epsg_code, self.nodata, tmp_path)
 
         # feed raster to vector factory
-        with pytest.raises(PywsInputError) as excinfo:
+        with pytest.raises(PywatemsedemInputError) as excinfo:
             f.vector_factory(geodata.rst_mask, "Polygon")
         assert (
             f"First create a mask with {Factory.create_mask.__name__}-function"

@@ -7,16 +7,16 @@ import pandas as pd
 import pytest
 from dotenv import find_dotenv, load_dotenv
 
-from pyws.pyws.catchment import Catchment
-from pyws.pyws.scenario import Scenario
-from pyws.pyws.userchoices import UserChoices
+from pywatemsedem.catchment import Catchment
+from pywatemsedem.scenario import Scenario
+from pywatemsedem.userchoices import UserChoices
 
 # Load environmental variables
 ## load dotenv
 load_dotenv(find_dotenv())
 
 # subfolder data
-folder_core = Path("tests/pyws/data")
+folder_core = Path("tests/pywatemsedem/data")
 folder_flanders = Path("tests/flanders/data")
 folder_geo = Path("tests/geo/data")
 folder_io = Path("tests/io/data")
@@ -210,7 +210,7 @@ class non_specific_landuse_measures:
     This scenario covers the output data for the standard use case for Flanders:
 
     - No specific landuse: C-factor for agricultural fields is set to 0.37, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - Following symptom-oriented measures are implemented:
 
@@ -218,7 +218,7 @@ class non_specific_landuse_measures:
         - 'erosiebestrijdingswerken'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Buffers and grass strips are used, source oriented measures not.
     """
@@ -254,12 +254,12 @@ class non_specific_landuse_no_measures:
     This scenario covers the output data for the standard use case for Flanders:
 
     - No specific landuse: C-factor for agricultural fields is set to 0.37, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - No symptom-oriented measures are implemented:
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - No buffers, grass strips, source oriented measures are used.
     """
@@ -311,7 +311,7 @@ class specific_landuse_indicator_current_measures:
     This scenario covers the output data for the standard use case for Flanders:
 
     - indicator: C-factors defined in the indicator are used, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - Following symptom-oriented measures are implemented:
 
@@ -319,7 +319,7 @@ class specific_landuse_indicator_current_measures:
         - 'erosiebestrijdingswerken'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Following source-oriented measures are implemented:
 
@@ -327,7 +327,7 @@ class specific_landuse_indicator_current_measures:
         - 'randvoorwaarden'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Buffers, grass strips and source-oriented measures are used.
     """
@@ -363,21 +363,21 @@ class specific_landuse_indicator_erosiebestrijdingswerken_randvoorwaarden:
     This scenario covers the output data for the standard use case for Flanders:
 
     - indicator: C-factors defined in the indicator are used, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - Following symptom-oriented measures are implemented:
 
         - 'erosiebestrijdingswerken'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Following source-oriented measures are implemented:
 
         - 'randvoorwaarden'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Buffers, grass strips and source-oriented measures are used.
     """
@@ -413,14 +413,14 @@ class specific_landuse_indicator_beheerovereenkomsten_randvoorwaarden:
     This scenario covers the output data for the standard use case for Flanders:
 
     - indicator: C-factors defined in the indicator are used, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - Following symptom-oriented measures are implemented:
 
         - 'beheerovereenkomsten'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Following source-oriented measures are implemented:
 
@@ -428,7 +428,7 @@ class specific_landuse_indicator_beheerovereenkomsten_randvoorwaarden:
         - 'randvoorwaarden'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Buffers, grass strips and source-oriented measures are used.
     """
@@ -464,7 +464,7 @@ class specific_landuse_indicator_beheerovereenkomsten_erosiebestrijdingswerken:
     This scenario covers the output data for the standard use case for Flanders:
 
     - indicator: C-factors defined in the indicator are used, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - Following symptom-oriented measures are implemented:
 
@@ -472,14 +472,14 @@ class specific_landuse_indicator_beheerovereenkomsten_erosiebestrijdingswerken:
         - 'erosiebestrijdingswerken'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Following source-oriented measures are implemented:
 
         - 'beheerovereenkomsten'
 
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Buffers, grass strips and source-oriented measures are used.
     """
@@ -515,15 +515,15 @@ class specific_landuse_indicator_no_measures:
     This scenario covers the output data for the standard use case for Flanders:
 
     - indicator: C-factors defined in the indicator are used, see
-      :func:`pyws.flanders.standard_scenarios.apply_specific_landuse`.
+      :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
 
     - No symptom-oriented measures.
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - No source-oriented measures are implemented:
       See
-      :func:`pyws.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
+      :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
 
     - Buffers, grass strips and source-oriented measures are not used.
     """

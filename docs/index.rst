@@ -5,7 +5,7 @@ Contents
 ========
 
 .. toctree::
-   :caption: pyws
+   :caption: pywatemsedem
    :maxdepth: 2
 
    Installation <installation>

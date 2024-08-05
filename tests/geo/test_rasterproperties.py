@@ -3,7 +3,7 @@ from pyproj import CRS
 from pyproj.exceptions import CRSError
 from rasterio import Affine
 
-from pyws.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.rasterproperties import RasterProperties
 
 
 def test_rasterproperties():

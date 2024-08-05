@@ -3,7 +3,7 @@
 Development guidelines
 =======================
 
-Want to contribute code or functionalities to the ``pyws`` package? Great and welcome on board!
+Want to contribute code or functionalities to the ``pywatemsedem`` package? Great and welcome on board!
 
 We use a number of development tools to support us in improving the code quality. No magic bullet or free
 lunch, but just a set of tools as any craftman has tools to support him/her doing a better job.
@@ -12,7 +12,7 @@ For development purposes using conda, make sure to first run ``pip install -e .[
 to prepare the development environment and install all development tools. (When using ``tox -e dev`` this
 is already done).
 
-When starting on the development of the ``pyws`` package, makes sure to be familiar with the following tools. Do
+When starting on the development of the ``pywatemsedem`` package, makes sure to be familiar with the following tools. Do
 not hesitate to ask the other developers when having trouble using these tools.
 
 Pre-commit hooks
@@ -28,7 +28,7 @@ required dependencies are included in the development requirements installed whe
 
     pre-commit install
 
-on the main level of the package (``pyws`` folder, location where the file ``.pre-commit-config.yaml`` is located)
+on the main level of the package (``pywatemsedem`` folder, location where the file ``.pre-commit-config.yaml`` is located)
 
 If you just want to run the hooks on your files to see the effect (not during a git commit),
 you can use the command at any time:
@@ -43,7 +43,7 @@ Unit testing with pytest
 -------------------------
 
 Run the test suite using the ``pytest`` package, from within the main package
-folder (`pyws`):
+folder (`pywatemsedem`):
 
 ::
 
@@ -75,7 +75,7 @@ Drone CI
 --------
 
 Apart from these tools you can run locally, we use drone continuous integration to run these checks also
-on our servers. See https://drone.fluves.net/Fluves/pyws for the results.
+on our servers. See https://drone.fluves.net/Fluves/pywatemsedem for the results.
 
 Git lfs
 -------
@@ -125,20 +125,20 @@ Utilities
 
 - Load raster: load rasters as numpy arrays. The ``profile`` raster metadata
   holds all metedata that geograpical defines the array. See
-  :func:`pyws.core.utils.load_raster`:
+  :func:`pywatemsedem.core.utils.load_raster`:
 
 ::
 
-    from pyws.core.utils import load_raster
+    from pywatemsedem.core.utils import load_raster
     rst = "landuse.tif" # can be any raster extension supported by GDAL
     arr,profile = load_raster(rst)
 
 - Write raster: write numpy arrays to rasters. See
-  :func:`pyws.core.utils.write_arr_as_rst`:
+  :func:`pywatemsedem.core.utils.write_arr_as_rst`:
 
 ::
 
-    from pyws.core.utils import write_arr_as_rst
+    from pywatemsedem.core.utils import write_arr_as_rst
     rst_out = "landuse_int64.tif"
     write_arr_as_rst(arr, rst_out, "int64", profile):
 
@@ -152,7 +152,7 @@ Guideline for unified coding style
 ----------------------------------
 
 A number of guidelines are given in order to obtain a degree of unified style
-in the pyws code. Following guidelines are given:
+in the pywatemsedem code. Following guidelines are given:
 
  - Pandas: access columns via ``df["test"]`` rather than ``df.test``.
  - Use Pandas dataframes to transfer non-raster data between modules/functions,
@@ -223,7 +223,7 @@ item, you can use this in the docstring. E.g. a dict
 Postprocess file structure
 --------------------------
 
-The postprocess filestructure file `src/pyws/data/postprocess_files.csv`
+The postprocess filestructure file `src/pywatemsedem/data/postprocess_files.csv`
 holds an overview of all files that are used within postprocessing
 (either WaTEM/SEDEM input data, output data, intermediate processing files,
 etc..). This file can be used to add files to the WaTEM/SEDEM package. Do note that

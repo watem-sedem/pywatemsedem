@@ -2,4 +2,4 @@
 # e.g.
 # global-include your_custom_file_which_is_part_of_package
 prune tests/data  # for test data which should NOT be part of the release
-graft src/pyws/data
+graft src/pywatemsedem/data

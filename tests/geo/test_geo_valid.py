@@ -7,9 +7,9 @@ import pytest
 import rasterio
 from shapely.geometry import LineString, Polygon
 
-from pyws.geo.valid import (
-    PywsInputError,
-    PywsTypeError,
+from pywatemsedem.geo.valid import (
+    PywatemsedemInputError,
+    PywatemsedemTypeError,
     valid_exists,
     valid_linesvector,
     valid_pointvector,
@@ -82,10 +82,10 @@ def dummy_fun():
 
 def test_valid():
     """Test valid seprate operators for
-    :func:`pyws.geo.valid.valid_input`-decorator."""
+    :func:`pywatemsedem.geo.valid.valid_input`-decorator."""
     # test valid exists
     rst = tempfile.NamedTemporaryFile(suffix=".tif").name
-    with pytest.raises(PywsInputError) as excinfo:
+    with pytest.raises(PywatemsedemInputError) as excinfo:
         valid_exists(rst, dummy_fun)
     assert "does not exist, cannot execute" in str(excinfo.value)
 
@@ -101,14 +101,14 @@ def test_valid():
     f = open(log, "w")
     f.write("test")
     f.close()
-    with pytest.raises(PywsTypeError) as excinfo:
+    with pytest.raises(PywatemsedemTypeError) as excinfo:
         valid_raster(log, dummy_fun)
-    assert "The rasterio engine in pyws cannot open" in str(excinfo.value)
+    assert "The rasterio engine in pywatemsedem cannot open" in str(excinfo.value)
 
     # test if valid rasterlist not works when inputting wrong input
     assert valid_rasterlist([rst, rst], dummy_fun)
 
-    with pytest.raises(PywsInputError) as excinfo:
+    with pytest.raises(PywatemsedemInputError) as excinfo:
         valid_rasterlist(rst, dummy_fun)
     assert "is not a valid list of rasters input," in str(excinfo.value)
 
@@ -130,14 +130,14 @@ def test_valid():
     # test if valid vectorlist not works when inputting wrong input
     assert valid_vectorlist([vct, vct], dummy_fun, "LineString")
 
-    with pytest.raises(PywsInputError) as excinfo:
+    with pytest.raises(PywatemsedemInputError) as excinfo:
         valid_vectorlist(rst, dummy_fun, "LineString")
     assert "is not a valid list of vectors input," in str(excinfo.value)
 
     # test feed wrong file format in valid vector
-    with pytest.raises(PywsTypeError) as excinfo:
+    with pytest.raises(PywatemsedemTypeError) as excinfo:
         valid_vector(rst, dummy_fun, "Polygon")
-    assert "The fiona engine in pyws cannot open" in str(excinfo.value)
+    assert "The fiona engine in pywatemsedem cannot open" in str(excinfo.value)
 
     # test not known required type
     with pytest.raises(IOError) as excinfo:
@@ -145,6 +145,6 @@ def test_valid():
     assert "Geomtry type 'test' not known." in str(excinfo.value)
 
     # test feed wrong type of vector  (vct = line, see test above) to valid polygonshape
-    with pytest.raises(PywsTypeError) as excinfo:
+    with pytest.raises(PywatemsedemTypeError) as excinfo:
         valid_polygonvector(vct, dummy_fun)
     assert "Geometry input type" in str(excinfo.value)

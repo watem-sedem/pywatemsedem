@@ -3,7 +3,7 @@ import shutil
 import pytest
 from conftest import ini_file
 
-from pyws.io.ini import add_field, modify_field
+from pywatemsedem.io.ini import add_field, modify_field
 
 
 class TestModifyField:

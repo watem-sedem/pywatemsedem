@@ -22,9 +22,9 @@ file included in this repository:
 
     conda env create -f environment.yml
 
-    conda activate pyws
+    conda activate pywatemsedem
 
-Next, install the package from within the ``pyws`` folder in the terminal
+Next, install the package from within the ``pywatemsedem`` folder in the terminal
 and with the (conda/virtualenv) environment activated:
 
 ::

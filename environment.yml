@@ -1,4 +1,4 @@
-name: pyws
+name: pywatemsedem
 channels:
   - defaults
   - conda-forge
