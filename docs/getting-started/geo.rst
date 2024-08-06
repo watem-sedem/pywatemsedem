@@ -5,22 +5,22 @@ Geo-module
 
 Introduction
 ------------
-The pyws package makes use of a number of GDAL and SAGA command line
+The pywatemsedem package makes use of a number of GDAL and SAGA command line
 operators to process raster data (for reasons of processing speed). In order
 to cope with this file-based system, but still make use of numpy arrays for
-processing in Python, a :class:`pyws.geo.rasters.RasterFile` and
-:class:`pyws.geo.rasters.RasterMemory` class is
+processing in Python, a :class:`pywatemsedem.geo.rasters.RasterFile` and
+:class:`pywatemsedem.geo.rasters.RasterMemory` class is
 implemented. The aim of these engines is to couple raster file/numpy arrays to
 specific raster properties. Second, this engine aims to perform simple
 clipping and masking for input data. Third, this engine makes use of a class
-:class:`pyws.geo.rasterproperties.RasterProperties`, which aims to enable
+:class:`pywatemsedem.geo.rasterproperties.RasterProperties`, which aims to enable
 easy switch between raster geographic references of gdal and rasterio,
 respectively named *gdal_profile* and *rasterio_profile*.
 
 The aim of this tutorial is to examplify the use of the
-:class:`pyws.geo.rasterproperties.RasterProperties`
-and the :class:`pyws.geo.rasters.RasterFile` class. Note that the example
-files in this tutorial can be found in ``pyws/pyws/test/geo/data``.
+:class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+and the :class:`pywatemsedem.geo.rasters.RasterFile` class. Note that the example
+files in this tutorial can be found in ``pywatemsedem/pywatemsedem/test/geo/data``.
 
 For this example, we assume we have a raster available which defines the
 geographical boundaries, the resolution (20 m) and coordinate system (in this
@@ -35,8 +35,8 @@ Defining the raster properties for this raster can be done by:
 .. code-block:: python
 
     # imports
-    from pyws.geo.utils import load_raster
-    from pyws.geo.rasterproperties import RasterProperties
+    from pywatemsedem.geo.utils import load_raster
+    from pywatemsedem.geo.rasterproperties import RasterProperties
     from pathlib import Path
 
     # input file
@@ -54,9 +54,9 @@ Defining the raster properties for this raster can be done by:
     print(f"nodata: {rp.nodata}")
 
 The instance ``rp`` of the class
-:class:`pyws.geo.rasterproperties.RasterProperties` can now be used te
+:class:`pywatemsedem.geo.rasterproperties.RasterProperties` can now be used te
 define the extent of other rasters with the help of the class
-:class:`pyws.geo.rasters.RasterFile`.
+:class:`pywatemsedem.geo.rasters.RasterFile`.
 Yet, before we do so, we first want to narrow our spatial domain by clipping
 a part of the input raster. We do this by defining left x boundary, lower y
 boundary, right x boundary and upper y boundary by the values
@@ -80,12 +80,12 @@ Rasters
 
 We have now predefined our geospatial context, and we want to clip our input
 according to this definition using
-:class:`pyws.geo.rasters.RasterFile`-engine:
+:class:`pywatemsedem.geo.rasters.RasterFile`-engine:
 
 .. code-block:: python
 
     # imports
-    from pyws.geo.rasters import RasterFile
+    from pywatemsedem.geo.rasters import RasterFile
 
     # clip
     raster = RasterFile(file_path, rp=rp)
@@ -99,7 +99,7 @@ Which results to:
     :width: 1000px
     :align: center
 
-Do note that if no :class:`pyws.geo.rasterproperties.RasterProperties`
+Do note that if no :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
 ``rp`` is defined, no clipping will occur:
 
 .. code-block:: python
@@ -127,7 +127,7 @@ the zeros indicate masking.
 
 .. code-block:: python
 
-    from pyws.geo.utils import vct_to_rst_field
+    from pywatemsedem.geo.utils import vct_to_rst_field
     rst_mask = Path(input_folder) / "mask.tif"
     mask = RasterFile(rst_mask)
 
@@ -196,33 +196,33 @@ a Jupyter Notebook environment.
     In order to use the hv_plot functionality, one has to install hvplot
     and geoviews. See :ref:`installation page <https://rasterio.readthedocs.io/en/stable/>`.
 
-The :class:`pyws.geo.rasters.RasterMemory` class can be used in a
+The :class:`pywatemsedem.geo.rasters.RasterMemory` class can be used in a
 similar way:
 
 .. code-block:: python
 
-    from pyws.geo.rasters import RasterMemory
+    from pywatemsedem.geo.rasters import RasterMemory
     arr, profile = load_raster(file_path)
     raster = RasterMemory(arr, RasterProperties.from_rasterio(profile))
     raster.mask(mask.arr)
 
-Do note that clipping in :class:`pyws.geo.rasters.RasterMemory` is not
+Do note that clipping in :class:`pywatemsedem.geo.rasters.RasterMemory` is not
 implemented in the current version.
 
 .. note:
 
-    The class :class:`pyws.geo.rasterproperties.RasterProperties` is
-    generated for switching between the two profiles in pyws, it does not
+    The class :class:`pywatemsedem.geo.rasterproperties.RasterProperties` is
+    generated for switching between the two profiles in pywatemsedem, it does not
     aim to replace functionalities in rasterio.
 
 Vectors
 -------
-Similar to :class:`pyws.geo.rasters.RasterFile`, one can  make use
-:class:`pyws.geo.vectors.VectorFile` to define vector data:
+Similar to :class:`pywatemsedem.geo.rasters.RasterFile`, one can  make use
+:class:`pywatemsedem.geo.vectors.VectorFile` to define vector data:
 
 .. code-block:: python
 
-    from pyws.geo.vectors import VectorFile
+    from pywatemsedem.geo.vectors import VectorFile
 
     input_folder = Path(r"$YOURINPUTFOLDER")
     file_path = input_folder / "Wlas_langegracht.shp"
@@ -241,7 +241,7 @@ and clip:
     vector = VectorFile(file_path,vct_clip=file_path_clip)
     vector.plot()
 
-with the option to rasterize to a :class:`pyws.geo.rasters.RasterFile`-class
+with the option to rasterize to a :class:`pywatemsedem.geo.rasters.RasterFile`-class
 (using the mask as reference raster):
 
 .. code-block:: python
