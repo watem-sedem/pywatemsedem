@@ -23,7 +23,7 @@ __location__ = os.path.join(
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.join(__location__, "../src"))
+sys.path.insert(0, os.path.join(__location__, ".."))
 
 # -- Run sphinx-apidoc -------------------------------------------------------
 # This hack is necessary since RTD does not issue `sphinx-apidoc` before running
@@ -300,7 +300,7 @@ intersphinx_mapping = {
     "pyscaffold": ("https://pyscaffold.org/en/stable", None),
     "geopandas": ("https://geopandas.readthedocs.io/en/latest/", None),
     "rasterio": ("https://rasterio.readthedocs.io/en/stable/", None),
-    "cnws": ("https://watem-sedem.github.io/watem-sedem/", None),
+    "watemsedem": ("https://watem-sedem.github.io/watem-sedem/", None),
     "shapely": ("https://shapely.readthedocs.io/en/stable", None),
 }
 
