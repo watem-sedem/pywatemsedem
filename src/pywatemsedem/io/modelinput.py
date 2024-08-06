@@ -9,8 +9,8 @@ from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
-    check_raster_properties_raster_with_template,
     mask_array_with_val,
+    check_raster_properties_raster_with_template
 )
 from pywatemsedem.io.plots import axes_creator, plot_continuous_raster, plot_discrete_raster
 from pywatemsedem.io.valid import (
@@ -154,7 +154,7 @@ class Modelinput(Factory):
         valid_non_nan(self.buffers.arr)
         valid_array_type(self.buffers.arr, required_type=np.int16)
         valid_boundaries(self.buffers.arr, lower=0, upper=None)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         labels = ["No buffer", "Buffer"]
 
@@ -211,7 +211,7 @@ class Modelinput(Factory):
         valid_nodata(self.dtm.arr, nodata_value=-99999)
         valid_boundaries(self.dtm.arr, lower=-431, upper=9000)
         # +- lowest and highest points on earth
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for DTM with cividis as colormap
@@ -262,7 +262,7 @@ class Modelinput(Factory):
         valid_boundaries(
             raster.arr[raster.arr != -9999], lower=0, upper=None
         )  # No data value excluded from check
-        check_raster_properties_raster_with_template(
+        valid_raster_properties_raster_with_template(
             self.rp, raster_input, epsg=self.rp.epsg
         )
         self._kfactor = raster
@@ -317,7 +317,7 @@ class Modelinput(Factory):
             self.ktc.arr[self.ktc.arr != 9999], lower=0, upper=20
         )  # 0 to 20 if not nodata
         valid_values(self.ktc.arr[self._ktc.arr > 20], [9999])
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         label = ["9999"]
 
@@ -374,7 +374,7 @@ class Modelinput(Factory):
         valid_nodata(self.outlet.arr)
         valid_array_type(self.outlet.arr, required_type=np.int16)
         valid_values(self.outlet.arr, unique_values=[0, 1])
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
     @property
     def pfactor(self):
@@ -399,7 +399,7 @@ class Modelinput(Factory):
         lower, upper = 0, 1
         valid_boundaries(self.pfactor.arr, lower=lower, upper=upper)
         valid_array_type(self.pfactor.arr, required_type=np.float32)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for P-factor
@@ -449,7 +449,7 @@ class Modelinput(Factory):
         valid_non_nan(self.compositelanduse.arr)
         valid_array_type(self.compositelanduse.arr, required_type=np.int16)
         valid_boundaries(self.compositelanduse.arr, lower=-32757, upper=32757)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         # custom plotting features
         colormap = colors.ListedColormap(
@@ -525,7 +525,7 @@ class Modelinput(Factory):
         # int16, maar waarom niet float32?
         lower, upper = 0, 100
         valid_boundaries(self.ptef.arr, lower=lower, upper=upper)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for PTEF
@@ -576,7 +576,7 @@ class Modelinput(Factory):
         valid_non_nan(self.ptef.arr)
         valid_array_type(self.ptef.arr, required_type=np.int16)
         valid_boundaries(self.ptef.arr, lower=0, upper=None)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for riversegments
@@ -641,7 +641,7 @@ class Modelinput(Factory):
             self.riverrouting.arr[self.riverrouting.arr != -9999],
             unique_values=np.arange(0, 9).tolist(),
         )
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         colormap_start = mpl.cm.get_cmap("tab10")
         colorlist = []
         for i in range(0, 9):
@@ -711,7 +711,7 @@ class Modelinput(Factory):
         valid_array_type(self.sewers.arr, required_type=np.float32)
         lower, upper = 0, 1
         valid_boundaries(self.sewers.arr, lower=lower, upper=upper)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        valid_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for sewers

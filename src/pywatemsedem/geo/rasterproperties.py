@@ -168,11 +168,8 @@ class RasterProperties:
         Parameters
         -----------
         rasterio_profile: dict
-
-
         epsg: int, default None
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`. Must be filled
-            in when no epsg-code is present in the input data.
+            EPSG code should be a numeric value, see https://epsg.io/.
         """
         if not {"transform", "width", "height", "crs", "nodata"}.issubset(
             rasterio_profile.keys()
@@ -255,7 +252,13 @@ class RasterProperties:
 
     @staticmethod
     def _check_epsg(epsg: int):
-        """Check EPSG code"""
+        """Check EPSG code
+
+        Parameters
+        ----------
+        epsg: int
+            EPSG code should be a numeric value, see https://epsg.io/.
+        """
         if type(epsg) is not int:
             msg = f"EPSG-code '{epsg}' need to be an integer code."
             raise TypeError(msg)

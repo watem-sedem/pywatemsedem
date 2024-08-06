@@ -39,7 +39,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../src")
+module_dir = os.path.join(__location__, "../src/pywatemsedem")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -298,7 +298,7 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "setuptools": ("https://setuptools.readthedocs.io/en/stable/", None),
     "pyscaffold": ("https://pyscaffold.org/en/stable", None),
-    "geopandas": ("https://geopandas.readthedocs.io/en/latest/", None),
+    "geopandas": ("https://geopandas.org/en/latest", None),
     "rasterio": ("https://rasterio.readthedocs.io/en/stable/", None),
     "watemsedem": ("https://watem-sedem.github.io/watem-sedem/", None),
     "shapely": ("https://shapely.readthedocs.io/en/stable", None),

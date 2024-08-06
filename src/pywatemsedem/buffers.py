@@ -48,15 +48,13 @@ def process_buffer_outlets(gdf_outlets, gdf_buffer):
 def filter_outlets_in_arr_extension_id(gdf, arr, arr_dtm, arr_outlet=None):
     """Map buffer outlet on extension id raster
 
-    #TODO: check implementation arr_outlet
-
     This function filters outlet id's to single outlet id, for every buffer. The
     function returns an array with single entries for every buffer id and
     multiple entries for every buffer extension id.
 
     The algorithm takes a single pixel that
 
-    - corresponds to the the pixel defined in arr_outlet (use-defined).
+    - corresponds to the pixel defined in arr_outlet (use-defined).
 
     OR
 
@@ -68,7 +66,7 @@ def filter_outlets_in_arr_extension_id(gdf, arr, arr_dtm, arr_outlet=None):
         Holding id's (column: 'buf_id' (int)), all id's should be present in arr and
         vice versa.
     arr: numpy.ndarray
-        Array with buffer outlet (<16 385) and extension id's (1.6385>=). This array
+        Array with buffer outlet (<16 385) and extension id's (16 385>=). This array
         can hold multiple entries for buffer outlet. All outlet id's should be present
         in gdf
     arr_dtm: numpy.ndarray
@@ -102,7 +100,7 @@ def process_buffers_in_river(gdf, arr, arr_river, nodata):
     gdf: geopandas.GeoDataFrame
         Geopandas representation of arr, in buf_exid.
     arr: numpy.ndarray
-        Array with buffer outlet (<16 385) and extension id's (1.6385>=). This array
+        Array with buffer outlet (<16 385) and extension id's (16 385>=). This array
         can hold multiple entries for buffer outlet. All outlet id's should be present
         in gdf.
     arr_river: numpy.ndarray

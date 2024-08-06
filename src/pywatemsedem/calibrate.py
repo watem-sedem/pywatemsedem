@@ -331,7 +331,7 @@ def linear_regression_evaluation_calibration(arr_observed, arr_predicted):
     p_reg: float
         See :class:`sklearn.linear_model.LinearRegression`
     r2: float
-        See :class:`sklearn.metrics.r2_score`
+        See :func:`sklearn.metrics.r2_score`
     rico: float
         First order regression coefficient. See also
         :class:`sklearn.linear_model.LinearRegression`
@@ -416,7 +416,7 @@ def compute_nash_sutcliffe(
     Parameters
     ----------
     df_calibration_results: pandas.DataFrame
-        See :func:`pywatemsedem.calibrate.calculate_modelefficiency`.
+        See :func:`pywatemsedem.calibrate.calculate_model_efficiency`.
     denominator: float
         See :func:`pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe`.
     variable: str
@@ -468,7 +468,7 @@ def compute_denomitor_nash_sutcliffe(df_calibration_data, variable, squared_erro
     Parameters
     ----------
     df_calibration_data: pandas.DataFrame
-        See :func:`pywatemsedem.calibrate.calculate_modelefficiency`.
+        See :func:`pywatemsedem.calibrate.calculate_model_efficiency`.
     variable: str, default 'sy'
         Name of output variable 'sy' or 'ssy'.
     squared_error: bool
@@ -670,7 +670,7 @@ def plot_regression(
     Parameters
     ----------
     df: pandas.DataFrame
-        See :func:`pywatemsedem.calibrate.calculate_modelefficiency`.
+        See :func:`pywatemsedem.calibrate.calculate_model_efficiency`.
     ktc_low: float
         Low transport capacity coefficient.
     ktc_high: float

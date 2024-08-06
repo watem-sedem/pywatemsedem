@@ -14,7 +14,6 @@ from shapely.geometry import LineString
 
 from ..geo.factory import Factory
 from ..geo.utils import (
-    check_raster_properties_raster_with_template,
     clean_up_tempfiles,
     create_spatial_index,
     execute_saga,
@@ -25,6 +24,7 @@ from ..geo.utils import (
     raster_to_polygon,
     rst_to_vct_points,
     write_arr_as_rst,
+    check_raster_properties_raster_with_template
 )
 from ..io.plots import axes_creator  # hvplot_continuous_raster,
 from ..io.plots import log_scale_enabler, plot_continuous_raster, plot_output_raster

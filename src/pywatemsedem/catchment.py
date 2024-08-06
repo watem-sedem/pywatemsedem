@@ -177,6 +177,7 @@ class Catchment(Factory):
             vct_catchment.to_file(self.vct_catchment)
         else:
             self.vct_catchment = vct_catchment
+        # input your own raster properties and do not self-generate them.
         self.create_rasterproperties = False
 
         # get RasterProperties from catchment vector and bounds DTM

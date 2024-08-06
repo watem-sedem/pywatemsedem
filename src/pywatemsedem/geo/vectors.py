@@ -163,6 +163,7 @@ class AbstractVector:
         rst_reference: str or  pathlib.Path
             File path to reference file for raster output.
         epsg: int
+            EPSG code should be a numeric value, see https://epsg.io/.
         col: str, default "NR"
             Column name to map
         nodata: float, default None

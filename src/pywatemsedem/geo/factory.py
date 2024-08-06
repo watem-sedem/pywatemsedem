@@ -25,7 +25,7 @@ from .vectors import AbstractVector, VectorFile
 
 
 def valid_mask_factory(func):
-    """CHeck valid mask inputted when using raster or vectofactory"""
+    """Check valid mask inputted when using raster or vectofactory"""
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
@@ -41,22 +41,25 @@ def valid_mask_factory(func):
 
 
 class Factory:
-    """The factory class
+    """Factory class
 
-    This class is base class for generating classes that handle file-based and
-    memory-based rasters and vectors.
+    Used to enable functions to generate vectors and rasters.
 
+    Notes
+    -----
+    By default a rasterproperties instance is made in the initialisation
+    See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled of by
+    setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to False
     """
-
     def __init__(self, resolution, epsg_code, nodata, resmap, bounds=None):
-        """Initialize factory
-
+        """See class docs
+        
         Parameters
         ---------
         resolution:int
             Model spatial resolution
         epsg_code: int
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+            EPSG code should be a numeric value, see https://epsg.io/.
         nodata: float
             See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
         resmap: pathlib.Path | str
@@ -64,12 +67,6 @@ class Factory:
         bounds: list, default None
             Raster boundaries which you wish for model.
             See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-
-        Notes
-        -----
-        By default a rasterproperties instance is made in the initialisation
-        See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled of by
-        setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to False
         """
         self._resolution = resolution
         self._epsg_code = epsg_code
@@ -94,7 +91,7 @@ class Factory:
 
     @rp.setter
     def rp(self, rasterproperties):
-        "Set raster properties"
+        "RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"
         self._rp = rasterproperties
 
     @property
@@ -104,7 +101,7 @@ class Factory:
 
     @property
     def vct_mask(self):
-        "AbstractRaster mask, See :class:pywatemsedem.geo.rasters.AbstractRaster"
+        "AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`"
         return self._vct_mask
 
     @mask.setter
@@ -128,8 +125,8 @@ class Factory:
 
         Notes
         -----
-        If :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` is set to False,
-        one needs to self-define a RasterProperties instance.
+        If :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` is set
+        to False, one needs to self-define a RasterProperties instance.
         """
         valid_exists(mask, None)
         if self.create_rasterproperties is False:
@@ -257,7 +254,8 @@ class Factory:
         vector_input: str, pathlib.Path or geopandas.GeoDataFrame
             Input vector file or geopandas dataframe
         mask: bool, default True
-            Mask vector (True)
+            Mask vector (True), nodata value will be that one of
+            `pywatemsedem.geo.factory.Factory.rp`.
         allow_empty: bool, default False
             Allow vector to be empty, see :class:`pywatemsedem.geo.vectors.AbstractVector`
 
