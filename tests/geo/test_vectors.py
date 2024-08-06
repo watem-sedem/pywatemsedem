@@ -2,8 +2,8 @@ import geopandas as gpd
 import pytest
 from conftest import geodata
 
-from pyws.geo.utils import get_geometry_type
-from pyws.geo.vectors import VectorFile, VectorMemory
+from pywatemsedem.geo.utils import get_geometry_type
+from pywatemsedem.geo.vectors import VectorFile, VectorMemory
 
 
 def test_vector_file():
@@ -25,7 +25,7 @@ def test_vector_memory():
     with pytest.raises(TypeError) as excinfo:
         VectorMemory(gdf, geometry_type, req_geometry_type)
     assert (
-        f"Required geometry item type '{req_geometry_type}' not known to pyws. "
+        f"Required geometry item type '{req_geometry_type}' not known to pywatemsedem. "
         f"Please select 'LineString or Polygon or Point'" in str(excinfo.value)
     )
 

@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from pyws.io.valid import (
+from pywatemsedem.io.valid import (
     valid_array_type,
     valid_boundaries,
     valid_nodata,

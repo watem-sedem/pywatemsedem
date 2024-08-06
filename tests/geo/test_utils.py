@@ -3,8 +3,8 @@ import pytest
 from conftest import geodata
 from shapely.geometry import Polygon
 
-from pyws.defaults import SAGA_FLAGS
-from pyws.geo.utils import any_equal_element_in_vector, execute_subprocess
+from pywatemsedem.defaults import SAGA_FLAGS
+from pywatemsedem.geo.utils import any_equal_element_in_vector, execute_subprocess
 
 
 @pytest.mark.skip(reason="Unvalidated")

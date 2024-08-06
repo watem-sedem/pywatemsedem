@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 from conftest import geodata
 
-from pyws.geo.rasterproperties import RasterProperties
-from pyws.geo.rasters import RasterFile, RasterMemory, TemporalRaster
-from pyws.geo.utils import load_raster
+from pywatemsedem.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.rasters import RasterFile, RasterMemory, TemporalRaster
+from pywatemsedem.geo.utils import load_raster
 
 
 def test_rastermemory():
@@ -28,7 +28,7 @@ def test_rastermemory():
     assert raster.write(tiff_temp, dtype="int32")
     with pytest.raises(NotImplementedError) as excinfo:
         raster.write(tiff_temp, format="test")
-    assert "Format 'test' not implemented in pyws." in str(excinfo.value)
+    assert "Format 'test' not implemented in pywatemsedem." in str(excinfo.value)
     # enable mask to be in same nodata
     arr_mask = arr_mask.astype(np.float64)
     # feed wrong format

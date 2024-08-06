@@ -1,5 +1,5 @@
 """
-    Setup file for pyws.
+    Setup file for pywatemsedem.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold 4.1.

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from pytest import approx
 
-from pyws.io.modeloutput import (
+from pywatemsedem.io.modeloutput import (
     Modeloutput,
     check_segment_edges,
     compute_efficiency_buffers,
@@ -106,12 +106,12 @@ def test_compute_efficiency_buffers():
 def test_identify_rank_sediment_loads(
     threshold, n_ranks, sum_sediment_load, mean_sediment_load, tmp_path
 ):
-    """Test function for :func:`pyws.pyws.process_output.map_rank_sediment_loads``
+    """Test function for :func:`pywatemsedem.pywatemsedem.process_output.map_rank_sediment_loads``
 
     Parameters
     ----------
     threshold: float
-        See :func:`pyws.pyws.process_output.analyse_cumulative_sediexport`
+        See :func:`pywatemsedem.pywatemsedem.process_output.analyse_cumulative_sediexport`
     n_ranks: float
         Number of records (ranks) for threshold.
     sum_sediment_load: float

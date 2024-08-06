@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pyws.io.modelinput import Modelinput
+from pywatemsedem.io.modelinput import Modelinput
 
 # testing normal functioning
 
@@ -15,7 +15,7 @@ from pyws.io.modelinput import Modelinput
 )
 def test_modelinput_all():
     """tests for Modelinput class"""
-    # folder = Path(r"pyws/tests/io/data")
+    # folder = Path(r"pywatemsedem/tests/io/data")
     folder = Path("tests") / "io" / "data"
     filepath = folder / "model_in"
     P_ex = filepath / "pfactor.rst"

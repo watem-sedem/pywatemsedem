@@ -14,7 +14,7 @@ name: virtualenv-3.11-pipeline
 
 steps:
   - name: linting and docstring cov on PR
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     failure: ignore
     commands:
       - SKIP=no-commit-to-branch tox -e pre-commit
@@ -22,26 +22,26 @@ steps:
       event: [pull_request]
 
   - name: unit testing (pinned)
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     commands:
       - tox -e pinned
 
   - name: test building docs
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     commands:
       - git fetch origin --tags
       - pip install tox setuptools_scm
       - tox -e docs
 
   - name: build release
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     commands:
       - tox -e build
     when:
       event: [pull_request]
 
   - name: report unit test coverage
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     commands:
       - "coverage3 report -m"
       - "coverage3 html"
@@ -57,7 +57,7 @@ steps:
         from_secret: rsync_key
       source: htmlcov/*
       recursive: true
-      target: /appdata/static/coverage/pyws
+      target: /appdata/static/coverage/pywatemsedem
       secrets: [rsync_key]
     when:
       branch:
@@ -84,7 +84,7 @@ steps:
     commands:
       - git fetch --tags
   - name: build release
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     commands:
       - tox -e build
 
@@ -111,7 +111,7 @@ trigger:
     exclude: [pull_request]
 steps:
   - name: build docs
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     commands:
       - tox -e docs
 
@@ -125,7 +125,7 @@ steps:
         from_secret: rsync_key
       source: docs/_build/html/
       recursive: true
-      target: /appdata/static/docs/pyws
+      target: /appdata/static/docs/pywatemsedem
       secrets: [rsync_key]
 
 --- # run unit test with unpinned requirements
@@ -136,7 +136,7 @@ name: virtualenv-3.11-pipeline-nonpinned
 
 steps:
   - name: unit-tests
-    image: registry.fluves.net/drone/pyws/venv-3.11
+    image: registry.fluves.net/drone/pywatemsedem/venv-3.11
     failure: ignore
     commands:
       - tox -e py
