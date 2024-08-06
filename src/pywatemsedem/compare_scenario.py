@@ -14,9 +14,9 @@ class DeltaScenario:
 
     Parameters
     ----------
-    pp1: pywatemsedem.pywatemsedem.postproces.PostProcess
+    pp1: pywatemsedem.postproces.PostProcess
         First PostProcess instance of scenario used for the comparison.
-    pp2: pywatemsedem.pywatemsedem.postproces.PostProcess
+    pp2: pywatemsedem.postproces.PostProcess
         Second PostProcess instance of scenario used for the comparison.
     resmap:
         Folder path used to write results to
@@ -39,9 +39,9 @@ class DeltaScenario:
         Parameters
         ----------
         pp1: pywatemsedem.core.postprocess.PostProcess
-            See class:`pywatemsedem.pywatemsedem.postprocess.PostProcess`
+            See class:`pywatemsedem.postprocess.PostProcess`
         pp2: pywatemsedem.core.postprocess.PostProcess
-            See class:`pywatemsedem.pywatemsedem.postprocess.PostProcess`
+            See class:`pywatemsedem.postprocess.PostProcess`
         resmap: str or pathlib.Path, default None
             Folder path of results map
         """
@@ -67,13 +67,13 @@ class DeltaScenario:
 
         Parameters
         ----------
-        pp : pywatemsedem.pywatemsedem.postproces.PostProcess
+        pp : pywatemsedem.postproces.PostProcess
             A PostProcess instance of scenario used for the comparison.
         """
         if not isinstance(pp, PostProcess):
             msg = (
                 f"{pp} is not an instance of the class PostProcess, "
-                f"see ~:class:pywatemsedem.pywatemsedem.postprocess.PostProcess"
+                f"see ~:class:pywatemsedem.postprocess.PostProcess"
             )
             raise IOError(msg)
         else:

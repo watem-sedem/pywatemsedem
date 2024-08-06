@@ -951,7 +951,7 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     """Converts line features to a direction raster
 
     This function converts the direction of line features to a raster. See the
-    :ref:`docs of cnws for more information <cnws:routingmap>` about this raster
+    :ref:`docs of cnws for more information <watemsedem:routingmap>` about this raster
 
     Parameters
     ----------

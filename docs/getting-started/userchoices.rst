@@ -19,7 +19,7 @@ this page, listed per model resolution.
 
     It is important to note that a number of the pywatemsedem options hold
     functionalities that are inherited from the WaTEM/SEDEM model (see
-    :ref:`model parameters in WaTEM/SEDEM documentation page <cnws:modelinput>`).
+    :ref:`model parameters in WaTEM/SEDEM documentation page <watemsedem:modelinput>`).
     As such many of these options hold the same key, but another
     functionality. If the functionality of the option is different for the
     WaTEM/SEDEM model, then this is indicated in the text (indicated with
@@ -41,51 +41,51 @@ WaTEM/SEDEM engine.
 
 Include sewers
 ^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:inlcudesewers>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:inlcudesewers>`
 
 UseTillage
 ^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:calctileros>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:calctileros>`
 
 CreateKtc
 ^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:createktc>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:createktc>`
 
 Create ktil map
 ^^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:createktil>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:createktil>`
 
 Estimate clay content
 ^^^^^^^^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:estimclay>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:estimclay>`
 
 Manual outlet selection
 ^^^^^^^^^^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:manualoutlet>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:manualoutlet>`
 
 Calibrate
 ^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:calibrate>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:calibrate>`
 
 Convert output
 ^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:convertoutput>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:convertoutput>`
 
 L model
 ^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:lmodel>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:lmodel>`
 
 S model
 ^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:smodel>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:smodel>`
 
 Adjusted Slope
 ^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:adjustslope>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:adjustslope>`
 
 Buffer reduce area
 ^^^^^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:bufferreduce>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:bufferreduce>`
 
 Force Routing
 ^^^^^^^^^^^^^
@@ -93,7 +93,7 @@ This options allows to use  user-defined routing. This functions is useful
 for situations where it is known from expert knowledge that the general
 flow pattern is incorrect.
 
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:forcerouting>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:forcerouting>`
 
 FilterDTM
 ^^^^^^^^^
@@ -102,7 +102,7 @@ account the parcel boundaries (i.e. only averaging within parcel boundaries).
 
 River Routing
 ^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:riverrouting>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:riverrouting>`
 
 BankGrassStrips
 ^^^^^^^^^^^^^^^
@@ -111,7 +111,7 @@ river-adjancent agricultural parcel (with the land cover equal to agriculture).
 
 Calculate Tillage Erosion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:includetillagedirection>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:includetillagedirection>`
 
 ECM options
 -----------
@@ -121,25 +121,25 @@ Include buffers (WaTEM/SEDEM)
 
 Load and translate buffer shapefiles to WaTEM/SEDEM buffer rasters. Consider
 buffers for WaTEM/SEDEM model simulation. For functionality in WaTEM/SEDEM pascal, see
-:ref:`here <cnws:includebuffers>`
+:ref:`here <watemsedem:includebuffers>`
 
 
 UseGras (pywatemsedem)
 ^^^^^^^^^^^^^^^^^^^^^^
 Load and translate grass strips shapefiles to WaTEM/SEDEM grass rasters. Grass strips
 are considered in WaTEM/SEDEM via the WaTEM/SEDEM parcel raster (see
-:ref:`here <cnws:prcmap>`).
+:ref:`here <watemsedem:prcmap>`).
 
 
 Include dams (WaTEM/SEDEM)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 Load and translate buffer shapefiles to WaTEM/SEDEM grass rasters. Consider grass
 for WaTEM/SEDEM model simulation. For functionality in WaTEM/SEDEM pascal, see
-:ref:`here <cnws:includedams>`
+:ref:`here <watemsedem:includedams>`
 
 Include ditches (WaTEM/SEDEM)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:includeditches>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:includeditches>`
 
 UseTeelttechn (pywatemsedem)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -151,71 +151,71 @@ Variables
 
 Bulk density
 ^^^^^^^^^^^^
-See :ref:`here <cnws:bulkdensity>`:
+See :ref:`here <watemsedem:bulkdensity>`:
 
 ktc low
 ^^^^^^^
-See :ref:`here <cnws:ktclow>`
+See :ref:`here <watemsedem:ktclow>`
 
 ktc high
 ^^^^^^^^
-See :ref:`here <cnws:ktchigh>`
+See :ref:`here <watemsedem:ktchigh>`
 
 ktc limit
 ^^^^^^^^^
-See :ref:`here <cnws:ktclimit>`
+See :ref:`here <watemsedem:ktclimit>`
 
 ktil default
 ^^^^^^^^^^^^
-See :ref:`here <cnws:ktildefault>`
+See :ref:`here <watemsedem:ktildefault>`
 
 ktil threshold
 ^^^^^^^^^^^^^^
-See :ref:`here <cnws:ktilthres>`
+See :ref:`here <watemsedem:ktilthres>`
 
 Parcel connectivity cropland
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:parcelconncrop>`
+See :ref:`here <watemsedem:parcelconncrop>`
 
 Parcel connectivity forest
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:parcelconnforest>`
+See :ref:`here <watemsedem:parcelconnforest>`
 
 Parcel trapping efficiency cropland
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:parceltrapppingcrop>`
+See :ref:`here <watemsedem:parceltrapppingcrop>`
 
 Parcel trapping efficiency forest
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:parceltrappingforest>`
+See :ref:`here <watemsedem:parceltrappingforest>`
 
 Parcel trapping efficiency pasture
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:parceltrappingpasture>`
+See :ref:`here <watemsedem:parceltrappingpasture>`
 
 Clay content parent material
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:claycontent>`
+See :ref:`here <watemsedem:claycontent>`
 
 R factor
 ^^^^^^^^
-See :ref:`here <cnws:rfactor_var>`
+See :ref:`here <watemsedem:rfactor_var>`
 
 Alpha
 ^^^^^
-See :ref:`here <cnws:alpha>`
+See :ref:`here <watemsedem:alpha>`
 
 Beta
 ^^^^
-See :ref:`here <cnws:beta>`
+See :ref:`here <watemsedem:beta>`
 
 Stream velocity
 ^^^^^^^^^^^^^^^
-See :ref:`here <cnws:streamvelocity>`
+See :ref:`here <watemsedem:streamvelocity>`
 
 Final timestep output
 ^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:timestep>`
+See :ref:`here <watemsedem:timestep>`
 
 begin_jaar
 ^^^^^^^^^^
@@ -227,76 +227,76 @@ begin_maand
 
 Max kernel
 ^^^^^^^^^^
-See :ref:`here <cnws:maxkernel>`
+See :ref:`here <watemsedem:maxkernel>`
 
 Max kernel river
 ^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:maxkernelriver>`
+See :ref:`here <watemsedem:maxkernelriver>`
 
 SewerInletEff
 ^^^^^^^^^^^^^
 Used to define efficiency inlet, mapped to raster. For functionality of
-sewer raster in WaTEM/SEDEM pascal, see :ref:`here <cnws:inlcudesewers>`
+sewer raster in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:inlcudesewers>`
 
 Sewer exit
 ^^^^^^^^^^
-Only CN. For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:sewerexit>`
+Only CN. For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:sewerexit>`
 
 LS correction
 ^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <cnws:lscorrection>`
+For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:lscorrection>`
 
 Output
 ------
 
-The output options below are all inherited by cnws. This implies that the
-keys and functionalities of these options in pywatemsedem and cnws are exactly the
+The output options below are all inherited by WaTEM/SEDEM. This implies that the
+keys and functionalities of these options in pywatemsedem and WaTEM/SEDEM are exactly the
 same. For an explanation of these functionalities, we refer to the
-`WaTEM/SEDEM documentation page <https://docs.fluves.net/cnws-pascal>`_
+`WaTEM/SEDEM documentation page <https://watem-sedem.github.io/watem-sedem/>`_
 
 Write aspect
 ^^^^^^^^^^^^
-See :ref:`here <cnws:writeaspect>`
+See :ref:`here <watemsedem:writeaspect>`
 
 Write LS factor
 ^^^^^^^^^^^^^^^
-See :ref:`here <cnws:writels>`
+See :ref:`here <watemsedem:writels>`
 
 Write RUSLE
 ^^^^^^^^^^^
-See :ref:`here <cnws:writerusle>`
+See :ref:`here <watemsedem:writerusle>`
 
 Write sediment export
 ^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:writesedexport>`
+See :ref:`here <watemsedem:writesedexport>`
 
 Write slope
 ^^^^^^^^^^^
-See :ref:`here <cnws:writeslope>`
+See :ref:`here <watemsedem:writeslope>`
 
 Write total runoff
 ^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:writetotalrunoff>`
+See :ref:`here <watemsedem:writetotalrunoff>`
 
 Write upstream area
 ^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:writeuparea>`
+See :ref:`here <watemsedem:writeuparea>`
 
 Write water erosion
 ^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:writerwatereros>`
+See :ref:`here <watemsedem:writerwatereros>`
 
 Output per river segment
 ^^^^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:outputsegment>`
+See :ref:`here <watemsedem:outputsegment>`
 
 Write rainfall excess
 ^^^^^^^^^^^^^^^^^^^^^
-See :ref:`here <cnws:writerainfallexcess>`
+See :ref:`here <watemsedem:writerainfallexcess>`
 
 Write routing table
 ^^^^^^^^^^^^^^^^^^^
-see :ref:`here <cnws:writerouting>`
+see :ref:`here <watemsedem:writerouting>`
 
 Maximize grass strips (maximize_grass_strips)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

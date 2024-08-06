@@ -132,7 +132,7 @@ def get_item_from_ini(ini, section, option, dtype):
     dtype: str
         Type of parameter to be read (get (string), int, float or bool).
         If another string is giver to this parameter, a
-        :class:`~pywatemsedem.pywatemsedem.CNWS.CNWSException` is raised.
+        :class:`~pywatemsedem.CNWS.CNWSException` is raised.
 
     Returns
     -------

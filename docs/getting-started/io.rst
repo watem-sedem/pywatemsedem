@@ -10,7 +10,7 @@ WaTEM/SEDEM files.
 
 Ini-file
 --------
-The ini-file (see :ref:`here <cnws:inifile>`) can be modified with a Python
+The ini-file (see :ref:`here <pywatemsedem:inifile>`) can be modified with a Python
 function available in the in ini-submodule:
 
 .. code-block:: python

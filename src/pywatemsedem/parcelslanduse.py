@@ -88,27 +88,27 @@ def create_parcels_landuse_degerick2015(
     grass strips, landuse from parcels data source, parcelsand finally pywatemsedem landuse.
     Incemental mapping to the parcels landuse raster is done by mapping pixels from the
     input raster to empty pixels in the landuse raster
-    (see also :func:`pywatemsedem.pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem landuse
+    (see also :func:`pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem landuse
     raster is used to fill gaps.
 
     Parameters
     ----------
     landuse_core: numpy.ndarray
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     river: numpy.ndarray
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     water: numpy.ndarray
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     infrastructure: numpy.ndarray
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     mask: numpy.ndarray
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     landuse_parcels: numpy.ndarray, default None
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     parcels: numpy.ndarray, default None
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
     grass_strips: numpy.ndarray, default None
-        See :class:`pywatemsedem.pywatemsedem.scenario.ParcelsLanduse`
+        See :class:`pywatemsedem.scenario.ParcelsLanduse`
 
     Returns
     -------

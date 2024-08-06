@@ -246,7 +246,7 @@ class Scenario:
 
     The catchment class holds all dynamic information for a scenario, for a given year.
     The class considers all data of which the content is user-option-dependent (i.e.
-    :class:`pywatemsedem.pywatemsedem.userchoices.UserChoices`.
+    :class:`pywatemsedem.userchoices.UserChoices`.
 
     - *vct_parcels*: polygon vector of parcels with obligated columns 'LANDUSE',
       'C_crop' and 'CODE'.
@@ -270,7 +270,7 @@ class Scenario:
         Parameters
         ----------
         catchm: pywatemsedem.core.catchment.Catchment
-            Instance of :class:`pywatemsedem catchment <pywatemsedem.pywatemsedem.catchment.Catchment>`
+            Instance of :class:`pywatemsedem catchment <pywatemsedem.catchment.Catchment>`
             containing the catchment characteristics.
         year: int
             Simulation year
@@ -375,7 +375,7 @@ class Scenario:
         """Calculates for which years and seasons the scenario needs data.
 
         Based on the defined choices in the
-        :py:class:`CNWS.UserChoices <pywatemsedem.pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
+        :py:class:`CNWS.UserChoices <pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
         'begin_maand' and, in case of CNWS, 'Endtime model'.
         """
         if (self.choices.version == "WS") or self.choices.version == "Only Routing":
@@ -411,7 +411,7 @@ class Scenario:
         Should contain a definition of crop code (column "CODE").
 
         Should contain a definition of the crop C-factor (column 'C_crop', see
-        :ref:`here <cnws:cmap>`.):
+        :ref:`here <watemsedem:cmap>`.):
 
             - *[0,1]*: C-factor for crop.
             - *NULL*: no C-factor defined.
@@ -573,8 +573,8 @@ class Scenario:
         Grass strips are appointed the value -6 in the WaTEM/SEDEM parcels landuse
         raster. In addition, C-factors and kTC-values are assigned to grass strips
         pixels according to their width, see also
-        :func:`pywatemsedem.pywatemsedem.cfactor.create_cfactor_cnws` and
-        :func:`pywatemsedem.pywatemsedem.ktc.create_ktc_cnws`
+        :func:`pywatemsedem.cfactor.create_cfactor_cnws` and
+        :func:`pywatemsedem.ktc.create_ktc_cnws`
 
         Parameters
         ----------
@@ -583,8 +583,8 @@ class Scenario:
 
             - *width* (int): meter width of grass strip (shortest side!)
             - *scale_ktc* (int): either 0 (scale or 1), if not kTC is not scaled, then
-              the ktc_low (see :class:`pywatemsedem.pywatemsedem.userchoices.UserChoices`) is used,
-              see :func:`pywatemsedem.pywatemsedem.ktc.scale_ktc_gdf_grass_strips`
+              the ktc_low (see :class:`pywatemsedem.userchoices.UserChoices`) is used,
+              see :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`
 
         Notes
         -----
@@ -647,7 +647,7 @@ class Scenario:
         Parameters
         ----------
         raster_input: Pathlib.Path, str or numpy.ndarray
-            See :func:`pywatemsedem.pywatemsedem.catchment.raster_factory`.
+            See :func:`pywatemsedem.catchment.raster_factory`.
         """
         self._grass_strips = self.raster_factory(raster_input)
 
@@ -679,7 +679,7 @@ class Scenario:
             - *boverl* (CN)
             - *eff* (WS)
 
-            For an explanation of the columns, see :ref:`here <cnws:buffermap>`
+            For an explanation of the columns, see :ref:`here <watemsedem:buffermap>`
         """
 
         req_col = {
@@ -721,7 +721,7 @@ class Scenario:
         Parameters
         ----------
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.catchment.vector_factory`.
+            See :func:`pywatemsedem.catchment.vector_factory`.
         """
         self._vct_bufferoutlets = self.vector_factory(vector_input, "Polygon")
 
@@ -823,7 +823,7 @@ class Scenario:
         Parameters
         ----------
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.catchment.vector_factory`.
+            See :func:`pywatemsedem.catchment.vector_factory`.
         """
         self._vct_ditches = self.vector_factory(vector_input, "Polygon")
 
@@ -839,7 +839,7 @@ class Scenario:
         Parameters
         ----------
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.catchment.vector_factory`.
+            See :func:`pywatemsedem.catchment.vector_factory`.
         """
         self._vct_condictive_dams = self.vector_factory(vector_input, "Polygon")
 
@@ -901,7 +901,7 @@ class Scenario:
 
         With this setter, one can define the outlet point of a catchment. This outlet
         is reflected in the output of WaTEM/SEDEM (see
-        :ref:`here <cnws:totalsedimenttxt>`).
+        :ref:`here <watemsedem:totalsedimenttxt>`).
 
         Parameters
         ----------
@@ -957,7 +957,7 @@ class Scenario:
         Parameters
         ----------
         vector_input: str | pathlib.Path | geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.catchment.vector_factory`.
+            See :func:`pywatemsedem.catchment.vector_factory`.
         """
         vct_forced_routing = self.vector_factory(
             vector_input, "LineString", allow_empty=True
@@ -992,7 +992,7 @@ class Scenario:
         Notes
         -----
         1. In the WaTEM/SEDEM pywatemsedem engine, endpoints are named "sewers", see also
-           :ref:`here <cnws:sewermapfile>`. Note that in pywatemsedem, type of endpoints can
+           :ref:`here <watemsedem:sewermapfile>`. Note that in pywatemsedem, type of endpoints can
            be defined (ditches, sewers).
         """
         self._vct_endpoints = self.vector_factory(
@@ -1094,6 +1094,7 @@ class Scenario:
         -------
         pandas.DataFrame
             with columns:
+
             - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
               associated to crop), contour plowing measures (0/1/2), hydrological
               conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
@@ -1112,6 +1113,7 @@ class Scenario:
         -------
         pandas.DataFrame
             with columns:
+
             - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
               associated to crop), contour plowing measures (0/1/2), hydrological
               conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
@@ -1140,7 +1142,7 @@ class Scenario:
         Parameters
         ----------
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.catchment.vector_factory`.
+            See :func:`pywatemsedem.catchment.vector_factory`.
         """
         self._composite_landuse = self.raster_factory(
             raster_input, flag_mask=False, flag_clip=False
@@ -1249,22 +1251,22 @@ class Scenario:
         parcels=None,
         landuse_parcels=None,
     ):
-        """Create CN_WS perceelskaart according to format of :ref:`here <cnws:prcmap>`.
+        """Create CN_WS perceelskaart according to format of :ref:`here <watemsedem:prcmap>`.
 
         Parameters
         ----------
         rivers: numpy.ndarray
             River raster, should only contain nodata-value and -1 (river), see
-            :ref:`here <cnws:prcmap>`.
+            :ref:`here <watemsedem:prcmap>`.
         water: numpy.ndarray
             Water raster, should only contain nodata-value and -3 (), see
-            :ref:`here <cnws:prcmap>`.
+            :ref:`here <watemsedem:prcmap>`.
         infrastructure: numpy.ndarray
             Infrastructure raster, should only contain -2 (paved) and -7 (non-paved)
             and nodata-value. #TODO: check if we can only use -7
         landuse: numpy.ndarray
             Landuse raster. This raster should be formatted according to the composite
-            landuse / WaTEM/SEDEM parcels raster (see :ref:`here <cnws:prcmap>`).
+            landuse / WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`).
         mask: numpy.ndarray
             Mask raster,
         yearfolder: pathlib.Path
@@ -1273,15 +1275,15 @@ class Scenario:
             Raster properties, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
         grass_strips: numpy.ndarray
             Grass strips raster, can only contain nodata-value and -6 (see
-            :ref:`here <cnws:prcmap>`).
+            :ref:`here <watemsedem:prcmap>`).
         parcels: numpy.ndarray
             Parcels ids raster, can only containt nodata-value and >0 (see
-            :ref:`here <cnws:prcmap>`)
+            :ref:`here <watemsedem:prcmap>`)
 
         Notes
         -----
         The infrastructur value -7 does not follow the definition of
-        :ref:`here <cnws:prcmap>`. This value is converted in subfunctionalities of
+        :ref:`here <watemsedem:prcmap>`. This value is converted in subfunctionalities of
         this function to -2.
         """
         # parcels)
@@ -1325,7 +1327,7 @@ class Scenario:
         Parameters
         ----------
         maximize_grass_strips: bool, default False
-            See :func:`pywatemsedem.pywatemsedem.scenario.create_perceelskaart_cnws`
+            See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`
         """
         logger.info("Aanmaken van alle nodige modelinput...")
         self.prepare_grass_strips(maximize_grass_strips=maximize_grass_strips)

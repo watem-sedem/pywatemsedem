@@ -134,7 +134,7 @@ class UserChoices:
 
         Note
         ----
-        See example use in :func:`pywatemsedem.pywatemsedem.CNWS.UserChoices.set_LS_equation`.
+        See example use in :func:`pywatemsedem.CNWS.UserChoices.set_LS_equation`.
         """
         if model_equation in lst_possible_equations:
             self.dict_model_options[type_model] = model_equation
@@ -442,17 +442,17 @@ class UserChoices:
         type_cn_storage: str
             "filestorage" or "database" storage.
         txt_rainfall_filename: str
-            See :func:`pywatemsedem.pywatemsedem.CNWS.UserChoicesCurveNumber.check`
+            See :func:`pywatemsedem.CNWS.UserChoicesCurveNumber.check`
         rainfall_depth_antecedent: int
             Antecedent rainfall depth (mm).
         begin_date: pandas.DateTime
-            See :func:`pywatemsedem.pywatemsedem.userchoices.UserChoicesCurveNumber.check`
+            See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`
         end_date: pandas.DateTime
-            See :func:`pywatemsedem.pywatemsedem.userchoices.UserChoicesCurveNumber.check`
+            See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`
         time_step_event: int
-            See :func:`pywatemsedem.pywatemsedem.userchoices.UserChoicesCurveNumber.check`
+            See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`
         days_antecedent: int
-            See :func:`pywatemsedem.pywatemsedem.userchoices.UserChoicesCurveNumber.check`
+            See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`
         resolution: int
             Spatial resolution.
         """

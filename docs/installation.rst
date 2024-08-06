@@ -74,7 +74,7 @@ install of the package and it will register the environment as a ipykernel
 
 Dependencies
 ============
-The pycnws package has two external dependencies (outside the python
+The pywatemsedem package has two external dependencies (outside the python
 dependencies):
 
 - WaTEM/SEDEM: `WaTEM/SEDEM Pascal <https://watem-sedem.github.io/watem-sedem/>`_

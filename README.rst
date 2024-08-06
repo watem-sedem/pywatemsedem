@@ -21,13 +21,14 @@ Getting started
 This package makes use of Python (and a number of dependencies such as
 Geopandas, Rasterio, Pandas and Numpy). To install the package:
 
-``
-pip install pywatemsedem
-``
+::
 
-Note that it relies on dependencies you need to install yourselves, see
-:ref:`installation instructions <installation>` for more information
-and follow the example in the :ref:`Get started <getstarted>` page
+    pip install pywatemsedem
+
+.. note::
+
+    Note that it relies on dependencies you need to install yourselves, see
+    :ref:`installation instructions <installation>` for more information.
 
 Documentation
 -------------
@@ -59,7 +60,7 @@ Contact
 For technical questions, we refer to the documentation. If you have a
 technical issue with running the model, or if you encounter a bug, please
 use the issue-tracker on github:
-[https://github.com/watem-sedem/pywatemsedem/issues](https://github.com/pywatemsedem/issues)
+`https://github.com/watem-sedem/pywatemsedem/issues <https://github.com/pywatemsedem/issues>`_
 
 
 Powered by
@@ -74,7 +75,7 @@ Powered by
  :target: https://vmm.be/
 
 .. figure:: _static/png/fluves_logo.png
- :scale: 20 %
+ :scale: 5 %
  :target: https://fluves.com/
 
 .. figure:: _static/png/KULeuven_logo.png

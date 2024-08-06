@@ -28,7 +28,7 @@ def process_cn_raster(
     hsg: numpy.ndarray
         Raster that holds values from 1 to 4 according to hydrological soil group
         (A, B, C and D), see [1]_ and [2]_, for more info, see documentation in function
-        :attr: pywatemsedem.pywatemsedem.catchment.Catchment.hydrological_soil_group`.
+        :attr: pywatemsedem.catchment.Catchment.hydrological_soil_group`.
     parcels: geopandas.GeoDataFrame
         Parcels polygon data with columns:
 

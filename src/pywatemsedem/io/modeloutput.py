@@ -78,7 +78,7 @@ class Modeloutput(Factory):
     def sediout(self):
         """Getter SediOut attribute.
 
-        For documentation, see :ref:`here <cnws:sedioutrst>`
+        For documentation, see :ref:`here <watemsedem:sedioutrst>`
         """
         return self._sediout
 
@@ -142,7 +142,7 @@ class Modeloutput(Factory):
     @property
     def routing(self):
         """Getter routing attribute.
-        For documentation, see :ref:`here <cnws:routingtxt>`
+        For documentation, see :ref:`here <watemsedem:routingtxt>`
         """
         return self._routing
 
@@ -204,7 +204,7 @@ class Modeloutput(Factory):
     @property
     def routing_missing(self):
         """Getter routing_missing attribute.
-        For documentation, see :ref:`here <cnws:missingroutingtxt>`
+        For documentation, see :ref:`here <watemsedem:missingroutingtxt>`
         """
         return self._routing_missing
 
@@ -278,7 +278,7 @@ class Modeloutput(Factory):
     def ls(self):
         """Getter LS (length-slope) attribute.
 
-        For documentation, see :ref:`here <cnws:lsmap>`
+        For documentation, see :ref:`here <watemsedem:lsmap>`
         """
         return self._ls
 
@@ -337,7 +337,7 @@ class Modeloutput(Factory):
     def slope(self):
         """Getter slope attribute.
 
-        For documentation, see :ref:`here <cnws:slopemap>`
+        For documentation, see :ref:`here <watemsedem:slopemap>`
         """
         return self._slope
 
@@ -396,7 +396,7 @@ class Modeloutput(Factory):
     def uparea(self):
         """Getter uparea attribute.
 
-        For documentation, see :ref:`here <cnws:upareamap>`
+        For documentation, see :ref:`here <watemsedem:upareamap>`
         """
         return self._uparea
 
@@ -460,7 +460,7 @@ class Modeloutput(Factory):
     def total_sediment(self):
         """Getter total sediment attribute.
 
-        For documentation, see :ref:`here <cnws:totalsedimenttxt>`.
+        For documentation, see :ref:`here <watemsedem:totalsedimenttxt>`.
         For explanation on colmun variables of dataframe: see
         :func:`pywatemsedem.pywatemsedem.cnwsoutput.load_total_sediment_file`.
         """
@@ -481,7 +481,7 @@ class Modeloutput(Factory):
     def sewer_in(self):
         """Getter sewer_in attribute.
 
-        For documentation, see :ref:`here <cnws:sewerinrst>`
+        For documentation, see :ref:`here <watemsedem:sewerinrst>`
         """
         return self._sewer_in
 
@@ -544,7 +544,7 @@ class Modeloutput(Factory):
     def sedi_export(self):
         """Getter SediExport attribute.
 
-        For documentation, see :ref:`here <cnws:sediexportrst>`
+        For documentation, see :ref:`here <watemsedem:sediexportrst>`
         """
         return self._sedi_export
 
@@ -621,7 +621,7 @@ class Modeloutput(Factory):
     def sedi_in(self):
         """Getter SediIn attribute.
 
-        For documentation, see :ref:`here <cnws:sediinrst>`
+        For documentation, see :ref:`here <watemsedem:sediinrst>`
         """
         return self._sedi_in
 
@@ -683,7 +683,7 @@ class Modeloutput(Factory):
     def capacity(self):
         """Getter capacity attribute.
 
-        For documentation, see :ref:`here <cnws:capacityrst>`
+        For documentation, see :ref:`here <watemsedem:capacityrst>`
         """
         return self._capacity
 
@@ -755,7 +755,7 @@ class Modeloutput(Factory):
         """Getter rusle attribute.
 
 
-        For documentation, see :ref:`here <cnws:ruslerst>`
+        For documentation, see :ref:`here <watemsedem:ruslerst>`
         """
         return self._rusle
 
@@ -1863,9 +1863,9 @@ def check_segment_edges(adj_edges, up_edges, arr):
     Parameters
     ----------
     adj_edges: pandas.DataFrame
-        Loaded adjacent edges text file, see :ref:`here <cnws:adjsegments>`
+        Loaded adjacent edges text file, see :ref:`here <watemsedem:adjsegments>`
     up_edges: pandas.DataFrame
-        Loaded up edges text file, see :ref:`here <cnws:upstrsegments>`
+        Loaded up edges text file, see :ref:`here <watemsedem:upstrsegments>`
     arr: numpy.ndarray
         Segment raster array
 

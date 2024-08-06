@@ -83,7 +83,7 @@ class Modelinput(Factory):
     def cfactor(self):
         """Getter cfactor attribute.
 
-        For documentation, see :ref:`here <cnws:cmap>`
+        For documentation, see :ref:`here <watemsedem:cmap>`
         """
         return self._cfactor
 
@@ -137,7 +137,7 @@ class Modelinput(Factory):
     def buffers(self):
         """Getter buffers attribute.
 
-        For documentation, see :ref:`here <cnws:buffermap>`
+        For documentation, see :ref:`here <watemsedem:buffermap>`
         """
         return self._buffers
 
@@ -190,7 +190,7 @@ class Modelinput(Factory):
     def dtm(self):
         """Getter dtm attribute.
 
-        For documentation, see :ref:`here <cnws:dtmmap>`
+        For documentation, see :ref:`here <watemsedem:dtmmap>`
         """
         return self._dtm
 
@@ -242,7 +242,7 @@ class Modelinput(Factory):
     @property
     def kfactor(self):
         """Getter kfactor attribute.
-        For documentation, see :ref:`here <cnws:kmap>`
+        For documentation, see :ref:`here <watemsedem:kmap>`
         """
         return self._kfactor
 
@@ -297,7 +297,7 @@ class Modelinput(Factory):
     def ktc(self):
         """Getter kTC parameter attribute.
 
-        For documentation, see :ref:`here <cnws:ktcmap>`
+        For documentation, see :ref:`here <watemsedem:ktcmap>`
         """
         return self._ktc
 
@@ -356,7 +356,7 @@ class Modelinput(Factory):
     def outlet(self):
         """Getter outlet attribute.
 
-        For documentation, see :ref:`here <cnws:outletmap>`
+        For documentation, see :ref:`here <watemsedem:outletmap>`
         """
         return self._outlet
 
@@ -380,7 +380,7 @@ class Modelinput(Factory):
     def pfactor(self):
         """Getter P-factor attribute.
 
-        For documentation, see :ref:`here <cnws:pmap>`
+        For documentation, see :ref:`here <watemsedem:pmap>`
         """
         return self._pfactor
 
@@ -431,7 +431,7 @@ class Modelinput(Factory):
     def compositelanduse(self):
         """Getter landuseparcels attribute.
 
-        For documentation, see :ref:`here <cnws:prcmap>`
+        For documentation, see :ref:`here <watemsedem:prcmap>`
         """
         return self._compositelanduse
 
@@ -506,7 +506,7 @@ class Modelinput(Factory):
     def ptef(self):
         """Getter ptef attribute.
 
-        For documentation, see :ref:`here <cnws:parceltrapppingcrop>`
+        For documentation, see :ref:`here <watemsedem:parceltrapppingcrop>`
         """
         return self._ptef
 
@@ -558,7 +558,7 @@ class Modelinput(Factory):
     def riversegments(self):
         """Getter riversegments attribute.
 
-        For documentation, see :ref:`here <cnws:riversegmentfile>`
+        For documentation, see :ref:`here <watemsedem:riversegmentfile>`
         """
         return self._riversegments
 
@@ -620,7 +620,7 @@ class Modelinput(Factory):
     def riverrouting(self):
         """Getter riverrouting attribute.
 
-        For documentation, see :ref:`here <cnws:routingmap>`
+        For documentation, see :ref:`here <watemsedem:routingmap>`
         """
         return self._riverrouting
 
@@ -692,7 +692,7 @@ class Modelinput(Factory):
     def sewers(self):
         """Getter sewers attribute.
 
-        For documentation, see :ref:`here <cnws:sewermapfile>`
+        For documentation, see :ref:`here <watemsedem:sewermapfile>`
         """
         return self._sewers
 
@@ -744,7 +744,7 @@ class Modelinput(Factory):
     def upstreamsegments(self):
         """Getter upstreamsegments dataframe.
 
-        For documentation, see :ref:`here <cnws:upstrsegments>`
+        For documentation, see :ref:`here <watemsedem:upstrsegments>`
         """
         return self._upstreamsegments
 
@@ -768,7 +768,7 @@ class Modelinput(Factory):
     def adjacentsegments(self):
         """Getter adjacentsegments dataframe.
 
-        For documentation, see :ref:`here <cnws:adjsegments>`
+        For documentation, see :ref:`here <watemsedem:adjsegments>`
         """
         return self._adjacentsegments
 

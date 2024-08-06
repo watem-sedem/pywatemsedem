@@ -71,7 +71,7 @@ def scale_cfactor_linear(
     Parameters
     ----------
     arr_width: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_cfactor_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_cfactor_with_grass_strip_width`
     resolution: int
         Spatial resolution of raster grid on which grass strips are projected.
     upper_cfactor: float, default 0.37
@@ -82,7 +82,7 @@ def scale_cfactor_linear(
     Returns
     -------
     arr_cfactor: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_cfactor_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_cfactor_with_grass_strip_width`
 
     Notes
     -----
@@ -126,7 +126,7 @@ def scale_ktc_linear(
     Parameters
     ----------
     arr_width: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
     resolution: int
         Spatial resolution of raster grid on which grass strips are projected.
     ktc_low: float
@@ -137,9 +137,9 @@ def scale_ktc_linear(
     Returns
     -------
     arr_ktc: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
     arr_ste: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
 
     Notes
     -----
@@ -196,7 +196,7 @@ def scale_ktc_zhang(
     Parameters
     ----------
     arr_width: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
     ktc_high: float
         The upper boundary to which scale the ktc value.
     k: float
@@ -207,9 +207,9 @@ def scale_ktc_zhang(
     Returns
     -------
     arr_ktc: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
     arr_ste: numpy.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
 
     Notes
     -----
@@ -331,7 +331,7 @@ def estimate_ste(simulated_sediin, simulated_sediout):
     -----
     1. The estimated :math:`\\hat{STE}`  is referred to with a hat to make a distinction
        between the theoretical STE defined in
-       :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
+       :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
     2. Note that the STE can be negative in case there is more erosie produced in the
        grass strip then there is incoming into the grass strip.
     """
@@ -432,17 +432,17 @@ def expand_grass_strips_with_triggers(
     arr_triggers: numpy.ndarray
         Binary array with 1's when a pixel is a trigger. Nodata values are allowed.
     arr_parcels: numpy.ndarray, default None
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
+        See :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
     nodata: float, default None
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
+        See :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
     mode: int, default 1
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`.
+        See :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`.
         Only for computing neighbours grass strips.
 
     Returns
     -------
     arr_grass_strips: np.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grassstrips.core_expand_grass_strips_with_triggers`
+        See :func:`pywatemsedem.grassstrips.core_expand_grass_strips_with_triggers`
 
     Examples
     --------
@@ -468,7 +468,7 @@ def expand_grass_strips_with_triggers(
     Notes
     -----
     1. For algorithm description, see
-    :func:`pywatemsedem.pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
+    :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
 
     For visual example, see image below:
 
@@ -618,7 +618,7 @@ def core_expand_grass_strips_with_triggers(
 
     1. Expand the grass strips with one pixel. This implies that adjacent (ordinal
        and/or cardinal directions, depending on mode, see
-       :func:`pywatemsedem.pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`) pixels to
+       :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`) pixels to
        a grass strip pixel are classified as grass strip pixels.
 
     2. The added grass strip pixels can only be retained if following rules are
@@ -634,10 +634,10 @@ def core_expand_grass_strips_with_triggers(
     arr_grass_strips: numpy.ndarray
         Array with unique id's per grass strips
     arr_grass_strips_neighbours:
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
+        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
         on grass strips array.
     arr_triggers_neighbours: nump.ndarray
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
+        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
         on triggers array.
     arr_parcels: nump.ndarray, default None
         Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
@@ -696,7 +696,7 @@ def create_grassstrips_cnws(
     """Create grass strips raster for WaTEM/SEDEM
 
     This function create the grass strips raster that is used as input creating the
-    composite WaTEM/SEDEM parcels raster (see :ref:`here <cnws:prcmap>`). The
+    composite WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`). The
     output of this function provides a raster with -6-values for grass strip pixels.
 
     Parameters
@@ -721,7 +721,7 @@ def create_grassstrips_cnws(
         input rasters must have the same nodata-value, defined in profile.
     expand_grass_strips: bool, default False
         Use expand grass strips algorithm with rivers as triggers, see
-         :func:`pywatemsedem.pywatemsedem.grasstrips.expand_grass_strips_with_triggers`
+         :func:`pywatemsedem.grasstrips.expand_grass_strips_with_triggers`
 
     Returns
     -------
@@ -729,7 +729,7 @@ def create_grassstrips_cnws(
         Expanded grass strips id's-raster.
     arr_grass: numpy.ndarray
         -6-value-raster of grass strips id's-raster, formatted according to composite
-         WaTEM/SEDEM parcels raster (see :ref:`here <cnws:prcmap>`).
+         WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`).
 
     Notes
     -----
@@ -837,7 +837,7 @@ def create_grass_strips_from_line_string(
 
         - *width* (float): width of grass strips
         - *scale_ktc* (float): scale ktc, see
-          :func:`pywatemsedem.pywatemsedem.grassttips.scale_ktc_with_grass_strip_width`
+          :func:`pywatemsedem.grassttips.scale_ktc_with_grass_strip_width`
 
 
     Notes

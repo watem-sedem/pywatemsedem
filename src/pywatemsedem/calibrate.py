@@ -130,7 +130,7 @@ def process_calibrationrun_output(
     ----------
     txt_calibration: str or pathlib.Path
         Path to the calibration-output file of a WaTEM/SEDEM model run, see
-        :ref:`here <cnws:calibrationtxt>`.
+        :ref:`here <watemsedem:calibrationtxt>`.
     observed_sy: float
         The observed sediment yield for the catchment (in ton).
     catchment_name: str
@@ -141,7 +141,7 @@ def process_calibrationrun_output(
         This coefficient determines the percentual amount of the sediment load
         that is captured in endpoints (sewers and ditches).
         In percentage (% - e.g. 80%). See also
-        :func:`pywatemsedem.pywatemsedem.calibrate.check_endpoint_throughput_coefficient`.
+        :func:`pywatemsedem.calibrate.check_endpoint_throughput_coefficient`.
 
     Returns
     -------
@@ -208,7 +208,7 @@ def compute_model_errors_sy(df_cal, variable):
     Parameters
     ----------
     df_cal: pandas.DataFrame
-        Definition, see :func:`pywatemsedem.pywatemsedem.calibrate.process_calibrationrun_output`.
+        Definition, see :func:`pywatemsedem.calibrate.process_calibrationrun_output`.
     variable: str
         Name of output variable 'sy' or 'ssy'.
 
@@ -237,7 +237,7 @@ def compute_model_errors_sy(df_cal, variable):
 
 def check_endpoint_throughput_coefficient(endpoint_coefficient: float):
     """Check the endpoint (sewers and ditches) throughput coefficient used in
-    :func:`pywatemsedem.pywatemsedem.calibrate.process_calibrationrun_output`.
+    :func:`pywatemsedem.calibrate.process_calibrationrun_output`.
 
     Raise error if the throughput coefficient is not within the defined ranges.
 
@@ -259,7 +259,7 @@ def check_endpoint_throughput_coefficient(endpoint_coefficient: float):
 
 def merge_calibration_results(lst_df_calibration, caldata):
     """Check if dimension of calibration space are equal to the one defined in
-    the caldata instance (see :class:`pywatemsedem.pywatemsedem.calibrate.Calibration`)
+    the caldata instance (see :class:`pywatemsedem.calibrate.Calibration`)
 
     Merges a list of pandas.DataFrame with processed calibration model output
 
@@ -267,9 +267,9 @@ def merge_calibration_results(lst_df_calibration, caldata):
     ----------
     lst_df_calibration: list
         Every item in the list is a pandas.DataFrame. For the definition of the
-        dataframe, see :func:`pywatemsedem.pywatemsedem.calibrate.process_calibrationrun_output`.
+        dataframe, see :func:`pywatemsedem.calibrate.process_calibrationrun_output`.
     caldata: pywatemsedem.core.calibrate.Calibration
-        See :class:`pywatemsedem.pywatemsedem.calibrate.Calibration`
+        See :class:`pywatemsedem.calibrate.Calibration`
 
     Returns
     -------
@@ -366,7 +366,7 @@ def calculate_model_efficiency(df_calibration_data, df_calibration_results):
     df_calibration_results: pandas.DataFrame
         DataFrame with all modelled sediment yields for different combinations
         of ktc-values and different catchments. For the definition of the
-        dataframe, see :func:`pywatemsedem.pywatemsedem.calibrate.merge_calibration_results`.
+        dataframe, see :func:`pywatemsedem.calibrate.merge_calibration_results`.
 
     Returns
     -------
@@ -416,9 +416,9 @@ def compute_nash_sutcliffe(
     Parameters
     ----------
     df_calibration_results: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.calibrate.calculate_modelefficiency`.
+        See :func:`pywatemsedem.calibrate.calculate_modelefficiency`.
     denominator: float
-        See :func:`pywatemsedem.pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe`.
+        See :func:`pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe`.
     variable: str
         Name of output variable 'sy' or 'ssy'.
     squared_error: bool, default True
@@ -468,7 +468,7 @@ def compute_denomitor_nash_sutcliffe(df_calibration_data, variable, squared_erro
     Parameters
     ----------
     df_calibration_data: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.calibrate.calculate_modelefficiency`.
+        See :func:`pywatemsedem.calibrate.calculate_modelefficiency`.
     variable: str, default 'sy'
         Name of output variable 'sy' or 'ssy'.
     squared_error: bool
@@ -514,10 +514,10 @@ def plot_model_efficiency(
     ----------
     df_me: pandas.DataFrame
         Dataframe with the calculated model efficiencies for all combinations
-        of ktc-values. See :func:`pywatemsedem.pywatemsedem.calibrate.calculate_modelefficiency`
+        of ktc-values. See :func:`pywatemsedem.calibrate.calculate_modelefficiency`
         for the defintion of the dataframe.
     caldata: pywatemsedem.core.calibrate.Calibration
-        See :class:`pywatemsedem.pywatemsedem.calibrate.Calibration`.
+        See :class:`pywatemsedem.calibrate.Calibration`.
     sy: bool, default True
         Plot the sediment yield (sy=True) or the specific sediment yield (sy=False).
     contours: list, default [-0.15, 0, 0.15, 0.3, 0.45, 0.6, 0.75]
@@ -584,10 +584,10 @@ def calculate_regressions(df_calibration_results, calibration):
     df_calibration_results: pandas.DataFrame
         DataFrame with all modelled sediment yields for different combinations
         of ktc-values and different catchments. For the definition of the
-        dataframe, see :func:`pywatemsedem.pywatemsedem.calibrate.merge_calibration_results`.
+        dataframe, see :func:`pywatemsedem.calibrate.merge_calibration_results`.
 
     calibration: pywatemsedem.core.calibrate.Calibration
-        See :class:`pywatemsedem.pywatemsedem.calibrate.Calibration`.
+        See :class:`pywatemsedem.calibrate.Calibration`.
 
     Returns
     -------
@@ -598,13 +598,13 @@ def calculate_regressions(df_calibration_results, calibration):
         - *ktc_low* (float): ktc low value used in the model run.
         - *ktc_high* (float): ktc high value used in the model run.
         - *R2 sy* (float): see
-          :func:`pywatemsedem.pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
+          :func:`pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
         - *R2 ssy* (float): see
-          :func:`pywatemsedem.pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
+          :func:`pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
         - *rico_sy* (float): see
-          :func:`pywatemsedem.pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
+          :func:`pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
         - *rico_ssy* (float): see
-          :func:`pywatemsedem.pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
+          :func:`pywatemsedem.calibrate.linear_regression_evaluation_calibration`.
 
     """
 
@@ -670,7 +670,7 @@ def plot_regression(
     Parameters
     ----------
     df: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.calibrate.calculate_modelefficiency`.
+        See :func:`pywatemsedem.calibrate.calculate_modelefficiency`.
     ktc_low: float
         Low transport capacity coefficient.
     ktc_high: float
@@ -751,7 +751,7 @@ def add_outlier_names_to_calibration_plot(df, ax, kind, lq=50, uq=150):
 
     Outlier names are plotted when the quotient of observed to predicted is lower or
     higher than respectively the lower or upper quotient (lq and uq). For description
-    of plots see :func:`pywatemsedem.pywatemsedem.calibrate.plot_regression`.
+    of plots see :func:`pywatemsedem.calibrate.plot_regression`.
 
     Parameters
     ----------

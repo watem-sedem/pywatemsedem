@@ -32,7 +32,7 @@ def create_cfactor_cnws(
         no-0 value.
     landuse: numpy.ndarray
         Landuse raster. This raster should be formatted according to the composite
-        WaTEM/SEDEM parcels raster (see :ref:`here <cnws:prcmap>`).
+        WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`).
     mask: #TODO: check how to simplify this
     sfolder: pathlib.Path
         Results necessary for saving mask
@@ -51,7 +51,7 @@ def create_cfactor_cnws(
     -----
     C-reduction based on source-oriented measures are only applied at the level of
     parcel polygons
-    (see :func:`pywatemsedem.pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).
+    (see :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).
     """
     # use to rasterize
     rst_mask = sfolder.scenario_folder / "mask.rst"

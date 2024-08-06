@@ -138,7 +138,7 @@ class PostProcess(Factory):
 
     Examples
     --------
-    >>> from pywatemsedem.pywatemsedem.postprocess import PostProcess()
+    >>> from pywatemsedem.postprocess import PostProcess()
     >>> pp = PostProcess(r"molenbeek", 1, 2019, 20, 31370) # note that the folder
     >>> #modelbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
     >>> pp.make_routing_vct() #make a vector file of the text routig file.
@@ -324,7 +324,7 @@ class PostProcess(Factory):
         Notes
         -----
         The condition defines which pywatemsedem option
-        (see :func:pywatemsedem.pywatemsedem.CNWS.UserChoices) should be considered as
+        (see :func:pywatemsedem.CNWS.UserChoices) should be considered as
         True/False given that a file (exists) is present in the pywatemsedem
         filesystem. For example: the presence of the buffers.rst raster in the
         modeloutput indicates that the Include buffers option was set to True in
@@ -425,7 +425,7 @@ class PostProcess(Factory):
     def identify_subcatchments_to_buffers(self):
         """Define the seperate subcatchments to the buffer outlets
 
-        See :func:`pywatemsedem.pywatemsedem.postprocess.identify_subcatchments_to_buffers`
+        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_buffers`
         """
         logger.info("Defining catchments to buffers...")
         if self.dict_ecm_options["Include buffers"] == 1:
@@ -492,7 +492,7 @@ class PostProcess(Factory):
         Parameters
         ----------
         routing_file: pathlib.Path
-            See :ref:`here <cnws:routingtxt>`
+            See :ref:`here <watemsedem:routingtxt>`
 
         Returns
         -------
@@ -545,7 +545,7 @@ class PostProcess(Factory):
         Identify the pixels with the highest loads in the sediout raster,
         sort them from high too low, and delineate the subcatchment for these
         pixels up until nmax catchments. See
-        :func:`pywatemsedem.pywatemsedem.postprocess.identify_individual_priority_catchments`.
+        :func:`pywatemsedem.postprocess.identify_individual_priority_catchments`.
 
         Parameters
         ----------
@@ -737,7 +737,7 @@ class PostProcess(Factory):
         -------
         df_sediexport: pandas.DataFrame
             Data Frame format of SediExport raster (format: see
-            :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`)
+            :func:`pywatemsedem.utils.raster_array_to_pandas_dataframe`)
         percentage: int
             Updated x percentage highest load that the user want to analyse
         """
@@ -779,7 +779,7 @@ class PostProcess(Factory):
         ----------
         df_sediexport: pandas.DataFrame
             Data Frame format of SediExport raster (format: see
-            :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`)
+            :func:`pywatemsedem.utils.raster_array_to_pandas_dataframe`)
         profile: rasterio.profiles
             see :func:`rasterio.open`
         percentage: int
@@ -793,7 +793,7 @@ class PostProcess(Factory):
         -------
         df_sediexport: pandas.DataFrame
             Data Frame format of SediExport raster (format: see
-            :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`) added
+            :func:`pywatemsedem.utils.raster_array_to_pandas_dataframe`) added
             with:
 
             - *cum_perc* (float): cumulative highest load
@@ -889,7 +889,7 @@ class PostProcess(Factory):
         -------
         df_prckrt: geopandas.GeoDataFrame
             See
-            :func:`pywatemsedem.pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel`
+            :func:`pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel`
 
         """
         # couple sediment out to routing file
@@ -947,12 +947,12 @@ class PostProcess(Factory):
     def couple_sediout_routing(self, cols_out=None):
         """Couple sediout of raster map values to routing file.
 
-        See :func:`pywatemsedem.pywatemsedem.postprocess.couple_sediout_routing`
+        See :func:`pywatemsedem.postprocess.couple_sediout_routing`
 
         Returns
         -------
         gdf_routing_sediout: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.postprocess.couple_sediout_routing`
+            See :func:`pywatemsedem.postprocess.couple_sediout_routing`
         """
         logger.info("Coupling amount of sediment to routing vectors...")
         valid_routing_vector(self)
@@ -1054,12 +1054,12 @@ class PostProcess(Factory):
     def read_total_sediment(self):
         """Load the total sediment file
 
-        See :func:`pywatemsedem.pywatemsedem.utils.load_total_sediment_file`
+        See :func:`pywatemsedem.utils.load_total_sediment_file`
 
         Returns
         -------
         dict_total_sediment: dict
-            See :func:`pywatemsedem.pywatemsedem.utils.load_total_sediment_file`
+            See :func:`pywatemsedem.utils.load_total_sediment_file`
         """
         dict_total_sediment = load_total_sediment_file(self.files["txt_total_sediment"])
         return dict_total_sediment
@@ -1127,7 +1127,7 @@ class PostProcess(Factory):
         This function computes the efficiency (deposition = ingoing -
         outgoing) sediment per buffer. In addition, this result is
         mapped to a shape file. See
-        :func:`pywatemsedem.pywatemsedem.postprocess.compute_efficiency_buffers` for an
+        :func:`pywatemsedem.postprocess.compute_efficiency_buffers` for an
         explanation of the algorithm.
 
         Parameters
@@ -1176,7 +1176,7 @@ class PostProcess(Factory):
         """Compute the netto erosion per parcel.
 
         For an explanation of the definition of netto erosion,
-        see :func:`pywatemsedem.pywatemsedem.postprocess.compute_netto_erosion_parcels`
+        see :func:`pywatemsedem.postprocess.compute_netto_erosion_parcels`
 
         Parameters
         ----------
@@ -1206,7 +1206,7 @@ class PostProcess(Factory):
         Returns
         -------
         gdf_grass_strips: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.pywatemsedem.postprocess.compute_efficiency_grass_strips` added
+            See :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips` added
             with columns (if compute_priority=True)
                 - *gras_id_target* (float): grass_id
                 - *gras_id_source* (float): grass_id
@@ -1214,7 +1214,7 @@ class PostProcess(Factory):
                 - *sediin* (float): total incoming sediment in grass strip (kg)
                 - *sediout* (float): total outgoing sediment out of grass strip (kg)
                 - *eSTE* (float): estimated sediment trapping efficiency, see
-                  :func:`pywatemsedem.pywatemsedem.grasstrips.estimate_ste` (%)
+                  :func:`pywatemsedem.grasstrips.estimate_ste` (%)
                 - sed (float): amount of sedimentation (kg)
                 - *column_value* (float): deposition in grass strip.
                 - *cum_sum* (float): cumulative sum of deposition in grass strips
@@ -1623,7 +1623,7 @@ class PostProcess(Factory):
     def split_sewerin(self):
         """Split the sewerin raster with the sewer_id raster.
 
-        See :func:`pywatemsedem.pywatemsedem.postprocess.split_endpoints_in_raster`
+        See :func:`pywatemsedem.postprocess.split_endpoints_in_raster`
         """
 
         rst_sewers = (
@@ -1777,7 +1777,7 @@ def compute_efficiency_grass_strips(
         - *sediin* (float): total incoming sediment in grass strip (kg)
         - *sediout* (float): total outgoing sediment out of grass strip (kg)
         - *eSTE* (float): estimated sediment trapping efficiency, see
-          :func:`pywatemsedem.pywatemsedem.grasstrips.estimate_ste` (%)
+          :func:`pywatemsedem.grasstrips.estimate_ste` (%)
         - sed (float): amount of sedimentation (kg)
 
     Note
@@ -1832,7 +1832,7 @@ def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
     Parameters
     ----------
     df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`:
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`:
 
         - *targetrow* (float): target row of pixel
         - *targetcol* (float) target column of pixel
@@ -1853,7 +1853,7 @@ def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
         - *sediin* (float): incoming sediment in grass strip
         - *sediout* (float): outgoing sediment out of grass strip
         - *eSTE* (float): estimated sediment trapping efficiency, see
-          :func:`pywatemsedem.pywatemsedem.grasstrips.estimate_ste`
+          :func:`pywatemsedem.grasstrips.estimate_ste`
         - *sed* (float): amount of sedimentation
 
     Notes
@@ -1920,12 +1920,12 @@ def merge_grass_strip_id_and_sediout_to_routing(
         - *val* (fload): outgoing sediment
 
     df_routing: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`
 
     Returns
     -------
     df_routing_grass_id: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`,
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`,
         holding columns of df_routing and additional columns:
 
         - *gras_id_source* (int): gras_id value of the source pixel
@@ -1981,12 +1981,12 @@ def reformat_routing_grass(df_routing_grass):
     Parameters
     ----------
     df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`
 
     Returns
     -------
     df_routing_grass_T: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`
 
         - *gras_id_target* (float): id of the routing target
         - *sediout* (float): sediment output pixel
@@ -2013,14 +2013,14 @@ def select_and_rename_cols_grass_routing(df_routing_grass, target_id):
     Parameters
     ----------
     df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`
     target_id: int
         The number of the targets, can only be 1 or 2
 
     Returns
     -------
     df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`,
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`,
         selected and renamed after target1 or target2
     """
 
@@ -2047,7 +2047,7 @@ def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_st
     ----------
     df_grass_strips: pandas.DataFrame
         see
-        :func:`pywatemsedem.pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
+        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
     df_prckrt: pandas.DataFrame
 
         - *col* (int): col
@@ -2061,7 +2061,7 @@ def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_st
     -------
     df_grass_strips: pandas.DataFrame
         filtered data, see
-        :func:`pywatemsedem.pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
+        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
     """
 
     df_grass_strips.loc[df_prckrt["val"] != -6, "val"] = profile_grass_strips["nodata"]
@@ -2076,9 +2076,9 @@ def merge_grass_id_to_routing(df_routing, df_grass_strips, cols, field):
     Parameters
     ----------
     df_routing: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file`
+        See :func:`pywatemsedem.process_output.open_txt_routing_file`
     df_grass_strips: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
+        See :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
     cols: list
         Cols to consider for join
     field: str
@@ -2087,7 +2087,7 @@ def merge_grass_id_to_routing(df_routing, df_grass_strips, cols, field):
     Returns
     -------
     df_routing_merged: pandas.DataFrame
-        See :func:`pywatemsedem.pywatemsedem.process_output.open_txt_routing_file` with
+        See :func:`pywatemsedem.process_output.open_txt_routing_file` with
 
         TO DO
 
@@ -2232,7 +2232,7 @@ def compute_netto_erosion_parcels(
     relevant for doing the analysis on large catchments.
 
     2. For details on the computation of netto erosion per parcel, see
-    :func:`pywatemsedem.pywatemsedem.postprocess.compute_netto_ero_prckrt`
+    :func:`pywatemsedem.postprocess.compute_netto_ero_prckrt`
     """
 
     # make output dir

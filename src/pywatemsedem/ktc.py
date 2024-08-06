@@ -75,8 +75,8 @@ def scale_ktc_gdf_grass_strips(gdf_grass_strips, ktc_low, ktc_high):
         columns.
     ktc_low: float
     ktc_high: float
-        See :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_linear` and
-        :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_zhang`.
+        See :func:`pywatemsedem.grasstrips.scale_ktc_linear` and
+        :func:`pywatemsedem.grasstrips.scale_ktc_zhang`.
 
     Returns
     -------
@@ -84,7 +84,7 @@ def scale_ktc_gdf_grass_strips(gdf_grass_strips, ktc_low, ktc_high):
         Updated with the KTC value and the linear sediment trapping efficiency
         (STE_linear).
         For definition STE_linear,
-        :func:`pywatemsedem.pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`.
+        :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`.
 
     Notes
     -----
