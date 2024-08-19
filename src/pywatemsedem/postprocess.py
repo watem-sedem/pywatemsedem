@@ -9,6 +9,7 @@ import pandas as pd
 import pkg_resources
 import shapely
 
+from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
@@ -24,6 +25,8 @@ from pywatemsedem.geo.utils import (
     set_no_data_rst,
     write_arr_as_rst,
 )
+from pywatemsedem.grasstrips import estimate_ste
+from pywatemsedem.io.folders import CatchmentFolder, ScenarioFolders
 from pywatemsedem.io.modeloutput import (
     compute_efficiency_buffers,
     create_deposition_raster,
@@ -34,10 +37,7 @@ from pywatemsedem.io.modeloutput import (
     make_routing_vct_saga,
     open_txt_routing_file,
 )
-from pywatemsedem.grasstrips import estimate_ste
 
-from pywatemsedem.defaults import SAGA_FLAGS
-from pywatemsedem.io.folders import CatchmentFolder, ScenarioFolders
 from .plots import plot_cumulative_sedimentload
 from .scenario import CNWSException
 from .tools import zip_folder

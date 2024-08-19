@@ -12,8 +12,11 @@ import pandas as pd
 from matplotlib import colors
 from shapely.geometry import LineString
 
+from pywatemsedem.plots import plot_cumulative_sedimentload
+
 from ..geo.factory import Factory
 from ..geo.utils import (
+    check_raster_properties_raster_with_template,
     clean_up_tempfiles,
     create_spatial_index,
     execute_saga,
@@ -24,12 +27,10 @@ from ..geo.utils import (
     raster_to_polygon,
     rst_to_vct_points,
     write_arr_as_rst,
-    check_raster_properties_raster_with_template
 )
 from ..io.plots import axes_creator  # hvplot_continuous_raster,
 from ..io.plots import log_scale_enabler, plot_continuous_raster, plot_output_raster
 from ..io.valid import valid_array_type, valid_boundaries, valid_non_nan
-from pywatemsedem.plots import plot_cumulative_sedimentload
 
 IMPLEMENTED_RASTER_TYPES = [np.int16, np.int32, np.int64, np.float32, np.float64]
 COLORMAP = "cividis"

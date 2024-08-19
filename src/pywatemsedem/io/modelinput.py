@@ -9,10 +9,14 @@ from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
+    check_raster_properties_raster_with_template,
     mask_array_with_val,
-    check_raster_properties_raster_with_template
 )
-from pywatemsedem.io.plots import axes_creator, plot_continuous_raster, plot_discrete_raster
+from pywatemsedem.io.plots import (
+    axes_creator,
+    plot_continuous_raster,
+    plot_discrete_raster,
+)
 from pywatemsedem.io.valid import (
     valid_array_type,
     valid_boundaries,
