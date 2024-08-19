@@ -57,6 +57,8 @@ env/
 
 # Test data
 *.rst.aux.xml
+langegracht/*
+results/*
 
 # Run files
 docs/getting-started/langegracht/*
