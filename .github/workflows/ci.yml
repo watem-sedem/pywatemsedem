@@ -31,7 +31,9 @@ jobs:
     - name: Install dependencies
       run: |
         pip install tox
-        sudo apt-get install -y gdal-bin
+        sudo apt-get install -y gdal-bin saga wget
+        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2023.10.24/saga-vpo_20231024090715-6-g45d8ba6.jammy_amd64.deb
+        sudo dpkg -i saga-vpo*.deb
     - name: Run precommit hooks & linting
       if: matrix.python-version == '3.9'
       run: |
