@@ -46,7 +46,8 @@ jobs:
       # this is new and still needs fixes to be succesful
       continue-on-error: true
       run: |
-        tox -e doctests    - name: Build documentation
+        tox -e doctests
+    - name: Build documentation
       run: |
         tox -e docs
     - name: Test package build
