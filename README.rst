@@ -28,7 +28,7 @@ Geopandas, Rasterio, Pandas and Numpy). To install the package:
 .. note::
 
     Note that it relies on dependencies you need to install yourselves, see
-    :ref:`installation instructions <installation>` for more information.
+     `installation instructions <https://watem-sedem.github.io/pywatemsedem/installation.html>`_ for more information.
 
 Documentation
 -------------
@@ -42,8 +42,8 @@ The open-source code can be found on
 
 License
 -------
-This project is licensed under **TODO**, see
-:ref:`here <license>` for more information.
+This project is licensed under MIT, see
+`license <https://watem-sedem.github.io/pywatemsedem/license.html>`_ for more information.
 
 Projects
 --------
