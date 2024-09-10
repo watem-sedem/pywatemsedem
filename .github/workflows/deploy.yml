@@ -9,6 +9,9 @@ jobs:
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
+      # required for writing to gh-pages
+      contents: write
+
     steps:
     - uses: actions/checkout@v4
     - name: Get all git tags
