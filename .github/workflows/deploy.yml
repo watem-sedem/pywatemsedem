@@ -27,7 +27,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/_build/html
     - name: Build and publish package to pypi
-      env:
       run: |
         tox -e build
         twine upload dist/*
