@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.parcelslanduse &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.parcelslanduse</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.parcelslanduse</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">write_arr_as_rst</span>
+
+
+<div class="viewcode-block" id="ParcelsLanduse">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ParcelsLanduse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to generate parcels land-use raster.</span>
+
+<span class="sd">    This parcels land-use raster is used as raster input for WaTEM/SEDEM pywatemsedem.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    landuse_core: numpy.ndarray</span>
+<span class="sd">        Core landuse raster</span>
+<span class="sd">    rivers: numpy.ndarray</span>
+<span class="sd">        River raster (-1)</span>
+<span class="sd">    water: numpy.ndarray</span>
+<span class="sd">        Water raster (-3)</span>
+<span class="sd">    infrastructure: numpy.ndarray</span>
+<span class="sd">        Infrastructure (-2)</span>
+<span class="sd">    mask: numpy.ndarray</span>
+<span class="sd">        Mask array ???</span>
+<span class="sd">    landuse_parcels: numpy.ndarray, default None</span>
+<span class="sd">        Landuse parcels (-1, -2, -3, -4, -5, -6)</span>
+<span class="sd">    parcels: numpy.ndarray, default None</span>
+<span class="sd">        Pacels (&gt;0)</span>
+<span class="sd">    grass_strips: numpy.ndarray, default None</span>
+<span class="sd">        Grass (-6)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">landuse_core</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">river</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">water</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">infrastructure</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">nodata</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">landuse_parcels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">parcels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">grass_strips</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ParcelsLanduse.create_parcels_landuse_raster">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.create_parcels_landuse_raster">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_parcels_landuse_raster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;Degerickx2015_adjusted&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create parcels landuse raster with a defined scheme.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scheme: str, default &#39;Degerickx2015_adjusted&#39;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Parcels landuse raster</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;Degerickx2015_adjusted&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">create_parcels_landuse_degerick2015</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">landuse_core</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">river</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">water</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">infrastructure</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+                <span class="n">landuse_parcels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">landuse_parcels</span><span class="p">,</span>
+                <span class="n">parcels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">,</span>
+                <span class="n">grass_strips</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Scheme &#39;</span><span class="si">{</span><span class="n">scheme</span><span class="si">}</span><span class="s2">&#39; for creating parcels landuse raster is not known.&quot;</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="create_parcels_landuse_degerick2015">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.create_parcels_landuse_degerick2015">[docs]</a>
+<span class="k">def</span> <span class="nf">create_parcels_landuse_degerick2015</span><span class="p">(</span>
+    <span class="n">landuse_core</span><span class="p">,</span>
+    <span class="n">river</span><span class="p">,</span>
+    <span class="n">water</span><span class="p">,</span>
+    <span class="n">infrastructure</span><span class="p">,</span>
+    <span class="n">mask</span><span class="p">,</span>
+    <span class="n">nodata</span><span class="p">,</span>
+    <span class="n">landuse_parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">grass_strips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create parcels landuse raster as with Degerickx and Van Den Broeck [1] scheme</span>
+<span class="sd">    (version VPO).</span>
+
+<span class="sd">    This schemes map rasters from top to bottom : rivers, water, infrastructure,</span>
+<span class="sd">    grass strips, landuse from parcels data source, parcelsand finally pywatemsedem landuse.</span>
+<span class="sd">    Incemental mapping to the parcels landuse raster is done by mapping pixels from the</span>
+<span class="sd">    input raster to empty pixels in the landuse raster</span>
+<span class="sd">    (see also :func:`pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem landuse</span>
+<span class="sd">    raster is used to fill gaps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    landuse_core: numpy.ndarray</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    river: numpy.ndarray</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    water: numpy.ndarray</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    infrastructure: numpy.ndarray</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    mask: numpy.ndarray</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    landuse_parcels: numpy.ndarray, default None</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    parcels: numpy.ndarray, default None</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+<span class="sd">    grass_strips: numpy.ndarray, default None</span>
+<span class="sd">        See :class:`pywatemsedem.scenario.ParcelsLanduse`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Parcels landuse raster</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] Degerickx, J., Van Den Broeck, M., 2015. Handleiding CN_WS.KU Leuven, Leuven,</span>
+<span class="sd">        Belgium.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">water</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">water</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">infrastructure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">infrastructure</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grass_strips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">grass_strips</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">landuse_parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">landuse_parcels</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># avoid too many parcel ids in integer 16 raster</span>
+        <span class="n">parcels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">parcels</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">,</span> <span class="p">(</span><span class="n">parcels</span> <span class="o">%</span> <span class="mi">32757</span><span class="p">),</span> <span class="n">nodata</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">parcels</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">landuse_core</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">landuse_core</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr</span></div>
+
+
+
+<div class="viewcode-block" id="map_input_array_on_array">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.map_input_array_on_array">[docs]</a>
+<span class="k">def</span> <span class="nf">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_input</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;only_empty&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map an input array on an other array with a method</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        To map to array</span>
+<span class="sd">    arr_input: numpy.ndarray</span>
+<span class="sd">        To map array</span>
+<span class="sd">    nodata: float</span>
+<span class="sd">        No data value in arr_input array</span>
+<span class="sd">    method: str, default &quot;only_empty&quot;</span>
+<span class="sd">        Mappig method:</span>
+
+<span class="sd">        - &quot;only_empty&quot;: only map values from input array to empty (nodata) items in</span>
+<span class="sd">          array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">arr_input</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Dimension to map array for are different from to map to array.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;only_empty&quot;</span><span class="p">:</span>
+        <span class="n">cond</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">==</span> <span class="n">nodata</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">arr_input</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_source_landuse">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.get_source_landuse">[docs]</a>
+<span class="k">def</span> <span class="nf">get_source_landuse</span><span class="p">(</span>
+    <span class="n">landuse</span><span class="p">,</span>
+    <span class="n">maxprc_id</span><span class="p">,</span>
+    <span class="n">rasterio_profile</span><span class="p">,</span>
+    <span class="n">arr_mask</span><span class="p">,</span>
+    <span class="n">tempfolder</span><span class="p">,</span>
+    <span class="n">tag</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get landuse raster</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    maxprc_id : int</span>
+<span class="sd">        Maximum perceelskaart id.</span>
+<span class="sd">    gdal_profile : dict</span>
+<span class="sd">        Rasterio profile dictionary holding all metadata for geotiff rasters.</span>
+<span class="sd">    rasterio_profile : dict</span>
+<span class="sd">        Gdal dictionary holding all metadata for idrisi rasters.</span>
+<span class="sd">    arr_mask : numpy.ndarray</span>
+<span class="sd">        Binaire array defining model domain (1 else 0).</span>
+<span class="sd">    tempfolder : str or pathlib.Path</span>
+<span class="sd">        Folder to write temp files to.</span>
+<span class="sd">    tag : str</span>
+<span class="sd">        Extra tag which is added to filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># landgebruik</span>
+    <span class="n">land_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">landuse</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">10</span><span class="p">,</span> <span class="n">maxprc_id</span><span class="p">,</span> <span class="n">landuse</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int16&quot;</span><span class="p">)</span>
+    <span class="n">nolanduse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">land_arr</span> <span class="o">==</span> <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">],</span> <span class="n">arr_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">land_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nolanduse</span><span class="p">,</span> <span class="n">maxprc_id</span><span class="p">,</span> <span class="n">land_arr</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int16&quot;</span><span class="p">)</span>
+    <span class="n">tmp_LandUse</span> <span class="o">=</span> <span class="n">tempfolder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;landuse_reclass</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">land_arr</span><span class="p">,</span> <span class="n">tmp_LandUse</span><span class="p">,</span> <span class="s2">&quot;int16&quot;</span><span class="p">,</span> <span class="n">rasterio_profile</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">land_arr</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

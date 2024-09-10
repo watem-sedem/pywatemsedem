@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.grasstrips &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.grasstrips</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.grasstrips</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;pywatemsedem grass strips processing functions&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+
+<span class="kn">from</span> <span class="nn">pywatemsedem.defaults</span> <span class="kn">import</span> <span class="n">PREFIX_TEMP</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">clean_up_tempfiles</span><span class="p">,</span>
+    <span class="n">estimate_width_of_polygon</span><span class="p">,</span>
+    <span class="n">saga_intersection</span><span class="p">,</span>
+    <span class="n">vct_to_rst_field</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Add new kte scaling functions here</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_grass_strip_width</span><span class="p">(</span><span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check a number of conditions for the definition of grass strip widths array</span>
+
+<span class="sd">    1. Grass strip widths (m) are rounded to their integer value.</span>
+<span class="sd">    2. Grass strip widths (m) smaller than one are not allowed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        Vector array with grass strips widths (m).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        Vector array with rounded grass strips widths (m).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">arr_width</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Grass strip widths array should be a numerical array, not&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">arr_width</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">. Abort&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr_width</span><span class="p">)):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Non defined grass strips widths (nan) are not allowed. Abort&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># round to integer (m)</span>
+    <span class="n">arr_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">arr_width</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr_width</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">arr_width</span><span class="p">[</span><span class="n">arr_width</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Grass widths lower than one are observed, setting equal to one.&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">arr_width</span>
+
+
+<div class="viewcode-block" id="scale_cfactor_linear">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.scale_cfactor_linear">[docs]</a>
+<span class="k">def</span> <span class="nf">scale_cfactor_linear</span><span class="p">(</span>
+    <span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">upper_cfactor</span><span class="o">=</span><span class="mf">0.37</span><span class="p">,</span>
+    <span class="n">lower_cfactor</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a lineair interpolation between the defined lower</span>
+<span class="sd">    and upper boundary condtion, and the resolution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_cfactor_with_grass_strip_width`</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        Spatial resolution of raster grid on which grass strips are projected.</span>
+<span class="sd">    upper_cfactor: float, default 0.37</span>
+<span class="sd">        Upper allowed C-factor.</span>
+<span class="sd">    upper_cfactor: float, default 0.01</span>
+<span class="sd">        Lower allowed C-factor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_cfactor: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_cfactor_with_grass_strip_width`</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The C-factor (:math:`C`) is weighted by the grass strips width (:math:`w`)</span>
+<span class="sd">    and resolution (:math:`r`):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        C = 0.01*\\frac{w}{r}+0.37*\\frac{r-w}{r}</span>
+
+<span class="sd">    Considering an lower and upper C-factor of 0.01 and 0.37, widths are capped to</span>
+<span class="sd">    model resolution.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Deproost, P., Renders, D., Van de Wauw, J., Van Ransbeeck, N., Verstraeten, G.,</span>
+<span class="sd">    2018. Herkalibratie van WaTEM/SEDEM met het DHMV-II als hoogtemodel: eindrapport.</span>
+<span class="sd">    Brussel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arr_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">arr_width</span> <span class="o">&gt;=</span> <span class="n">resolution</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="p">,</span>
+        <span class="n">arr_width</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_cfactor</span> <span class="o">*</span> <span class="p">(</span><span class="n">arr_width</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span>
+        <span class="n">upper_cfactor</span> <span class="o">*</span> <span class="p">((</span><span class="n">resolution</span> <span class="o">-</span> <span class="n">arr_width</span><span class="p">)</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_cfactor</span></div>
+
+
+
+<div class="viewcode-block" id="scale_ktc_linear">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.scale_ktc_linear">[docs]</a>
+<span class="k">def</span> <span class="nf">scale_ktc_linear</span><span class="p">(</span>
+    <span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">ktc_low</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">ktc_high</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a lineair interpolation between the defined lower</span>
+<span class="sd">    and upper boundary condtion, and the resolution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        Spatial resolution of raster grid on which grass strips are projected.</span>
+<span class="sd">    ktc_low: float</span>
+<span class="sd">        The lower boundary to which scale the ktc value.</span>
+<span class="sd">    ktc_high: float</span>
+<span class="sd">        The upper boundary to which scale the ktc value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_ktc: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+<span class="sd">    arr_ste: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. ktc values for grass strips are determined by a lower and upper boundary of ktc.</span>
+<span class="sd">    The weighting is defined by the width of the grass strip compared to the resolution</span>
+<span class="sd">    of the model. This approach is defined in Deproost et al. (2018).</span>
+
+<span class="sd">    2. The estimated STE values are determined by using the formula of Verstraete et</span>
+<span class="sd">    al. (2006):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        STE (percent) = [1 -  * ktc_{var}/ktc_{high}]*100</span>
+
+<span class="sd">    with:</span>
+
+<span class="sd">        :math:`ktc_{var}` (1/m): the ktc values for the grass strips;</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Deproost, P., Renders, D., Van de Wauw, J., Van Ransbeeck, N., Verstraeten, G.,</span>
+<span class="sd">    2018. Herkalibratie van WaTEM/SEDEM met het DHMV-II als hoogtemodel: eindrapport.</span>
+<span class="sd">    Brussel.</span>
+
+<span class="sd">    Verstraeten, G., Poesen, J., Gillijns, K., Govers, G., 2006. The use of riparian</span>
+<span class="sd">    vegetated filter strips to reduce river sediment loads: an overestimated control</span>
+<span class="sd">    measure? Hydrol. Process. 20, 4259–4267. https://doi.org/10.1002/hyp.6155</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr_width</span> <span class="o">&gt;</span> <span class="n">resolution</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Grass strips larger than the resolution </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2"> are not allowed &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;for linear scaling of ktc value grass strips, setting to </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2"> m.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">arr_width</span><span class="p">[</span><span class="n">arr_width</span> <span class="o">&gt;</span> <span class="n">resolution</span><span class="p">]</span> <span class="o">=</span> <span class="n">resolution</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">arr_width</span> <span class="o">/</span> <span class="n">resolution</span>
+    <span class="n">w2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">arr_width</span> <span class="o">/</span> <span class="n">resolution</span>
+    <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">ktc_low</span> <span class="o">*</span> <span class="n">w1</span> <span class="o">+</span> <span class="n">ktc_high</span> <span class="o">*</span> <span class="n">w2</span>
+    <span class="n">arr_ste</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">arr_ktc</span> <span class="o">/</span> <span class="n">ktc_high</span>
+
+    <span class="k">return</span> <span class="n">arr_ktc</span><span class="p">,</span> <span class="n">arr_ste</span></div>
+
+
+
+<div class="viewcode-block" id="scale_ktc_zhang">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.scale_ktc_zhang">[docs]</a>
+<span class="k">def</span> <span class="nf">scale_ktc_zhang</span><span class="p">(</span>
+    <span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">ktc_high</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mf">90.9</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mf">0.446</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a Zhang et al. (2010).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+<span class="sd">    ktc_high: float</span>
+<span class="sd">        The upper boundary to which scale the ktc value.</span>
+<span class="sd">    k: float</span>
+<span class="sd">        Maximum sediment trappping efficiency (K in Zhang et al., 2010)</span>
+<span class="sd">    b: float</span>
+<span class="sd">        Slope coefficient (see Zhang et al., 2010).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_ktc: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+<span class="sd">    arr_ste: numpy.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. The ktc valeus for grass strips are determined by using emperical sediment</span>
+<span class="sd">    trapping efficiency (STE) values in the equation of Verstraete et al. (2006):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        ktc_{var} = (ktc_{high}/100)*(1-STE/100)</span>
+
+
+<span class="sd">    with:</span>
+
+<span class="sd">        :math:`ktc_{var}` (1/m): the ktc values for the grass strips;</span>
+
+<span class="sd">    The STE can be determined by using the emperical findings of Zhang et al. (2010):</span>
+
+<span class="sd">    .. math::s</span>
+
+
+<span class="sd">        STE (percent) = K * (1-e^{-b*w_{gs}})</span>
+
+
+<span class="sd">    with:</span>
+
+<span class="sd">        :math:`K` = 90.9;</span>
+
+<span class="sd">        :math:`b` = 0.446;</span>
+
+<span class="sd">        :math:`gs` (m) = width grass strips</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Zhang, X., Liu, X., Zhang, M., Dahlgren, R.A., Eitzel, M., 2010. A Review of</span>
+<span class="sd">    Vegetated Buffers and a Meta-analysis of Their Mitigation Efficacy in Reducing</span>
+<span class="sd">    Nonpoint Source Pollution. J. Environ. Qual. 39, 76–84.</span>
+<span class="sd">    https://doi.org/10.2134/jeq2008.0496</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arr_ste</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">arr_width</span><span class="p">))</span> <span class="o">/</span> <span class="mi">100</span>  <span class="c1"># in decimals</span>
+    <span class="n">arr_ktc</span> <span class="o">=</span> <span class="p">(</span><span class="n">ktc_high</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">arr_ste</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_ktc</span><span class="p">,</span> <span class="n">arr_ste</span></div>
+
+
+
+<span class="c1"># Add new kte scaling functions here</span>
+<span class="n">KTC_SCALING_FUNCTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="n">scale_ktc_linear</span><span class="p">,</span> <span class="n">scale_ktc_zhang</span><span class="p">]</span>
+<span class="n">CFACTOR_SCALING_FUNCTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="n">scale_cfactor_linear</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="scale_ktc_with_grass_strip_width">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width">[docs]</a>
+<span class="k">def</span> <span class="nf">scale_ktc_with_grass_strip_width</span><span class="p">(</span>
+    <span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scaling_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale ktc value for grass stripts according to the width of the grass strip.</span>
+
+<span class="sd">    The ktc parameters (which determines the amount of sediment which is routed</span>
+<span class="sd">    downstream) for a grass strip varies as a function of the width of the grass strip.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        Vector array with grass strips widths (m)</span>
+<span class="sd">    scaling_function: callable</span>
+<span class="sd">        Scaling function</span>
+<span class="sd">    parameters:</span>
+<span class="sd">        Scaling function parameters as required by the ``scaling function``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_ktc: numpy.ndarray</span>
+<span class="sd">        Vector array with ktc values for grass strips (1/m)</span>
+<span class="sd">    arr_ste: numpy.ndarray</span>
+<span class="sd">        Vector array of sediment trapping efficiency of grass strips</span>
+<span class="sd">        (under the assumption of a flat plane, see Notes)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The theoretical &#39;sediment trapping efficiency&#39; (STE) is interpreted as the</span>
+<span class="sd">    trapping efficiency of a grass strips on a homogenous lineair slope. In other</span>
+<span class="sd">    words, the slope plane can be defined as a flat plane (as in: can be defined in</span>
+<span class="sd">    by two dimensions). This is also sometimes referred to as a linear slope (see</span>
+<span class="sd">    Verstraete et al. (2006))</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Verstraeten, G., Poesen, J., Gillijns, K., Govers, G., 2006. The use of riparian</span>
+<span class="sd">    vegetated filter strips to reduce river sediment loads: an overestimated control</span>
+<span class="sd">    measure? Hydrol. Process. 20, 4259–4267. https://doi.org/10.1002/hyp.6155</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">scaling_function</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">KTC_SCALING_FUNCTIONS</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Ktc scale function </span><span class="si">{</span><span class="n">scaling_function</span><span class="si">}</span><span class="s2"> not implemented in pywatemsedem.&quot;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">arr_width</span> <span class="o">=</span> <span class="n">_check_grass_strip_width</span><span class="p">(</span><span class="n">arr_width</span><span class="p">)</span>
+
+    <span class="n">arr_ktc</span><span class="p">,</span> <span class="n">arr_ste</span> <span class="o">=</span> <span class="n">scaling_function</span><span class="p">(</span><span class="n">arr_width</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_ktc</span><span class="p">,</span> <span class="n">arr_ste</span></div>
+
+
+
+<div class="viewcode-block" id="estimate_ste">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.estimate_ste">[docs]</a>
+<span class="k">def</span> <span class="nf">estimate_ste</span><span class="p">(</span><span class="n">simulated_sediin</span><span class="p">,</span> <span class="n">simulated_sediout</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the estimated :math:`\\hat{STE}` based on simulated sediment output/input</span>
+
+<span class="sd">    This function computes the sediment trapping efficiency based on the</span>
+<span class="sd">    model-simulated incoming and outgoing sediment for each grass strip.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    simulated_sediin: numpy.ndarray</span>
+<span class="sd">        Simulated incoming sediment per grass strip</span>
+<span class="sd">    simulated_sediout: numpy.ndarray</span>
+<span class="sd">        Simulated outgoing sediment per grass strip</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Estimated STE (STEe)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. The estimated :math:`\\hat{STE}`  is referred to with a hat to make a distinction</span>
+<span class="sd">       between the theoretical STE defined in</span>
+<span class="sd">       :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`</span>
+<span class="sd">    2. Note that the STE can be negative in case there is more erosie produced in the</span>
+<span class="sd">       grass strip then there is incoming into the grass strip.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">simulated_sediout</span> <span class="o">/</span> <span class="n">simulated_sediin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span></div>
+
+
+
+<div class="viewcode-block" id="scale_cfactor_with_grass_strips_width">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.scale_cfactor_with_grass_strips_width">[docs]</a>
+<span class="k">def</span> <span class="nf">scale_cfactor_with_grass_strips_width</span><span class="p">(</span>
+    <span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scaling_function_cfactor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale C-factor value for grass strips according to the width of the grass strip.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width: numpy.ndarray</span>
+<span class="sd">        Vector array with grass strips widths (m)</span>
+<span class="sd">    scaling_function_cfactor: callable</span>
+<span class="sd">        Scaling function</span>
+<span class="sd">    parameters:</span>
+<span class="sd">        Scaling function parameters as required by the ``scaling function``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_cfactor: numpy.ndarray</span>
+<span class="sd">        Vector array with C-factor values for grass strips (-)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">scaling_function_cfactor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CFACTOR_SCALING_FUNCTIONS</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Ktc scale function </span><span class="si">{</span><span class="n">scaling_function_cfactor</span><span class="si">}</span><span class="s2"> not implemented in &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;pywatemsedem.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">arr_width</span> <span class="o">=</span> <span class="n">_check_grass_strip_width</span><span class="p">(</span><span class="n">arr_width</span><span class="p">)</span>
+
+    <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">scaling_function_cfactor</span><span class="p">(</span><span class="n">arr_width</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_cfactor</span></div>
+
+
+
+<div class="viewcode-block" id="get_width_grass_strips">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.get_width_grass_strips">[docs]</a>
+<span class="k">def</span> <span class="nf">get_width_grass_strips</span><span class="p">(</span>
+    <span class="n">arr_width_gras_strips</span><span class="p">,</span> <span class="n">arr_gras_polygon_perimeter</span><span class="p">,</span> <span class="n">arr_gras_polygon_area</span><span class="p">,</span> <span class="n">resolution</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the width of the gras strips for gras strips with width being equal</span>
+<span class="sd">    to np.nan &#39;unknown&#39; or zero.</span>
+
+<span class="sd">    If width cannot be estimated, estimate is based on polygon shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_width_gras_strips: numpy.ndarray or pandas.Series</span>
+<span class="sd">        1D array holding in each row width of the gras strip.</span>
+<span class="sd">        note: this can all be zeros or np.nan</span>
+<span class="sd">    arr_gras_polygon_perimeter: numpy.ndarray or pandas.Series</span>
+<span class="sd">        1D array holding in each row the perimeter of each gras polygon</span>
+<span class="sd">    arr_gras_polygon_area: numpy.ndarray or pandas.Series</span>
+<span class="sd">        1D array holding in each row the area of each gras polygon</span>
+<span class="sd">    resolution: int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_width_gras_strips: numpy.ndarray or pandas.Series</span>
+<span class="sd">        1D array holding in each row (estimated) width of the gras strip</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arr_est_polygon_width</span> <span class="o">=</span> <span class="n">estimate_width_of_polygon</span><span class="p">(</span>
+        <span class="n">arr_gras_polygon_perimeter</span><span class="p">,</span> <span class="n">arr_gras_polygon_area</span><span class="p">,</span> <span class="n">nan_value</span><span class="o">=</span><span class="n">resolution</span>
+    <span class="p">)</span>
+    <span class="c1"># fill in zeros with estimates</span>
+    <span class="n">arr_width_gras_strips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">arr_width_gras_strips</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">arr_est_polygon_width</span><span class="p">,</span>
+        <span class="n">arr_width_gras_strips</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># fill in np.nan with estimates</span>
+    <span class="n">arr_width_gras_strips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr_width_gras_strips</span><span class="p">),</span> <span class="n">arr_est_polygon_width</span><span class="p">,</span> <span class="n">arr_width_gras_strips</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_width_gras_strips</span></div>
+
+
+
+<div class="viewcode-block" id="expand_grass_strips_with_triggers">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.expand_grass_strips_with_triggers">[docs]</a>
+<span class="k">def</span> <span class="nf">expand_grass_strips_with_triggers</span><span class="p">(</span>
+    <span class="n">arr_grass_strips</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">arr_triggers</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">arr_parcels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand grass strips based on neighbouring trigger pixels.</span>
+
+<span class="sd">    This algorithm expands grass strips with one neighbouring pixel when a neighbouring</span>
+<span class="sd">    is a trigger pixel. The expansion can be bound within one unique parcel (optional).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_grass_strips: numpy.ndarray</span>
+<span class="sd">        Array with grass strips. Every contiguous grass strips needs to be identified</span>
+<span class="sd">        with an unique id as array value.</span>
+<span class="sd">    arr_triggers: numpy.ndarray</span>
+<span class="sd">        Binary array with 1&#39;s when a pixel is a trigger. Nodata values are allowed.</span>
+<span class="sd">    arr_parcels: numpy.ndarray, default None</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`</span>
+<span class="sd">    nodata: float, default None</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`</span>
+<span class="sd">    mode: int, default 1</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`.</span>
+<span class="sd">        Only for computing neighbours grass strips.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_grass_strips: np.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grassstrips.core_expand_grass_strips_with_triggers`</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # triggers (for instance river, road)</span>
+<span class="sd">    &gt;&gt;&gt; arr_triggers = np.array([[1, 0, 0, 0],</span>
+<span class="sd">    &gt;&gt;&gt;                        [0, 1, 0, 0],</span>
+<span class="sd">    &gt;&gt;&gt;                        [0, 0, 1, 0],</span>
+<span class="sd">    &gt;&gt;&gt;                        [0, 0, 0, 1]])</span>
+<span class="sd">    &gt;&gt;&gt; # parcel ids</span>
+<span class="sd">    &gt;&gt;&gt; arr_parcels_id = np.array([[0, 3, 3, 3],</span>
+<span class="sd">    &gt;&gt;&gt;                            [1, 0, 2, 2],</span>
+<span class="sd">    &gt;&gt;&gt;                            [1, 1, 0, 2],</span>
+<span class="sd">    &gt;&gt;&gt;                            [1, 1, 1, 0]])</span>
+<span class="sd">    &gt;&gt;&gt; # input gras id&#39;s</span>
+<span class="sd">    &gt;&gt;&gt; arr_grass_strips = np.array([[0, 0, 0, 0],</span>
+<span class="sd">    &gt;&gt;&gt;                            [0, 0, 0, 0],</span>
+<span class="sd">    &gt;&gt;&gt;                            [0, 0, 0, 1],</span>
+<span class="sd">    &gt;&gt;&gt;                            [0, 0, 0, 1]])</span>
+<span class="sd">    &gt;&gt;&gt; # execute</span>
+<span class="sd">    &gt;&gt;&gt; arr_out = expand_grass_strips_with_triggers(</span>
+<span class="sd">    &gt;&gt;&gt;    arr_grass_strips, arr_triggers, arr_parcels_id)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. For algorithm description, see</span>
+<span class="sd">    :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`</span>
+
+<span class="sd">    For visual example, see image below:</span>
+
+<span class="sd">    .. image:: /_static/png/expand_grass_strips_at_infr_parcel_boundary.png</span>
+<span class="sd">      :width: 600</span>
+
+
+<span class="sd">    2. All input arrays should have the same nodata value in their raster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">arr_triggers</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">arr_grass_strips</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Input grass strips array </span><span class="si">{</span><span class="n">arr_grass_strips</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> has a different &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;size than the input triggers array </span><span class="si">{</span><span class="n">arr_triggers</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">arr_triggers</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span> <span class="o">!=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Input trigger can only contain 0&#39;s and 1&#39;s (and no data) values.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># remove grass strips from triggers</span>
+    <span class="n">arr_grass_strips_nt</span> <span class="o">=</span> <span class="n">arr_grass_strips</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">arr_grass_strips_nt</span><span class="p">[</span><span class="n">arr_triggers</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># add boundaries to cope with boundary condition</span>
+    <span class="n">arr_grass_strips</span> <span class="o">=</span> <span class="n">add_boundary_rows_cols_to_arr</span><span class="p">(</span><span class="n">arr_grass_strips</span><span class="p">)</span>
+    <span class="n">arr_grass_strips_nt</span> <span class="o">=</span> <span class="n">add_boundary_rows_cols_to_arr</span><span class="p">(</span><span class="n">arr_grass_strips_nt</span><span class="p">)</span>
+    <span class="n">arr_triggers</span> <span class="o">=</span> <span class="n">add_boundary_rows_cols_to_arr</span><span class="p">(</span><span class="n">arr_triggers</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">arr_parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr_parcels</span> <span class="o">=</span> <span class="n">add_boundary_rows_cols_to_arr</span><span class="p">(</span><span class="n">arr_parcels</span><span class="p">)</span>
+
+    <span class="c1"># compute for every pixel how many pixels are trigger pixels</span>
+    <span class="n">arr_triggers_neighbours</span> <span class="o">=</span> <span class="n">compute_number_of_non_zero_neighbours</span><span class="p">(</span>
+        <span class="n">arr_triggers</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span>
+    <span class="p">)</span>
+    <span class="c1"># compute for every pixel how many pixels are gras strip pixels</span>
+    <span class="n">arr_grass_strips_neighbours</span> <span class="o">=</span> <span class="n">compute_number_of_non_zero_neighbours</span><span class="p">(</span>
+        <span class="n">arr_grass_strips_nt</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span>
+    <span class="p">)</span>
+
+    <span class="c1"># run expansion algorithm</span>
+    <span class="n">arr_grass_strips</span> <span class="o">=</span> <span class="n">core_expand_grass_strips_with_triggers</span><span class="p">(</span>
+        <span class="n">arr_grass_strips</span><span class="p">,</span>
+        <span class="n">arr_grass_strips_neighbours</span><span class="p">,</span>
+        <span class="n">arr_triggers_neighbours</span><span class="p">,</span>
+        <span class="n">arr_parcels</span><span class="p">,</span>
+        <span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">arr_grass_strips</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="compute_number_of_non_zero_neighbours">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_number_of_non_zero_neighbours</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute number of non-zero neighbour (eight) elemnts for every</span>
+<span class="sd">    array element.</span>
+
+<span class="sd">    This algorithm computes how many neighbours of a pixel are not equal to zero (and</span>
+<span class="sd">    not equal to nodata.)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Input array with valid values: (nodata, 0, &gt;0)</span>
+<span class="sd">        Nodata values are considered as 0-values. &gt;0 values are considerd as 1-values</span>
+<span class="sd">    nodata: float, default None</span>
+<span class="sd">        Values to ignore, if equal to None this is not considered.</span>
+<span class="sd">    mode: int</span>
+<span class="sd">        Mode of expansion:</span>
+
+<span class="sd">        1: Consider ordinal + cardinal direction.</span>
+<span class="sd">        2: Cardinal direction.</span>
+<span class="sd">        3: Ordinal direction.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_out: numpy.ndarray</span>
+<span class="sd">        Array with for each element the number of non-zero neighbours.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. Nodata values are not considered!</span>
+<span class="sd">    2. Boundaries are set to zero.</span>
+<span class="sd">    3. Grass strips within trigger pixels are not considered.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arr_out</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">nodata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arr_out</span><span class="p">[</span><span class="n">arr_out</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">arr_out</span> <span class="o">=</span> <span class="n">arr_out</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Mode for searching neighbours </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2"> not known, please select 1 &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(cardinal + ordinal), 2 (ordinal direction) or 3 (cardinal direction).&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">arr_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">convolve2d</span><span class="p">(</span><span class="n">arr_out</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">)</span>
+
+    <span class="c1"># boundaries</span>
+    <span class="n">arr_out</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">arr_out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">arr_out</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">arr_out</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">arr_out</span><span class="p">[(</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">arr_out</span></div>
+
+
+
+<div class="viewcode-block" id="add_boundary_rows_cols_to_arr">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.add_boundary_rows_cols_to_arr">[docs]</a>
+<span class="k">def</span> <span class="nf">add_boundary_rows_cols_to_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add boundary rows and columns to an array, set values to zero.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        With two rows added to the top and bottom, and two columns added to the left</span>
+<span class="sd">        and right</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span>
+
+    <span class="k">return</span> <span class="n">_arr</span></div>
+
+
+
+<div class="viewcode-block" id="core_expand_grass_strips_with_triggers">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers">[docs]</a>
+<span class="k">def</span> <span class="nf">core_expand_grass_strips_with_triggers</span><span class="p">(</span>
+    <span class="n">arr_grass_strips</span><span class="p">,</span>
+    <span class="n">arr_grass_strips_neighbours</span><span class="p">,</span>
+    <span class="n">arr_triggers_neighbours</span><span class="p">,</span>
+    <span class="n">arr_parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Grass strip expansion algorithm based on raster inputs.</span>
+
+<span class="sd">    The grass strips expansion algorithm executes following steps:</span>
+
+<span class="sd">    1. Expand the grass strips with one pixel. This implies that adjacent (ordinal</span>
+<span class="sd">       and/or cardinal directions, depending on mode, see</span>
+<span class="sd">       :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`) pixels to</span>
+<span class="sd">       a grass strip pixel are classified as grass strip pixels.</span>
+
+<span class="sd">    2. The added grass strip pixels can only be retained if following rules are</span>
+<span class="sd">       satisfied:</span>
+
+<span class="sd">        - The added grass strip pixels is in the direct vicinity of (one of 8</span>
+<span class="sd">          neighbours) a trigger pixel (river, infrastructure pixel).</span>
+<span class="sd">        - (optional) The added grass strip pixels can only be withheld when it belongs</span>
+<span class="sd">          to a parcel to which the original grass strip was part of.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_grass_strips: numpy.ndarray</span>
+<span class="sd">        Array with unique id&#39;s per grass strips</span>
+<span class="sd">    arr_grass_strips_neighbours:</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied</span>
+<span class="sd">        on grass strips array.</span>
+<span class="sd">    arr_triggers_neighbours: nump.ndarray</span>
+<span class="sd">        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied</span>
+<span class="sd">        on triggers array.</span>
+<span class="sd">    arr_parcels: nump.ndarray, default None</span>
+<span class="sd">        Parcel ids raster. Pixel belonging to one parcel share the same unique id. The</span>
+<span class="sd">        value zero indicates that no parcel is present. If None, the expansion is not</span>
+<span class="sd">        limited to the boundaries of a parcel.</span>
+<span class="sd">    nodata: float, default None</span>
+<span class="sd">        Nodata value of all rasters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_grass_strips: numpy.ndarray</span>
+<span class="sd">        Grass strips array with grass strips expanded at the</span>
+<span class="sd">        trigger boundary edge cases.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. This algorithm is not able to make a distinction between two separate grass</span>
+<span class="sd">       strip in one parcel.</span>
+
+<span class="sd">    2. For the expansion of the grass strips, the source grass pixels overlapping with</span>
+<span class="sd">       the triggers are not considered. This implies that if a specific gras strip</span>
+<span class="sd">       completely overlaps with triggers, no expansion will be done.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">id_grass_strip</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr_grass_strips</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">id_grass_strip</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">id_grass_strip</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">arr_parcels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">arr_grass_strips_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr_triggers_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">arr_grass_strips</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_grass_strip</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">un_parcels_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+                    <span class="n">arr_parcels</span><span class="p">[(</span><span class="n">arr_grass_strips</span> <span class="o">==</span> <span class="n">id_grass_strip</span><span class="p">)]</span>
+                <span class="p">)</span>
+                <span class="n">un_parcels_id</span> <span class="o">=</span> <span class="n">un_parcels_id</span><span class="p">[</span><span class="n">un_parcels_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">parcel_id</span> <span class="ow">in</span> <span class="n">un_parcels_id</span><span class="p">:</span>
+                    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="p">(</span><span class="n">arr_parcels</span> <span class="o">==</span> <span class="n">parcel_id</span><span class="p">)</span>
+                        <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr_grass_strips_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr_triggers_neighbours</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">arr_grass_strips</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_grass_strip</span>
+
+    <span class="k">return</span> <span class="n">arr_grass_strips</span></div>
+
+
+
+<div class="viewcode-block" id="create_grassstrips_cnws">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.create_grassstrips_cnws">[docs]</a>
+<span class="k">def</span> <span class="nf">create_grassstrips_cnws</span><span class="p">(</span>
+    <span class="n">arr_grass_strips_ids</span><span class="p">,</span>
+    <span class="n">arr_river</span><span class="p">,</span>
+    <span class="n">arr_infr</span><span class="p">,</span>
+    <span class="n">profile</span><span class="p">,</span>
+    <span class="n">arr_parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">expand_grass_strips</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create grass strips raster for WaTEM/SEDEM</span>
+
+<span class="sd">    This function create the grass strips raster that is used as input creating the</span>
+<span class="sd">    composite WaTEM/SEDEM parcels raster (see :ref:`here &lt;watemsedem:prcmap&gt;`). The</span>
+<span class="sd">    output of this function provides a raster with -6-values for grass strip pixels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr_grass_id: numpy.ndarray</span>
+<span class="sd">        Grass strips id&#39;s-raster. Pixel belonging to one grass strip share the same</span>
+<span class="sd">        unique id. Other values should be have nodata-value described in the parameter</span>
+<span class="sd">        profile.</span>
+<span class="sd">    arr_river: numpy.ndarray</span>
+<span class="sd">        River raster. River pixels should have the value differing from 0 or nodata</span>
+<span class="sd">        (defined in profile).</span>
+<span class="sd">    arr_infr: numpy.ndarray</span>
+<span class="sd">        Infrastructure raster. Infrastructure pixels should have the value differing</span>
+<span class="sd">        from 0 or nodata (defined in profile).</span>
+<span class="sd">    arr_parcels: numpy.ndarray, default None</span>
+<span class="sd">        Parcel ids raster. Pixel belonging to one parcel share the same unique id. The</span>
+<span class="sd">        value zero indicates that no parcel is present. If None, the expansion is not</span>
+<span class="sd">        limited to the boundaries of a parcel.</span>
+<span class="sd">    profile: dict</span>
+<span class="sd">        Rasterio profile, see</span>
+<span class="sd">        :attr:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`. All the</span>
+<span class="sd">        input rasters must have the same nodata-value, defined in profile.</span>
+<span class="sd">    expand_grass_strips: bool, default False</span>
+<span class="sd">        Use expand grass strips algorithm with rivers as triggers, see</span>
+<span class="sd">         :func:`pywatemsedem.grasstrips.expand_grass_strips_with_triggers`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_grass_strips_ids: numpy.ndarray</span>
+<span class="sd">        Expanded grass strips id&#39;s-raster.</span>
+<span class="sd">    arr_grass: numpy.ndarray</span>
+<span class="sd">        -6-value-raster of grass strips id&#39;s-raster, formatted according to composite</span>
+<span class="sd">         WaTEM/SEDEM parcels raster (see :ref:`here &lt;watemsedem:prcmap&gt;`).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    All the input rasters must have the same nodata-value, defined in profile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">expand_grass_strips</span><span class="p">:</span>
+        <span class="n">arr_river</span><span class="p">[(</span><span class="n">arr_river</span> <span class="o">==</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">])]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">arr_infr</span><span class="p">[(</span><span class="n">arr_infr</span> <span class="o">==</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">])]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">arr_triggers</span> <span class="o">=</span> <span class="n">arr_infr</span> <span class="o">+</span> <span class="n">arr_river</span>
+        <span class="n">arr_triggers</span><span class="p">[(</span><span class="n">arr_triggers</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># arr_gras[arr_gras==profile[&quot;nodata&quot;]] = 0</span>
+
+        <span class="n">arr_grass_strips_ids</span> <span class="o">=</span> <span class="n">expand_grass_strips_with_triggers</span><span class="p">(</span>
+            <span class="n">arr_grass_strips_ids</span><span class="p">,</span>
+            <span class="n">arr_triggers</span><span class="p">,</span>
+            <span class="n">arr_parcels</span><span class="o">=</span><span class="n">arr_parcels</span><span class="p">,</span>
+            <span class="n">nodata</span><span class="o">=</span><span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">arr_grass</span> <span class="o">=</span> <span class="n">arr_grass_strips_ids</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">arr_grass</span><span class="p">[</span><span class="n">arr_grass</span> <span class="o">!=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
+
+    <span class="k">return</span> <span class="n">arr_grass_strips_ids</span><span class="p">,</span> <span class="n">arr_grass</span></div>
+
+
+
+<div class="viewcode-block" id="get_neighbour_grass_strips_ids_array">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.get_neighbour_grass_strips_ids_array">[docs]</a>
+<span class="k">def</span> <span class="nf">get_neighbour_grass_strips_ids_array</span><span class="p">(</span>
+    <span class="n">vct_grass_strips</span><span class="p">,</span> <span class="n">rst_params</span><span class="p">,</span> <span class="n">width_polygon</span><span class="o">=</span><span class="mi">20</span>
+<span class="p">):</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_grass_strips</span><span class="p">)</span>
+    <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;buffer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">width_polygon</span><span class="p">)</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[[</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="s2">&quot;buffer&quot;</span><span class="p">]]</span>
+    <span class="n">gdf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;buffer&quot;</span><span class="p">:</span> <span class="s2">&quot;geometry&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+    <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_buffer&quot;</span> <span class="o">+</span> <span class="s2">&quot;.shp&quot;</span><span class="p">))</span>
+    <span class="n">rst_out</span> <span class="o">=</span> <span class="s2">&quot;neighbour_grass_strips_ids_array.tiff&quot;</span>
+    <span class="n">vct_to_rst_field</span><span class="p">(</span>
+        <span class="n">vct_grass_strips</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">rst_out</span><span class="p">),</span> <span class="n">rst_params</span><span class="p">,</span> <span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="n">alltouched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_grass_strips_from_parcels">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.extract_grass_strips_from_parcels">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_grass_strips_from_parcels</span><span class="p">(</span><span class="n">vct_parcels</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">resmap</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract grass buffers from parcels using the Thinnes criterium</span>
+
+<span class="sd">    Extract grass buffers from parcels using the Thinnes</span>
+<span class="sd">    criterium (&gt;0.3) of a given year.</span>
+
+<span class="sd">    ! EXPERIMENTAL - NOT IN USE YET !</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    year : int</span>
+<span class="sd">        Year for which to extract the grass buffers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grass_strips</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;graspercelen_</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">.shp&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_parcels</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;could not open </span><span class="si">{</span><span class="n">vct_parcels</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Grasbuffer&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;opp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">area</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;perimeter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">length</span>
+
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="o">.</span><span class="n">length</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">gdf</span><span class="o">.</span><span class="n">area</span><span class="p">]</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">length</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">gdf</span><span class="o">.</span><span class="n">length</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">gdf</span><span class="o">.</span><span class="n">area</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">4</span>
+
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Aspect&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">gdf</span><span class="o">.</span><span class="n">area</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Thinnes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">gdf</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">length</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Thinnes&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">25</span><span class="p">]</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Aspect&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.25</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">gdf</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;gras&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grass_strips</span>
+            <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">grass_strips</span><span class="p">)</span>
+        <span class="n">vct_grass_strips_parcels</span> <span class="o">=</span> <span class="n">d</span>
+
+    <span class="k">return</span> <span class="n">vct_grass_strips_parcels</span></div>
+
+
+
+<div class="viewcode-block" id="create_grass_strips_from_line_string">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.grasstrips.create_grass_strips_from_line_string">[docs]</a>
+<span class="k">def</span> <span class="nf">create_grass_strips_from_line_string</span><span class="p">(</span>
+    <span class="n">line_string</span><span class="p">,</span> <span class="n">polygons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">width_polygon</span><span class="o">=</span><span class="mi">20</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add bank grass strips</span>
+
+<span class="sd">    Adds bank grass strips with a standard length of 20m, along input LineStrings. If</span>
+<span class="sd">    required, clip by polygons.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    line_string: geopandas.GeoDataFrame</span>
+<span class="sd">        Geopandas dataframe with LineString</span>
+<span class="sd">    polygons: geopandas.GeoDataFrame, default None</span>
+<span class="sd">        Geopandas dataframe with Polygon</span>
+<span class="sd">    width: int, optional, default 20</span>
+<span class="sd">        Width (m) of the bank grass strip stored in the attribute table.</span>
+<span class="sd">    width_polygon: int, optional, default 20</span>
+<span class="sd">        width (m) of the bank grass strip polygon</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grass_strips: geopandas.GeoDataFrame</span>
+
+<span class="sd">        - *width* (float): width of grass strips</span>
+<span class="sd">        - *scale_ktc* (float): scale ktc, see</span>
+<span class="sd">          :func:`pywatemsedem.grassttips.scale_ktc_with_grass_strip_width`</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The `width` is the estimated true width of the grass strip, whereas the</span>
+<span class="sd">    `width polygon` the used width is for mapping the shape to a raster. Typically,</span>
+<span class="sd">    this `width polygon` is set to the resolution to ensure all LineString-surrounding</span>
+<span class="sd">    pixels are mapped as grass strips. Note that the `width polygon` is not the</span>
+<span class="sd">    estimated true width, it is a mapping (shape =&gt; raster) width.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">line_string</span><span class="p">[</span><span class="s2">&quot;buffer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line_string</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">width_polygon</span><span class="p">)</span>
+    <span class="n">grass_strips</span> <span class="o">=</span> <span class="n">line_string</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+    <span class="n">grass_strips</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">width</span>
+    <span class="n">grass_strips</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bankgrassstrip&quot;</span>
+    <span class="n">grass_strips</span><span class="p">[</span><span class="s2">&quot;scale_ktc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">grass_strips</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;buffer&quot;</span><span class="p">:</span> <span class="s2">&quot;geometry&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">grass_strips</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">grass_strips</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+
+    <span class="c1"># intersect over years</span>
+    <span class="c1"># if no intersection with parcels: assign same bank grass strip for every</span>
+    <span class="c1"># year</span>
+    <span class="k">if</span> <span class="n">polygons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tmp_bankgrasstrips</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.shp&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">grass_strips</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">tmp_bankgrasstrips</span><span class="p">)</span>
+        <span class="n">tmp_polygons</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.shp&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">polygons</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">tmp_polygons</span><span class="p">)</span>
+        <span class="n">tmp_bankstrips_polygons</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.shp&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">saga_intersection</span><span class="p">(</span>
+            <span class="n">tmp_bankgrasstrips</span><span class="p">,</span>
+            <span class="n">tmp_polygons</span><span class="p">,</span>
+            <span class="n">tmp_bankstrips_polygons</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">grass_strips</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">tmp_bankstrips_polygons</span><span class="p">)</span>
+        <span class="c1"># add dissolve of grass strips here</span>
+        <span class="n">grass_strips</span> <span class="o">=</span> <span class="n">grass_strips</span><span class="o">.</span><span class="n">dissolve</span><span class="p">(</span><span class="s2">&quot;NR&quot;</span><span class="p">)</span>
+        <span class="n">grass_strips</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="n">grass_strips</span><span class="p">[</span><span class="s2">&quot;scale_ktc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tmp_bankgrasstrips</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tmp_polygons</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tmp_bankstrips_polygons</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">grass_strips</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[[</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;scale_ktc&quot;</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

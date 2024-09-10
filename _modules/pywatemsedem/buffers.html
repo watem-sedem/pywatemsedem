@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.buffers &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.buffers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.buffers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="process_buffer_outlets">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.buffers.process_buffer_outlets">[docs]</a>
+<span class="k">def</span> <span class="nf">process_buffer_outlets</span><span class="p">(</span><span class="n">gdf_outlets</span><span class="p">,</span> <span class="n">gdf_buffer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map user-defined outlets to buffers.</span>
+
+<span class="sd">    This function maps outlets to buffer id&#39;s based on the overlap between the outlet</span>
+<span class="sd">    definition and the buffer polygon definition.</span>
+
+<span class="sd">    #TODO: write test function</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf_outlets: gpd.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame with a geometry definition.</span>
+<span class="sd">    gdf_buffer: gpd.GeoDataFrame</span>
+<span class="sd">        Holding buffer id&#39;s and geometry</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gdf_outlets: gpd.GeoDataFrame</span>
+<span class="sd">        Updated outlets with buf id assigedn</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gdf_outlets</span><span class="p">[</span><span class="s2">&quot;BUF_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># 1. per buffer kijken welke outlets er in liggen en het</span>
+    <span class="c1"># buf_id toekennen aan deze outlet</span>
+    <span class="k">for</span> <span class="n">b_id</span><span class="p">,</span> <span class="n">geom</span> <span class="ow">in</span> <span class="n">gdf_buffer</span><span class="p">[[</span><span class="s2">&quot;BUF_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]:</span>
+        <span class="n">gdf_outlets</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_outlets</span><span class="o">.</span><span class="n">within</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">gdf_outlets</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf_outlets</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;multiple buffer outlets present in buffer&quot;</span> <span class="sa">f</span><span class="s2">&quot;with id </span><span class="si">{</span><span class="n">b_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; only one, random is outlet chosen!&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">gdf_outlets</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;BUF_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_id</span>
+        <span class="k">elif</span> <span class="n">mask</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;no buffer outlet defined for buffer with id &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">b_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gdf_outlets</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;BUF_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_id</span>
+
+    <span class="k">return</span> <span class="n">gdf_outlets</span></div>
+
+
+
+<div class="viewcode-block" id="filter_outlets_in_arr_extension_id">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.buffers.filter_outlets_in_arr_extension_id">[docs]</a>
+<span class="k">def</span> <span class="nf">filter_outlets_in_arr_extension_id</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_dtm</span><span class="p">,</span> <span class="n">arr_outlet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map buffer outlet on extension id raster</span>
+
+<span class="sd">    This function filters outlet id&#39;s to single outlet id, for every buffer. The</span>
+<span class="sd">    function returns an array with single entries for every buffer id and</span>
+<span class="sd">    multiple entries for every buffer extension id.</span>
+
+<span class="sd">    The algorithm takes a single pixel that</span>
+
+<span class="sd">    - corresponds to the pixel defined in arr_outlet (use-defined).</span>
+
+<span class="sd">    OR</span>
+
+<span class="sd">    - corresponds to the minimum dtm value in the extension of the buffer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf: geopandas.GeoDataFrame</span>
+<span class="sd">        Holding id&#39;s (column: &#39;buf_id&#39; (int)), all id&#39;s should be present in arr and</span>
+<span class="sd">        vice versa.</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Array with buffer outlet (&lt;16 385) and extension id&#39;s (16 385&gt;=). This array</span>
+<span class="sd">        can hold multiple entries for buffer outlet. All outlet id&#39;s should be present</span>
+<span class="sd">        in gdf</span>
+<span class="sd">    arr_dtm: numpy.ndarray</span>
+<span class="sd">        DTM array, should have dimension of arr</span>
+<span class="sd">    arr_outlet: numpy.ndarray</span>
+<span class="sd">        Holds number of forced outlets, should have dimension of arr.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Array with single entries for every buffer id and multiple entries for every</span>
+<span class="sd">        buffer extension id.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">un_outlets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr_outlet</span><span class="p">)</span> <span class="k">if</span> <span class="n">arr_outlet</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">itertuples</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">buf_id</span> <span class="ow">in</span> <span class="n">un_outlets</span><span class="p">:</span>
+            <span class="n">outlet_loc</span> <span class="o">=</span> <span class="n">arr_dtm</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr_outlet</span> <span class="o">==</span> <span class="n">row</span><span class="o">.</span><span class="n">buf_id</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outlet_loc</span> <span class="o">=</span> <span class="n">arr_dtm</span><span class="p">[</span><span class="n">arr</span> <span class="o">==</span> <span class="n">row</span><span class="o">.</span><span class="n">buf_exid</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">arr</span><span class="p">[(</span><span class="n">arr_dtm</span> <span class="o">==</span> <span class="n">outlet_loc</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="n">row</span><span class="o">.</span><span class="n">buf_exid</span><span class="p">)]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">buf_id</span>
+    <span class="k">return</span> <span class="n">arr</span></div>
+
+
+
+<div class="viewcode-block" id="process_buffers_in_river">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.buffers.process_buffers_in_river">[docs]</a>
+<span class="k">def</span> <span class="nf">process_buffers_in_river</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_river</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This functions filters buffers from the buffer raster that overlap with a</span>
+<span class="sd">    river</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf: geopandas.GeoDataFrame</span>
+<span class="sd">        Geopandas representation of arr, in buf_exid.</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Array with buffer outlet (&lt;16 385) and extension id&#39;s (16 385&gt;=). This array</span>
+<span class="sd">        can hold multiple entries for buffer outlet. All outlet id&#39;s should be present</span>
+<span class="sd">        in gdf.</span>
+<span class="sd">    arr_river: numpy.ndarray</span>
+<span class="sd">        River raster, should be -1 and nodata</span>
+<span class="sd">    nodata: float</span>
+<span class="sd">        Nodata value in arr_river.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gdf: geopandas.GeoDataFrame</span>
+<span class="sd">        Filtered</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Filtered</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># remove buffer pixels that coincide with river pixels</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr_river</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int16&quot;</span><span class="p">)</span>
+    <span class="c1"># remove buffers that are not present in raster</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;buf_exid&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">arr</span><span class="p">,</span> <span class="n">gdf</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

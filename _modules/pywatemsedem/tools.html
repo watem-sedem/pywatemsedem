@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.tools &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="format_forced_routing">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.format_forced_routing">[docs]</a>
+<span class="k">def</span> <span class="nf">format_forced_routing</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">trajectory_routing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format forced routing LineString geometry in a dataframe writable to the ini-file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf: GeoPandas.GeoDataFrame</span>
+<span class="sd">        Should contain geometry-proprety with LineStrings</span>
+<span class="sd">    minmax: list</span>
+<span class="sd">        [x_left, y_lower, x_right, y_upper]. The **first** entry is **x_left**, the</span>
+<span class="sd">        **second** entry is **y_lower**, the **third** entry is **x_right** and the</span>
+<span class="sd">        **fourth** entry is **y_upper**.</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        In m</span>
+<span class="sd">    trajectory_routing: bool, default False</span>
+<span class="sd">        Use routing via trajectory (True) or via jump (False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df: pandas.DataFrame</span>
+<span class="sd">        Each row is one routing element, with columns:</span>
+
+<span class="sd">        - fromX (float): source X-coordinate</span>
+<span class="sd">        - fromY (float): source Y-coordinate</span>
+<span class="sd">        - toX (float): target X-coordinate</span>
+<span class="sd">        - toY (float): target Y-coordinate</span>
+<span class="sd">        - fromcol (int): source column</span>
+<span class="sd">        - fromrow (int): source row</span>
+<span class="sd">        - tocol (int): target column</span>
+<span class="sd">        - torow (int): target row</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">lst_df</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">:</span>
+        <span class="n">lst_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">reformat_LineString_to_source_targetf</span><span class="p">(</span>
+                <span class="n">it</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">trajectory_routing</span><span class="o">=</span><span class="n">trajectory_routing</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">lst_df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromcol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromrow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromY&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;tocol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;torow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toY&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromcol&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;tocol&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromrow&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;torow&quot;</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="reformat_LineString_to_source_targetf">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.reformat_LineString_to_source_targetf">[docs]</a>
+<span class="k">def</span> <span class="nf">reformat_LineString_to_source_targetf</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">trajectory_routing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reformat single LineString-routing to source/target dataframe format</span>
+
+<span class="sd">    The routing can be organised via a trajectory or a jump:</span>
+
+<span class="sd">    - trajectory: the routing follows the sequential coordinates of the elements in the</span>
+<span class="sd">      LineString.</span>
+<span class="sd">    - jump: the routing goes from the start to the end of the LineString.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coordinates: list</span>
+<span class="sd">        List of tuples (x,y)</span>
+<span class="sd">    trajectory_routing: bool, default False</span>
+<span class="sd">        Use routing via trajectory (True) or via jump (False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df: pandas.DataFrame</span>
+<span class="sd">        Each row is one routing element, with columns:</span>
+
+<span class="sd">        - fromX (float): source X-coordinate</span>
+<span class="sd">        - fromY (float): source Y-coordinate</span>
+<span class="sd">        - toX (float): target X-coordinate</span>
+<span class="sd">        - toY (float): target Y-coordinate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">trajectory_routing</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;fromX&quot;</span><span class="p">,</span> <span class="s2">&quot;fromY&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">,</span> <span class="s2">&quot;fromY&quot;</span><span class="p">,</span> <span class="s2">&quot;toX&quot;</span><span class="p">,</span> <span class="s2">&quot;toY&quot;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">,</span> <span class="s2">&quot;fromY&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">,</span> <span class="s2">&quot;toY&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="zip_folder">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.zip_folder">[docs]</a>
+<span class="k">def</span> <span class="nf">zip_folder</span><span class="p">(</span><span class="n">folder2zip</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Zip a folder</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    folder2zip: str</span>
+<span class="sd">        File path of the folder to be zipped</span>
+<span class="sd">    outfile: str</span>
+<span class="sd">        File path and name of the output zip-file (optional). If not given the zip</span>
+<span class="sd">        file will have the same name as the folder and it will be stored in</span>
+<span class="sd">        the same place.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="n">folder2zip</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;zip&quot;</span><span class="p">,</span> <span class="n">folder2zip</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_item_from_ini">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.get_item_from_ini">[docs]</a>
+<span class="k">def</span> <span class="nf">get_item_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets an item from an option in a certain section of an ini-file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini: pathlib.Path</span>
+<span class="sd">        File path of the ini-file</span>
+<span class="sd">    section: str</span>
+<span class="sd">        Name of the desired section</span>
+<span class="sd">    option: str</span>
+<span class="sd">        Name of the desired option</span>
+<span class="sd">    dtype: str</span>
+<span class="sd">        Type of parameter to be read (get (string), int, float or bool).</span>
+<span class="sd">        If another string is giver to this parameter, a</span>
+<span class="sd">        :class:`~pywatemsedem.CNWS.CNWSException` is raised.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or int or float or bool or None</span>
+<span class="sd">        Settings value of ini-file. If the option or section does not exist in</span>
+<span class="sd">        the ini-file or the value of the section-option None is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ini</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">Cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ini</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;get&quot;</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;int&quot;</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;not a correct Type&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">configparser</span><span class="o">.</span><span class="n">NoOptionError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Option </span><span class="si">{</span><span class="n">option</span><span class="si">}</span><span class="s2"> does not exist in ini-file (section </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="n">configparser</span><span class="o">.</span><span class="n">NoSectionError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Section </span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s2"> does not exist in ini-file&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">a</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ini</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_tags_from_template_file">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.extract_tags_from_template_file">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_tags_from_template_file</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart template</span>
+<span class="sd">    file.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    template: pathlib.Path or str</span>
+<span class="sd">        File path to CN-WS perceelskaart template file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    catchment_name: str</span>
+<span class="sd">        Catchment name</span>
+<span class="sd">    scenario: str</span>
+<span class="sd">        Scenario number (in string!)</span>
+<span class="sd">    year: int</span>
+<span class="sd">        Simulation year.</span>
+<span class="sd">    valid: bool</span>
+<span class="sd">        Tag that indicate whether template format agrees with defined template format.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    The template format should be</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># take first template file and drop extension</span>
+    <span class="n">template_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># split template name on &quot;_&quot;</span>
+    <span class="n">template_</span> <span class="o">=</span> <span class="n">template_</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="c1"># valid if template conveys with define template format</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">template_</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Template </span><span class="si">{</span><span class="n">template</span><span class="si">}</span><span class="s2"> does not convey with defined template format &quot;</span>
+            <span class="s2">&quot;`fname_%year_</span><span class="si">%c</span><span class="s2">atchmentname_s</span><span class="si">%s</span><span class="s2">cenariolabel.rst`.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># get catchment name which is on the third position (index 2)</span>
+    <span class="n">catchment_name</span> <span class="o">=</span> <span class="n">template_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># get scenario number (str) from last position and drop &quot;s&quot;</span>
+    <span class="n">scenario</span> <span class="o">=</span> <span class="n">template_</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="c1"># get year (int) from second position (index 1)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">template_</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">catchment_name</span><span class="p">,</span> <span class="n">scenario</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">valid</span></div>
+
+
+
+<div class="viewcode-block" id="get_df_area_unique_values_array">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.get_df_area_unique_values_array">[docs]</a>
+<span class="k">def</span> <span class="nf">get_df_area_unique_values_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the total area for every value in an array</span>
+
+<span class="sd">    The area for a value is calculated as the amount of cells with</span>
+<span class="sd">    a certain value * cellsize * cellsize.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Input array</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        The spatial resolution of the raster</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df: pandas.DataFrame</span>
+<span class="sd">        With two columns:</span>
+
+<span class="sd">        - *values* (float): all values within the raster</span>
+<span class="sd">        - *area* (float): the area of every value in the raster</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vals</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">areas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">resolution</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">areas</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="check_cn_ws_binary">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.check_cn_ws_binary">[docs]</a>
+<span class="k">def</span> <span class="nf">check_cn_ws_binary</span><span class="p">(</span><span class="n">cn_ws_binary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fixed_name_cmd</span><span class="o">=</span><span class="s2">&quot;cn_ws&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the compiled CN_WS program is known in the environment,</span>
+<span class="sd">    or if the path reference exists</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cn_ws_binary: str, default None</span>
+<span class="sd">        File Path of compiled cn_ws Pascal code. If None, check environment.</span>
+<span class="sd">    fixed_name_cmd: str, default &#39;cn_ws&#39;</span>
+<span class="sd">        Name of exe/program.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cn_ws_exe: str</span>
+<span class="sd">        File path of compiled cn_ws Pascal code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cn_ws_binary</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cn_ws_defined_in_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="n">fixed_name_cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cn_ws_defined_in_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">try_location</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;GitHub&quot;</span> <span class="o">/</span> <span class="s2">&quot;cn_ws&quot;</span> <span class="o">/</span> <span class="s2">&quot;cn_ws&quot;</span> <span class="o">/</span> <span class="s2">&quot;cn_ws&quot;</span>
+            <span class="k">if</span> <span class="n">try_location</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">cn_ws_binary</span> <span class="o">=</span> <span class="n">try_location</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;CN_WSmodel exe/program not found in environment, make sure you &quot;</span>
+                    <span class="s2">&quot;have defined a compiled version of cn_ws in your &quot;</span>
+                    <span class="s2">&quot;environment correctly!&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cn_ws_binary</span> <span class="o">=</span> <span class="n">fixed_name_cmd</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">cn_ws_binary</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">cn_ws_binary</span> <span class="o">=</span> <span class="n">cn_ws_binary</span> <span class="o">+</span> <span class="s2">&quot;.exe&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">cn_ws_binary</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The custom-path defined for the CN_WSmodel exe/program &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cn_ws_binary</span><span class="si">}</span><span class="s2"> is incorrect, please check you refer &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;to a compiled CN_WSmodel.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cn_ws_binary</span></div>
+
+
+
+<div class="viewcode-block" id="check_courant_criterium">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.check_courant_criterium">[docs]</a>
+<span class="k">def</span> <span class="nf">check_courant_criterium</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.75</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the courant criterium, see</span>
+<span class="sd">    https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    velocity: float</span>
+<span class="sd">        Stream velocity (m/s)</span>
+<span class="sd">    time_step: float</span>
+<span class="sd">        Time step of calculations (s)</span>
+<span class="sd">    resolution: float</span>
+<span class="sd">        Grid resolution (m)</span>
+<span class="sd">    factor: float</span>
+<span class="sd">        Correction factor to avoid that CN-WS Pascal does crash if the distance water</span>
+<span class="sd">        covers in a timestep that is equal to +-0.75 times the pixel resolution</span>
+<span class="sd">        (temporary fix).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    time_step_posterior: float</span>
+<span class="sd">        Posterior time step of calculations (s)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dist_per_calc_step</span> <span class="o">=</span> <span class="n">velocity</span> <span class="o">*</span> <span class="n">time_step</span>
+    <span class="k">if</span> <span class="n">dist_per_calc_step</span> <span class="o">&gt;</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">:</span>
+        <span class="n">time_step_posterior</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">resolution</span> <span class="o">/</span> <span class="n">velocity</span><span class="p">))</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Time step of </span><span class="si">{</span><span class="n">time_step</span><span class="si">}</span><span class="s2"> seconds too large for a&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;stream velocity of </span><span class="si">{</span><span class="n">velocity</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;m/s (Courant criterium) lowering to resolution divided by &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;the velocity (</span><span class="si">{</span><span class="n">time_step_posterior</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">time_step_posterior</span> <span class="o">=</span> <span class="n">time_step</span>
+    <span class="k">return</span> <span class="n">time_step_posterior</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

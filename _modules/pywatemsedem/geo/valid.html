@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.geo.valid &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.geo.valid</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.geo.valid</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">fiona</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">fiona.errors</span> <span class="kn">import</span> <span class="n">DriverError</span>
+<span class="kn">from</span> <span class="nn">rasterio.errors</span> <span class="kn">import</span> <span class="n">RasterioIOError</span>
+
+<span class="kn">from</span> <span class="nn">.rasterproperties</span> <span class="kn">import</span> <span class="n">RasterProperties</span>
+
+
+<div class="viewcode-block" id="PywatemsedemInputError">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.PywatemsedemInputError">[docs]</a>
+<span class="k">class</span> <span class="nc">PywatemsedemInputError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise when input data are not conform the pywatemsedem required input format.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="PywatemsedemTypeError">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.PywatemsedemTypeError">[docs]</a>
+<span class="k">class</span> <span class="nc">PywatemsedemTypeError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise when input data type are not conform the pywatemsedem required type format.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="valid_polygonvector">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_polygonvector">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_polygonvector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input vector file is a valid polygon shape</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct: pathlib.Path</span>
+<span class="sd">        File path to vector.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_exists</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+    <span class="n">valid_vector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_pointvector">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_pointvector">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_pointvector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input vector file is a valid point shape</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct: pathlib.Path</span>
+<span class="sd">        File path to vector.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_exists</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+    <span class="n">valid_vector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="s2">&quot;Point&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_linesvector">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_linesvector">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_linesvector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input vector file is a valid lines shape</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct: pathlib.Path</span>
+<span class="sd">        File path to vector.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_exists</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+    <span class="n">valid_vector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="s2">&quot;LineString&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_rasterlist">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_rasterlist">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_rasterlist</span><span class="p">(</span><span class="n">lst_rst</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input is a valid list of rasters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lst_rst: list</span>
+<span class="sd">        List of file paths to rasters.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst_rst</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">lst_rst</span><span class="si">}</span><span class="s2">&#39; is not a valid list of rasters input, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cannot execute &#39;</span><span class="si">{</span><span class="n">fun</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">rst</span> <span class="ow">in</span> <span class="n">lst_rst</span><span class="p">:</span>
+        <span class="n">valid_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_vectorlist">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_vectorlist">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_vectorlist</span><span class="p">(</span><span class="n">lst_vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">req_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input is a valid list of rasters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lst_vct: list</span>
+<span class="sd">        List of file paths to rasters.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    req_type:</span>
+<span class="sd">        Required geometry type of vector. See :func:`pywatemsedem.geo.valid.valid_vector`</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    -----</span>
+<span class="sd">    req_type can only be one type, not a mix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lst_vct</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">lst_vct</span><span class="si">}</span><span class="s2">&#39; is not a valid list of vectors input, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cannot execute &#39;</span><span class="si">{</span><span class="n">fun</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">vct</span> <span class="ow">in</span> <span class="n">lst_vct</span><span class="p">:</span>
+        <span class="n">valid_vector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">req_type</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_vector">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_vector">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_vector</span><span class="p">(</span><span class="n">vct</span><span class="p">,</span> <span class="n">fun</span><span class="p">,</span> <span class="n">req_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input file is a valid vector</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct: pathlib.Path</span>
+<span class="sd">        File path to vector.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    req_type:</span>
+<span class="sd">        Required geometry type of vector, limited to &quot;Polygon&quot;, &quot;LineString&quot;, &quot;Point&quot;</span>
+<span class="sd">        and None (i.e. don&#39;t check).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">req_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;LineString&quot;</span><span class="p">,</span> <span class="s2">&quot;Point&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Geomtry type &#39;</span><span class="si">{</span><span class="n">req_type</span><span class="si">}</span><span class="s2">&#39; not known.&quot;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">vct</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">req_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">req_type</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Geometry input type (&#39;</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;) of &#39;</span><span class="si">{</span><span class="n">vct</span><span class="si">}</span><span class="s2">&#39; is &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;not of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;type &#39;</span><span class="si">{</span><span class="n">req_type</span><span class="si">}</span><span class="s2">&#39;, cannot execute &#39;</span><span class="si">{</span><span class="n">fun</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">PywatemsedemTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="n">DriverError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The fiona engine in pywatemsedem cannot open &#39;</span><span class="si">{</span><span class="n">vct</span><span class="si">}</span><span class="s2">&#39; as it is not &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;recognized as a supported file format, cannot execute &#39;</span><span class="si">{</span><span class="n">fun</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_raster">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_raster">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input file is a valid raster</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rst: pathlib.Path</span>
+<span class="sd">        File path to raster.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">valid_exists</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">fun</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">RasterioIOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The rasterio engine in pywatemsedem cannot open &#39;</span><span class="si">{</span><span class="n">rst</span><span class="si">}</span><span class="s2">&#39; as it is not &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;recognized as a supported file format, cannot execute &#39;</span><span class="si">{</span><span class="n">fun</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_exists">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_exists">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_exists</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input file exists</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rst: pathlib.Path</span>
+<span class="sd">        File path to raster.</span>
+<span class="sd">    fun: callable</span>
+<span class="sd">        See :func:`pywatemsedem.geo.valid.valid_input`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">fun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Input raster &#39;</span><span class="si">{</span><span class="n">rst</span><span class="si">}</span><span class="s2">&#39; does not exist, cannot execute &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">fun</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Input raster &#39;</span><span class="si">{</span><span class="n">rst</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<span class="n">VALID_FUN</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;valid_vectorlist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;valid_pointvector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;valid_polygonvector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;valid_linesvector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;valid_raster&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;valid_vector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;valid_rasterlist&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="valid_input">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_input">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_input</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Customizable wrapper function that allows to check arg-defined function input.</span>
+
+<span class="sd">    This wrapper is defined to check formats of file-based raster and vector input. It</span>
+<span class="sd">    makes use of a dictionary to apply specific valid functions on non-keyword</span>
+<span class="sd">    arguments.  This valid function is typically applied to functions which have file</span>
+<span class="sd">    paths that have to be checked in their input.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func: callable</span>
+<span class="sd">        To call function for which to check inputs. Note that only function with all</span>
+<span class="sd">        keyword-arguments as parameters can be used.</span>
+<span class="sd">    dict: dictionary</span>
+<span class="sd">        Holding string of fun parameters as keys, and valid-callable function as</span>
+<span class="sd">        values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function output</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Use with a &#39;@&#39;-decorator to check input types for utils functions:</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        from pywatemsedem.geo.utils import valid_input,valid_rasterlist,valid_polygonvector</span>
+<span class="sd">        #note: only on-keyword arguments!</span>
+<span class="sd">        @valid_input(dict={&quot;lst_rst&quot;: valid_rasterlist, &quot;vct_in&quot;: valid_polygonvector})</span>
+<span class="sd">        def grid_statistics(lst_rst,vct_in):</span>
+<span class="sd">        # ... function code</span>
+
+<span class="sd">    Above example check if input of lst_rst is a list of rasters (and rasters exist)</span>
+<span class="sd">    (1) and if input of vct_in is a polygoon shape (2).</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. Can only be applied to non-keyword arguments.</span>
+<span class="sd">    2. Validation methods should be added to VALID_FUN.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">or</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">it</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">valid_fun</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">valid_fun</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">VALID_FUN</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Validation fuction </span><span class="si">{</span><span class="n">valid_fun</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;implemented&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">valid_fun</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">it</span><span class="p">],</span> <span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">else</span> <span class="n">_decorator</span></div>
+
+
+
+<div class="viewcode-block" id="valid_rp">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_rp">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_rp</span><span class="p">(</span><span class="n">rp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if rasterproperties is not equal to none and valid</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rp: pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">rp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define rasterproperties&quot;</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">RasterProperties</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Input RasterProperties &#39;</span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&#39; is not a valid instance of the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">RasterProperties</span><span class="si">}</span><span class="s2">&#39; class&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="valid_mask">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_mask">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if mask is not equal to none and valid</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mask</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define a mask&quot;</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemInputError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span> <span class="o">!=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define a valid mask with only 0,1-values&quot;</span>
+        <span class="k">raise</span> <span class="n">PywatemsedemTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

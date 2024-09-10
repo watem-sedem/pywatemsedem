@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.io.plots &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.io.plots</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.io.plots</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mplcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..geo.utils</span> <span class="kn">import</span> <span class="n">mask_array_with_val</span>
+
+
+<div class="viewcode-block" id="plot_continuous_raster">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.plot_continuous_raster">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_continuous_raster</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">,</span>
+    <span class="n">ax</span><span class="p">,</span>
+    <span class="n">arr</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;cividis&quot;</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Contains raster data</span>
+<span class="sd">    bounds: list</span>
+<span class="sd">        [left, bottom, right, upper] as obtained from RasterProperties.bounds</span>
+<span class="sd">        (See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`)</span>
+<span class="sd">    cmap: string or matplotlib.colors.Colormap, default = &#39;cividis&#39;</span>
+
+<span class="sd">    norm: matplotlib.colors.Normalize, optional</span>
+<span class="sd">        normalisation function for colormapping</span>
+<span class="sd">    colorbar: bool, default = True</span>
+<span class="sd">                Choice of displaying a colorbar</span>
+<span class="sd">    ticks: list, optional</span>
+<span class="sd">        Supply [min, 25th percentile, 50th percentile ,75th percentile, max]</span>
+<span class="sd">        when norm is used!</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">arr</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bounds</span><span class="p">)[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">colorbar</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="n">ticks</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># allows custom colorbar</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">im</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_discrete_raster">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.plot_discrete_raster">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_discrete_raster</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;cividis&quot;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Contains raster data</span>
+<span class="sd">    bounds: list</span>
+<span class="sd">        [left, bottom, right, upper] as obtained from RasterProperties.bounds</span>
+<span class="sd">        (See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`)</span>
+<span class="sd">    labels: list</span>
+<span class="sd">        Supply unique string for each value</span>
+<span class="sd">    cmap: string or matplotlib.colors.Colormap, default = &#39;cividis</span>
+
+<span class="sd">    norm: matplotlib.colors.Normalize, optional</span>
+<span class="sd">        normalisation function for colormapping</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+        <span class="n">arr</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">extent</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bounds</span><span class="p">)[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="n">colours</span> <span class="o">=</span> <span class="p">[</span><span class="n">im</span><span class="o">.</span><span class="n">cmap</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+    <span class="c1"># create a patch (proxy artist) for every color</span>
+    <span class="n">patches</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">colours</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span>
+                    <span class="mi">0</span>
+                <span class="p">]</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_output_raster">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.plot_output_raster">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_output_raster</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard non-linear continuous raster plot for output raster</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        Contains raster data</span>
+<span class="sd">    mask: numpy.ndarray</span>
+<span class="sd">        Contains raster data, 0 outside of domain</span>
+<span class="sd">    bounds: list</span>
+<span class="sd">        [left, bottom, right, upper] as obtained from RasterProperties.bounds</span>
+<span class="sd">        (See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`)</span>
+<span class="sd">    cmap: string or matplotlib.colors.Colormap, default = &#39;cividis&#39;</span>
+
+<span class="sd">    ticks: list, optional</span>
+<span class="sd">        When no list is given, 0th, 25th, 50th, 75th and 100th percentile are used</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ticks</span><span class="p">:</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">normalising_function</span><span class="p">(</span><span class="n">ticks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ticks</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ticks</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">ticks</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+        <span class="n">fig</span><span class="p">,</span>
+        <span class="n">ax</span><span class="p">,</span>
+        <span class="n">arr</span><span class="o">=</span><span class="n">arr</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">ticks</span><span class="o">=</span><span class="n">ticks</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="log_scale_enabler">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.log_scale_enabler">[docs]</a>
+<span class="k">def</span> <span class="nf">log_scale_enabler</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cnorm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if log scale is supplied.</span>
+<span class="sd">    If minimum is lower or equal to zero,</span>
+<span class="sd">    changes lower bound to smallest value above zero.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr: numpy.ndarray</span>
+<span class="sd">        rastervalues</span>
+<span class="sd">    cnorm: str</span>
+<span class="sd">        cnorm used for hvplot</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lower: float</span>
+<span class="sd">        lower value for colorscale</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cnorm</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lower</span></div>
+
+
+
+<div class="viewcode-block" id="axes_creator">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.axes_creator">[docs]</a>
+<span class="k">def</span> <span class="nf">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates fig and ax object if none ar given</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    fig: matplotlib.figure.Figure</span>
+
+<span class="sd">    ax: matplotlib.pyplot.axis</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="normalising_function">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.normalising_function">[docs]</a>
+<span class="k">def</span> <span class="nf">normalising_function</span><span class="p">(</span><span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom normalisation function for maptlotlib plotting</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mini</span>
+<span class="sd">        minimum of the colorscale</span>
+<span class="sd">    Q25</span>
+<span class="sd">        25th percentile</span>
+<span class="sd">    Q50</span>
+<span class="sd">        50th percentile</span>
+<span class="sd">    Q75</span>
+<span class="sd">        75th percentile</span>
+<span class="sd">    maxi</span>
+<span class="sd">        maximum of the colorscale</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    norm: matplotlib.colors.Normalize</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_forward_custom</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+        <span class="n">_forward</span><span class="p">,</span> <span class="n">mini</span><span class="o">=</span><span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="o">=</span><span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="o">=</span><span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="o">=</span><span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="o">=</span><span class="n">maxi</span>
+    <span class="p">)</span>
+    <span class="n">_inverse_custom</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+        <span class="n">_inverse</span><span class="p">,</span> <span class="n">mini</span><span class="o">=</span><span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="o">=</span><span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="o">=</span><span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="o">=</span><span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="o">=</span><span class="n">maxi</span>
+    <span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">mplcolors</span><span class="o">.</span><span class="n">FuncNorm</span><span class="p">((</span><span class="n">_forward_custom</span><span class="p">,</span> <span class="n">_inverse_custom</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="n">mini</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">maxi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">norm</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom forward normalisation function</span>
+<span class="sd">    performs uniform interpolation between percentiles</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x: numpy.ndarray</span>
+
+<span class="sd">    mini</span>
+<span class="sd">        minimum of the colorscale</span>
+<span class="sd">    Q25</span>
+<span class="sd">        25th percentile</span>
+<span class="sd">    Q50</span>
+<span class="sd">        50th percentile</span>
+<span class="sd">    Q75</span>
+<span class="sd">        75th percentile</span>
+<span class="sd">    maxi</span>
+<span class="sd">        maximum of the colorscale</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y: numpy.ndarray</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">Q25</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">mini</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">/</span> <span class="p">(</span><span class="n">Q25</span> <span class="o">-</span> <span class="n">mini</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">-</span> <span class="n">mini</span><span class="p">)</span>
+    <span class="n">cond2</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">Q25</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">Q50</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">cond2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Q50</span> <span class="o">-</span> <span class="n">Q25</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cond2</span><span class="p">]</span> <span class="o">-</span> <span class="n">Q25</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.25</span>
+    <span class="n">cond3</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">Q75</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">Q50</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">cond3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.75</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Q75</span> <span class="o">-</span> <span class="n">Q50</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cond3</span><span class="p">]</span> <span class="o">-</span> <span class="n">Q50</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
+    <span class="n">cond4</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">maxi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">Q75</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">cond4</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.75</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxi</span> <span class="o">-</span> <span class="n">Q75</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cond4</span><span class="p">]</span> <span class="o">-</span> <span class="n">Q75</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.75</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+
+<span class="k">def</span> <span class="nf">_inverse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom inverse normalisation function</span>
+<span class="sd">    performs uniform interpolation between percentiles</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x: numpy.ndarray</span>
+
+<span class="sd">    min</span>
+<span class="sd">        minimum of the colorscale</span>
+<span class="sd">    Q25</span>
+<span class="sd">        25th percentile</span>
+<span class="sd">    Q50</span>
+<span class="sd">        50th percentile</span>
+<span class="sd">    Q75</span>
+<span class="sd">        75th percentile</span>
+<span class="sd">    max</span>
+<span class="sd">        maximum of the colorscale</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="mf">0.25</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q25</span> <span class="o">-</span> <span class="n">mini</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">+</span> <span class="n">mini</span>
+    <span class="n">cond2</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="mf">0.25</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">cond2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q50</span> <span class="o">-</span> <span class="n">Q25</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">cond2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q25</span>
+    <span class="n">cond3</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="mf">0.75</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">cond3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q75</span> <span class="o">-</span> <span class="n">Q50</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">cond3</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q50</span>
+    <span class="n">cond4</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">cond4</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxi</span> <span class="o">-</span> <span class="n">Q75</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">cond4</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.75</span><span class="p">)</span> <span class="o">+</span> <span class="n">Q75</span>
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

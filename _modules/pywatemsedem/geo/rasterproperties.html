@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.geo.rasterproperties</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.geo.rasterproperties</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">fiona</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">CRS</span>
+<span class="kn">from</span> <span class="nn">pyproj.exceptions</span> <span class="kn">import</span> <span class="n">CRSError</span>
+<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">Affine</span>
+
+
+<div class="viewcode-block" id="RasterProperties">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties">[docs]</a>
+<span class="k">class</span> <span class="nc">RasterProperties</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raster properties class</span>
+
+<span class="sd">    Pywatemsedem makes use of rasterio and gdal for loading, writing and processing</span>
+<span class="sd">    rasters/vectors. A small class is implemented to easily switch between raster</span>
+<span class="sd">    geographic references of gdal and rasterio, respectively names *gdal_profile*</span>
+<span class="sd">    and *rasterio_profile*. Assuming you start with loading a raster with rasterio:</span>
+
+<span class="sd">    .. code-block::</span>
+
+<span class="sd">        from pywatemsedem.geo.utils import load_raster</span>
+<span class="sd">        from pywatemsedem.geo.rasterproperties import RasterProperties</span>
+<span class="sd">        arr, _, rasterio_profile = load_raster(&quot;test.tif&quot;)</span>
+<span class="sd">        rp = RasterProperties.from_rasterio(rasterio_profile)</span>
+<span class="sd">        rp.gdal_profile</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    Note that ``rasterio_profile`` is of type dictionary, as such one can start from</span>
+<span class="sd">    a profile definition in a dictionary format, for instance for gdal:</span>
+
+<span class="sd">    .. code-block::</span>
+
+<span class="sd">        from pywatemsedem.geo.utils import load_raster</span>
+<span class="sd">        from pywatemsedem.geo.rasterproperties import RasterProperties</span>
+<span class="sd">        gdal_profile = {</span>
+<span class="sd">            &quot;nodata&quot;: -9999.0,</span>
+<span class="sd">            &quot;epsg&quot;: &quot;EPSG:31370&quot;,</span>
+<span class="sd">            &quot;res&quot;: 20.0,</span>
+<span class="sd">            &quot;minmax&quot;: [201620.0, 153880.0, 207500.0, 164060.0],</span>
+<span class="sd">            &quot;ncols&quot;: 294,</span>
+<span class="sd">            &quot;nrows&quot;: 509,</span>
+<span class="sd">        }</span>
+<span class="sd">        rp = RasterProperties.from_gdal(gdal_profile)</span>
+<span class="sd">        rp.rasterio_profile</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    In addition, a ``RasterProfile`` instance can be generated from known raster</span>
+<span class="sd">    bounds and a raster resolution</span>
+<span class="sd">    (this can be useful for generating raster geographical references when</span>
+<span class="sd">    no rasterio or gdal profile definition is available):</span>
+
+<span class="sd">    .. code-block::</span>
+
+<span class="sd">        from pywatemsedem.geo.rasterproperties import RasterProperties</span>
+
+<span class="sd">        bounds = [201620.0, 153880.0, 207500.0, 164060.0]</span>
+<span class="sd">        resolution = 20</span>
+<span class="sd">        nodata= -9999</span>
+<span class="sd">        epsg = 31370</span>
+<span class="sd">        rp = RasterProperties(bounds, resolution, nodata, epsg)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. Current implementation support storing of raster properties, yet is does not aim</span>
+<span class="sd">       to provide functionalities to adapt raster properties (as these functionalities</span>
+<span class="sd">       are present in rasterio).</span>
+<span class="sd">    2. Current implementation does not support tiled rasters. In addition,</span>
+<span class="sd">       it only support bands-interleaving as only single-band raster are used.</span>
+<span class="sd">    3. Definition interleaving: the way multiple bands of a raster are saved to the</span>
+<span class="sd">       raster (e.g. pixel-based, line-based, band-based)</span>
+<span class="sd">    4. The coordinate reference system (crs) is defined in EPSG.</span>
+<span class="sd">    5. Note that dtype in gdal operation is typically derived from input raster</span>
+<span class="sd">       dtype that is used to execute the gdal operation. As such dtype is not</span>
+<span class="sd">       defined as a key in the gdal_profile property.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">nodata</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsg</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">driver</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a RasterProperties instance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bounds: list</span>
+<span class="sd">            The **first** entry is **x_left**, the **second** entry is **y_lower**, the</span>
+<span class="sd">            **third** entry is **x_right** and the **fourth** entry is **y_upper**</span>
+<span class="sd">            [x_left, y_lower, x_right, y_upper].</span>
+<span class="sd">        resolution: int</span>
+<span class="sd">            Spatial resolution.</span>
+<span class="sd">        nodata: float</span>
+<span class="sd">            No data values.</span>
+<span class="sd">        epsg: int</span>
+<span class="sd">            EPSG code should be a numeric value, see https://epsg.io/.</span>
+<span class="sd">        dtype: str, default &quot;float64&quot;</span>
+<span class="sd">            Raster type</span>
+<span class="sd">        driver : GTiff | RST | SAGA</span>
+<span class="sd">            Name of GDAL driver, see https://gdal.org/drivers/raster/index.html; only</span>
+<span class="sd">            GTiff | RST | SAGA are supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ncols</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nrows</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_ncols_nrows</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span> <span class="o">=</span> <span class="n">nodata</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_epsg</span><span class="p">(</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsg</span> <span class="o">=</span> <span class="n">epsg</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_driver</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">driver</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xcoord</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ycoord</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="RasterProperties.from_gdal">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.from_gdal">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_gdal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gdal_profile</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set RasterProperties from a gdal profile</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        gdal_profile: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;res&quot;</span><span class="p">,</span> <span class="s2">&quot;ncols&quot;</span><span class="p">,</span> <span class="s2">&quot;nrows&quot;</span><span class="p">,</span> <span class="s2">&quot;minmax&quot;</span><span class="p">,</span> <span class="s2">&quot;nodata&quot;</span><span class="p">,</span> <span class="s2">&quot;epsg&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
+            <span class="n">gdal_profile</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Function input is not a gdal profile instance!&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;minmax&quot;</span><span class="p">],</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;res&quot;</span><span class="p">],</span>
+            <span class="n">nodata</span><span class="o">=</span><span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">],</span>
+            <span class="n">epsg</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;epsg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gdal_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return gdal profile</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        gdal_profile: dict</span>
+<span class="sd">            See definition in this function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gdal_profile</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span>
+        <span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;epsg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;EPSG:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_epsg</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1"># gdal_profile[&quot;epsg&quot;] = f&quot;{self._epsg}&quot;</span>
+        <span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;res&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
+        <span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;minmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span>
+        <span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;ncols&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ncols</span>
+        <span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;nrows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nrows</span>
+
+        <span class="k">return</span> <span class="n">gdal_profile</span>
+
+<div class="viewcode-block" id="RasterProperties.from_rasterio">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.from_rasterio">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_rasterio</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rasterio_profile</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">epsg</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set RasterProperties with a rasterio profile</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        rasterio_profile: dict</span>
+<span class="sd">        epsg: int, default None</span>
+<span class="sd">            EPSG code should be a numeric value, see https://epsg.io/.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="s2">&quot;crs&quot;</span><span class="p">,</span> <span class="s2">&quot;nodata&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
+            <span class="n">rasterio_profile</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Function input is not a rasterio profile instance!&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="o">+</span> <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">5</span><span class="p">],</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">epsg</span> <span class="o">=</span> <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;crs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">nodata</span><span class="o">=</span><span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">],</span>
+            <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rasterio_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return rasterio profile</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rasterio_profile: dict</span>
+<span class="sd">            See definition in this function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rasterio_profile</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;driver&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nrows</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ncols</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;crs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CRS</span><span class="o">.</span><span class="n">from_epsg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_epsg</span><span class="p">)</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Affine</span><span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">),</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">==</span> <span class="s2">&quot;GTiff&quot;</span><span class="p">:</span>
+            <span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;compress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;deflate&quot;</span>
+
+        <span class="k">return</span> <span class="n">rasterio_profile</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raster boundary coordinates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list : [x_left, y_lower, x_right, y_upper]</span>
+<span class="sd">            The **first** entry is **x_left**, the **second** entry is **y_lower**, the</span>
+<span class="sd">            **third** entry is **x_right** and the **fourth** entry is **y_upper**.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raster resolution&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
+
+    <span class="k">def</span> <span class="nf">_set_ncols_nrows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the number of columns and rows based on the bounds and the resolution&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ncols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nrows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nodata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;No data value used in raster.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_epsg</span><span class="p">(</span><span class="n">epsg</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check EPSG code</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epsg: int</span>
+<span class="sd">            EPSG code should be a numeric value, see https://epsg.io/.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">epsg</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;EPSG-code &#39;</span><span class="si">{</span><span class="n">epsg</span><span class="si">}</span><span class="s2">&#39; need to be an integer code.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CRS</span><span class="o">.</span><span class="n">from_epsg</span><span class="p">(</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CRSError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;EPSG-code &#39;</span><span class="si">{</span><span class="n">epsg</span><span class="si">}</span><span class="s2">&#39; is an unknown epsg-code.&quot;</span>
+            <span class="k">raise</span> <span class="n">CRSError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">epsg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: EPSG code of the raster projection should be a numeric value,</span>
+<span class="sd">        see https://epsg.io/&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsg</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nrows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of rows in the raster</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nrows</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ncols</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of columns in the raster</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ncols</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_driver</span><span class="p">(</span><span class="n">driver</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the defined driver is known to pywatemsedem.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">driver</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;GTiff&quot;</span><span class="p">,</span> <span class="s2">&quot;RST&quot;</span><span class="p">,</span> <span class="s2">&quot;SAGA&quot;</span><span class="p">]:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Raster property driver &#39;</span><span class="si">{</span><span class="n">driver</span><span class="si">}</span><span class="s2">&#39; not supported in pywatemsedem.&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">driver</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of GDAL driver</span>
+
+<span class="sd">        see https://gdal.org/drivers/raster/index.html;</span>
+<span class="sd">        only GTiff | RST | SAGA are supported.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xcoord</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns 1D-vector array of x-coordinates</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ncols</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ycoord</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns 1D-vector array of y-coordinates</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrows</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_bounds_from_vct">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.get_bounds_from_vct">[docs]</a>
+<span class="k">def</span> <span class="nf">get_bounds_from_vct</span><span class="p">(</span><span class="n">vct_catchment</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">n_pixels_buffer</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get bounds from vector catchment.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct_catchment: pathlib.Path</span>
+<span class="sd">        Vector file of catchment.</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        Spatial resolution, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
+<span class="sd">    n_pixels_buffer: int, default 5</span>
+<span class="sd">        Number of pixels that have to be taken into account to expand boundaries</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bounds: list</span>
+<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">vct_catchment</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+        <span class="c1"># Get spatial extent of catchment.</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">bounds</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
+        <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">bounds</span></div>
+
+
+
+<div class="viewcode-block" id="synchronize_bounds">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.synchronize_bounds">[docs]</a>
+<span class="k">def</span> <span class="nf">synchronize_bounds</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize target geographical bounds of a raster with source bounds given a</span>
+<span class="sd">     raster resolution.</span>
+
+<span class="sd">    Bounds are defined as a list of  xmin, ymin, xmax and ymax-values of a raster. The</span>
+<span class="sd">    boundaries leading to the smallest geographical model are selected as new</span>
+<span class="sd">    boundaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    target: list</span>
+<span class="sd">        To check target boundaries, see</span>
+<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.</span>
+<span class="sd">    source: pathlib.Path</span>
+<span class="sd">        Source boundaries to which target boundaries have to be checked, see</span>
+<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bounds: list</span>
+<span class="sd">        Updated bounds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">check</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># xmin en ymin</span>
+            <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">%</span> <span class="n">resolution</span>
+            <span class="k">if</span> <span class="n">rest</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">check</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">rest</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># xmax en ymax</span>
+            <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">])</span> <span class="o">%</span> <span class="n">resolution</span>
+            <span class="k">if</span> <span class="n">rest</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">check</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">rest</span> <span class="o">+</span> <span class="n">resolution</span>
+    <span class="k">if</span> <span class="n">check</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Synchronizing x/y-axis model boundaries with input raster `</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">`&quot;</span>
+        <span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

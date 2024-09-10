@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Development guidelines &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=2be448b1"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributors" href="authors.html" />
+    <link rel="prev" title="IO-module" href="getting-started/io.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-commit-hooks">Pre-commit hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unit-testing-with-pytest">Unit testing with pytest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation-with-sphinx">Documentation with sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drone-ci">Drone CI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-lfs">Git lfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naming-things">Naming things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#guideline-for-unified-coding-style">Guideline for unified coding style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#describing-dataframes-in-docstrings">Describing DataFrames in docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#postprocess-file-structure">Postprocess file structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Development guidelines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="http://watem-sedem.github.io/pywatemsedem/src/branch/master/pywatemsedem/docs/contributing.rst">View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="development-guidelines">
+<span id="dev-guidelines"></span><h1>Development guidelines<a class="headerlink" href="#development-guidelines" title="Link to this heading">¶</a></h1>
+<p>Want to contribute code or functionalities to the <code class="docutils literal notranslate"><span class="pre">pywatemsedem</span></code> package? Great and welcome on board!</p>
+<p>We use a number of development tools to support us in improving the code quality. No magic bullet or free
+lunch, but just a set of tools as any craftman has tools to support him/her doing a better job.</p>
+<p>For development purposes using conda, make sure to first run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[develop]</span></code> environment
+to prepare the development environment and install all development tools. (When using <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">dev</span></code> this
+is already done).</p>
+<p>When starting on the development of the <code class="docutils literal notranslate"><span class="pre">pywatemsedem</span></code> package, makes sure to be familiar with the following tools. Do
+not hesitate to ask the other developers when having trouble using these tools.</p>
+<section id="pre-commit-hooks">
+<h2>Pre-commit hooks<a class="headerlink" href="#pre-commit-hooks" title="Link to this heading">¶</a></h2>
+<p>To ensure a more common code formatting and limit the git diff, make sure to install the pre-commit hooks. The
+required dependencies are included in the development requirements installed when running <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[develop]</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Install the <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> hooks before your first git commit to the package!</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>on the main level of the package (<code class="docutils literal notranslate"><span class="pre">pywatemsedem</span></code> folder, location where the file <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code> is located)</p>
+<p>If you just want to run the hooks on your files to see the effect (not during a git commit),
+you can use the command at any time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">files</span>
+</pre></div>
+</div>
+</section>
+<section id="unit-testing-with-pytest">
+<span id="unittest"></span><h2>Unit testing with pytest<a class="headerlink" href="#unit-testing-with-pytest" title="Link to this heading">¶</a></h2>
+<p>Run the test suite using the <code class="docutils literal notranslate"><span class="pre">pytest</span></code> package, from within the main package
+folder (<cite>pywatemsedem</cite>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span>
+</pre></div>
+</div>
+<p>Or using tox (i.e. in a separate environment)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tox</span> <span class="o">--</span>
+</pre></div>
+</div>
+<p>You will receive information on the test status and the test coverage of the
+unit tests. Make sure you have defined SAGA and WaTEM/SEDEM, see
+<a class="reference internal" href="installation.html#dependencies"><span class="std std-ref">here</span></a>.</p>
+</section>
+<section id="documentation-with-sphinx">
+<h2>Documentation with sphinx<a class="headerlink" href="#documentation-with-sphinx" title="Link to this heading">¶</a></h2>
+<p>Build the documentation locally with Sphinx (tox):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tox</span> <span class="o">-</span><span class="n">e</span> <span class="n">docs</span>
+</pre></div>
+</div>
+<p>which will create the docs in the <code class="docutils literal notranslate"><span class="pre">docs/_build/html</span></code> folder. The <code class="docutils literal notranslate"><span class="pre">docs/_build</span></code> directory itself is
+left out of version control (and we rather keep it as such ;-)).</p>
+</section>
+<section id="drone-ci">
+<h2>Drone CI<a class="headerlink" href="#drone-ci" title="Link to this heading">¶</a></h2>
+<p>Apart from these tools you can run locally, we use drone continuous integration to run these checks also
+on our servers. See <a class="reference external" href="https://drone.fluves.net/Fluves/pywatemsedem">https://drone.fluves.net/Fluves/pywatemsedem</a> for the results.</p>
+</section>
+<section id="git-lfs">
+<h2>Git lfs<a class="headerlink" href="#git-lfs" title="Link to this heading">¶</a></h2>
+<p>Git lfs, or large file support, is used in this repository to store gis files in
+the repository. To use this functionality you need to install git lfs. See
+<a class="reference external" href="https://git-lfs.github.com/">https://git-lfs.github.com/</a> for instructions and more information.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.gitattributes</span></code>-file in the root folder contains the file extensions wich are
+stored under lfs. For now, only files within the test folder are stored under
+lfs.</p>
+</section>
+<section id="naming-things">
+<h2>Naming things<a class="headerlink" href="#naming-things" title="Link to this heading">¶</a></h2>
+<p>To provide structure in the naming of methods, functions, classes,… we propose
+to conform the following guidelines.</p>
+<p>Class, function/methods names follow the standard naming conventions as defined
+in the <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#naming-conventions">PEP8</a> guidelines. Additionaly, methods/functions start - whenever
+possible - with an active verb on the action they perform (<code class="docutils literal notranslate"><span class="pre">does_something()</span></code>)
+, e.g. <code class="docutils literal notranslate"><span class="pre">load_raster()</span></code>, <code class="docutils literal notranslate"><span class="pre">clip_shape()</span></code>, <code class="docutils literal notranslate"><span class="pre">transform_rasterprop()</span></code></p>
+<p>Variable names follow the <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#naming-conventions">PEP8</a> guidelines, but provide additional context:</p>
+<ul class="simple">
+<li><p>vectorfiles (incl. shapefiles etc):  <code class="docutils literal notranslate"><span class="pre">vct_variable</span></code></p></li>
+<li><p>rasterfiles: <code class="docutils literal notranslate"><span class="pre">rst_raster</span></code></p></li>
+<li><p>raw tekstfiles (txt): <code class="docutils literal notranslate"><span class="pre">txt_variable</span></code></p></li>
+<li><p>numpy array: <code class="docutils literal notranslate"><span class="pre">arr_variable</span></code></p></li>
+<li><p>pandas: <code class="docutils literal notranslate"><span class="pre">df_variable</span></code></p></li>
+<li><p>geopandas df: <code class="docutils literal notranslate"><span class="pre">gdf_variable</span></code></p></li>
+<li><p>files: <code class="docutils literal notranslate"><span class="pre">`fname_variable</span></code></p></li>
+</ul>
+</section>
+<section id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Load raster: load rasters as numpy arrays. The <code class="docutils literal notranslate"><span class="pre">profile</span></code> raster metadata
+holds all metedata that geograpical defines the array. See
+<code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.utils.load_raster()</span></code>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.core.utils</span> <span class="kn">import</span> <span class="n">load_raster</span>
+<span class="n">rst</span> <span class="o">=</span> <span class="s2">&quot;landuse.tif&quot;</span> <span class="c1"># can be any raster extension supported by GDAL</span>
+<span class="n">arr</span><span class="p">,</span><span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Write raster: write numpy arrays to rasters. See
+<code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.utils.write_arr_as_rst()</span></code>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.core.utils</span> <span class="kn">import</span> <span class="n">write_arr_as_rst</span>
+<span class="n">rst_out</span> <span class="o">=</span> <span class="s2">&quot;landuse_int64.tif&quot;</span>
+<span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="s2">&quot;int64&quot;</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The dtype of the array and output raster is a required function input
+parameter, and can be used to save disk memory (i.e. use int64 instead of
+float64).</p>
+</section>
+<section id="guideline-for-unified-coding-style">
+<h2>Guideline for unified coding style<a class="headerlink" href="#guideline-for-unified-coding-style" title="Link to this heading">¶</a></h2>
+<p>A number of guidelines are given in order to obtain a degree of unified style
+in the pywatemsedem code. Following guidelines are given:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Pandas: access columns via <code class="docutils literal notranslate"><span class="pre">df[&quot;test&quot;]</span></code> rather than <code class="docutils literal notranslate"><span class="pre">df.test</span></code>.</p></li>
+<li><p>Use Pandas dataframes to transfer non-raster data between modules/functions,
+use numpy arrays to perform numerical operations. In case of numerical
+operations (&gt; 1 operation), write independent functions which use numpy
+arrays as input and output numpy arrays that can be stored in a dataframe.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="describing-dataframes-in-docstrings">
+<h2>Describing DataFrames in docstrings<a class="headerlink" href="#describing-dataframes-in-docstrings" title="Link to this heading">¶</a></h2>
+<p>As Numpy docstring does not provide default rules on describing a parameter or
+returned variable that represents a <code class="docutils literal notranslate"><span class="pre">Pandas.DataFrame</span></code> or a <code class="docutils literal notranslate"><span class="pre">dict</span></code>, we
+include these as follows (equivalent for parameters versus returns section):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Returns</span>
+<span class="o">-------</span>
+<span class="n">df_name</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="n">The</span> <span class="n">DataFrame</span> <span class="o">...</span><span class="n">whatever</span> <span class="n">you</span> <span class="n">need</span> <span class="n">to</span> <span class="n">say</span><span class="o">...</span> <span class="ow">and</span> <span class="n">contains</span> <span class="n">the</span>
+    <span class="n">following</span> <span class="n">columns</span><span class="p">:</span>
+
+    <span class="o">-</span> <span class="o">*</span><span class="n">colunm_name_1</span><span class="o">*</span> <span class="p">(</span><span class="nb">int</span><span class="p">):</span> <span class="n">description</span> <span class="mi">1</span>
+    <span class="o">-</span> <span class="o">*</span><span class="n">colunm_name_2</span><span class="o">*</span> <span class="p">(</span><span class="nb">float</span><span class="p">):</span> <span class="n">description</span> <span class="mi">2</span>
+    <span class="o">-</span> <span class="o">*</span><span class="n">colunm_name_3</span><span class="o">*</span> <span class="p">(</span><span class="n">datetime</span><span class="p">):</span> <span class="n">description</span> <span class="mi">3</span>
+
+<span class="n">other_returned_var</span> <span class="p">:</span> <span class="nb">float</span>
+    <span class="n">Description</span> <span class="n">of</span> <span class="n">a</span> <span class="n">none</span> <span class="n">df</span> <span class="n">variable</span>
+</pre></div>
+</div>
+<p>Similar for a dictionary:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Returns</span>
+<span class="o">-------</span>
+<span class="n">df_name</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">The</span> <span class="nb">dict</span> <span class="o">...</span><span class="n">whatever</span> <span class="n">you</span> <span class="n">need</span> <span class="n">to</span> <span class="n">say</span><span class="o">...</span> <span class="ow">and</span> <span class="n">contains</span><span class="p">:</span>
+
+    <span class="o">-</span> <span class="o">*</span><span class="n">key_1</span><span class="o">*</span> <span class="p">(</span><span class="nb">int</span><span class="p">):</span> <span class="n">description</span> <span class="mi">1</span>
+    <span class="o">-</span> <span class="o">*</span><span class="n">key_2</span><span class="o">*</span> <span class="p">(</span><span class="nb">float</span><span class="p">):</span> <span class="n">description</span> <span class="mi">2</span>
+    <span class="o">-</span> <span class="o">*</span><span class="n">key_3</span><span class="o">*</span> <span class="p">(</span><span class="n">datetime</span><span class="p">):</span> <span class="n">description</span> <span class="mi">3</span>
+
+<span class="n">other_returned_var</span> <span class="p">:</span> <span class="nb">float</span>
+    <span class="n">Description</span> <span class="n">of</span> <span class="n">a</span> <span class="n">none</span> <span class="n">df</span> <span class="n">variable</span>
+</pre></div>
+</div>
+<p>In case it would be a dict where each element would be coming from different
+landuses,… and so the datatypes of the keys/values are the same for each
+item, you can use this in the docstring. E.g. a dict</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Returns</span>
+<span class="o">-------</span>
+<span class="n">df_name</span><span class="p">:</span> <span class="nb">dict</span> <span class="n">of</span> <span class="p">{</span><span class="nb">str</span> <span class="p">:</span> <span class="nb">float</span><span class="p">}</span>
+    <span class="n">The</span> <span class="nb">dict</span> <span class="o">...</span><span class="n">whatever</span> <span class="n">you</span> <span class="n">need</span> <span class="n">to</span> <span class="n">say</span><span class="o">...</span> <span class="k">with</span> <span class="n">the</span> <span class="n">landuse</span> <span class="n">classes</span> <span class="k">as</span> <span class="n">keys</span> <span class="ow">and</span> <span class="n">the</span>
+    <span class="n">area</span> <span class="p">(</span><span class="ow">in</span> <span class="n">ha</span><span class="p">)</span> <span class="k">as</span> <span class="n">values</span><span class="o">.</span>
+
+<span class="n">other_returned_var</span> <span class="p">:</span> <span class="nb">float</span>
+    <span class="n">Description</span> <span class="n">of</span> <span class="n">a</span> <span class="n">none</span> <span class="n">df</span> <span class="n">variable</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>The empty lines are important for sphinx to convert this to a clean
+list.</p></li>
+<li><p>Detail alert: the format <em>variable: type</em> is used as constructor for
+every variable in the documentation (and not <em>variable : type</em>).</p></li>
+</ol>
+</div>
+</section>
+<section id="postprocess-file-structure">
+<h2>Postprocess file structure<a class="headerlink" href="#postprocess-file-structure" title="Link to this heading">¶</a></h2>
+<p>The postprocess filestructure file <cite>src/pywatemsedem/data/postprocess_files.csv</cite>
+holds an overview of all files that are used within postprocessing
+(either WaTEM/SEDEM input data, output data, intermediate processing files,
+etc..). This file can be used to add files to the WaTEM/SEDEM package. Do note that
+this table is only used to define the references to files within the WaTEM/SEDEM
+Python code. These references are saved in Python in a dictionary. Each line
+holds the definition for one file:</p>
+<ul class="simple">
+<li><p>tag_variable &amp; prefix_variable (str): define the dictionary key
+(e.g. <code class="docutils literal notranslate"><span class="pre">rst_aspect</span></code>) as the filename structure defined above.</p></li>
+<li><p>folder, filename, argument and  extension (str): hold the dictionary value
+and defines the filename. Python string formating is used in filename to
+define the specific arguments needed to recognize the file (e.g. filename:
+<cite>buffers_%s_s%s</cite> and argument <cite>bekken, scenario</cite> will fill in the catchment
+name and scenario number in the filename).</p></li>
+<li><p>mandatory (int): indicates whether a file is mandatory to create/load.</p></li>
+<li><p>condition (str) (only postprocess): indicates the condition which is coupled
+to the existence of a file, e.g. if a <code class="docutils literal notranslate"><span class="pre">rst_buffers</span></code> file is loaded, then
+the option <code class="docutils literal notranslate"><span class="pre">Include</span> <span class="pre">buffers</span></code> in the model code is set to one. This option
+is only required for the postprocessing.</p></li>
+<li><p>default_value (int) (only postprocess): the default value given to an empty
+raster (usefull if a file was not mandatory, but if it does have to be
+loaded for merging with other scenario’s).</p></li>
+<li><p>generate_nodata (int) (only postprocess): generate a no data file to define
+model domain (i.e. some inputfiles have 0 as nodata value for the
+modeldomain, but also have 0 in the model domain).</p></li>
+<li><p>postprocess (int) (only postprocess): indicate whether file has to be loaded
+within postprocessing script.</p></li>
+</ul>
+</section>
+</section>
+<section id="package-release">
+<h1>Package release<a class="headerlink" href="#package-release" title="Link to this heading">¶</a></h1>
+<p>Before releasing, please check the pinned versions of the dependencies, and - if necessary-  adapt in the
+<code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>-file. The CI will create sdist/wheels and publish these to gitea when git tags are
+added, making releasing straight forward. In order to publish a new release,
+the following steps:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">master,</span> <span class="pre">git</span> <span class="pre">pull</span> <span class="pre">origin</span> <span class="pre">master</span></code> (work on up to date master
+branch)</p></li>
+<li><p>Update the <code class="docutils literal notranslate"><span class="pre">CHANGELOG.rst</span></code> with the changes for this new release</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-m</span> <span class="pre">'Update</span> <span class="pre">changelog</span> <span class="pre">for</span> <span class="pre">release</span> <span class="pre">X.X.X'</span> <span class="pre">CHANGELOG.rst</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">master</span></code></p></li>
+<li><p>Add git tags: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">X.X.X</span></code></p></li>
+<li><p>Push the git tags: <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span></code></p></li>
+</ul>
+<p>When all test pass, drone CI will publish a pre-release on gitea. To convert
+this to release:</p>
+<ul class="simple">
+<li><p>On the release page of the repository, draft a new release using the latest
+git tag</p></li>
+<li><p>Copy past the changes from the changelog in the dialog and publish release</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Run the flanders WS end-to-end test and validate results before creating
+a new release. To run these tests, see <a class="reference internal" href="#unittest"><span class="std std-ref">here</span></a></p>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting-started/io.html" class="btn btn-neutral float-left" title="IO-module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="authors.html" class="btn btn-neutral float-right" title="Contributors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

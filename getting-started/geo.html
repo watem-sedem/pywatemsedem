@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geo-module &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="User Choices" href="userchoices.html" />
+    <link rel="prev" title="Calibration" href="calibrate.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Processing rasters and vector</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rasters">Rasters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vectors">Vectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Geo-module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="http://watem-sedem.github.io/pywatemsedem/src/branch/master/pywatemsedem/docs/getting-started/geo.rst">View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="geo-module">
+<h1>Geo-module<a class="headerlink" href="#geo-module" title="Link to this heading">¶</a></h1>
+<section id="introduction">
+<span id="rasterproperties"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p>The pywatemsedem package makes use of a number of GDAL and SAGA command line
+operators to process raster data (for reasons of processing speed). In order
+to cope with this file-based system, but still make use of numpy arrays for
+processing in Python, a <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a> and
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory" title="pywatemsedem.geo.rasters.RasterMemory"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterMemory</span></code></a> class is
+implemented. The aim of these engines is to couple raster file/numpy arrays to
+specific raster properties. Second, this engine aims to perform simple
+clipping and masking for input data. Third, this engine makes use of a class
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>, which aims to enable
+easy switch between raster geographic references of gdal and rasterio,
+respectively named <em>gdal_profile</em> and <em>rasterio_profile</em>.</p>
+<p>The aim of this tutorial is to examplify the use of the
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>
+and the <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a> class. Note that the example
+files in this tutorial can be found in <code class="docutils literal notranslate"><span class="pre">pywatemsedem/pywatemsedem/test/geo/data</span></code>.</p>
+<p>For this example, we assume we have a raster available which defines the
+geographical boundaries, the resolution (20 m) and coordinate system (in this
+case Lambert72, i.e. EPSG:31370) of your model:</p>
+<a class="reference internal image-reference" href="../_images/example_dtm.png"><img alt="../_images/example_dtm.png" class="align-center" src="../_images/example_dtm.png" style="width: 1000px;" /></a>
+<p>Defining the raster properties for this raster can be done by:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># imports</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">load_raster</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasterproperties</span> <span class="kn">import</span> <span class="n">RasterProperties</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># input file</span>
+<span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;example_input_raster.tif&quot;</span>
+
+<span class="c1"># load raster and rasterio profile</span>
+<span class="n">arr</span><span class="p">,</span> <span class="n">rasterio_profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+<span class="c1"># define rasterproperties with rasterio profile</span>
+<span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">rasterio_profile</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bounds: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsg: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nodata: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The instance <code class="docutils literal notranslate"><span class="pre">rp</span></code> of the class
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a> can now be used te
+define the extent of other rasters with the help of the class
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>.
+Yet, before we do so, we first want to narrow our spatial domain by clipping
+a part of the input raster. We do this by defining left x boundary, lower y
+boundary, right x boundary and upper y boundary by the values
+162300, 165760, 167560 and 169520 respectively (keeping in mind the coordinate
+system Lambert72 and a resolution of 20 m):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">162300</span><span class="p">,</span> <span class="mi">165760</span><span class="p">,</span> <span class="mi">167560</span><span class="p">,</span> <span class="mi">169520</span><span class="p">]</span>
+<span class="n">resolution</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">nodata</span><span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+<span class="n">epsg</span> <span class="o">=</span> <span class="mi">31370</span>
+<span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bounds: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsg: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nodata: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="rasters">
+<h2>Rasters<a class="headerlink" href="#rasters" title="Link to this heading">¶</a></h2>
+<p>We have now predefined our geospatial context, and we want to clip our input
+according to this definition using
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>-engine:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># imports</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">RasterFile</span>
+
+<span class="c1"># clip</span>
+<span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">rp</span><span class="o">=</span><span class="n">rp</span><span class="p">)</span>
+
+<span class="c1"># rp (and properties) is an attribute of the raster</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Which results to:</p>
+<a class="reference internal image-reference" href="../_images/example_dtm_clipped.png"><img alt="../_images/example_dtm_clipped.png" class="align-center" src="../_images/example_dtm_clipped.png" style="width: 1000px;" /></a>
+<p>Do note that if no <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">rp</span></code> is defined, no clipping will occur:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And in addition, note that using incorrect bounds as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rp_</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="p">([</span><span class="mi">230</span><span class="p">,</span> <span class="mi">760</span><span class="p">,</span> <span class="mi">560</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="mi">20</span><span class="p">,</span> <span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">31370</span><span class="p">)</span>
+<span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">rp</span><span class="o">=</span><span class="n">rp_</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will lead to an error:</p>
+<div class="admonition error">
+<p class="admonition-title">Error</p>
+<p>Clipped output raster is empty. Make sure your input raster covers your
+defined spatial extent (bounds: [230, 760, 560, 1000], resolution: 20,
+espg: EPSG:31370).</p>
+</div>
+<p>Masking with a (1, 0)-array is also available. The ones indicate no masking,
+the zeros indicate masking.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">vct_to_rst_field</span>
+<span class="n">rst_mask</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;mask.tif&quot;</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">rst_mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Masking can easily be done as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">raster</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We want to write our result to disk (note that the raster format should be defined):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;output.tif&quot;</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff)</span>
+</pre></div>
+</div>
+<p>You can write it to an idrisi raster:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;output.rst&quot;</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;idrisis&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also raise an error when format and extension do not overlap:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;output.rst&quot;</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition error">
+<p class="admonition-title">Error</p>
+<p>Can not write file (‘output.rst’)  in format ‘tiff’ with ‘.rst’ extension.</p>
+</div>
+<p>Or make a nice plot the result while ignoring nodata values:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Our result should look like:</p>
+<a class="reference internal image-reference" href="../_images/example_dtm_masker.png"><img alt="../_images/example_dtm_masker.png" class="align-center" src="../_images/example_dtm_masker.png" style="width: 1000px;" /></a>
+<p>Besides static plots, also interactive plots can be made as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">hv_plot</span><span class="p">(</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">nodata</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/example_dtm_hvplot.png" src="../_images/example_dtm_hvplot.png" />
+<p>Remark that coordinate system has changed to WGS 84 (EPSG:4326). The
+interactive features (such as zooming, hovering…) are only accessible in
+a Jupyter Notebook environment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In order to use the hv_plot functionality, one has to install hvplot
+and geoviews. See <span class="xref std std-ref">installation page</span>.</p>
+</div>
+<p>The <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory" title="pywatemsedem.geo.rasters.RasterMemory"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterMemory</span></code></a> class can be used in a
+similar way:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">RasterMemory</span>
+<span class="n">arr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">raster</span> <span class="o">=</span> <span class="n">RasterMemory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">profile</span><span class="p">))</span>
+<span class="n">raster</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Do note that clipping in <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory" title="pywatemsedem.geo.rasters.RasterMemory"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterMemory</span></code></a> is not
+implemented in the current version.</p>
+</section>
+<section id="vectors">
+<h2>Vectors<a class="headerlink" href="#vectors" title="Link to this heading">¶</a></h2>
+<p>Similar to <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>, one can  make use
+<a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile" title="pywatemsedem.geo.vectors.VectorFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorFile</span></code></a> to define vector data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.vectors</span> <span class="kn">import</span> <span class="n">VectorFile</span>
+
+<span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;Wlas_langegracht.shp&quot;</span>
+
+<span class="n">vector</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">vector</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>and clip:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;Wlas_langegracht.shp&quot;</span>
+<span class="n">file_path_clip</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;catchm_langegracht.shp&quot;</span>
+
+<span class="n">vector</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="n">vct_clip</span><span class="o">=</span><span class="n">file_path_clip</span><span class="p">)</span>
+<span class="n">vector</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>with the option to rasterize to a <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>-class
+(using the mask as reference raster):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
+<span class="n">reference_raster</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;mask.tif&quot;</span>
+<span class="n">raster</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span><span class="n">reference_raster</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A numpy array is returned.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="calibrate.html" class="btn btn-neutral float-left" title="Calibration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="userchoices.html" class="btn btn-neutral float-right" title="User Choices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

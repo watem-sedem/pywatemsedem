@@ -1,0 +1,61 @@
+pywatemsedem.geo package
+========================
+
+Submodules
+----------
+
+pywatemsedem.geo.factory module
+-------------------------------
+
+.. automodule:: pywatemsedem.geo.factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.geo.rasterproperties module
+----------------------------------------
+
+.. automodule:: pywatemsedem.geo.rasterproperties
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.geo.rasters module
+-------------------------------
+
+.. automodule:: pywatemsedem.geo.rasters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.geo.utils module
+-----------------------------
+
+.. automodule:: pywatemsedem.geo.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.geo.valid module
+-----------------------------
+
+.. automodule:: pywatemsedem.geo.valid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.geo.vectors module
+-------------------------------
+
+.. automodule:: pywatemsedem.geo.vectors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pywatemsedem.geo
+   :members:
+   :undoc-members:
+   :show-inheritance:

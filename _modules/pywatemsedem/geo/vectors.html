@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.geo.vectors &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.geo.vectors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.geo.vectors</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..defaults</span> <span class="kn">import</span> <span class="n">PREFIX_TEMP</span>
+<span class="kn">from</span> <span class="nn">.rasterproperties</span> <span class="kn">import</span> <span class="n">RasterProperties</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">clean_up_tempfiles</span><span class="p">,</span>
+    <span class="n">clip_vct</span><span class="p">,</span>
+    <span class="n">create_spatial_index</span><span class="p">,</span>
+    <span class="n">get_geometry_type</span><span class="p">,</span>
+    <span class="n">lines_to_direction</span><span class="p">,</span>
+    <span class="n">lines_to_raster</span><span class="p">,</span>
+    <span class="n">load_raster</span><span class="p">,</span>
+    <span class="n">polygons_to_raster</span><span class="p">,</span>
+    <span class="n">read_rasterio_profile</span><span class="p">,</span>
+    <span class="n">vct_to_rst_field</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="AbstractVector">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector">[docs]</a>
+<span class="k">class</span> <span class="nc">AbstractVector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract Vector class based on geopandas GeoDataFrame&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">geodata</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">req_geometry_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Abstract vector class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        geodata: geopandas.GeoDataFrame</span>
+<span class="sd">            Input data set.</span>
+<span class="sd">        geometry_type: str</span>
+<span class="sd">            Geometry type of input dataset</span>
+<span class="sd">        req_geometry_type: str, default None</span>
+<span class="sd">            Geometry type, for implemented types, see</span>
+<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`</span>
+<span class="sd">        allow_empty: bool, default False</span>
+<span class="sd">            Allow an empty geodataframe</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="n">geodata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry_type</span> <span class="o">=</span> <span class="n">geometry_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">geometry_type</span><span class="p">,</span> <span class="n">req_geometry_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_empty</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_if_empty</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Input vector is empty. If you wish to &quot;</span>
+                    <span class="s2">&quot;return an empty vector, please use &#39;allow_empty&#39;.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AbstractVector.check_type">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">geometry_type</span><span class="p">,</span>
+        <span class="n">req_geometry</span><span class="p">,</span>
+        <span class="n">implemented_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;LineString&quot;</span><span class="p">,</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;Point&quot;</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check geometry types of vector to the required type</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        geometry_type: str</span>
+<span class="sd">            Geometry type of input dataset.</span>
+<span class="sd">        req_geometry: str</span>
+<span class="sd">            The required geometry types</span>
+<span class="sd">        implemented_types: list, default &quot;LineString&quot;, &quot;Polygon&quot;, &quot;Point&quot;</span>
+<span class="sd">            List of implemented geometry types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">req_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">req_geometry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">implemented_types</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Required geometry item type &#39;</span><span class="si">{</span><span class="n">req_geometry</span><span class="si">}</span><span class="s2">&#39; not known to &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;pywatemsedem. Please select &#39;</span><span class="si">{</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">implemented_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">req_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">geometry_type</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Input vector should have geometry item type &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">req_geometry</span><span class="si">}</span><span class="s2">&#39;, not &#39;</span><span class="si">{</span><span class="n">geometry_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AbstractVector.check_if_empty">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_if_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_if_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if input is empty&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Input vector cannot be empty!&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AbstractVector.plot">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot shape vector with geopandas plot</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        color</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax: matplotlib.pyplot.axis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="s2">&quot;cmap&quot;</span><span class="p">:</span> <span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="s2">&quot;legend&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geodata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property to override&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span>
+
+    <span class="nd">@geodata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">geodata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="nb">input</span>
+
+<div class="viewcode-block" id="AbstractVector.clip">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.clip">[docs]</a>
+    <span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;NotImplemented clip function&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="AbstractVector.write">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write raster data to disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outfile_path: pathlib.Path or str, default None</span>
+<span class="sd">            File path output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">outfile_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">outfile_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">outfile_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.shp&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">)</span>
+            <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">outfile_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;ESRI Shapefile&quot;</span><span class="p">)</span>  <span class="c1"># esri</span>
+            <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Extension of  </span><span class="si">{</span><span class="n">outfile_path</span><span class="si">}</span><span class="s2"> not support in pywatemsedem&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="AbstractVector.rasterize">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.rasterize">[docs]</a>
+    <span class="k">def</span> <span class="nf">rasterize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rst_reference</span><span class="p">,</span>
+        <span class="n">epsg</span><span class="p">,</span>
+        <span class="n">col</span><span class="o">=</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span>
+        <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dtype_raster</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+        <span class="n">convert_lines_to_direction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rasterize function for shape file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rst_reference: str or  pathlib.Path</span>
+<span class="sd">            File path to reference file for raster output.</span>
+<span class="sd">        epsg: int</span>
+<span class="sd">            EPSG code should be a numeric value, see https://epsg.io/.</span>
+<span class="sd">        col: str, default &quot;NR&quot;</span>
+<span class="sd">            Column name to map</span>
+<span class="sd">        nodata: float, default None</span>
+<span class="sd">            Values within dataframe &#39;col&#39; that have to be considered as nodata in</span>
+<span class="sd">            raster.</span>
+<span class="sd">        dtype_raster: str, default &quot;float&quot;</span>
+<span class="sd">            Output raster type</span>
+<span class="sd">            convert_lines_to_direction:</span>
+<span class="sd">        convert_lines_to_direction: bool, default &quot;False&quot;</span>
+<span class="sd">            Convert lines to directions</span>
+<span class="sd">        gdal: bool, default False</span>
+<span class="sd">            Use gdal(true) / saga (false)-enige for mapping.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        arr: numpy.ndarray</span>
+<span class="sd">            Return numpy array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># convert lines to directions only be done with saga</span>
+        <span class="k">if</span> <span class="n">gdal</span> <span class="o">&amp;</span> <span class="n">convert_lines_to_direction</span><span class="p">:</span>
+            <span class="n">gdal</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">col</span> <span class="o">==</span> <span class="s2">&quot;NR&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s2">&quot;NR&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">&quot;NR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nodata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99999.0</span>
+        <span class="n">vct_temp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.shp&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">vct_temp</span><span class="p">)</span>
+
+        <span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span>
+            <span class="n">read_rasterio_profile</span><span class="p">(</span><span class="n">rst_reference</span><span class="p">),</span> <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">gdal</span><span class="p">:</span>
+            <span class="n">tf_rst</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span>
+            <span class="p">)</span>
+            <span class="n">vct_to_rst_field</span><span class="p">(</span><span class="n">vct_temp</span><span class="p">,</span> <span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">rp</span><span class="o">.</span><span class="n">gdal_profile</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+            <span class="n">arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tf_rst</span><span class="p">,</span> <span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tf_rst</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.sgrid&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry_type</span> <span class="o">==</span> <span class="s2">&quot;LineString&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">convert_lines_to_direction</span><span class="p">:</span>
+                    <span class="n">lines_to_direction</span><span class="p">(</span><span class="n">vct_temp</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">rst_reference</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lines_to_raster</span><span class="p">(</span>
+                        <span class="n">vct_temp</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">rst_reference</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype_raster</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry_type</span> <span class="o">==</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">convert_lines_to_direction</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot convert polygons to directions&quot;</span>
+                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">polygons_to_raster</span><span class="p">(</span>
+                    <span class="n">vct_temp</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">rst_reference</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype_raster</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry_type</span> <span class="o">==</span> <span class="s2">&quot;Point&quot;</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Rasterisation of points is not implemented.&quot;</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="n">arr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.sdat&quot;</span><span class="p">))</span>
+            <span class="c1"># correct no data value if necessary</span>
+            <span class="k">if</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">:</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">==</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">nodata</span>
+            <span class="n">tf_rst</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tf_rst</span><span class="p">,</span> <span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
+            <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tf_rst</span><span class="p">,</span> <span class="s2">&quot;saga&quot;</span><span class="p">)</span>
+
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">vct_temp</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">arr</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="VectorMemory">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorMemory">[docs]</a>
+<span class="k">class</span> <span class="nc">VectorMemory</span><span class="p">(</span><span class="n">AbstractVector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Geopandas vector</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geodata: geopandas.GeoDataFrame</span>
+<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">    geometry_type: str</span>
+<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">    req_geometry_type: str, default None</span>
+<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">    allow_empty: bool, default False</span>
+<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">geodata</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">req_geometry_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterMemory&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">geodata</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">req_geometry_type</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="VectorMemory.clip">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorMemory.clip">[docs]</a>
+    <span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;NotImplemented clip function&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="VectorFile">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile">[docs]</a>
+<span class="k">class</span> <span class="nc">VectorFile</span><span class="p">(</span><span class="n">AbstractVector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;clipped Vector based on input vector file&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">req_geometry_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vct_clip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterFile class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: pathlib.Path</span>
+<span class="sd">            File path to user input raster.</span>
+<span class="sd">        vct_clip: pathlib.Path</span>
+<span class="sd">            Mask vector</span>
+<span class="sd">        req_geometry_type: str</span>
+<span class="sd">            Required type of geometry, see implemented geometries in</span>
+<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`</span>
+<span class="sd">        allow_empty: bool, default False</span>
+<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">geometry_type</span> <span class="o">=</span> <span class="n">get_geometry_type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vct_clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">geodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vct_clip</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">geodata</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">geodata</span><span class="p">,</span>
+            <span class="n">geometry_type</span><span class="p">,</span>
+            <span class="n">req_geometry_type</span><span class="o">=</span><span class="n">req_geometry_type</span><span class="p">,</span>
+            <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="VectorFile.clip">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile.clip">[docs]</a>
+    <span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">vct_clip</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip input file path with vct_clip</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: pathlib.Path</span>
+<span class="sd">            File path to user input raster.</span>
+<span class="sd">        vct_clip: pathlib.Path</span>
+<span class="sd">            Mask vector</span>
+<span class="sd">        geometry_type: str</span>
+<span class="sd">            Required type of geometry, see implemented geometries in</span>
+<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vct_temp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.shp&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+        <span class="n">clip_vct</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vct_temp</span><span class="p">,</span> <span class="n">vct_clip</span><span class="p">)</span>
+        <span class="n">geodata</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_temp</span><span class="p">)</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">vct_temp</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">geodata</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

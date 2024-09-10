@@ -1,0 +1,61 @@
+pywatemsedem.io package
+=======================
+
+Submodules
+----------
+
+pywatemsedem.io.folders module
+------------------------------
+
+.. automodule:: pywatemsedem.io.folders
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.io.ini module
+--------------------------
+
+.. automodule:: pywatemsedem.io.ini
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.io.modelinput module
+---------------------------------
+
+.. automodule:: pywatemsedem.io.modelinput
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.io.modeloutput module
+----------------------------------
+
+.. automodule:: pywatemsedem.io.modeloutput
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.io.plots module
+----------------------------
+
+.. automodule:: pywatemsedem.io.plots
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.io.valid module
+----------------------------
+
+.. automodule:: pywatemsedem.io.valid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pywatemsedem.io
+   :members:
+   :undoc-members:
+   :show-inheritance:

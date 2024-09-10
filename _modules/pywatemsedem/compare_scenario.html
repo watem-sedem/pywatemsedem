@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.compare_scenario &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.compare_scenario</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.compare_scenario</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">grid_difference</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.io.modeloutput</span> <span class="kn">import</span> <span class="n">load_total_sediment_file</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.tools</span> <span class="kn">import</span> <span class="n">zip_folder</span>
+
+<span class="kn">from</span> <span class="nn">.postprocess</span> <span class="kn">import</span> <span class="n">PostProcess</span>
+
+
+<div class="viewcode-block" id="DeltaScenario">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario">[docs]</a>
+<span class="k">class</span> <span class="nc">DeltaScenario</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a DeltaScenario instance with two instances of PostProcess</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pp1: pywatemsedem.postproces.PostProcess</span>
+<span class="sd">        First PostProcess instance of scenario used for the comparison.</span>
+<span class="sd">    pp2: pywatemsedem.postproces.PostProcess</span>
+<span class="sd">        Second PostProcess instance of scenario used for the comparison.</span>
+<span class="sd">    resmap:</span>
+<span class="sd">        Folder path used to write results to</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Define inputs</span>
+<span class="sd">        &gt;&gt;&gt; pp1 = PostProcess(molenbeek, 1, 2019, 20, 31370)</span>
+<span class="sd">        &gt;&gt;&gt; pp2 = PostProcess(molenbeek, 2, 2019, 20, 31370)</span>
+
+<span class="sd">    Run</span>
+<span class="sd">        &gt;&gt;&gt; delta_scenario = DeltaScenario(pp1,pp2)</span>
+<span class="sd">        &gt;&gt;&gt; delta_scenario.comparison_total_sediment_file()</span>
+<span class="sd">        &gt;&gt;&gt; ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pp1</span><span class="p">,</span> <span class="n">pp2</span><span class="p">,</span> <span class="n">resmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pp1: pywatemsedem.core.postprocess.PostProcess</span>
+<span class="sd">            See class:`pywatemsedem.postprocess.PostProcess`</span>
+<span class="sd">        pp2: pywatemsedem.core.postprocess.PostProcess</span>
+<span class="sd">            See class:`pywatemsedem.postprocess.PostProcess`</span>
+<span class="sd">        resmap: str or pathlib.Path, default None</span>
+<span class="sd">            Folder path of results map</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_input</span><span class="p">(</span><span class="n">pp1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span> <span class="o">=</span> <span class="n">pp1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_input</span><span class="p">(</span><span class="n">pp2</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span> <span class="o">=</span> <span class="n">pp2</span>
+        <span class="k">if</span> <span class="n">resmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+                <span class="o">/</span> <span class="n">pp1</span><span class="o">.</span><span class="n">catchment_name</span>
+                <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;compare_scenario</span><span class="si">{</span><span class="n">pp1</span><span class="o">.</span><span class="n">scenario</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">pp2</span><span class="o">.</span><span class="n">scenario</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">resmap</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_rasterprop</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DeltaScenario.check_input">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.check_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the type of input given to DeltaScenario class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pp : pywatemsedem.postproces.PostProcess</span>
+<span class="sd">            A PostProcess instance of scenario used for the comparison.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">PostProcess</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pp</span><span class="si">}</span><span class="s2"> is not an instance of the class PostProcess, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;see ~:class:pywatemsedem.postprocess.PostProcess&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="DeltaScenario.check_rasterprop">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.check_rasterprop">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_rasterprop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the raster properties are equal for both scenario&#39;s&quot;&quot;&quot;</span>
+        <span class="n">rstparams1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">rstparams</span>
+        <span class="n">rstparams2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">rstparams</span>
+        <span class="k">if</span> <span class="n">rstparams1</span> <span class="o">==</span> <span class="n">rstparams2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="DeltaScenario.zip_files">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.zip_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">zip_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zip output folder of deltascenario&quot;&quot;&quot;</span>
+
+        <span class="n">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resmap</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DeltaScenario.comparison_total_sediment_file">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.comparison_total_sediment_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">comparison_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare the values in the total sediments file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        df: pandas.DataFrame</span>
+<span class="sd">            Holding results of summary values for run for scenario 1 and 2,</span>
+<span class="sd">            and the difference between those values.</span>
+
+<span class="sd">            - *sc1*: values for general statistics scenario 1</span>
+<span class="sd">            - *sc2*: values for general statistics scenario 2</span>
+<span class="sd">            - *difference*: difference between statistics scenario 1 and 2</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df_1</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;txt_total_sediment&quot;</span><span class="p">])</span>
+        <span class="n">df_2</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;txt_total_sediment&quot;</span><span class="p">])</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">df_1</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sc1&quot;</span><span class="p">,</span> <span class="s2">&quot;sc2&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_1</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_2</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;difference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc1&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc2&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="DeltaScenario.difference_grids">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.difference_grids">[docs]</a>
+    <span class="k">def</span> <span class="nf">difference_grids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make difference grids for a number of files&quot;&quot;&quot;</span>
+        <span class="n">difference_grids</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;rst_sediout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rst_sediin&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rst_sediexport&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rst_watereros&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">difference_grids</span><span class="p">:</span>
+            <span class="n">rst_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">grid</span><span class="p">]</span>
+            <span class="n">rst_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">grid</span><span class="p">]</span>
+            <span class="n">rst_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span> <span class="o">+</span> <span class="s2">&quot;_difference.rst&quot;</span><span class="p">)</span>
+            <span class="n">grid_difference</span><span class="p">(</span><span class="n">rst_1</span><span class="p">,</span> <span class="n">rst_2</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

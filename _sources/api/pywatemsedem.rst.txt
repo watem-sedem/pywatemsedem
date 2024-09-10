@@ -1,0 +1,174 @@
+pywatemsedem package
+====================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pywatemsedem.geo
+   pywatemsedem.io
+
+Submodules
+----------
+
+pywatemsedem.buffers module
+---------------------------
+
+.. automodule:: pywatemsedem.buffers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.calibrate module
+-----------------------------
+
+.. automodule:: pywatemsedem.calibrate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.catchment module
+-----------------------------
+
+.. automodule:: pywatemsedem.catchment
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.cfactor module
+---------------------------
+
+.. automodule:: pywatemsedem.cfactor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.cn module
+----------------------
+
+.. automodule:: pywatemsedem.cn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.compare\_scenario module
+-------------------------------------
+
+.. automodule:: pywatemsedem.compare_scenario
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.defaults module
+----------------------------
+
+.. automodule:: pywatemsedem.defaults
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.errors module
+--------------------------
+
+.. automodule:: pywatemsedem.errors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.grasstrips module
+------------------------------
+
+.. automodule:: pywatemsedem.grasstrips
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.ktc module
+-----------------------
+
+.. automodule:: pywatemsedem.ktc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.parcelslanduse module
+----------------------------------
+
+.. automodule:: pywatemsedem.parcelslanduse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.plots module
+-------------------------
+
+.. automodule:: pywatemsedem.plots
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.postprocess module
+-------------------------------
+
+.. automodule:: pywatemsedem.postprocess
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.scenario module
+----------------------------
+
+.. automodule:: pywatemsedem.scenario
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.templates module
+-----------------------------
+
+.. automodule:: pywatemsedem.templates
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.testing module
+---------------------------
+
+.. automodule:: pywatemsedem.testing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.tools module
+-------------------------
+
+.. automodule:: pywatemsedem.tools
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.userchoices module
+-------------------------------
+
+.. automodule:: pywatemsedem.userchoices
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pywatemsedem.valid module
+-------------------------
+
+.. automodule:: pywatemsedem.valid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pywatemsedem
+   :members:
+   :undoc-members:
+   :show-inheritance:

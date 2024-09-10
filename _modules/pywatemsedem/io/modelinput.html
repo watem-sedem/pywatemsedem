@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.io.modelinput &mdash; pywatemsedem 0.0.1a2.post1.dev2+g19434b0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=2be448b1"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+              <div class="version">
+                0.0.1a2.post1.dev2+g19434b0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.io.modelinput</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.io.modelinput</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># hvplot functionalities</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
+
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_raster_properties_raster_with_template</span><span class="p">,</span>
+    <span class="n">mask_array_with_val</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.io.plots</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">axes_creator</span><span class="p">,</span>
+    <span class="n">plot_continuous_raster</span><span class="p">,</span>
+    <span class="n">plot_discrete_raster</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.io.valid</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">valid_array_type</span><span class="p">,</span>
+    <span class="n">valid_boundaries</span><span class="p">,</span>
+    <span class="n">valid_nodata</span><span class="p">,</span>
+    <span class="n">valid_non_nan</span><span class="p">,</span>
+    <span class="n">valid_values</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">IMPLEMENTED_RASTER_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
+<span class="n">COLORMAP</span> <span class="o">=</span> <span class="s2">&quot;cividis&quot;</span>
+
+
+<div class="viewcode-block" id="valid_segments">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modelinput.valid_segments">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_segments</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a river segments raster.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Please first define WaTEM/SEDEM river segments, see &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Modelinput</span><span class="o">.</span><span class="n">riversegments</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="Modelinput">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Modelinput</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;AbstractRaster class with model inputs as attributes. Modelinput class</span>
+<span class="sd">        serves the goal of automating the reading in, checking and visualisation</span>
+<span class="sd">        of the input data of the WaTEM/SEDEM model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        template: pathlib.Path | str</span>
+<span class="sd">            Template raster needed to extract raster properties.</span>
+<span class="sd">            Raster contains values in [0,1]. Values in ]0,1] define the catchment.</span>
+<span class="sd">        resolution: int</span>
+<span class="sd">            See :class:`pywatemsedem.geo.RasterProperties`</span>
+<span class="sd">        epsg: int</span>
+<span class="sd">            See :class:`pywatemsedem.geo.RasterProperties`.</span>
+<span class="sd">        nodata: int</span>
+<span class="sd">            See :class:`pywatemsedem.geo.RasterProperties`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># apply factory and set mask</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">template</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">template</span>
+
+        <span class="c1"># DATA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outlet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pfactor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compositelanduse</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ptef</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_riverrouting</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sewers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_upstreamsegments</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adjacentsegments</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter cfactor attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:cmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span>
+
+    <span class="nd">@cfactor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raw raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span>
+            <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span>
+            <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for _cfactor with cividis as colormap</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;C-factor [-]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter buffers attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:buffermap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span>
+
+    <span class="nd">@buffers</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;No buffer&quot;</span><span class="p">,</span> <span class="s2">&quot;Buffer&quot;</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for buffers</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># binary plotting: if larger than 0, it is a buffer id!</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># binary plotting!</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_discrete_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Buffers&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter dtm attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:dtmmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span>
+
+    <span class="nd">@dtm</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="c1"># crucial that code does NOT run when nodata values detected!</span>
+        <span class="n">valid_nodata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">nodata_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">valid_nodata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">nodata_value</span><span class="o">=-</span><span class="mi">99999</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mi">431</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">9000</span><span class="p">)</span>
+        <span class="c1"># +- lowest and highest points on earth</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for DTM with cividis as colormap</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;DTM [m MSL]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter kfactor attribute.</span>
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:kmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span>
+
+    <span class="nd">@kfactor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">raster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="c1"># NO need for checking no data, deal with this in plotting!</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span>
+            <span class="n">raster</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">raster</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>  <span class="c1"># No data value excluded from check</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span> <span class="o">=</span> <span class="n">raster</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for K-factor with cividis as colormap</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;K-factor [kg.h]/[MJ.mm]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter kTC parameter attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:ktcmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span>
+
+    <span class="nd">@ktc</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">9999</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">20</span>
+        <span class="p">)</span>  <span class="c1"># 0 to 20 if not nodata</span>
+        <span class="n">valid_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span><span class="o">.</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">9999</span><span class="p">])</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;9999&quot;</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for kTC parameter with cividis as colormap</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">arr_nodata</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="mi">9999</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr_nodata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">arr_only_nodata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">9999</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_discrete_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr_only_nodata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;Set1&quot;</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;kTC [m]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">outlet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter outlet attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:outletmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlet</span>
+
+    <span class="nd">@outlet</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">outlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outlet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_nodata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="n">valid_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">unique_values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter P-factor attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:pmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pfactor</span>
+
+    <span class="nd">@pfactor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pfactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_nodata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>  <span class="c1"># since only binary values of use!</span>
+        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for P-factor</span>
+
+<span class="sd">             Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;P-factor [-]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pfactor</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">compositelanduse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter landuseparcels attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:prcmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compositelanduse</span>
+
+    <span class="nd">@compositelanduse</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">compositelanduse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compositelanduse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># checks</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mi">32757</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">32757</span><span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="c1"># custom plotting features</span>
+        <span class="n">colormap</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;#64cf1b&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#3b7db4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#71b651&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#387b00&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#000000&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#00bfff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#a47158&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;Grass strips (-6)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Pools (-5)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Meadow (-4)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Forest (-3)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Infrastructure (-2)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;River (-1)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Outside boundaries (0)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Agriculture (&gt;0)&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for Landuseparecles</span>
+
+<span class="sd">             Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_discrete_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">colormap</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Land use parcels&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compositelanduse</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ptef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter ptef attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:parceltrapppingcrop&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ptef</span>
+
+    <span class="nd">@ptef</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ptef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ptef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># checks on raster data</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="c1"># int16, maar waarom niet float32?</span>
+        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for PTEF</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PTEF [%]&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ptef</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">riversegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter riversegments attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:riversegmentfile&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span>
+
+    <span class="nd">@riversegments</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">riversegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># checks</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for riversegments</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">riversegments</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">arr_only_rivers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr_only_rivers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">arr_only_norivers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span>
+                <span class="n">ax</span><span class="p">,</span>
+                <span class="n">arr_only_norivers</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;summer&quot;</span><span class="p">,</span>
+                <span class="n">colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Riversegments&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">riverrouting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter riverrouting attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:routingmap&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_riverrouting</span>
+
+    <span class="nd">@riverrouting</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">riverrouting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_riverrouting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># checks</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="n">valid_values</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">],</span>
+            <span class="n">unique_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">colormap_start</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab10&quot;</span><span class="p">)</span>
+        <span class="n">colorlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">rgb2hex</span><span class="p">(</span><span class="n">colormap_start</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">colorlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">colormap_routing</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">colorlist</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;0 (no routing)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;1 (North)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;2 (NorthEast)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;3 (East)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;4 (SouthEast)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;5 (South)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;6 (SouthWest)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;7 (West)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;8 (NorthWest)&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for riverrouting</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">9999</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># no routing</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_discrete_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">colormap_routing</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Riverrouting&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_riverrouting</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter sewers attribute.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:sewermapfile&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sewers</span>
+
+    <span class="nd">@sewers</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sewers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># checks</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewers</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">)</span>
+        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for sewers</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Fraction of sediment in sewers&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sewers</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">upstreamsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter upstreamsegments dataframe.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:upstrsegments&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upstreamsegments</span>
+
+    <span class="nd">@upstreamsegments</span><span class="o">.</span><span class="n">setter</span>
+    <span class="nd">@valid_segments</span>
+    <span class="k">def</span> <span class="nf">upstreamsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_upstreamsegments</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="c1"># checks</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upstreamsegments</span><span class="p">[[</span><span class="s2">&quot;line_id&quot;</span><span class="p">,</span> <span class="s2">&quot;upstream_line&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">valid_values</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">unique_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">riversegments</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">adjacentsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter adjacentsegments dataframe.</span>
+
+<span class="sd">        For documentation, see :ref:`here &lt;watemsedem:adjsegments&gt;`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjacentsegments</span>
+
+    <span class="nd">@adjacentsegments</span><span class="o">.</span><span class="n">setter</span>
+    <span class="nd">@valid_segments</span>
+    <span class="k">def</span> <span class="nf">adjacentsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text: pathlib.Path | str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adjacentsegments</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="c1"># checks</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjacentsegments</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">valid_non_nan</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">valid_values</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">unique_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">riversegments</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
