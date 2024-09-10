@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IO-module &mdash; pywatemsedem 0.0.1a7 documentation</title>
+  <title>IO-module &mdash; pywatemsedem 0.0.1a7.post1.dev2+g7739a78 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/documentation_options.js?v=aae18673"></script>
+        <script src="../_static/documentation_options.js?v=dd886e4b"></script>
         <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
             pywatemsedem
           </a>
               <div class="version">
-                0.0.1a7
+                0.0.1a7.post1.dev2+g7739a78
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -116,8 +116,16 @@ WaTEM/SEDEM files.</p>
 <h2>Ini-file<a class="headerlink" href="#ini-file" title="Link to this heading">¶</a></h2>
 <p>The ini-file (see <span class="xref std std-ref">here</span>) can be modified with a Python
 function available in the in ini-submodule:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.io</span> <span class="kn">import</span> <span class="n">ini</span>
+<span class="n">ini</span><span class="o">.</span><span class="n">modify_field</span><span class="p">(</span><span class="s2">&quot;inifile.ini&quot;</span><span class="p">,</span> <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;max kernel&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>It adjusts the value of ‘max kernel’ in the section ‘User Choices’ to 20.</p>
 <p>In addition, one can add a value to a section:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.io</span> <span class="kn">import</span> <span class="n">ini</span>
+<span class="n">ini</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="s2">&quot;inifile.ini&quot;</span><span class="p">,</span> <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;max kernelz&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The code only does error handling for non-existing key and sections, it does
 not check the content.</p>
 </section>
