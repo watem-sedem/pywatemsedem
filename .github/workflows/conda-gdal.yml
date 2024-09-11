@@ -20,6 +20,7 @@ jobs:
 
     steps:
     - uses: mamba-org/setup-micromamba@v1
+      environment-name: gdal
       with:
         create-args: >-
           python=${{ matrix.python-version }}
