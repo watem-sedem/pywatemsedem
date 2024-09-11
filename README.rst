@@ -1,4 +1,4 @@
-.. figure:: _static/png/logo_pyws.png
+.. figure:: https://watem-sedem.github.io/pywatemsedem/_static/png/logo_pyws.png
 
 pywatemsedem
 ============
