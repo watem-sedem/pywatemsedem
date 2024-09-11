@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Development guidelines &mdash; pywatemsedem 0.0.1a8.post1.dev2+g21e0c23 documentation</title>
+  <title>Development guidelines &mdash; pywatemsedem 0.0.1a8.post1.dev3+g7dbcab9 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/documentation_options.js?v=e2181587"></script>
+        <script src="_static/documentation_options.js?v=e50aaa26"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -40,7 +40,7 @@
             pywatemsedem
           </a>
               <div class="version">
-                0.0.1a8.post1.dev2+g21e0c23
+                0.0.1a8.post1.dev3+g7dbcab9
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -69,8 +69,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#pre-commit-hooks">Pre-commit hooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#unit-testing-with-pytest">Unit testing with pytest</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#documentation-with-sphinx">Documentation with sphinx</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#drone-ci">Drone CI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#git-lfs">Git lfs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#github-actions">Github actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-lfs">Git LFS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#naming-things">Naming things</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#guideline-for-unified-coding-style">Guideline for unified coding style</a></li>
@@ -161,19 +161,19 @@ unit tests. Make sure you have defined SAGA and WaTEM/SEDEM, see
 <p>which will create the docs in the <code class="docutils literal notranslate"><span class="pre">docs/_build/html</span></code> folder. The <code class="docutils literal notranslate"><span class="pre">docs/_build</span></code> directory itself is
 left out of version control (and we rather keep it as such ;-)).</p>
 </section>
-<section id="drone-ci">
-<h2>Drone CI<a class="headerlink" href="#drone-ci" title="Link to this heading">¶</a></h2>
-<p>Apart from these tools you can run locally, we use drone continuous integration to run these checks also
-on our servers. See <a class="reference external" href="https://drone.fluves.net/Fluves/pywatemsedem">https://drone.fluves.net/Fluves/pywatemsedem</a> for the results.</p>
+<section id="github-actions">
+<h2>Github actions<a class="headerlink" href="#github-actions" title="Link to this heading">¶</a></h2>
+<p>Apart from these tools you can run locally, we use github actions to run these tests also on the cloud.
+You can see the results at <a class="reference external" href="https://github.com/watem-sedem/pywatemsedem/actions">https://github.com/watem-sedem/pywatemsedem/actions</a></p>
 </section>
 <section id="git-lfs">
-<h2>Git lfs<a class="headerlink" href="#git-lfs" title="Link to this heading">¶</a></h2>
-<p>Git lfs, or large file support, is used in this repository to store gis files in
+<h2>Git LFS<a class="headerlink" href="#git-lfs" title="Link to this heading">¶</a></h2>
+<p>Git LFS, or large file support, is used in this repository to store gis files in
 the repository. To use this functionality you need to install git lfs. See
 <a class="reference external" href="https://git-lfs.github.com/">https://git-lfs.github.com/</a> for instructions and more information.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">.gitattributes</span></code>-file in the root folder contains the file extensions wich are
-stored under lfs. For now, only files within the test folder are stored under
-lfs.</p>
+stored under LFS. For now, only files within the test folder are stored under
+LFS.</p>
 </section>
 <section id="naming-things">
 <h2>Naming things<a class="headerlink" href="#naming-things" title="Link to this heading">¶</a></h2>
