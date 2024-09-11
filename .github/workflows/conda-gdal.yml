@@ -21,7 +21,6 @@ jobs:
     steps:
     - uses: mamba-org/setup-micromamba@v1
       with:
-        environment-name: gdal-recent
         create-args: >-
           python=${{ matrix.python-version }}
           libgdal=3.9.2
@@ -29,4 +28,6 @@ jobs:
         init-shell: bash
     - name: Test with tox
       run: |
+        python -V
+        micromamba info
         tox
