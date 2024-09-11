@@ -1,0 +1,32 @@
+# This workflow tests with micromamba and the most recent gdal version, to make sure future updates still work
+
+
+name: Recent gdal
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.11, 3.12]
+
+    steps:
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        environment-name: gdal-recent
+        create-args: >-
+          python=${{ matrix.python-version }}
+          libgdal=3.9.2
+          tox
+        init-shell: bash
+    - name: Test with tox
+      run: |
+        tox
