@@ -27,6 +27,7 @@ jobs:
         init-shell: bash
     - name: Test with tox
       run: |
+        micromamba activate gdal
         python -V
         micromamba info
         tox
