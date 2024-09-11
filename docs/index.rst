@@ -1,5 +1,6 @@
 .. _changes:
-.. include:: ../../README.rst
+
+.. include:: ../README.rst
 
 Contents
 ========
