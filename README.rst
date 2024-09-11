@@ -1,5 +1,4 @@
 .. figure:: _static/png/logo_pyws.png
- :scale: 50 %
 
 pywatemsedem
 ============
