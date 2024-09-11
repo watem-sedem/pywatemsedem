@@ -18,8 +18,8 @@ jobs:
 
     steps:
     - uses: mamba-org/setup-micromamba@v1
-      environment-name: gdal
       with:
+        environment-name: gdal
         create-args: >-
           python=${{ matrix.python-version }}
           libgdal=3.9.2
