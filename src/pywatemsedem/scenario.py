@@ -501,7 +501,7 @@ class Scenario:
             arr = np.where(arr > 32767, 32767, arr)
             arr = arr.astype(np.int16)
 
-            return self.raster_factory(arr)
+            return self.raster_factory(arr, allow_nodata_array=True)
         else:
             return None
 
