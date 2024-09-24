@@ -644,7 +644,7 @@ multiple entries for every buffer extension id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Holding id’s (column: ‘buf_id’ (int)), all id’s should be present in arr and
+<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Holding id’s (column: ‘buf_id’ (int)), all id’s should be present in arr and
 vice versa.</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Array with buffer outlet (&lt;16 385) and extension id’s (16 385&gt;=). This array
 can hold multiple entries for buffer outlet. All outlet id’s should be present
@@ -694,7 +694,7 @@ river</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas representation of arr, in buf_exid.</p></li>
+<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas representation of arr, in buf_exid.</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Array with buffer outlet (&lt;16 385) and extension id’s (16 385&gt;=). This array
 can hold multiple entries for buffer outlet. All outlet id’s should be present
 in gdf.</p></li>
@@ -787,7 +787,7 @@ of plots see <a class="reference internal" href="#pywatemsedem.calibrate.plot_re
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <p>Results of one set of ktc values with columns:</p>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <p>Results of one set of ktc values with columns:</p>
 <ul>
 <li><p><em>O_sy</em> (float): observed (specific) sediment yield (ton).</p></li>
 <li><p><em>P_sy</em> (float): predicted (specific) sediment yield (ton/ha).</p></li>
@@ -817,7 +817,7 @@ criterion (NSE).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_calibration_data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <p>DataFrame with all necessary data for a calibration. It contains at
+<li><p><strong>df_calibration_data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <p>DataFrame with all necessary data for a calibration. It contains at
 least the following columns:</p>
 <ul>
 <li><p><em>name</em> (str): the name of a catchment.</p></li>
@@ -826,7 +826,7 @@ least the following columns:</p>
 <li><p><em>ssy</em> (float): the specific sediment yield (ton/ha).</p></li>
 </ul>
 </p></li>
-<li><p><strong>df_calibration_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – DataFrame with all modelled sediment yields for different combinations
+<li><p><strong>df_calibration_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – DataFrame with all modelled sediment yields for different combinations
 of ktc-values and different catchments. For the definition of the
 dataframe, see <a class="reference internal" href="#pywatemsedem.calibrate.merge_calibration_results" title="pywatemsedem.calibrate.merge_calibration_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.merge_calibration_results()</span></code></a>.</p></li>
 </ul>
@@ -844,7 +844,7 @@ columns:</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -857,7 +857,7 @@ columns:</p>
 <dd><p>Calculates the ratio between ktc low and ktc high</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_ktc</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <p>DataFrame with different comibinations of ktc-values. The DataFrame
+<dd class="field-odd"><p><strong>df_ktc</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <p>DataFrame with different comibinations of ktc-values. The DataFrame
 contains at least following columns:</p>
 <ul class="simple">
 <li><p><em>ktc_low</em> (float): ktc low value used in the model run.</p></li>
@@ -870,7 +870,7 @@ contains at least following columns:</p>
 ratio_ktc (float).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -882,7 +882,7 @@ ratio_ktc (float).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_calibration_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – DataFrame with all modelled sediment yields for different combinations
+<li><p><strong>df_calibration_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – DataFrame with all modelled sediment yields for different combinations
 of ktc-values and different catchments. For the definition of the
 dataframe, see <a class="reference internal" href="#pywatemsedem.calibrate.merge_calibration_results" title="pywatemsedem.calibrate.merge_calibration_results"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.merge_calibration_results()</span></code></a>.</p></li>
 <li><p><strong>calibration</strong> (<em>pywatemsedem.core.calibrate.Calibration</em>) – See <a class="reference internal" href="#pywatemsedem.calibrate.Calibration" title="pywatemsedem.calibrate.Calibration"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.Calibration</span></code></a>.</p></li>
@@ -906,7 +906,7 @@ The DataFrame contains following columns:</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -934,7 +934,7 @@ in scenario_x/modeloutput/calibration.txt).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_calibration_data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.calculate_model_efficiency" title="pywatemsedem.calibrate.calculate_model_efficiency"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_model_efficiency()</span></code></a>.</p></li>
+<li><p><strong>df_calibration_data</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.calculate_model_efficiency" title="pywatemsedem.calibrate.calculate_model_efficiency"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_model_efficiency()</span></code></a>.</p></li>
 <li><p><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default 'sy'</em>) – Name of output variable ‘sy’ or ‘ssy’.</p></li>
 <li><p><strong>squared_error</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Make use of squared errors to compute denominator (True/False).</p></li>
 </ul>
@@ -960,7 +960,7 @@ in scenario_x/modeloutput/calibration.txt).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_cal</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Definition, see <a class="reference internal" href="#pywatemsedem.calibrate.process_calibrationrun_output" title="pywatemsedem.calibrate.process_calibrationrun_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.process_calibrationrun_output()</span></code></a>.</p></li>
+<li><p><strong>df_cal</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Definition, see <a class="reference internal" href="#pywatemsedem.calibrate.process_calibrationrun_output" title="pywatemsedem.calibrate.process_calibrationrun_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.process_calibrationrun_output()</span></code></a>.</p></li>
 <li><p><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of output variable ‘sy’ or ‘ssy’.</p></li>
 </ul>
 </dd>
@@ -968,7 +968,7 @@ in scenario_x/modeloutput/calibration.txt).</p>
 <dd class="field-even"><p><strong>df_cal</strong> – Updated with errors between simulation and observations.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -981,7 +981,7 @@ variable</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_calibration_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.calculate_model_efficiency" title="pywatemsedem.calibrate.calculate_model_efficiency"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_model_efficiency()</span></code></a>.</p></li>
+<li><p><strong>df_calibration_results</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.calculate_model_efficiency" title="pywatemsedem.calibrate.calculate_model_efficiency"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_model_efficiency()</span></code></a>.</p></li>
 <li><p><strong>denominator</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe" title="pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe()</span></code></a>.</p></li>
 <li><p><strong>variable</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of output variable ‘sy’ or ‘ssy’.</p></li>
 <li><p><strong>squared_error</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Make use of squared errors to compute Nash-Sutcliffe (True/False).</p></li>
@@ -1001,7 +1001,7 @@ sediment yield.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1013,8 +1013,8 @@ sediment yield.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_observed</strong> (<em>np.ndarray</em><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – Observed (specific) sediment yield.</p></li>
-<li><p><strong>arr_predicted</strong> (<em>np.ndarray</em><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – Predicted (specific) sediment yield</p></li>
+<li><p><strong>arr_observed</strong> (<em>np.ndarray</em><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – Observed (specific) sediment yield.</p></li>
+<li><p><strong>arr_predicted</strong> (<em>np.ndarray</em><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – Predicted (specific) sediment yield</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1061,7 +1061,7 @@ ssy.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1074,7 +1074,7 @@ ktc-low and ktc-high.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_me</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Dataframe with the calculated model efficiencies for all combinations
+<li><p><strong>df_me</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Dataframe with the calculated model efficiencies for all combinations
 of ktc-values. See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_modelefficiency()</span></code>
 for the defintion of the dataframe.</p></li>
 <li><p><strong>caldata</strong> (<em>pywatemsedem.core.calibrate.Calibration</em>) – See <a class="reference internal" href="#pywatemsedem.calibrate.Calibration" title="pywatemsedem.calibrate.Calibration"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.Calibration</span></code></a>.</p></li>
@@ -1099,7 +1099,7 @@ for the defintion of the dataframe.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.calculate_model_efficiency" title="pywatemsedem.calibrate.calculate_model_efficiency"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_model_efficiency()</span></code></a>.</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.calibrate.calculate_model_efficiency" title="pywatemsedem.calibrate.calculate_model_efficiency"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.calibrate.calculate_model_efficiency()</span></code></a>.</p></li>
 <li><p><strong>ktc_low</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Low transport capacity coefficient.</p></li>
 <li><p><strong>ktc_high</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – High transport capacity coefficient.</p></li>
 <li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – “ssy” or “sy”.</p></li>
@@ -1162,7 +1162,7 @@ ssy.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1214,7 +1214,7 @@ class. Every row indicates a connection between two segments: segment <em>from</
 </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1540,7 +1540,7 @@ Lower than 1 when upstream edge flows into two edges.</p></li>
 </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1573,7 +1573,7 @@ Lower than 1 when upstream edge flows into two edges.</p></li>
 defined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>vector_input</strong> (<em>Pathlib.Path</em><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Line vector file.</p>
+<dd class="field-odd"><p><strong>vector_input</strong> (<em>Pathlib.Path</em><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Line vector file.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1586,7 +1586,7 @@ defined.</p>
 attributes should be defined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>vector_input</strong> (<em>Pathlib.Path</em><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Line vector file.</p>
+<dd class="field-odd"><p><strong>vector_input</strong> (<em>Pathlib.Path</em><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Line vector file.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1680,9 +1680,9 @@ no-0 value.</p></li>
 WaTEM/SEDEM parcels raster (see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#prcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>).</p></li>
 <li><p><strong>mask</strong> (<em>#TODO: check how to simplify this</em>)</p></li>
 <li><p><strong>sfolder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Results necessary for saving mask</p></li>
-<li><p><strong>vct_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Dataframe holding C-factor values, columns:
+<li><p><strong>vct_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Dataframe holding C-factor values, columns:
 - <em>C_factor</em> (float)</p></li>
-<li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Dataframe holding C-factor values, columns:
+<li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Dataframe holding C-factor values, columns:
 - <em>C_factor</em> (float)</p></li>
 <li><p><strong>cfactor_aggriculture</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> , </em><em>default 0.37</em>) – Default C-factor value for left-over pixels</p></li>
 <li><p><strong>use_source_oriented_measures</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True / False. In case True, vct_parcels should contain the column ‘C_reduct’.</p></li>
@@ -1741,7 +1741,7 @@ water (-5).</p></li>
 <li><p><strong>hsg</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Raster that holds values from 1 to 4 according to hydrological soil group
 (A, B, C and D), see <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and <a class="footnote-reference brackets" href="#id5" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, for more info, see documentation in function
 :attr: pywatemsedem.catchment.Catchment.hydrological_soil_group`.</p></li>
-<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – <p>Parcels polygon data with columns:</p>
+<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – <p>Parcels polygon data with columns:</p>
 <ul>
 <li><p><em>NR</em> (int): unique id, should be the same as in parcels_ids (i.e. parcels_ids
 is a rasterized version of the parcels dataframe).</p></li>
@@ -1760,7 +1760,7 @@ is a rasterized version of the parcels dataframe).</p></li>
 <li><p><strong>composite_landuse</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – A composite land-use raster. Typically, it defines the landuse from
 non-agricultural pixels.</p></li>
 <li><p><strong>parcels_ids</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – A parcels id raster, holding unique id’s per parcel.</p></li>
-<li><p><strong>cn_table</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Table holding CNmax values per hydrological soil group and per CNmaxID.</p></li>
+<li><p><strong>cn_table</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Table holding CNmax values per hydrological soil group and per CNmaxID.</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default -9999</em>) – Nodata value</p></li>
 </ul>
 </dd>
@@ -1885,7 +1885,7 @@ and the difference between those values.</p>
 </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1948,7 +1948,7 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Internal naming.</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Lower boundary, if None: no boundary.</p></li>
 <li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Upper boundary, if None: no boundary.</p></li>
@@ -1966,7 +1966,7 @@ values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Internal naming.</p></li>
 <li><p><strong>attribute</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Column name</p></li>
 <li><p><strong>allowed_values</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><em>set</em></a><em> of </em><em>int and/or float</em>) – Allowed values</p></li>
@@ -1984,7 +1984,7 @@ values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Internal naming.</p></li>
 <li><p><strong>req_attributes</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><em>set</em></a>) – Required attributes in input source.</p></li>
 </ul>
@@ -2130,8 +2130,8 @@ required, clip by polygons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>line_string</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas dataframe with LineString</p></li>
-<li><p><strong>polygons</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Geopandas dataframe with Polygon</p></li>
+<li><p><strong>line_string</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas dataframe with LineString</p></li>
+<li><p><strong>polygons</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Geopandas dataframe with Polygon</p></li>
 <li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default 20</em>) – Width (m) of the bank grass strip stored in the attribute table.</p></li>
 <li><p><strong>width_polygon</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default 20</em>) – width (m) of the bank grass strip polygon</p></li>
 </ul>
@@ -2146,7 +2146,7 @@ required, clip by polygons.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -2318,10 +2318,10 @@ to np.nan ‘unknown’ or zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_width_gras_strips</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row width of the gras strip.
+<li><p><strong>arr_width_gras_strips</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row width of the gras strip.
 note: this can all be zeros or np.nan</p></li>
-<li><p><strong>arr_gras_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each gras polygon</p></li>
-<li><p><strong>arr_gras_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each gras polygon</p></li>
+<li><p><strong>arr_gras_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each gras polygon</p></li>
+<li><p><strong>arr_gras_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each gras polygon</p></li>
 <li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>)</p></li>
 </ul>
 </dd>
@@ -2329,7 +2329,7 @@ note: this can all be zeros or np.nan</p></li>
 <dd class="field-even"><p><strong>arr_width_gras_strips</strong> – 1D array holding in each row (estimated) width of the gras strip</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2532,7 +2532,7 @@ Nonpoint Source Pollution. J. Environ. Qual. 39, 76–84.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Grass strips geodataframe, ‘width’ and ‘scale_ktc’ should be present as
+<li><p><strong>gdf_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Grass strips geodataframe, ‘width’ and ‘scale_ktc’ should be present as
 columns.</p></li>
 <li><p><strong>ktc_low</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>)</p></li>
 <li><p><strong>ktc_high</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – See <a class="reference internal" href="#pywatemsedem.grasstrips.scale_ktc_linear" title="pywatemsedem.grasstrips.scale_ktc_linear"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.grasstrips.scale_ktc_linear()</span></code></a> and
@@ -2546,7 +2546,7 @@ For definition STE_linear,
 <a class="reference internal" href="#pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width" title="pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width()</span></code></a>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -2732,7 +2732,7 @@ array.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Data with cumulative sediment load
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Data with cumulative sediment load
 - <em>value</em> (float): sediment load value
 - <em>cum_perc</em> (float): cumulative percentage
 - <em>rank</em> (float): rank</p></li>
@@ -2820,14 +2820,14 @@ sedlen-argument.</p>
 <dd><p>Aggregate sediment leaving on the scale of single parcels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gdf_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – dataframe format of routing file, indicating which target cells
+<dd class="field-odd"><p><strong>gdf_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – dataframe format of routing file, indicating which target cells
 flor in which source cells.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>df_prckrt</strong> – prckrt added with sediout for every pixel defined per parcel</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2840,7 +2840,7 @@ from high to low</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
+<li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.utils.raster_array_to_pandas_dataframe()</span></code>)</p></li>
 <li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – see <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.html#rasterio.open" title="(in rasterio v1.3.11)"><code class="xref py py-func docutils literal notranslate"><span class="pre">rasterio.open()</span></code></a></p></li>
 <li><p><strong>percentage</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – x percentage highest load that the user wants to analyse</p></li>
@@ -2884,7 +2884,7 @@ with:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_summary</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Dataframe holding all summary values</p></li>
+<li><p><strong>df_summary</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Dataframe holding all summary values</p></li>
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Row index to write summary values to</p></li>
 <li><p><strong>bekken</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the (sub)catchemnt</p></li>
 <li><p><strong>bekken_id</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Id of the bekken</p></li>
@@ -2906,7 +2906,7 @@ boundaries catchment</p></li>
 <dd class="field-even"><p><strong>df_summary</strong> – updated dataframe holding all summary values</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2990,7 +2990,7 @@ inspection</p>
 <dd class="field-even"><p>Geopandas dataframe of vct with statistics per polygon.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3024,7 +3024,7 @@ watereros from kg to ton.</p>
 <dd class="field-odd"><p><strong>gdf_routing_sediout</strong> – See <a class="reference internal" href="#pywatemsedem.postprocess.couple_sediout_routing" title="pywatemsedem.postprocess.couple_sediout_routing"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.couple_sediout_routing()</span></code></a></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3038,7 +3038,7 @@ watereros from kg to ton.</p>
 <dd class="field-odd"><p>Sum statistic (columns <cite>value</cite>) for variables (indices).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3053,7 +3053,7 @@ watereros from kg to ton.</p>
 <a class="reference internal" href="#pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel" title="pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel()</span></code></a></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3148,7 +3148,7 @@ of a parcel.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rst_subcatchment_sinks</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the subcatcmsinks raster</p></li>
-<li><p><strong>df_sediout_parcel</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – DataFrame of the sediout parcel map. This map holds
+<li><p><strong>df_sediout_parcel</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – DataFrame of the sediout parcel map. This map holds
 for every pixel the total amount of sediment
 that is transported outside the parcel in which the parcel lies.</p></li>
 </ul>
@@ -3191,7 +3191,7 @@ overlapping catchments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_subcatchmpriority</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Catchment shapes with number of catchment.</p></li>
+<li><p><strong>gdf_subcatchmpriority</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Catchment shapes with number of catchment.</p></li>
 <li><p><strong>merge</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Merge the separate priority areas to one shapefile.</p></li>
 </ul>
 </dd>
@@ -3294,7 +3294,7 @@ formatting %)</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3317,7 +3317,7 @@ formatting %)</p></li>
 </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3368,7 +3368,7 @@ formatting %)</p></li>
 computed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_routing_grass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code>:</p>
+<dd class="field-odd"><p><strong>df_routing_grass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code>:</p>
 <ul class="simple">
 <li><p><em>targetrow</em> (float): target row of pixel</p></li>
 <li><p><em>targetcol</em> (float) target column of pixel</p></li>
@@ -3395,7 +3395,7 @@ strip.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -3429,7 +3429,7 @@ strip.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Dataframe to compute cdf for
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Dataframe to compute cdf for
 - <em>column_value</em> (float): sediment load values</p></li>
 <li><p><strong>column_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Column in ‘df’ to compute cdf for</p></li>
 <li><p><strong>resmap</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Folder path to which write figure to</p></li>
@@ -3448,7 +3448,7 @@ strip.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3650,7 +3650,7 @@ int16</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -3674,7 +3674,7 @@ relevant for doing the analysis on large catchments.</p>
 <li><p><strong>arr_sediout</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – WaTEM/SEDEM sediout raster.</p></li>
 <li><p><strong>arr_id</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – An unique array id array, sediout outside domain is grouped by these id’s.
 Should be integers or floats!</p></li>
-<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Loaded WaTEM/SEDEM routing dataframe</p></li>
+<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Loaded WaTEM/SEDEM routing dataframe</p></li>
 <li><p><strong>profile</strong> (<em>rasterio.profile</em>)</p></li>
 </ul>
 </dd>
@@ -3682,7 +3682,7 @@ Should be integers or floats!</p></li>
 <dd class="field-even"><p>Series holding sediout outside domain per id.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3752,7 +3752,7 @@ pixel</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3765,9 +3765,9 @@ river cells over gras_buffer_id)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_grass_strips</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – see
+<li><p><strong>df_grass_strips</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – see
 <a class="reference internal" href="#pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing" title="pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing()</span></code></a></p></li>
-<li><p><strong>df_prckrt</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <ul>
+<li><p><strong>df_prckrt</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <ul>
 <li><p><em>col</em> (int): col</p></li>
 <li><p><em>row</em> (int): row</p></li>
 <li><p><em>val</em> (float): WaTEM/SEDEM perceelskaart id.</p></li>
@@ -3781,7 +3781,7 @@ river cells over gras_buffer_id)</p>
 <a class="reference internal" href="#pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing" title="pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing()</span></code></a></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3793,7 +3793,7 @@ river cells over gras_buffer_id)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_datastructure_files</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.postprocess.read_filestructure_flanders()</span></code></p></li>
+<li><p><strong>df_datastructure_files</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.postprocess.read_filestructure_flanders()</span></code></p></li>
 <li><p><strong>index</strong> (<em>any series index</em>) – index of position dataframe</p></li>
 <li><p><strong>subfolder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – subfolder</p></li>
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – year of the simulation</p></li>
@@ -3878,7 +3878,7 @@ pixels. Keys:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_datastructure_files</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.postprocess.read_filestructure_flanders()</span></code></p></li>
+<li><p><strong>df_datastructure_files</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.postprocess.read_filestructure_flanders()</span></code></p></li>
 <li><p><strong>index</strong></p></li>
 </ul>
 </dd>
@@ -3916,8 +3916,8 @@ pixels. Keys:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p></li>
-<li><p><strong>df_grass_strips</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing" title="pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing()</span></code></a></p></li>
+<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p></li>
+<li><p><strong>df_grass_strips</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing" title="pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing()</span></code></a></p></li>
 <li><p><strong>cols</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Cols to consider for join</p></li>
 <li><p><strong>field</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Column to use of df_grass_strips to do join</p></li>
 </ul>
@@ -3928,7 +3928,7 @@ pixels. Keys:</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3945,19 +3945,19 @@ perceelskaart’</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_grass_strips</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <ul>
+<li><p><strong>df_grass_strips</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <ul>
 <li><p><em>col</em> (int): col</p></li>
 <li><p><em>row</em> (int): row</p></li>
 <li><p><em>val</em> (int): gras_id</p></li>
 </ul>
 </p></li>
-<li><p><strong>df_sediout</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <ul>
+<li><p><strong>df_sediout</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <ul>
 <li><p><em>col</em> (int): col</p></li>
 <li><p><em>row</em> (int): row</p></li>
 <li><p><em>val</em> (fload): outgoing sediment</p></li>
 </ul>
 </p></li>
-<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p></li>
+<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3971,7 +3971,7 @@ holding columns of df_routing and additional columns:</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4051,7 +4051,7 @@ generated (1).</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -4086,7 +4086,7 @@ variable in pywatemsedem, you can use it as (using pathlib.Path module):</p>
 the same column target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_routing_grass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p>
+<dd class="field-odd"><p><strong>df_routing_grass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p><strong>df_routing_grass_T</strong> – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p>
@@ -4097,7 +4097,7 @@ the same column target.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4109,7 +4109,7 @@ the same column target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_routing_grass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p></li>
+<li><p><strong>df_routing_grass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.process_output.open_txt_routing_file()</span></code></p></li>
 <li><p><strong>target_id</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The number of the targets, can only be 1 or 2</p></li>
 </ul>
 </dd>
@@ -4118,7 +4118,7 @@ the same column target.</p>
 selected and renamed after target1 or target2</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4130,7 +4130,7 @@ selected and renamed after target1 or target2</p>
 <p>Only select the routing vector which cross the parcel border.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gdf_routing</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Loaded routing vector file (with or without sediout coupled to it).
+<dd class="field-odd"><p><strong>gdf_routing</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Loaded routing vector file (with or without sediout coupled to it).
 See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.make_routing_vct()</span></code></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -4138,7 +4138,7 @@ See <code class="xref py py-func docutils literal notranslate"><span class="pre"
 See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.make_routing_vct()</span></code></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4203,7 +4203,7 @@ erosion (kg/pixel/year)</p></li>
 <dd class="field-even"><p><strong>df_netto_erosion</strong> – Holding statistics for every parcel according to dict_netto_ero</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4354,7 +4354,7 @@ conditions ({0,1-&gt;3}, {unknown, poor to good}), contour_id (0/1).</p></li>
 </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4695,8 +4695,8 @@ applied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Parcels polygon vector</p></li>
-<li><p><strong>gdf_tillage_technical</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Tillage technical polygon vector</p></li>
+<li><p><strong>gdf_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Parcels polygon vector</p></li>
+<li><p><strong>gdf_tillage_technical</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Tillage technical polygon vector</p></li>
 <li><p><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Minimal required overlap between polygons to select the implementation of a
 tillage technical measure to be applied for the parcel.</p></li>
 </ul>
@@ -4710,7 +4710,7 @@ tillage technical measure to be applied for the parcel.</p></li>
 <dd><p>Assign buffer id and extention id to buffer dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – Buffer dataframe with columns</p>
+<dd class="field-odd"><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Buffer dataframe with columns</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p><strong>df</strong> – Updated with:</p>
@@ -4721,7 +4721,7 @@ tillage technical measure to be applied for the parcel.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4739,7 +4739,7 @@ area_intersect(grasstri, parcel)/area(parcel).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
+<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
 <li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of parcel shapefiles</p></li>
 </ul>
 </dd>
@@ -4751,7 +4751,7 @@ area_intersect(grasstri, parcel)/area(parcel).</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4768,7 +4768,7 @@ area_intersect(grass strips, parcel)/area(parcel).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
+<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
 <li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of parcel shapefile</p></li>
 </ul>
 </dd>
@@ -4982,7 +4982,7 @@ lines [1, 4, 5, 10] contain paths and dates which are not compared</p>
 <li><p><strong>txt_table_file_2</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of second table-like file.</p></li>
 <li><p><strong>rtol</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – See <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html#numpy.testing.assert_allclose" title="(in NumPy v2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.testing.assert_allclose()</span></code></a>.</p></li>
 <li><p><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – See <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html#numpy.testing.assert_allclose" title="(in NumPy v2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.testing.assert_allclose()</span></code></a>.</p></li>
-<li><p><strong>skiplines</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – See <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv" title="(in pandas v2.2.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code></a>.</p></li>
+<li><p><strong>skiplines</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – See <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv" title="(in pandas v2.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code></a>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -5161,7 +5161,7 @@ file.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -5188,7 +5188,7 @@ a certain value * cellsize * cellsize.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -5246,7 +5246,7 @@ LineString.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -5470,8 +5470,8 @@ antecedent, and the time step of an event.</p>
 file with two columns. The first column contains the time in minutes
 (starting from 0), the second column contains the rainfall in mm.</p></li>
 <li><p><strong>rainfall_depth_antecedent</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Cumulative amount of rainfall in days_antecedent.</p></li>
-<li><p><strong>begin_date</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v2.2.2)"><em>pandas.Timestamp</em></a><em>, </em><em>optional</em>) – Begin rainfall timerseries, in UTC, make use of pd.Timestamp, see Note 1.</p></li>
-<li><p><strong>end_date</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v2.2.2)"><em>pandas.Timestamp</em></a><em>, </em><em>optional</em>) – End rainfall timerseries, in UTC, make use of pd.Timestamp, see Note 1.</p></li>
+<li><p><strong>begin_date</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v2.2.3)"><em>pandas.Timestamp</em></a><em>, </em><em>optional</em>) – Begin rainfall timerseries, in UTC, make use of pd.Timestamp, see Note 1.</p></li>
+<li><p><strong>end_date</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html#pandas.Timestamp" title="(in pandas v2.2.3)"><em>pandas.Timestamp</em></a><em>, </em><em>optional</em>) – End rainfall timerseries, in UTC, make use of pd.Timestamp, see Note 1.</p></li>
 <li><p><strong>time_step_event</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Time step event.</p></li>
 <li><p><strong>days_antecedent</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – Number of days for antecedent</p></li>
 <li><p><strong>stream_velocity</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Stream velocity (m/s)</p></li>

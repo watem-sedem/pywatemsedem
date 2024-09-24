@@ -211,7 +211,7 @@ see <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
+<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
 <li><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Mask vector (True), nodata value will be that one of
 <cite>pywatemsedem.geo.factory.Factory.rp</cite>.</p></li>
 <li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – Allow vector to be empty, see <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
@@ -784,8 +784,8 @@ dimension being temporal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoSeries</em></a>)</p></li>
-<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoSeries</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -821,15 +821,15 @@ dimension being temporal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
-<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
+<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
+<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>condition</strong> – 1D array holding True/False if cuboid</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -1148,8 +1148,8 @@ see also
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
-<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
+<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
+<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
 <li><p><strong>nan_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The value to fill in for nan_values</p></li>
 </ul>
 </dd>
@@ -1157,7 +1157,7 @@ see also
 <dd class="field-even"><p><strong>arr_est_polygon_width</strong> – 1D array holding in each row the estimated width</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1609,7 +1609,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoSeries</em></a>)</p></li>
 <li><p><strong>p</strong> (<em>shapely.Geometry</em>)</p></li>
 </ul>
 </dd>
@@ -1617,7 +1617,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p>True/False</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.2)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1650,7 +1650,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
+<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
 <li><p><strong>catchment_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>default 1</em>) – value that is used to define catchment</p></li>
 </ul>
 </dd>
@@ -1658,7 +1658,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>gdf_catchment</strong> – dissolved dataframe holding mask, in one polygon (row)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1684,7 +1684,7 @@ format = “EPSG:XXXXX”</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1696,7 +1696,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <p>A pandas format of the array raster with</p>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <p>A pandas format of the array raster with</p>
 <ul>
 <li><p><em>row</em> (int): the row id</p></li>
 <li><p><em>col</em> (int): the column id</p></li>
@@ -1820,7 +1820,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the input raster</p></li>
 <li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the destination rst (.sdat)</p></li>
-<li><p><strong>df_reclass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.2)"><em>pandas.DataFrame</em></a>) – <p>DataFrame containing the mapping with the columns:</p>
+<li><p><strong>df_reclass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – <p>DataFrame containing the mapping with the columns:</p>
 <ul>
 <li><p><em>RST_VAL</em>: current values</p></li>
 <li><p><em>NEWVAL</em>: new value</p></li>
@@ -1973,7 +1973,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>gdf</strong> – Geopandas representation of tiff raster</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2411,7 +2411,7 @@ convert_lines_to_direction:</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2426,7 +2426,7 @@ convert_lines_to_direction:</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+17)"><em>geopandas.GeoDataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>req_geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
