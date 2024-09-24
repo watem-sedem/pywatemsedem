@@ -71,22 +71,22 @@ Build the documentation locally with Sphinx (tox):
 which will create the docs in the ``docs/_build/html`` folder. The ``docs/_build`` directory itself is
 left out of version control (and we rather keep it as such ;-)).
 
-Drone CI
---------
+Github actions
+--------------
 
-Apart from these tools you can run locally, we use drone continuous integration to run these checks also
-on our servers. See https://drone.fluves.net/Fluves/pywatemsedem for the results.
+Apart from these tools you can run locally, we use github actions to run these tests also on the cloud.
+You can see the results at https://github.com/watem-sedem/pywatemsedem/actions
 
-Git lfs
+Git LFS
 -------
 
-Git lfs, or large file support, is used in this repository to store gis files in
+Git LFS, or large file support, is used in this repository to store gis files in
 the repository. To use this functionality you need to install git lfs. See
 https://git-lfs.github.com/ for instructions and more information.
 
 The ``.gitattributes``-file in the root folder contains the file extensions wich are
-stored under lfs. For now, only files within the test folder are stored under
-lfs.
+stored under LFS. For now, only files within the test folder are stored under
+LFS.
 
 Naming things
 -------------

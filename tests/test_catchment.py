@@ -5,9 +5,12 @@ import numpy as np
 import pytest
 from conftest import catchment_data
 
-from pywatemsedem.geo.utils import load_raster, write_arr_as_rst
 from pywatemsedem.catchment import Catchment
-from pywatemsedem.errors import PywatemsedemRasterValueError, PywatemsedemVectorAttributeValueError
+from pywatemsedem.errors import (
+    PywatemsedemRasterValueError,
+    PywatemsedemVectorAttributeValueError,
+)
+from pywatemsedem.geo.utils import load_raster, write_arr_as_rst
 
 
 class TestCatchment:
@@ -66,7 +69,9 @@ class TestCatchment:
         arr, profile = load_raster(catchment_data.basemap)
         arr[arr == 10] = -7
         write_arr_as_rst(arr, fname, arr.dtype, profile)
-        with pytest.raises(PywatemsedemRasterValueError, match="can only contain values"):
+        with pytest.raises(
+            PywatemsedemRasterValueError, match="can only contain values"
+        ):
             self.catchment.landuse = fname
 
     @pytest.mark.saga
@@ -142,6 +147,7 @@ class TestCatchment:
         df = gpd.read_file(catchment_data.roads)
         df["paved"] = -3
         with pytest.raises(
-            PywatemsedemVectorAttributeValueError, match="vector can only contain values"
+            PywatemsedemVectorAttributeValueError,
+            match="vector can only contain values",
         ):
             self.catchment.vct_infrastructure_roads = df

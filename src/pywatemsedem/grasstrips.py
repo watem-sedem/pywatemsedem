@@ -8,14 +8,13 @@ import geopandas as gpd
 import numpy as np
 from scipy import signal
 
+from pywatemsedem.defaults import PREFIX_TEMP
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
     estimate_width_of_polygon,
     saga_intersection,
     vct_to_rst_field,
 )
-
-from pywatemsedem.defaults import PREFIX_TEMP
 
 # Add new kte scaling functions here
 logger = logging.getLogger(__name__)

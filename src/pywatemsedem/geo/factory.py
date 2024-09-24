@@ -51,9 +51,10 @@ class Factory:
     See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled of by
     setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to False
     """
+
     def __init__(self, resolution, epsg_code, nodata, resmap, bounds=None):
         """See class docs
-        
+
         Parameters
         ---------
         resolution:int

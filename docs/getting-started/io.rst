@@ -14,6 +14,7 @@ The ini-file (see :ref:`here <pywatemsedem:inifile>`) can be modified with a Pyt
 function available in the in ini-submodule:
 
 .. code-block:: python
+
     from pywatemsedem.io import ini
     ini.modify_field("inifile.ini", "User Choices", "max kernel", 20)
 
@@ -22,6 +23,7 @@ It adjusts the value of 'max kernel' in the section 'User Choices' to 20.
 In addition, one can add a value to a section:
 
 .. code-block:: python
+
     from pywatemsedem.io import ini
     ini.add_field("inifile.ini", "User Choices", "max kernelz", 20)
 

@@ -3,9 +3,9 @@ from pathlib import Path
 import pandas as pd
 
 from pywatemsedem.geo.utils import grid_difference
+from pywatemsedem.io.modeloutput import load_total_sediment_file
 from pywatemsedem.tools import zip_folder
 
-from pywatemsedem.io.modeloutput import load_total_sediment_file
 from .postprocess import PostProcess
 
 

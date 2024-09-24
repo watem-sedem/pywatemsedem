@@ -10,11 +10,12 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-from pywatemsedem.geo.rasters import RasterMemory
-from pywatemsedem.geo.utils import nearly_identical, saga_intersection
-from pywatemsedem.io.ini import IniFile
 from pywatemsedem.cfactor import create_cfactor_cnws
 from pywatemsedem.cn import process_cn_raster
+from pywatemsedem.geo.rasters import RasterMemory
+from pywatemsedem.geo.utils import nearly_identical, saga_intersection
+from pywatemsedem.io.folders import ScenarioFolders
+from pywatemsedem.io.ini import IniFile
 from pywatemsedem.ktc import create_ktc_cnws
 from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
 
@@ -28,7 +29,6 @@ from .errors import (
     attribute_discrete_value_error,
     missing_attribute_error_in_vct,
 )
-from pywatemsedem.io.folders import ScenarioFolders
 from .grasstrips import create_grassstrips_cnws
 from .templates import InputFileName
 from .tools import format_forced_routing, zip_folder
@@ -329,9 +329,7 @@ class Scenario:
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
         )
 
-        self.sfolder = ScenarioFolders(
-            self.catchm.folder, self.scenario_nr, self.year
-        )
+        self.sfolder = ScenarioFolders(self.catchm.folder, self.scenario_nr, self.year)
         self.sfolder.create_all()
 
     @valid_kfactor

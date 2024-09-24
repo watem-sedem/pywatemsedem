@@ -11,6 +11,7 @@ import pandas as pd
 from matplotlib import colors
 from matplotlib import pyplot as plt
 
+from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.rasters import RasterMemory
@@ -23,6 +24,7 @@ from pywatemsedem.geo.utils import (
     load_raster,
     read_rasterio_profile,
 )
+from pywatemsedem.io.folders import CatchmentFolder
 from pywatemsedem.io.modeloutput import check_segment_edges
 from pywatemsedem.tools import (
     format_forced_routing,
@@ -30,9 +32,7 @@ from pywatemsedem.tools import (
     zip_folder,
 )
 
-from pywatemsedem.defaults import SAGA_FLAGS
 from .errors import attribute_discrete_value_error, raster_discrete_value_error
-from pywatemsedem.io.folders import CatchmentFolder
 from .valid import valid_req_property
 
 # from .valid import valid_req_property

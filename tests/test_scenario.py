@@ -6,7 +6,10 @@ import pytest
 from conftest import scenario_data
 from numpy.testing import assert_almost_equal
 
-from pywatemsedem.errors import PywatemsedemVectorAttributeError, PywatemsedemVectorAttributeValueError
+from pywatemsedem.errors import (
+    PywatemsedemVectorAttributeError,
+    PywatemsedemVectorAttributeValueError,
+)
 
 
 class TestCreateModel:
@@ -300,13 +303,15 @@ class TestEndpoints:
         df = gpd.read_file(scenario_data.endpoints)
         df["efficiency"] = -0.1
         with pytest.raises(
-            PywatemsedemVectorAttributeValueError, match="vector should contain values in"
+            PywatemsedemVectorAttributeValueError,
+            match="vector should contain values in",
         ):
             scenario.vct_endpoints = df
 
         df["efficiency"] = 10
         with pytest.raises(
-            PywatemsedemVectorAttributeValueError, match="vector should contain values in"
+            PywatemsedemVectorAttributeValueError,
+            match="vector should contain values in",
         ):
             scenario.vct_endpoints = df
 
@@ -364,7 +369,8 @@ class TestParcels:
         df = gpd.read_file(scenario_data.parcels)
         df["LANDUSE"] = -10
         with pytest.raises(
-            PywatemsedemVectorAttributeValueError, match="vector can only contain values"
+            PywatemsedemVectorAttributeValueError,
+            match="vector can only contain values",
         ):
             scenario.vct_parcels = df
 
@@ -554,7 +560,8 @@ class TestGrassStrips:
         df["width"] = -10
         df.to_file(fname)
         with pytest.raises(
-            PywatemsedemVectorAttributeValueError, match="vector should contain values in"
+            PywatemsedemVectorAttributeValueError,
+            match="vector should contain values in",
         ):
             scenario.vct_grass_strips = fname
 
@@ -617,7 +624,8 @@ class TestBuffers:
         df = gpd.read_file(scenario_data.buffers)
         df["eff"] = -10
         with pytest.raises(
-            PywatemsedemVectorAttributeValueError, match="vector should contain values in"
+            PywatemsedemVectorAttributeValueError,
+            match="vector should contain values in",
         ):
             scenario.vct_buffers = df
 

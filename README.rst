@@ -1,6 +1,3 @@
-.. figure:: _static/png/logo_pyws.png
- :scale: 50 %
-
 pywatemsedem
 ============
 
@@ -50,9 +47,8 @@ Projects
 
 The pywatemsedem package has been used in following projects:
 
-.. image:: _static/png/projects/tripleC.jpg
+.. image:: https://watem-sedem.github.io/pywatemsedem/_static/png/projects/tripleC.jpg
  :target: http://www.triple-c-water.eu
- :scale: 30 %
 
 
 Contact
@@ -66,18 +62,14 @@ use the issue-tracker on github:
 Powered by
 ----------
 
-.. figure:: _static/png/DepartementOmgeving_logo.png
- :scale: 70 %
+.. figure:: https://watem-sedem.github.io/pywatemsedem/_static/png/DepartementOmgeving_logo.png
  :target: https://omgeving.vlaanderen.be/
 
-.. figure:: _static/png/VMM_logo.png
- :scale: 20 %
+.. figure:: https://watem-sedem.github.io/pywatemsedem/_static/png/VMM_logo.png
  :target: https://vmm.be/
 
-.. figure:: _static/png/fluves_logo.png
- :scale: 5 %
+.. figure:: https://watem-sedem.github.io/pywatemsedem/_static/png/fluves_logo.png
  :target: https://fluves.com/
 
-.. figure:: _static/png/KULeuven_logo.png
- :scale: 30 %
+.. figure:: https://watem-sedem.github.io/pywatemsedem/_static/png/KULeuven_logo.png
  :target: https://aow.kuleuven.be/

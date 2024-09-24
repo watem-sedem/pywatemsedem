@@ -85,7 +85,7 @@ extensions = [
 templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = ".rst"
+source_suffix = {'.rst': 'restructuredtext'}
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
@@ -307,6 +307,9 @@ intersphinx_mapping = {
 print(f"loading configurations for {project} {version} ...", file=sys.stderr)
 
 html_context = {
-    "source_url_prefix": "http://watem-sedem.github.io/pywatemsedem/src/branch/master/pywatemsedem/docs/",
-    "display_vcs_links": 1,
+    "display_github": True,
+    "github_user": "watem-sedem",
+    "github_repo": "pywatemsedem",
+    "github_version": "master",
+    "conf_py_path": "/docs/"
 }

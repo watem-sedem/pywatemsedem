@@ -1,0 +1,54 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9, '3.10', 3.11, 3.12]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        lfs: 'true'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+        sudo apt-get install -y gdal-bin saga wget pandoc
+        gdal_translate --version # echo version for debugging
+        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2023.10.24/saga-vpo_20231024090715-6-g45d8ba6.jammy_amd64.deb
+        sudo dpkg -i saga-vpo*.deb
+    - name: Run precommit hooks & linting
+      if: matrix.python-version == '3.9'
+      run: |
+        python -m pip install --upgrade pre-commit
+        pre-commit run --all-files
+    - name: Test with tox
+      run: |
+        tox
+    - name: Test doctests
+      # this is new and still needs fixes to be succesful
+      continue-on-error: true
+      run: |
+        tox -e doctests
+    - name: Build documentation
+      run: |
+        tox -e docs
+    - name: Test package build
+      run: |
+        tox -e build
