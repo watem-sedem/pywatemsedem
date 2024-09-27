@@ -1,12 +1,9 @@
-import datetime
 import logging
 
-# Standard libraries
-import pathlib
-from pathlib import Path
+from pywatemsedem.tools import get_item_from_ini
 
-import pandas as pd
-from pycnws.core.tools import get_item_from_ini
+# Standard libraries
+
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +31,13 @@ class UserChoice:
         print("\n".join(print_))
 
     def validate_type(self, value):
+        """Validate if the value has the correct dtype"""
         if type(value) is not self.dtype:
             msg = f"Value assigned to key '{self.key}' should be dtype '{self.dtype}'."
             raise TypeError(msg)
 
     def validate_value(self, value):
+        """Validate if the value is within the allowed values"""
         if self.allowed_values is not None:
             if value not in self.allowed_values:
                 msg = f"Value should be one of: {self.allowed_values}."
@@ -46,21 +45,37 @@ class UserChoice:
 
     @property
     def value(self):
+        """Getter of the value of the UserChoice
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice.value
+        """
         return self._value
 
     @value.setter
     def value(self, input_value):
+        """Assign value of a UserChoice
+
+        This function assigns the value of a UserChoice after it is validated
+
+        Parameters
+        ----------
+        input_value: str, int or float
+        """
         if input_value is not None:
             self.validate_type(input_value)
             self.validate_value(input_value)
             self._value = input_value
 
     def read_value_default_ini(self, default_ini):
+        """Read value from an ini-file"""
         self.value = get_item_from_ini(default_ini, self.section, self.key, self.dtype)
 
 
 class WSMixin:
     def check_mandatory_values(self):
+        """Check if the value of an attribute is not None when it is mandatory"""
         for key in self.__dict__:
             attribute = getattr(self, key)
             if isinstance(attribute, UserChoice):
@@ -71,6 +86,7 @@ class WSMixin:
 
 class WSOptions(WSMixin):
     def __init__(self):
+        """Initialise WSOptions"""
         self._l_model = UserChoice(
             "L model",
             "options",
@@ -108,47 +124,116 @@ class WSOptions(WSMixin):
 
     @property
     def l_model(self):
+        """Getter L model
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the L model
+        """
         return self._l_model
 
     @l_model.setter
     def l_model(self, input_value):
+        """Assign the l_model
+
+        Parameters
+        ---------
+        input_value: str
+            name of the L model
+        """
         self._l_model.value = input_value
 
     @property
     def s_model(self):
+        """Getter S model
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the S model
+        """
         return self._s_model
 
     @s_model.setter
     def s_model(self, input_value):
+        """Assign the s_model
+
+        Parameters
+        ---------
+        input_value: str
+            name of the S model
+        """
         self._s_model.value = input_value
 
     @property
     def tc_model(self):
+        """Getter TC model
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the TC model
+        """
         return self._tc_model
 
     @tc_model.setter
     def tc_model(self, input_value):
+        """Assign the tc_model
+
+        Parameters
+        ---------
+        input_value: str
+            name of the TC model
+        """
         self._tc_model.value = input_value
 
     @property
     def only_routing(self):
+        """Getter only_routing option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the only_routing option
+        """
         return self._only_routing
 
     @only_routing.setter
     def only_routing(self, input_value):
+        """Assign the only_routing option
+
+        Parameters
+        ---------
+        input_value: bool
+        """
         self._only_routing.value = input_value
 
     @property
     def calculate_tillage_erosion(self):
+        """Getter calculate_tillage_erosion option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the calculate_tillage_erosion option
+        """
         return self._calculate_tillage_erosion
 
     @calculate_tillage_erosion.setter
     def calculate_tillage_erosion(self, input_value):
+        """Assign the calculate_tillage_erosion option
+
+        Parameters
+        ---------
+        input_value: bool
+        """
         self._calculate_tillage_erosion.value = input_value
 
 
 class WSParameters(WSMixin):
     def __init__(self):
+        """Initialise WSParameters"""
         self._r_factor = UserChoice("R factor", "parameters", None, float, True)
         self._parcel_connectivity_cropland = UserChoice(
             "Parcel connectivity cropland", "parameters", None, int, True
@@ -176,87 +261,228 @@ class WSParameters(WSMixin):
 
     @property
     def r_factor(self):
+        """Getter r_factor parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the r_factor parameter
+        """
         return self._r_factor
 
     @r_factor.setter
     def r_factor(self, input_value):
+        """Assign the r_factor parameter
+
+        Parameters
+        ----------
+        input_value: float
+            The R-factor value
+        """
         self._r_factor.value = input_value
 
     @property
     def parcel_connectivity_cropland(self):
+        """Getter parcel_connectivity_cropland parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the parcel_connectivity_cropland parameter
+        """
         return self._parcel_connectivity_cropland
 
     @parcel_connectivity_cropland.setter
     def parcel_connectivity_cropland(self, input_value):
+        """Assign the parcel_connectivity_cropland parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The parcel_connectivity_cropland value
+        """
         self._parcel_connectivity_cropland.value = input_value
 
     @property
     def parcel_connectivity_grasstrips(self):
+        """Getter parcel_connectivity_grasstrips parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the parcel_connectivity_grasstrips parameter
+        """
         return self._parcel_connectivity_grasstrips
 
     @parcel_connectivity_grasstrips.setter
     def parcel_connectivity_grasstrips(self, input_value):
+        """Assign the parcel_connectivity_grasstrips parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The parcel_connectivity_grasstrips value
+        """
         self._parcel_connectivity_grasstrips.value = input_value
 
     @property
     def parcel_connectivity_forest(self):
+        """Getter parcel_connectivity_forest parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the parcel_connectivity_forest parameter
+        """
         return self._parcel_connectivity_forest
 
     @parcel_connectivity_forest.setter
     def parcel_connectivity_forest(self, input_value):
+        """Assign the parcel_connectivity_fores parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The parcel_connectivity_forest value
+        """
         self._parcel_connectivity_forest.value = input_value
 
     @property
     def parcel_trapping_eff_cropland(self):
+        """Getter parcel_trapping_eff_cropland parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the parcel_trapping_eff_cropland parameter
+        """
         return self._parcel_trapping_eff_cropland
 
     @parcel_trapping_eff_cropland.setter
     def parcel_trapping_eff_cropland(self, input_value):
+        """Assign the parcel_trapping_eff_cropland parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The parcel_trapping_eff_cropland value
+        """
         self._parcel_trapping_eff_cropland.value = input_value
 
     @property
     def parcel_trapping_eff_pasture(self):
+        """Getter parcel_trapping_eff_pasture parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the parcel_trapping_eff_pasture parameter
+        """
         return self._parcel_trapping_eff_pasture
 
     @parcel_trapping_eff_pasture.setter
     def parcel_trapping_eff_pasture(self, input_value):
+        """Assign the parcel_trapping_eff_pasture parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The parcel_trapping_eff_pasture value
+        """
         self._parcel_trapping_eff_pasture.value = input_value
 
     @property
     def parcel_trapping_eff_forest(self):
+        """Getter parcel_trapping_eff_forest parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the parcel_trapping_eff_forest parameter
+        """
         return self._parcel_trapping_eff_forest
 
     @parcel_trapping_eff_forest.setter
     def parcel_trapping_eff_forest(self, input_value):
+        """Assign the parcel_trapping_eff_forest parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The parcel_trapping_eff_forest value
+        """
         self._parcel_trapping_eff_forest.value = input_value
 
     @property
     def max_kernel(self):
+        """Getter max_kernel parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the max_kernel parameter
+        """
         return self._max_kernel
 
     @max_kernel.setter
     def max_kernel(self, input_value):
+        """Assign the max_kernel parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The max_kernel value
+        """
         self._max_kernel.value = input_value
 
     @property
     def max_kernel_river(self):
+        """Getter max_kernel_river parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the max_kernel_river parameter
+        """
         return self._max_kernel_river
 
     @max_kernel_river.setter
     def max_kernel_river(self, input_value):
+        """Assign the max_kernel_river parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The max_kernel_river value
+        """
         self._max_kernel_river.value = input_value
 
     @property
     def bulk_density(self):
+        """Getter bulk_density parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the bulk_density parameter
+        """
         return self._bulk_density
 
     @bulk_density.setter
     def bulk_density(self, input_value):
+        """Assign the bulk_density parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The bulk_density value
+        """
         self._bulk_density.value = input_value
 
 
 class WSExtensions(WSMixin):
     def __init__(self):
+        """Initialise WSExtensions"""
         self._curve_number = UserChoice(
             "curve number", "extensions", False, bool, False
         )
@@ -312,146 +538,362 @@ class WSExtensions(WSMixin):
 
     @property
     def curve_number(self):
+        """Getter curve_number extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the curve_number extension"""
         return self._curve_number
 
     @curve_number.setter
     def curve_number(self, input_value):
+        """Set curve_number extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._curve_number.value = input_value
 
     @property
     def include_sewers(self):
+        """Getter include_sewers extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the include_sewers extension"""
         return self._include_sewers
 
     @include_sewers.setter
     def include_sewers(self, input_value):
+        """Set include_sewers extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._include_sewers.value = input_value
 
     @property
     def create_ktc_map(self):
+        """Getter create_ktc_map extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the create_ktc_map extension"""
         return self._create_ktc_map
 
     @create_ktc_map.setter
     def create_ktc_map(self, input_value):
+        """Set create_ktc_map extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._create_ktc_map.value = input_value
 
     @property
     def create_ktil_map(self):
+        """Getter create_ktil_map extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the create_ktil_map extension"""
         return self._create_ktil_map
 
     @create_ktil_map.setter
     def create_ktil_map(self, input_value):
+        """Set create_ktil_map extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._create_ktil_map.value = input_value
 
     @property
     def estimate_clay_content(self):
+        """Getter estimate_clay_content extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the estimate_clay_content extension"""
         return self._estimate_clay_content
 
     @estimate_clay_content.setter
     def estimate_clay_content(self, input_value):
+        """Set estimate_clay_content extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._estimate_clay_content.value = input_value
 
     @property
     def include_tillage_direction(self):
+        """Getter include_tillage_direction extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the include_tillage_direction extension"""
         return self._include_tillage_direction
 
     @include_tillage_direction.setter
     def include_tillage_direction(self, input_value):
+        """Set include_tillage_direction extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._include_tillage_direction.value = input_value
 
     @property
     def include_buffers(self):
+        """Getter include_buffers extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the include_buffers extension"""
         return self._include_buffers
 
     @include_buffers.setter
     def include_buffers(self, input_value):
+        """Set include_buffers extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._include_buffers.value = input_value
 
     @property
     def include_ditches(self):
+        """Getter include_ditches extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the include_ditches extension"""
         return self._include_ditches
 
     @include_ditches.setter
     def include_ditches(self, input_value):
+        """Set include_ditches extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._include_ditches.value = input_value
 
     @property
     def include_dams(self):
+        """Getter include_dams extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the include_dams extension"""
         return self._include_dams
 
     @include_dams.setter
     def include_dams(self, input_value):
+        """Set include_dams extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._include_dams.value = input_value
 
     @property
     def output_per_river_segment(self):
+        """Getter output_per_river_segment extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the output_per_river_segment extension"""
         return self._output_per_river_segment
 
     @output_per_river_segment.setter
     def output_per_river_segment(self, input_value):
+        """Set output_per_river_segment extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._output_per_river_segment.value = input_value
 
     @property
     def adjusted_slope(self):
+        """Getter adjusted_slope extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the adjusted_slope extension"""
         return self._adjusted_slope
 
     @adjusted_slope.setter
     def adjusted_slope(self, input_value):
+        """Set adjusted_slope extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._adjusted_slope.value = input_value
 
     @property
     def buffer_reduce_area(self):
+        """Getter buffer_reduce_area extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the buffer_reduce_area extension"""
         return self._buffer_reduce_area
 
     @buffer_reduce_area.setter
     def buffer_reduce_area(self, input_value):
+        """Set buffer_reduce_area extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._buffer_reduce_area.value = input_value
 
     @property
     def force_routing(self):
+        """Getter force_routing extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the force_routing extension"""
         return self._force_routing
 
     @force_routing.setter
     def force_routing(self, input_value):
+        """Set force_routing extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._force_routing.value = input_value
 
     @property
     def river_routing(self):
+        """Getter river_routing extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the river_routing extension"""
         return self._river_routing
 
     @river_routing.setter
     def river_routing(self, input_value):
+        """Set river_routing extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._river_routing.value = input_value
 
     @property
     def manual_outlet_selection(self):
+        """Getter manual_outlet_selection extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the manual_outlet_selection extension"""
         return self._manual_outlet_selection
 
     @manual_outlet_selection.setter
     def manual_outlet_selection(self, input_value):
+        """Set manual_outlet_selection extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._manual_outlet_selection.value = input_value
 
     @property
     def convert_output(self):
+        """Getter convert_output extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the convert_output extension"""
         return self._convert_output
 
     @convert_output.setter
     def convert_output(self, input_value):
+        """Set convert_output extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._convert_output.value = input_value
 
     @property
     def calibrate(self):
+        """Getter calibrate extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the calibrate extension"""
         return self._calibrate
 
     @calibrate.setter
     def calibrate(self, input_value):
+        """Set calibrate extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._calibrate.value = input_value
 
     @property
     def cardinal_routing_river(self):
+        """Getter cardinal_routing_river extension
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the cardinal_routing_river extension"""
         return self._cardinal_routing_river
 
     @cardinal_routing_river.setter
     def cardinal_routing_river(self, input_value):
+        """Set cardinal_routing_river extension
+
+        Parameters
+        ----------
+        input_value: bool
+        """
         self._cardinal_routing_river.value = input_value
 
 
@@ -574,127 +1016,338 @@ class WSExtensionsParameters(WSMixin):
 
     @property
     def sewer_exit(self):
+        """Getter sewer_exit parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the sewer_exit parameter
+        """
         return self._sewer_exit
 
     @sewer_exit.setter
     def sewer_exit(self, input_value):
+        """Assign the sewer_exit parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The sewer_exit value
+        """
         self._sewer_exit.value = input_value
 
     @property
     def clay_content_parent_material(self):
+        """Getter clay_content_parent_material parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the clay_content_parent_material parameter
+        """
         return self._clay_content_parent_material
 
     @clay_content_parent_material.setter
     def clay_content_parent_material(self, input_value):
+        """Assign the clay_content_parent_material parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The clay_content_parent_material value
+        """
         self._clay_content_parent_material.value = input_value
 
     @property
     def antecedent_rainfall(self):
+        """Getter antecedent_rainfall parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the antecedent_rainfall parameter
+        """
         return self._antecedent_rainfall
 
     @antecedent_rainfall.setter
     def antecedent_rainfall(self, input_value):
+        """Assign the antecedent_rainfall parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The antecedent_rainfall value
+        """
         self._antecedent_rainfall.value = input_value
 
     @property
     def stream_velocity(self):
+        """Getter stream_velocity parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the stream_velocity parameter
+        """
         return self._stream_velocity
 
     @stream_velocity.setter
     def stream_velocity(self, input_value):
+        """Assign the stream_velocity parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The stream_velocity value
+        """
         self._stream_velocity.value = input_value
 
     @property
     def alpha(self):
+        """Getter alpha parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the alpha parameter
+        """
         return self._alpha
 
     @alpha.setter
     def alpha(self, input_value):
+        """Assign the alpha parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The alpha value
+        """
         self._alpha.value = input_value
 
     @property
     def beta(self):
+        """Getter beta parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the beta parameter
+        """
         return self._beta
 
     @beta.setter
     def beta(self, input_value):
+        """Assign the beta parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The beta value
+        """
         self._beta.value = input_value
 
     @property
     def ls_correction(self):
+        """Getter ls_correction parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ls_correction parameter
+        """
         return self._ls_correction
 
     @ls_correction.setter
     def ls_correction(self, input_value):
+        """Assign the ls_correction parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ls_correction value
+        """
         self._ls_correction.value = input_value
 
     @property
     def ktc_low(self):
+        """Getter ktc_low parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_low parameter
+        """
         return self._ktc_low
 
     @ktc_low.setter
     def ktc_low(self, input_value):
+        """Assign the ktc_low parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_low value
+        """
         self._ktc_low.value = input_value
 
     @property
     def ktc_high(self):
+        """Getter ktc_high parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_high parameter
+        """
         return self._ktc_high
 
     @ktc_high.setter
     def ktc_high(self, input_value):
+        """Assign the ktc_high parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_high value
+        """
         self._ktc_high.value = input_value
 
     @property
     def ktc_limit(self):
+        """Getter ktc_limit parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_limit parameter
+        """
         return self._ktc_limit
 
     @ktc_limit.setter
     def ktc_limit(self, input_value):
+        """Assign the ktc_limit parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_limit value
+        """
         self._ktc_limit.value = input_value
 
     @property
     def ktil_default(self):
+        """Getter ktil_default parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktil_default parameter
+        """
         return self._ktil_default
 
     @ktil_default.setter
     def ktil_default(self, input_value):
+        """Assign the ktil_default parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktil_default value
+        """
         self._ktil_default.value = input_value
 
     @property
     def ktil_threshold(self):
+        """Getter ktil_threshold parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktil_threshold parameter
+        """
         return self._ktil_threshold
 
     @ktil_threshold.setter
     def ktil_threshold(self, input_value):
+        """Assign the ktil_threshold parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktil_threshold value
+        """
         self._ktil_threshold.value = input_value
 
     @property
     def desired_timestep(self):
+        """Getter desired_timestep parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the desired_timestep parameter
+        """
         return self._desired_timestep
 
     @desired_timestep.setter
     def desired_timestep(self, input_value):
+        """Assign the desired_timestep parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The desired_timestep value
+        """
         self._desired_timestep.value = input_value
 
     @property
     def final_timestep(self):
+        """Getter final_timestep parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the final_timestep parameter
+        """
         return self._final_timestep
 
     @final_timestep.setter
     def final_timestep(self, input_value):
+        """Assign the final_timestep parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The final_timestep value
+        """
         self._final_timestep.value = input_value
 
     @property
     def endtime_model(self):
+        """Getter endtime_model parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the endtime_model parameter
+        """
         return self._endtime_model
 
     @endtime_model.setter
     def endtime_model(self, input_value):
+        """Assign the endtime_model parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The endtime_model value
+        """
         self._endtime_model.value = input_value
 
 
 class WSOutput(WSMixin):
     def __init__(self):
+        """Initialise WSOutput"""
         self._write_aspect = UserChoice("output", "write aspect", False, bool, False)
         self._write_ls_factor = UserChoice(
             "output", "write ls factor", False, bool, False
@@ -728,103 +1381,260 @@ class WSOutput(WSMixin):
 
     @property
     def write_aspect(self):
+        """Getter write_aspect output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_aspect output option
+        """
         return self._write_aspect
 
     @write_aspect.setter
     def write_aspect(self, input_value):
+        """Set the write_aspect output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_aspect.value = input_value
 
     @property
     def write_ls_factor(self):
+        """Getter write_ls_factor output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_ls_factor output option
+        """
         return self._write_ls_factor
 
     @write_ls_factor.setter
     def write_ls_factor(self, input_value):
+        """Set the write_ls_factor output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_ls_factor.value = input_value
 
     @property
     def write_upstream_area(self):
+        """Getter write_upstream_area output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_upstream_area output option
+        """
         return self._write_upstream_area
 
     @write_upstream_area.setter
     def write_upstream_area(self, input_value):
+        """Set the write_upstream_area output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_upstream_area.value = input_value
 
     @property
     def write_slope(self):
+        """Getter write_slope output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_slope output option
+        """
         return self._write_slope
 
     @write_slope.setter
     def write_slope(self, input_value):
+        """Set the write_slope output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_slope.value = input_value
 
     @property
     def write_routing_table(self):
+        """Getter write_routing_table output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_routing_table output option
+        """
         return self._write_routing_table
 
     @write_routing_table.setter
     def write_routing_table(self, input_value):
+        """Set the write_routing_table output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_routing_table.value = input_value
 
     @property
     def write_routing_column_row(self):
+        """Getter write_routing_column_row output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_routing_column_row output option
+        """
         return self._write_routing_column_row
 
     @write_routing_column_row.setter
     def write_routing_column_row(self, input_value):
+        """Set the write_routing_column_row output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_routing_column_row.value = input_value
 
     @property
     def write_rusle(self):
+        """Getter write_rusle output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_rusle output option
+        """
         return self._write_rusle
 
     @write_rusle.setter
     def write_rusle(self, input_value):
+        """Set the write_rusle output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_rusle.value = input_value
 
     @property
     def write_sediment_export(self):
+        """Getter write_sediment_export output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_sediment_export output option
+        """
         return self._write_sediment_export
 
     @write_sediment_export.setter
     def write_sediment_export(self, input_value):
+        """Set the write_sediment_export output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_sediment_export.value = input_value
 
     @property
     def write_water_erosion(self):
+        """Getter write_water_erosion output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_water_erosion output option
+        """
         return self.write_water_erosion
 
     @write_water_erosion.setter
     def write_water_erosion(self, input_value):
+        """Set the write_water_erosion output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_water_erosion.value = input_value
 
     @property
     def write_rainfall_excess(self):
+        """Getter write_rainfall_excess output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_rainfall_excess output option
+        """
         return self._write_rainfall_excess
 
     @write_rainfall_excess.setter
     def write_rainfall_excess(self, input_value):
+        """Set the write_rainfall_excess output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_rainfall_excess.value = input_value
 
     @property
     def write_total_runoff(self):
+        """Getter write_total_runoff output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the write_total_runoff output option
+        """
         return self._write_total_runoff
 
     @write_total_runoff.setter
     def write_total_runoff(self, input_value):
+        """Set the write_total_runoff output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._write_total_runoff.value = input_value
 
     @property
     def export_saga(self):
+        """Getter export_saga output option
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice instance of the export_saga output option
+        """
         return self._export_saga
 
     @export_saga.setter
     def export_saga(self, input_value):
+        """Set the export_saga output option
+
+        Parameters
+        ----------
+        input_value:bool
+        """
         self._export_saga.value = input_value
 
 
 class PyVariables:
     def __init__(self):
+        """Initialise PyWSVariables"""
         self._start_year = None
         self._start_month = None
         self._sewer_inlet_efficiency = None
@@ -833,6 +1643,7 @@ class PyVariables:
 
 class PyOptions:
     def __init__(self):
+        """Initialise PyWSOptions"""
         self._filter_dtm = None
         self._only_sewers_in_infrastructure = None
         self._maximize_gras_strips = None
