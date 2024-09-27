@@ -16,7 +16,7 @@ class UserChoice:
         """Initialize choice"""
         self.key = key
         self.section = section
-        self._value = value
+        self.value = value
         self.dtype = dtype
         self.mandatory = mandatory
         self.allowed_values = allowed_values
@@ -59,7 +59,17 @@ class UserChoice:
         self.value = get_item_from_ini(default_ini, self.section, self.key, self.dtype)
 
 
-class WSOptions:
+class WSMixin:
+    def check_mandatory_values(self):
+        for key in self.__dict__:
+            attribute = getattr(self, key)
+            if isinstance(attribute, UserChoice):
+                if attribute.mandatory and (attribute.value is None):
+                    msg = f"{attribute.key} is mandatory and cannot be None"
+                    raise ValueError(msg)
+
+
+class WSOptions(WSMixin):
     def __init__(self):
         self._l_model = UserChoice(
             "L model",
@@ -137,7 +147,7 @@ class WSOptions:
         self._calculate_tillage_erosion.value = input_value
 
 
-class WSParameters:
+class WSParameters(WSMixin):
     def __init__(self):
         self._r_factor = UserChoice("R factor", "parameters", None, float, True)
         self._parcel_connectivity_cropland = UserChoice(
@@ -245,7 +255,7 @@ class WSParameters:
         self._bulk_density.value = input_value
 
 
-class WSExtensions:
+class WSExtensions(WSMixin):
     def __init__(self):
         self._curve_number = UserChoice(
             "curve number", "extensions", False, bool, False
@@ -445,7 +455,7 @@ class WSExtensions:
         self._cardinal_routing_river.value = input_value
 
 
-class WSExtensionsParameters:
+class WSExtensionsParameters(WSMixin):
     def __init__(self, extensions):
         """Generate WSExtensionsParameters instance .
 
@@ -683,7 +693,7 @@ class WSExtensionsParameters:
         self._endtime_model.value = input_value
 
 
-class WSOutput:
+class WSOutput(WSMixin):
     def __init__(self):
         self._write_aspect = UserChoice("output", "write aspect", False, bool, False)
         self._write_ls_factor = UserChoice(
