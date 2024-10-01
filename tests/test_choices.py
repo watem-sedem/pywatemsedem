@@ -30,7 +30,7 @@ def test_userchoice_wrong_dtype():
         float,
         False,
     )
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(TypeError) as excinfo:
         user_choice.value = "This value should be a float"
     assert ("Value assigned to key 'Test2' should be dtype '<class 'float'>'.") in str(
         excinfo.value
