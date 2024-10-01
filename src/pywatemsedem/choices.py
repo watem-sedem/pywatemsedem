@@ -993,14 +993,14 @@ class WSExtensionsParameters(WSMixin):
             "desired timestep",
             "parameters extensions",
             None,
-            float,
+            int,
             self._extensions.curve_number.value,
         )
         self._final_timestep = UserChoice(
             "final timestep",
             "parameters extensions",
             None,
-            float,
+            int,
             (
                 self._extensions.curve_number.value
                 and self._extensions.convert_output.value
@@ -1010,7 +1010,7 @@ class WSExtensionsParameters(WSMixin):
             "endtime model",
             "parameters extensions",
             None,
-            float,
+            int,
             self._extensions.curve_number.value,
         )
 
@@ -1348,35 +1348,35 @@ class WSExtensionsParameters(WSMixin):
 class WSOutput(WSMixin):
     def __init__(self):
         """Initialise WSOutput"""
-        self._write_aspect = UserChoice("output", "write aspect", False, bool, False)
+        self._write_aspect = UserChoice("write aspect", "output", False, bool, False)
         self._write_ls_factor = UserChoice(
-            "output", "write ls factor", False, bool, False
+            "write ls factor", "output", False, bool, False
         )
         self._write_upstream_area = UserChoice(
-            "output", "write upstream area", False, bool, False
+            "write upstream area", "output", False, bool, False
         )
-        self._write_slope = UserChoice("output", "write slope", False, bool, False)
+        self._write_slope = UserChoice("write slope", "output", False, bool, False)
         self._write_routing_table = UserChoice(
             "output", "write routing table", False, bool, False
         )
         self._write_routing_column_row = UserChoice(
-            "output", "write routing column/row", False, bool, False
+            "write routing column/row", "output", False, bool, False
         )
-        self._write_rusle = UserChoice("output", "write rusle", False, bool, False)
+        self._write_rusle = UserChoice("write rusle", "output", False, bool, False)
         self._write_sediment_export = UserChoice(
-            "output", "write sediment export", False, bool, False
+            "write sediment export", "output", False, bool, False
         )
         self._write_water_erosion = UserChoice(
-            "output", "write water erosion", False, bool, False
+            "write water erosion", "output", False, bool, False
         )
         self._write_rainfall_excess = UserChoice(
-            "output", "write rainfall excess", False, bool, False
+            "write rainfall excess", "output", False, bool, False
         )
         self._write_total_runoff = UserChoice(
-            "output", "write total runoff", False, bool, False
+            "write total runoff", "output", False, bool, False
         )
         self._export_saga = UserChoice(
-            "output", "Export .sgrd grids", False, bool, False
+            "Export .sgrd grids", "output", False, bool, False
         )
 
     @property
