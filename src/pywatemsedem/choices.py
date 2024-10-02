@@ -13,8 +13,8 @@ class UserChoice:
         """Initialize choice"""
         self.key = key
         self.section = section
-        self.value = value
         self.dtype = dtype
+        self.value = value
         self.mandatory = mandatory
         self.allowed_values = allowed_values
 
