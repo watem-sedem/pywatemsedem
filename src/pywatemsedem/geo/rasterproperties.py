@@ -329,6 +329,11 @@ class RasterProperties:
         """
         return np.linspace(self.bounds[1], self.bounds[3], self.nrows)
 
+    def __repr__(self):
+        """Partial representation for debugging"""
+        return f"Rasterproperties: ncols: {self._ncols}; nrows: {self._nrows}; nodata: {self._nodata}; driver: {self._driver}"
+
+
 
 def get_bounds_from_vct(vct_catchment, resolution, n_pixels_buffer=5):
     """Get bounds from vector catchment.

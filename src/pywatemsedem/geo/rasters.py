@@ -52,6 +52,10 @@ class AbstractRaster:
         """notebook/ipython representation"""
         return self.arr.__array__()
 
+    def __repr__(self):
+        """notebook/ipython representation"""
+        return f"{self.arr.__array__()}\ndtype:{self.arr.dtype}\n{self._rp}"
+
     @property
     def arr(self):
         """Return array
