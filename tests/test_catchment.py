@@ -38,6 +38,7 @@ class TestCatchment:
 
         # test type
         assert self.catchment.kfactor.arr.dtype == np.int32
+        assert self.catchment.kfactor.rp.nodata == -9999
 
         # test unique values
         un, counts = np.unique(self.catchment.kfactor.arr, return_counts=True)
@@ -47,7 +48,7 @@ class TestCatchment:
     def test_kfactor_warning(self, recwarn, tmp_path):
         """Test warning wrong value kfactor raster"""
         tmp_path.mkdir(exist_ok=True)
-        fname = Path(tmp_path) / "temp.rst"
+        fname = Path(tmp_path) / "kfactor_wrong_value.tif"
         arr, profile = load_raster(catchment_data.k)
         arr[arr < 40] = -10
         write_arr_as_rst(arr, fname, arr.dtype, profile)
@@ -65,7 +66,7 @@ class TestCatchment:
 
     def test_landuse_wrong_value(self, tmp_path):
         """Test wrong value in landuse raster"""
-        fname = Path(tmp_path) / "temp.rst"
+        fname = Path(tmp_path) / "landuse_wrong_value.tif"
         arr, profile = load_raster(catchment_data.basemap)
         arr[arr == 10] = -7
         write_arr_as_rst(arr, fname, arr.dtype, profile)
