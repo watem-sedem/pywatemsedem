@@ -499,7 +499,7 @@ class Scenario:
             arr = np.where(arr > 32767, 32767, arr)
             arr = arr.astype(np.int16)
 
-            return self.raster_factory(arr)
+            return self.raster_factory(arr, allow_nodata_array=True)
         else:
             return None
 
@@ -522,7 +522,7 @@ class Scenario:
             arr = self._vct_parcels.rasterize(
                 self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
             )
-            return self.raster_factory(arr)
+            return self.raster_factory(arr, allow_nodata_array=True)
         else:
             return None
 
