@@ -50,15 +50,15 @@ def test_initiation_ws_options():
     assert ws_opt.l_model.default_value == "Desmet1996_Vanoost2003"
     assert ws_opt.l_model.key == "L model"
     assert ws_opt.l_model.dtype == str
-    assert (
-        ws_opt.l_model.allowed_values
-        == "['Desmet1996_Vanoost2003', 'Desmet1996_McCool']"
-    )
+    assert ws_opt.l_model.allowed_values == [
+        "Desmet1996_Vanoost2003",
+        "Desmet1996_McCool",
+    ]
 
     assert ws_opt.s_model.default_value == "Nearing1997"
     assert ws_opt.s_model.key == "S model"
     assert ws_opt.s_model.dtype == str
-    assert ws_opt.s_model.allowed_values == "['Nearing1997', 'McCool1987']"
+    assert ws_opt.s_model.allowed_values == ["Nearing1997", "McCool1987"]
 
     assert not ws_opt.only_routing.default_value
     assert ws_opt.only_routing.dtype == bool
@@ -67,7 +67,7 @@ def test_initiation_ws_options():
     assert ws_opt.tc_model.default_value == "VanOost2000"
     assert ws_opt.tc_model.key == "TC model"
     assert ws_opt.tc_model.dtype == str
-    assert ws_opt.tc_model.allowed_values == "['VanOost2000', 'Verstraeten2007']"
+    assert ws_opt.tc_model.allowed_values == ["VanOost2000", "Verstraeten2007"]
 
     assert not ws_opt.calculate_tillage_erosion.default_value
     assert ws_opt.calculate_tillage_erosion.key == "calculate tillage erosion"
