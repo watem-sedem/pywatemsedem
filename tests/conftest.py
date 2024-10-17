@@ -21,6 +21,7 @@ folder_geo = Path("tests/geo/data")
 folder_io = Path("tests/io/data")
 userchoices_file = folder_core / "userchoices.ini"
 ini_file = folder_io / "model_in" / "ini.ini"
+default_ini_file = folder_core / "default_values.ini"
 
 
 # class rainfall_data:
