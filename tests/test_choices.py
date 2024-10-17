@@ -43,31 +43,35 @@ def test_userchoice_wrong_dtype():
     )
 
 
-@pytest.mark.skip(reason="To be checked")
 def test_initiation_ws_options():
     """Test if the WSOptions model is initialised ok"""
     ws_opt = WSOptions()
 
-    assert ws_opt.l_model.value == "Desmet1996_Vanoost2003"
+    assert ws_opt.l_model.default_value == "Desmet1996_Vanoost2003"
     assert ws_opt.l_model.key == "L model"
+    assert ws_opt.l_model.dtype == str
     assert (
         ws_opt.l_model.allowed_values
         == "['Desmet1996_Vanoost2003', 'Desmet1996_McCool']"
     )
 
-    assert ws_opt.s_model.value == "Nearing1997"
+    assert ws_opt.s_model.default_value == "Nearing1997"
     assert ws_opt.s_model.key == "S model"
+    assert ws_opt.s_model.dtype == str
     assert ws_opt.s_model.allowed_values == "['Nearing1997', 'McCool1987']"
 
-    assert not ws_opt.only_routing.value
+    assert not ws_opt.only_routing.default_value
+    assert ws_opt.only_routing.dtype == bool
     assert ws_opt.only_routing.key == "only routing"
 
-    assert ws_opt.tc_model.value == "VanOost2000"
+    assert ws_opt.tc_model.default_value == "VanOost2000"
     assert ws_opt.tc_model.key == "TC model"
+    assert ws_opt.tc_model.dtype == str
     assert ws_opt.tc_model.allowed_values == "['VanOost2000', 'Verstraeten2007']"
 
-    assert not ws_opt.calculate_tillage_erosion
+    assert not ws_opt.calculate_tillage_erosion.default_value
     assert ws_opt.calculate_tillage_erosion.key == "calculate tillage erosion"
+    assert ws_opt.calculate_tillage_erosion.dtype == bool
 
 
 @pytest.mark.skip(reason="not yet implemented")
@@ -135,7 +139,59 @@ def test_initialisation_ws_extension_parameters_estimate_clay_content():
 @pytest.mark.skip(reason="not yet implemented")
 def test_initialisation_ws_output():
     """Test if the WSOutput object is initialised ok"""
-    WSOutput()
+    ws_out = WSOutput()
+
+    assert ws_out.write_aspect.key == "write aspect"
+    assert ws_out.write_aspect.dtype == bool
+    assert not ws_out.write_aspect.mandatory
+
+    assert ws_out.write_rusle.key == "write rusle"
+    assert ws_out.write_rusle.dtype == bool
+    assert not ws_out.write_rusle.mandatory
+
+    assert ws_out.write_rusle.key == "write rusle"
+    assert ws_out.write_rusle.dtype == bool
+    assert not ws_out.write_rusle.mandatory
+
+    assert ws_out.write_ls_factor.key == "write ls factor"
+    assert ws_out.write_ls_factor.dtype == bool
+    assert not ws_out.write_ls_factor.mandatory
+
+    assert ws_out.write_upstream_area.key == "write upstream area"
+    assert ws_out.write_upstream_area.dtype == bool
+    assert not ws_out.write_upstream_area.mandatory
+
+    assert ws_out.write_slope.key == "write slope"
+    assert ws_out.write_slope.dtype == bool
+    assert not ws_out.write_slope.mandatory
+
+    assert ws_out.write_routing_table.key == "write routing table"
+    assert ws_out.write_routing_table.dtype == bool
+    assert not ws_out.write_routing_table.mandatory
+
+    assert ws_out.write_routing_column_row.key == "write routing column/row"
+    assert ws_out.write_routing_column_row.dtype == bool
+    assert not ws_out.write_routing_column_row.mandatory
+
+    assert ws_out.write_sediment_export.key == "write sediment export"
+    assert ws_out.write_sediment_export.dtype == bool
+    assert not ws_out.write_sediment_export.mandatory
+
+    assert ws_out.write_water_erosion.key == "write water erosion"
+    assert ws_out.write_water_erosion.dtype == bool
+    assert not ws_out.write_water_erosion.mandatory
+
+    assert ws_out.write_rainfall_excess.key == "write rainfall excess"
+    assert ws_out.write_rainfall_excess.dtype == bool
+    assert not ws_out.write_rainfall_excess.mandatory
+
+    assert ws_out.write_total_runoff.key == "write total runoff"
+    assert ws_out.write_total_runoff.dtype == bool
+    assert not ws_out.write_total_runoff.mandatory
+
+    assert ws_out.export_saga.key == "Export .sgrd grids"
+    assert ws_out.export_saga.dtype == bool
+    assert not ws_out.export_saga.mandatory
 
 
 def test_mandatory_value_not_given():
@@ -145,3 +201,18 @@ def test_mandatory_value_not_given():
     with pytest.raises(ValueError) as excinfo:
         ws_params.check_mandatory_values()
     assert ("R factor is mandatory and cannot be None") in str(excinfo.value)
+
+
+def test_apply_defaults():
+    """Test if the mixin function apply defaults works as assumed"""
+    ws_opt = WSOptions()
+    ws_opt.apply_defaults()
+
+    assert ws_opt.l_model.value == ws_opt.l_model.default_value
+    assert ws_opt.s_model.value == ws_opt.s_model.default_value
+    assert ws_opt.tc_model.value == ws_opt.tc_model.default_value
+    assert ws_opt.only_routing.value == ws_opt.only_routing.default_value
+    assert (
+        ws_opt.calculate_tillage_erosion.value
+        == ws_opt.calculate_tillage_erosion.default_value
+    )
