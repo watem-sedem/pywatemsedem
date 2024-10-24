@@ -1,4 +1,3 @@
-import configparser
 import logging
 import platform
 import shutil
@@ -116,57 +115,6 @@ def zip_folder(folder2zip, outfile=None):
     if outfile is None:
         outfile = folder2zip
     shutil.make_archive(outfile, "zip", folder2zip)
-
-
-def get_item_from_ini(ini, section, option, dtype):
-    """Gets an item from an option in a certain section of an ini-file
-
-    Parameters
-    ----------
-    ini: pathlib.Path
-        File path of the ini-file
-    section: str
-        Name of the desired section
-    option: str
-        Name of the desired option
-    dtype: str
-        Type of parameter to be read (get (string), int, float or bool).
-        If another string is giver to this parameter, a
-        :class:`~pywatemsedem.CNWS.CNWSException` is raised.
-
-    Returns
-    -------
-    str or int or float or bool or None
-        Settings value of ini-file. If the option or section does not exist in
-        the ini-file or the value of the section-option None is returned.
-    """
-
-    Cfg = configparser.ConfigParser()
-    if ini.exists():
-        Cfg.read(ini)
-        try:
-            if dtype == "get":
-                a = Cfg.get(section, option)
-            elif dtype == "int":
-                a = Cfg.getint(section, option)
-            elif dtype == "float":
-                a = Cfg.getfloat(section, option)
-            elif dtype == "bool":
-                a = Cfg.getboolean(section, option)
-            else:
-                raise TypeError("not a correct Type")
-        except configparser.NoOptionError:
-            msg = f"Option {option} does not exist in ini-file (section {section})"
-            logger.warning(msg)
-            return None
-        except configparser.NoSectionError:
-            msg = f"Section {section} does not exist in ini-file"
-            logger.warning(msg)
-            return None
-        else:
-            return a
-    else:
-        raise FileNotFoundError(f"{ini} does not exist")
 
 
 def extract_tags_from_template_file(template):
