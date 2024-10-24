@@ -53,7 +53,7 @@ class TestGetItemFromIni:
     def test_get_string_from_ini(self):
         """Test if a string can be retrieved from an ini-file"""
         value = get_item_from_ini(
-            ini_file, section="Test section", option="string_option", dtype=str
+            ini_file, section="Test Section", option="string_option", dtype=str
         )
         expected_string = "This is a string"
         assert value == expected_string
@@ -61,7 +61,7 @@ class TestGetItemFromIni:
     def test_get_float_from_ini(self):
         """Test if a float can be retrieved from an ini-file"""
         value = get_item_from_ini(
-            ini_file, section="Test section", option="float_option", dtype=float
+            ini_file, section="Test Section", option="float_option", dtype=float
         )
         expected_float = 0.03
         assert value == expected_float
