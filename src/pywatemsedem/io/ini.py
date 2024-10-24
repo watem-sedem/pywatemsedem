@@ -764,8 +764,8 @@ def get_item_from_ini(ini, section, option, dtype):
         Name of the desired option
     dtype: dtype
         Type of parameter to be read (str, int, float or bool).
-        If another string is giver to this parameter, a
-        :class:`~pywatemsedem.CNWS.CNWSException` is raised.
+        If another string is given to this parameter, a
+       TypeError is raised.
 
     Returns
     -------
@@ -790,8 +790,7 @@ def get_item_from_ini(ini, section, option, dtype):
                 raise TypeError("not a correct Type")
         except configparser.NoOptionError:
             msg = f"Option {option} does not exist in ini-file (section {section})"
-            logger.warning(msg)
-            return None
+            raise ValueError(msg)
         except configparser.NoSectionError:
             msg = f"Section {section} does not exist in ini-file"
             logger.warning(msg)
