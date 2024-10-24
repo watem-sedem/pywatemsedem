@@ -762,8 +762,8 @@ def get_item_from_ini(ini, section, option, dtype):
         Name of the desired section
     option: str
         Name of the desired option
-    dtype: str
-        Type of parameter to be read (get (string), int, float or bool).
+    dtype: dtype
+        Type of parameter to be read (str, int, float or bool).
         If another string is giver to this parameter, a
         :class:`~pywatemsedem.CNWS.CNWSException` is raised.
 
@@ -778,13 +778,13 @@ def get_item_from_ini(ini, section, option, dtype):
     if ini.exists():
         Cfg.read(ini)
         try:
-            if dtype == "get":
+            if dtype == str:
                 a = Cfg.get(section, option)
-            elif dtype == "int":
+            elif dtype == int:
                 a = Cfg.getint(section, option)
-            elif dtype == "float":
+            elif dtype == float:
                 a = Cfg.getfloat(section, option)
-            elif dtype == "bool":
+            elif dtype == bool:
                 a = Cfg.getboolean(section, option)
             else:
                 raise TypeError("not a correct Type")

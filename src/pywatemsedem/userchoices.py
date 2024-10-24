@@ -50,9 +50,7 @@ class UserChoices:
             if key not in self.dict_ecm_options:
                 # read key from default values
                 if defaultini is not None:
-                    defaultvalue = get_item_from_ini(
-                        defaultini, "ECMOptions", key, "int"
-                    )
+                    defaultvalue = get_item_from_ini(defaultini, "ECMOptions", key, int)
                     msg = (
                         f"{key} is not given in the ECM options, "
                         f"default value ({defaultvalue}) is used"
@@ -202,7 +200,7 @@ class UserChoices:
             if key not in self.dict_model_options:
                 if defaultini is not None:
                     # read key from default values
-                    defaultvalue = get_item_from_ini(defaultini, "Options", key, "int")
+                    defaultvalue = get_item_from_ini(defaultini, "Options", key, int)
                 else:
                     defaultvalue = None
 
@@ -344,9 +342,9 @@ class UserChoices:
                         "Outletshp",
                         "Routingshp",
                     ]:
-                        T = "get"
+                        T = str
                     else:
-                        T = "int"
+                        T = int
 
                     # read key from default values
                     defaultvalue = get_item_from_ini(defaultini, "Variables", key, T)
@@ -407,7 +405,7 @@ class UserChoices:
             if key not in self.dict_output:
                 if defaultini is not None:
                     # read key from default values
-                    defaultvalue = get_item_from_ini(defaultini, "Output", key, "int")
+                    defaultvalue = get_item_from_ini(defaultini, "Output", key, int)
                     msg = (
                         f"`{key}` is not given in the model options, default "
                         f"value ({defaultvalue}) is used."
