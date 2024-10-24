@@ -1,6 +1,6 @@
 import logging
 
-from pywatemsedem.tools import get_item_from_ini
+from pywatemsedem.io.ini import get_item_from_ini
 
 # Standard libraries
 
