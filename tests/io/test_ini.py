@@ -7,6 +7,8 @@ from pywatemsedem.io.ini import add_field, get_item_from_ini, modify_field
 
 
 class TestModifyField:
+    """Class combining all tests for the modify_field function"""
+
     def test_modify(self, tmp_path):
         """Test basic func"""
         modify_field(ini_file, "User Choices", "max kernel", 3)
@@ -25,6 +27,8 @@ class TestModifyField:
 
 
 class TestAddField:
+    """Class combining all tests for the add field section"""
+
     def test_add(self, tmp_path):
         """Test basic func"""
         shutil.copy(ini_file, tmp_path / "test.ini")
@@ -44,6 +48,8 @@ class TestAddField:
 
 
 class TestGetItemFromIni:
+    """Class combining all tests for the get_item_from_ini function"""
+
     def test_get_string_from_ini(self):
         """Test if a string can be retrieved from an ini-file"""
         value = get_item_from_ini(
@@ -99,12 +105,13 @@ class TestGetItemFromIni:
                 dtype=bool,
             )
         assert (
-            "Option Not extisting option does not exist in ini-file (section Test Section)"
+            "Option Not existing option does not exist in ini-file (section Test Section)"
         ) in str(excinfo.value)
 
     def test_wrong_dtype_from_ini(self):
-        """Test if a ValueError is raised when no correct dtype is given"""
-        with pytest.raises(ValueError) as excinfo:
+        """Test if a TypeError is raised
+        when no correct dtype is given"""
+        with pytest.raises(TypeError) as excinfo:
             get_item_from_ini(
                 ini_file,
                 section="Test Section",
