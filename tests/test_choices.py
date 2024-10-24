@@ -151,7 +151,6 @@ def test_initialisation_ws_extension_parameters_estimate_clay_content():
     assert ws_ext_param.clay_content_parent_material.mandatory
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_initialisation_ws_output():
     """Test if the WSOutput object is initialised ok"""
     ws_out = WSOutput()
