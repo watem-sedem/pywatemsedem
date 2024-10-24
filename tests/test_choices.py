@@ -46,14 +46,14 @@ def test_userchoice_wrong_dtype():
 
 def test_read_default_value_from_ini():
     """Test reading default value of a user choice from an ini-file"""
-    user_choice = UserChoice("R factor", "Parameters", float, True)
+    user_choice = UserChoice("R factor", "parameters", float, True)
     user_choice.read_default_value_from_ini(default_ini_file)
     assert user_choice.default_value == 1250.0
 
 
 def test_read_value_from_ini():
     """Test reading value of a user choice from an ini-file"""
-    user_choice = UserChoice("R factor", "Parameters", float, True)
+    user_choice = UserChoice("R factor", "parameters", float, True)
     user_choice.read_value_from_ini(default_ini_file)
     assert user_choice.default_value == 1250.0
 
