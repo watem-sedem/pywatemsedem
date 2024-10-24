@@ -793,8 +793,7 @@ def get_item_from_ini(ini, section, option, dtype):
             raise ValueError(msg)
         except configparser.NoSectionError:
             msg = f"Section {section} does not exist in ini-file"
-            logger.warning(msg)
-            return None
+            raise ValueError(msg)
         else:
             return a
     else:
