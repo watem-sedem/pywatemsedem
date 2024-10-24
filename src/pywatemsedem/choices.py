@@ -1363,7 +1363,7 @@ class WSOutput(WSMixin):
         )
         self._write_slope = UserChoice("write slope", "output", bool, False, False)
         self._write_routing_table = UserChoice(
-            "output", "write routing table", bool, False, False
+            "write routing table", "output", bool, False, False
         )
         self._write_routing_column_row = UserChoice(
             "write routing column/row", "output", bool, False, False
