@@ -1,4 +1,5 @@
 import shutil
+from pathlib import Path
 
 import pytest
 from conftest import ini_file
@@ -119,3 +120,14 @@ class TestGetItemFromIni:
                 dtype="this is not a dtype",
             )
         assert ("not a correct Type") in str(excinfo.value)
+
+    def test_wrong_ini_file(self):
+        """Test if a FileNotFoundError is raised when no correct ini file is given"""
+        with pytest.raises(FileNotFoundError) as excinfo:
+            get_item_from_ini(
+                Path("This/File/Does/Not/Exist.ini"),
+                "Test Section",
+                "bool_option",
+                bool,
+            )
+        assert "This/File/Does/Not/Exist.ini does not exist" in str(excinfo.value)
