@@ -55,7 +55,7 @@ def test_read_value_from_ini():
     """Test reading value of a user choice from an ini-file"""
     user_choice = UserChoice("R factor", "parameters", float, True)
     user_choice.read_value_from_ini(default_ini_file)
-    assert user_choice.default_value == 1250.0
+    assert user_choice.value == 1250.0
 
 
 def test_initiation_ws_options():
