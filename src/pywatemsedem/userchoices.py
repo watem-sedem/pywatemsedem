@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from pywatemsedem.tools import check_courant_criterium, get_item_from_ini
+from pywatemsedem.io.ini import get_item_from_ini
+from pywatemsedem.tools import check_courant_criterium
 
 logger = logging.getLogger(__name__)
 
