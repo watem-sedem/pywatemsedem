@@ -337,7 +337,7 @@ class UserChoices:
                         "Stream velocity",
                         "LS correction",
                     ]:
-                        T = "float"
+                        T = float
                     elif key in [
                         "Outletshp",
                         "Routingshp",
