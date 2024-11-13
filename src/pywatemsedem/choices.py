@@ -971,7 +971,7 @@ class WSExtensionsParameters(WSMixin):
             self._extensions.curve_number.value,
         )
         self._ls_correction = UserChoice(
-            "ls correction", "parameters extensions", None, float, 1.0
+            "ls correction", "parameters extensions", float, False, 1.0
         )
         self._ktc_low = UserChoice(
             "ktc low",
