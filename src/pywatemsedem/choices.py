@@ -28,6 +28,7 @@ class UserChoice:
             f"Value: {self.value}",
             f"Mandatory: {self.mandatory}",
             f"Dtype: {self.dtype}",
+            f"Default_value: {self.default_value}",
             f"Allowed_values: {self.allowed_values}",
             f"Section: {self.section}",
         ]
