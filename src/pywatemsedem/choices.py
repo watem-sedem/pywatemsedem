@@ -82,6 +82,10 @@ class UserChoice:
             default_ini, self.section, self.key, self.dtype
         )
 
+    def apply_default_value(self):
+        """Apply default value as the value for the user choice"""
+        self.value = self.default_value
+
 
 class WSMixin:
     def check_mandatory_values(self):

@@ -58,6 +58,15 @@ def test_read_value_from_ini():
     assert user_choice.value == 1250.0
 
 
+def test_apply_default_value():
+    """Test assigning default value to value"""
+    user_choice = UserChoice(
+        "R factor", "parameters", float, True, default_value=1250.0
+    )
+    user_choice.apply_default_value()
+    assert user_choice.value == user_choice.default_value
+
+
 def test_initiation_ws_options():
     """Test if the WSOptions model is initialised ok"""
     ws_opt = WSOptions()
