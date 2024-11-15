@@ -176,8 +176,6 @@ def get_source_landuse(
     maxprc_id,
     rasterio_profile,
     arr_mask,
-    tempfolder,
-    tag,
 ):
     """Get landuse raster
     Parameters
@@ -190,16 +188,10 @@ def get_source_landuse(
         Gdal dictionary holding all metadata for idrisi rasters.
     arr_mask : numpy.ndarray
         Binaire array defining model domain (1 else 0).
-    tempfolder : str or pathlib.Path
-        Folder to write temp files to.
-    tag : str
-        Extra tag which is added to filename.
     """
     # landgebruik
     land_arr = np.where(landuse.arr == 10, maxprc_id, landuse.arr).astype("int16")
     nolanduse = np.logical_and(land_arr == rasterio_profile["nodata"], arr_mask == 1)
     land_arr = np.where(nolanduse, maxprc_id, land_arr).astype("int16")
-    tmp_LandUse = tempfolder / f"landuse_reclass{tag}"
-    write_arr_as_rst(land_arr, tmp_LandUse, "int16", rasterio_profile)
 
     return land_arr

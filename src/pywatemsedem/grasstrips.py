@@ -684,11 +684,11 @@ def core_expand_grass_strips_with_triggers(
     return arr_grass_strips
 
 
-def create_grassstrips_cnws(
+def process_grass_strips(
     arr_grass_strips_ids,
     arr_river,
     arr_infr,
-    profile,
+    nodata,
     arr_parcels=None,
     expand_grass_strips=False,
 ):
@@ -714,10 +714,8 @@ def create_grassstrips_cnws(
         Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
         value zero indicates that no parcel is present. If None, the expansion is not
         limited to the boundaries of a parcel.
-    profile: dict
-        Rasterio profile, see
-        :attr:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`. All the
-        input rasters must have the same nodata-value, defined in profile.
+    nodata: int
+        Nodata value
     expand_grass_strips: bool, default False
         Use expand grass strips algorithm with rivers as triggers, see
          :func:`pywatemsedem.grasstrips.expand_grass_strips_with_triggers`
@@ -732,11 +730,11 @@ def create_grassstrips_cnws(
 
     Notes
     -----
-    All the input rasters must have the same nodata-value, defined in profile.
+    All the input rasters must have the same nodata-value.
     """
     if expand_grass_strips:
-        arr_river[(arr_river == profile["nodata"])] = 0
-        arr_infr[(arr_infr == profile["nodata"])] = 0
+        arr_river[(arr_river == nodata)] = 0
+        arr_infr[(arr_infr == nodata)] = 0
         arr_triggers = arr_infr + arr_river
         arr_triggers[(arr_triggers != 0)] = 1
         # arr_gras[arr_gras==profile["nodata"]] = 0
@@ -745,11 +743,11 @@ def create_grassstrips_cnws(
             arr_grass_strips_ids,
             arr_triggers,
             arr_parcels=arr_parcels,
-            nodata=profile["nodata"],
+            nodata=nodata,
             mode=1,
         )
     arr_grass = arr_grass_strips_ids.copy()
-    arr_grass[arr_grass != profile["nodata"]] = -6
+    arr_grass[arr_grass != nodata] = -6
 
     return arr_grass_strips_ids, arr_grass
 

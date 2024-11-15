@@ -1,5 +1,6 @@
 import numpy as np
-
+from pathlib import Path
+import tempfile
 from pywatemsedem.grasstrips import scale_ktc_with_grass_strip_width, scale_ktc_zhang
 
 
@@ -10,7 +11,6 @@ def create_ktc_cnws(
     ktc_low,
     ktc_high,
     ktc_limit,
-    sfolder,
     grass=None,
     correction_width=True,
 ):
@@ -20,8 +20,12 @@ def create_ktc_cnws(
     ----------
     # TODO
     """
-    rst_mask = sfolder.scenario_folder / "mask.rst"
-    mask.write(rst_mask)
+    tiff_temp = Path(
+        tempfile.NamedTemporaryFile(
+            suffix=".tif", prefix="pywatemsedem", delete=False
+        ).name
+    )
+    mask.write(tiff_temp,format="tiff")
 
     if cfactor is None:
         msg = "Unable to create KTC map, C-factor map is not known"
@@ -47,7 +51,7 @@ def create_ktc_cnws(
             ktc_high,
         )
         arr_grass = grass.rasterize(
-            rst_mask, landuse_parcels.rp.epsg, col="KTC", gdal=True
+            tiff_temp, landuse_parcels.rp.epsg, col="KTC", gdal=True
         )
         arr_ktc = np.where(
             np.logical_and(landuse_parcels.arr == -6, arr_grass != mask.rp.nodata),

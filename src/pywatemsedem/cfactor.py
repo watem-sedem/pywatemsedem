@@ -1,7 +1,10 @@
 import warnings
 
 import numpy as np
-
+import tempfile
+from pathlib import Path
+from .geo.utils import (
+    clean_up_tempfiles)
 from pywatemsedem.grasstrips import (
     scale_cfactor_linear,
     scale_cfactor_with_grass_strips_width,
@@ -13,7 +16,6 @@ def create_cfactor_cnws(
     infrastructure,
     landuse,
     mask,
-    sfolder,
     vct_parcels=None,
     vct_grass_strips=None,
     cfactor_aggriculture=0.37,
@@ -54,8 +56,12 @@ def create_cfactor_cnws(
     (see :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).
     """
     # use to rasterize
-    rst_mask = sfolder.scenario_folder / "mask.rst"
-    mask.write(rst_mask)
+    tiff_temp = Path(
+        tempfile.NamedTemporaryFile(
+            suffix=".tif", prefix="pywatemsedem", delete=False
+        ).name
+    )
+    mask.write(tiff_temp,format="tiff")
 
     arr_cfactor = np.full(rivers.arr.shape, rivers.rp.nodata).astype("float32")
     nodata = rivers.rp.nodata
@@ -82,7 +88,7 @@ def create_cfactor_cnws(
         # write calculated C-factor to shapefile -> needed for efficiency plots
         # vct_grass = grass.write()
         arr_grass_cfactor = vct_grass_strips.rasterize(
-            rst_mask, epsg=rivers.rp.epsg, col="C_factor", gdal=True
+            tiff_temp, epsg=rivers.rp.epsg, col="C_factor", gdal=True
         )
         arr_cfactor = np.where(arr_cfactor == nodata, arr_grass_cfactor, arr_cfactor)
 
@@ -110,7 +116,7 @@ def create_cfactor_cnws(
                 use_source_oriented_measures,
             )
             arr = vct_parcels.rasterize(
-                rst_mask, rivers.rp.epsg, col="C_factor", gdal=True
+                tiff_temp, rivers.rp.epsg, col="C_factor", gdal=True
             )
             arr_cfactor = np.where(
                 arr_cfactor == nodata,
@@ -141,6 +147,8 @@ def create_cfactor_cnws(
     arr_mask = np.where(mask.arr, cfactor_aggriculture, 0)
     arr_cfactor = np.where(arr_cfactor == nodata, arr_mask, arr_cfactor)
     arr_cfactor = arr_cfactor.astype("float32")
+    clean_up_tempfiles(tiff_temp, "tiff")
+
 
     return vct_grass_strips, arr_cfactor
 

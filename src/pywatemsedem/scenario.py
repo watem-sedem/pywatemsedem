@@ -29,7 +29,7 @@ from .errors import (
     attribute_discrete_value_error,
     missing_attribute_error_in_vct,
 )
-from .grasstrips import create_grassstrips_cnws
+from .grasstrips import process_grass_strips
 from .templates import InputFileName
 from .tools import format_forced_routing, zip_folder
 
@@ -1197,45 +1197,6 @@ class Scenario:
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
 
-    def prepare_grass_strips(self, maximize_grass_strips=False):
-        """Prepare grass strips array
-
-        Parameters
-        ----------
-        maximize_grass_strips: bool, default False
-
-        """
-        if self.grass_strips is not None:
-            arr_parcels = None if self.parcels is None else self.parcels.arr
-            arr_grass_ids, arr_grass = create_grassstrips_cnws(
-                self.grass_strips.arr,
-                self.catchm.river.arr,
-                self.catchm.infrastructure.arr,
-                self.rp.rasterio_profile,
-                arr_parcels=arr_parcels,
-                expand_grass_strips=maximize_grass_strips,
-            )
-
-            # write_ids
-            grass_ids = RasterMemory(arr_grass_ids, self.rp)
-            grass_ids.write(
-                self.sfolder.scenarioyear_folder
-                / (
-                    f"grasstripsID_{self.year}_{self.catchm.name}_s"
-                    f"{self.scenario_nr}.tif"
-                ),
-                format="tiff",
-                dtype=np.int16,
-            )
-            # grass
-            self.grass_strips = arr_grass
-            self.grass_strips.write(
-                self.sfolder.scenarioyear_folder
-                / (f"gras_{self.year}_{self.catchm.name}_s{self.scenario_nr}.tif"),
-                format="tiff",
-                dtype=np.int16,
-            )
-
     def create_perceelskaart_cnws(
         self,
         rivers,
@@ -1243,11 +1204,11 @@ class Scenario:
         infrastructure,
         landuse,
         mask,
-        yearfolder,
         rp,
         grass_strips=None,
         parcels=None,
         landuse_parcels=None,
+        maximize_grass_strips=False,
     ):
         """Create CN_WS perceelskaart according to format of :ref:`here <watemsedem:prcmap>`.
 
@@ -1267,8 +1228,6 @@ class Scenario:
             landuse / WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`).
         mask: numpy.ndarray
             Mask raster,
-        yearfolder: pathlib.Path
-            #TODO: try to ditch this
         rp: pywatemsedem.geo.rasterproperties.RasterProperties
             Raster properties, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
         grass_strips: numpy.ndarray
@@ -1277,6 +1236,8 @@ class Scenario:
         parcels: numpy.ndarray
             Parcels ids raster, can only containt nodata-value and >0 (see
             :ref:`here <watemsedem:prcmap>`)
+        maximize_grass_strips: bool, default False
+            See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`
 
         Notes
         -----
@@ -1284,21 +1245,24 @@ class Scenario:
         :ref:`here <watemsedem:prcmap>`. This value is converted in subfunctionalities of
         this function to -2.
         """
-        # parcels)
-        # TODO
-        if self.parcels is not None:
-            maxprc_id = np.max(self.parcels.arr)
-        else:
-            maxprc_id = 1
+        # preprocess grass strips
+        if grass_strips is not None:
+            _, grass_strips = process_grass_strips(grass_strips,
+                                                rivers,
+                                                infrastructure,
+                                                rp.rasterio_profile["nodata"],
+                                                parcels,
+                                                expand_grass_strips=maximize_grass_strips)
+            grass_strips[grass_strips != rp.rasterio_profile["nodata"]] = -6
 
         # landuse
+        maxprc_id = np.max(parcels) if parcels is not None else 1
+
         landuse_core = get_source_landuse(
             landuse,
             maxprc_id,
             rp.rasterio_profile,
             mask,
-            yearfolder,
-            self.catchm.name,
         )
         pl = ParcelsLanduse(
             landuse_core,
@@ -1327,20 +1291,12 @@ class Scenario:
         maximize_grass_strips: bool, default False
             See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`
         """
-        logger.info("Aanmaken van alle nodige modelinput...")
-        self.prepare_grass_strips(maximize_grass_strips=maximize_grass_strips)
 
+        #todo: fix this in the __init__
         arr_parcels_lu = (
             None if self.parcels_landuse is None else self.parcels_landuse.arr
         )
-
-        # todo: how could we fix following lines?
-        if self.grass_strips is None:
-            arr_grass_strips = None
-        else:
-            arr_grass_strips = self.grass_strips.arr
-            arr_grass_strips[arr_grass_strips != self.grass_strips.rp.nodata] = -6
-
+        arr_grass_strips = (None if self.grass_strips is None else self.grass_strips.arr)
         arr_water = None if self.catchm.vct_water is None else self.catchm.water.arr
 
         arr_parcels = None if self.parcels is None else self.parcels.arr
@@ -1350,29 +1306,58 @@ class Scenario:
             self.catchm.infrastructure.arr,
             self.catchm.landuse,
             self.catchm.mask.arr_bin,
-            self.sfolder.scenarioyear_folder,
             self.catchm.rp,
             grass_strips=arr_grass_strips,
             parcels=arr_parcels,
             landuse_parcels=arr_parcels_lu,
+            maximize_grass_strips=maximize_grass_strips
         )
-
-        self.composite_landuse.write(
-            self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
-            dtype=np.int32,
-        )
-
         if self.choices.version != "Only Routing":
-
-            self.update_seasonal_data(
-                self.composite_landuse,
+            _, self.cfactor = create_cfactor_cnws(
                 self.catchm.river,
                 self.catchm.infrastructure,
                 self.catchm.landuse,
                 self.catchm.mask,
                 vct_parcels=self.vct_parcels,
                 vct_grass_strips=self.vct_grass_strips,
+                use_source_oriented_measures=self.choices.dict_ecm_options["UseTeelttechn"]
             )
+
+            # kTC
+            if self.choices.dict_model_options["UserProvidedKTC"] == 1:
+                self.ktc, _ = create_ktc_cnws(
+                    self.composite_landuse,
+                    self.cfactor.arr,
+                    self.catchm.mask,
+                    self.choices.dict_variables["ktc low"],
+                    self.choices.dict_variables["ktc high"],
+                    self.choices.dict_variables["ktc limit"],
+                    grass=self.vct_grass_strips,
+                )
+            else:
+                self.ktc = None
+
+        logger.info("Prepare files for run...")
+        self.composite_landuse.write(
+            self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
+            dtype=np.int32,
+        )
+
+        if self.choices.version == "CN-WS":
+            if self.cn is not None:
+                self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
+            else:
+                msg = "Define a CN raster to run CN."
+                raise IOError(msg)
+
+        if self.choices.dict_model_options["UserProvidedKTC"] == 1:
+            if self.ktc is not None:
+                self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
+            else:
+                msg = "UserProvidedKTC is 1 (True), provide ktc-raster."
+                raise IOError(msg)
+
+        self.cfactor.write(self.sfolder.cnwsinput_folder / inputfilename.cfactor_file)
 
         if self.choices.dict_model_options["Manual outlet selection"] == 1:
             self.outlets.write(
@@ -1422,76 +1407,6 @@ class Scenario:
                     self.sfolder.cnwsinput_folder / inputfilename.endpoints_id_file,
                     format="idrisi",
                     dtype=np.float64,
-                )
-
-    def update_seasonal_data(
-        self,
-        composite_landuse,
-        river,
-        infrastructure,
-        landuse,
-        mask,
-        vct_parcels=None,
-        vct_grass_strips=None,
-    ):
-        """Update seasonal data for prepare_cnws_model_input
-
-        Parameters
-        ----------
-        year: int
-            Simulation year.
-        cn_table:
-            File path to CN table.
-        """
-        # C-factor
-        vct_grass_strips, cfactor = create_cfactor_cnws(
-            river,
-            infrastructure,
-            landuse,
-            mask,
-            self.sfolder,
-            vct_parcels=vct_parcels,
-            vct_grass_strips=vct_grass_strips,
-            use_source_oriented_measures=bool(
-                self.choices.dict_ecm_options["UseTeelttechn"]
-            ),
-        )
-        self.cfactor = cfactor
-        self.cfactor.write(self.sfolder.cnwsinput_folder / inputfilename.cfactor_file)
-
-        # CN
-        if self.choices.version == "CN-WS":
-            self.cn, gdf = process_cn_raster(
-                self.catchm.hydrological_soil_group.arr,
-                self.vct_parcels.geodata,
-                self.season,
-                self.composite_landuse.arr,
-                self.parcels_ids.arr,
-                self.cn_table,
-                self.rp.nodata,
-            )
-            gdf.to_file(self.sfolder.cnwsinput_folder / "CN_table_parcels.shp")
-            self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
-        # kTC
-        if self.choices.dict_model_options["UserProvidedKTC"] == 1:
-            out, vct_grass_strips = create_ktc_cnws(
-                composite_landuse,
-                cfactor,
-                mask,
-                self.choices.dict_variables["ktc low"],
-                self.choices.dict_variables["ktc high"],
-                self.choices.dict_variables["ktc limit"],
-                self.sfolder,
-                grass=vct_grass_strips,
-            )
-            # write results
-            self.ktc = out
-            self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
-            # write grass strips
-            if vct_grass_strips is not None:
-                vct_grass_strips.write(
-                    self.sfolder.scenarioyear_folder
-                    / f"gras_{self.year}_{self.catchm.name}_s{self.scenario_nr}.shp"
                 )
 
     @valid_cnws_input
