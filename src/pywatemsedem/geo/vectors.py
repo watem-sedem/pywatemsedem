@@ -22,8 +22,11 @@ from .utils import (
 
 class AbstractVector:
     """Abstract Vector class based on geopandas GeoDataFrame"""
+    def __init__(self):
+        self._geodata = None
+        self._geometry_type = None
 
-    def __init__(
+    def initialize(
         self, geodata, geometry_type, req_geometry_type=None, allow_empty=False
     ):
         """Abstract vector class
@@ -238,6 +241,14 @@ class AbstractVector:
 
         return arr
 
+    def is_empty(self):
+        """check if geodata (vector) is None (empty)
+
+        Returns
+        -------
+        True/False
+        """
+        return self._geodata is None
 
 class VectorMemory(AbstractVector):
     """Geopandas vector
@@ -258,7 +269,7 @@ class VectorMemory(AbstractVector):
         self, geodata, geometry_type, req_geometry_type=None, allow_empty=False
     ):
         """Initialize RasterMemory"""
-        super().__init__(
+        super().initialize(
             geodata, geometry_type, req_geometry_type, allow_empty=allow_empty
         )
 
@@ -294,7 +305,7 @@ class VectorFile(AbstractVector):
         else:
             geodata = gpd.read_file(file_path)
 
-        super().__init__(
+        super().initialize(
             geodata,
             geometry_type,
             req_geometry_type=req_geometry_type,

@@ -14,7 +14,8 @@ from matplotlib import pyplot as plt
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
-from pywatemsedem.geo.rasters import RasterMemory
+from pywatemsedem.geo.rasters import RasterMemory, AbstractRaster
+from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
     clean_up_tempfiles,
@@ -44,8 +45,8 @@ def valid_dtm(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._dtm is None:
-            msg = "Please first define a DTM!"
+        if self._dtm.is_empty():
+            msg = "Please first define non-empty DTM!"
             raise IOError(msg)
 
         return func(self, *args, **kwargs)
@@ -58,8 +59,8 @@ def valid_vct_river(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_river is None:
-            msg = "Please define river vector!"
+        if self._vct_river.is_empty():
+            msg = "Please define non-empty river vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -71,7 +72,7 @@ def valid_vct_infra_line(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_infrastructure_roads is None:
+        if self._vct_infrastructure_roads.is_empty():
             msg = "Please define infrastructure line vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
@@ -84,8 +85,8 @@ def valid_vct_infra_poly(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_infrastructure_buildings is None:
-            msg = "Please define infrastructure polygon vector!"
+        if self._vct_infrastructure_buildings.is_empty():
+            msg = "Please define non-empty infrastructure polygon vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -97,8 +98,8 @@ def valid_vct_parcels(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_parcels is None:
-            msg = "Please define parcels polygon vector!"
+        if self._vct_parcels.is_empty():
+            msg = "Please define non_empty parcels polygon vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -196,28 +197,32 @@ class Catchment(Factory):
         # set dtm
         self.dtm = rst_dtm
 
-        # attributes
-        self._pfactor = None
-        self._kfactor = None
-        self._segments = None
-        self._routing = None
-        self._hydrosoilgroup = None
-        self._landuse = None
-        self._water = None
-        self._infrastructure = None
+        # API atttributes
+        self._hydrosoilgroup = AbstractRaster()
+        self._landuse = AbstractRaster()
+        self._water = AbstractRaster()
+        self._infrastructure = AbstractRaster()
+        self._river = AbstractRaster()
+
+        # WaTEM/SEDEM inputs
+        self._pfactor = AbstractRaster()
+        self._kfactor = AbstractRaster()
+        self._segments = AbstractRaster()
+        self._routing = AbstractRaster()
+
 
         # set name and logger
         self.name = str(name)
 
         # set other attributes to none
-        self._river = None
-        self._vct_river = None
-        self._vct_tubed_river = None
-        self._vct_water = None
-        self._vct_infrastructure_buildings = None
-        self._vct_infrastructure_roads = None
-        self._adjacent_edges = None
-        self._up_edges = None
+
+        self._vct_river = AbstractVector()
+        self._vct_tubed_river = AbstractVector()
+        self._vct_water = AbstractVector()
+        self._vct_infrastructure_buildings = AbstractVector()
+        self._vct_infrastructure_roads = AbstractVector()
+        self._adjacent_edges = AbstractVector()
+        self._up_edges = AbstractVector()
 
     def zip(self):
         """Zip catchment folder"""
@@ -686,7 +691,7 @@ class Catchment(Factory):
         else:
             msg = "River input vector is empty, setting river routing to None"
             logger.info(msg)
-            self._routing = None
+            self._routing = AbstractRaster()
 
     @property
     def vct_tubed_river(self):
@@ -734,7 +739,7 @@ class Catchment(Factory):
             self.rp.gdal_profile["minmax"],
             self.rp.resolution,
         )
-        if self.vct_river is not None:
+        if not self.vct_river.is_empty():
             if any_equal_element_in_vector(
                 self.vct_river.geodata.geometry, vct_tubed_river.geodata.geometry
             ):
@@ -914,14 +919,17 @@ class Catchment(Factory):
             - *-5*: open water
             - *-9999*: nodata
         """
-        self._vct_water.geodata["value"] = self._vct_water.geodata["value"].astype(
-            float
-        )
-        water = self._vct_water.rasterize(
-            self.mask_raster, self.rp.epsg, "value", "integer", gdal=True
-        )
-
-        return self.raster_factory(water)
+        if not self._vct_water.is_empty():
+            self._vct_water.geodata["value"] = self._vct_water.geodata["value"].astype(
+                float
+            )
+            water = self._vct_water.rasterize(
+                self.mask_raster, self.rp.epsg, "value", "integer", gdal=True
+            )
+            arr = self.raster_factory(water)
+        else:
+            arr = AbstractRaster()
+        return arr
 
     @property
     def vct_infrastructure_buildings(self):
@@ -1058,8 +1066,8 @@ class Catchment(Factory):
         or roads and buildings (3). If no roads or buildings are defined, an error is
         thrown."""
 
-        if self.infrastructure_roads is not None:
-            if self.infrastructure_buildings is not None:
+        if not self.infrastructure_roads.is_empty():
+            if not self.infrastructure_buildings.is_empty():
                 arr1 = self.infrastructure_roads.arr.copy()
                 arr2 = self.infrastructure_buildings.arr.copy()
                 cond1 = arr1 == self.infrastructure_roads.rp.nodata
@@ -1072,7 +1080,7 @@ class Catchment(Factory):
             else:
                 self._infrastructure = self.infrastructure_roads
         else:
-            if self.infrastructure_buildings is not None:
+            if not self.infrastructure_buildings.is_empty():
                 self._infrastructure = self.infrastructure_buildings
             else:
                 msg = (

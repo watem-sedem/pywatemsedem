@@ -12,12 +12,11 @@ import numpy as np
 import pandas as pd
 
 from pywatemsedem.cfactor import create_cfactor_cnws
-from pywatemsedem.cn import process_cn_raster
-from pywatemsedem.geo.rasters import RasterMemory
 from pywatemsedem.geo.utils import nearly_identical, saga_intersection
+from pywatemsedem.geo.rasters import AbstractRaster
+from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import ScenarioFolders
 from pywatemsedem.io.ini import IniFile
-from pywatemsedem.io import plots
 from pywatemsedem.ktc import create_ktc
 from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
 
@@ -47,9 +46,9 @@ def valid_vct_endpoints(func):
     def wrapper(self, *args, **kwargs):
         """wrapper"""
         if self.choices.dict_model_options["Include sewers"] == 1:
-            if self._vct_endpoints is None:
+            if self._vct_endpoints.is_empty():
                 msg = (
-                    "Please define endpoints line vector (see "
+                    "Please define a non-empty endpoints line vector (see "
                     "vct_endpoints-property) or set 'Include sewers' in "
                     "'dict_model_options' to 0!!"
                 )
@@ -65,37 +64,61 @@ def valid_vct_endpoints(func):
 
     return wrapper
 
-
-def valid_vct_parcels(func):
-    """Check if parcels vector are defined"""
+def valid_composite_landuse(func):
+    """Check if composite landuse is defined"""
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self._vct_parcels is None:
-            msg = "Please define parcels polygon vector (see vct_parcels-property)!"
+        if self._composite_landuse.is_empty():
+            msg = "Please define a non-empty composite landuse (see also " \
+                  "self.create_composite_landuse)!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
     return wrapper
 
-
-def valid_vct_source_measure(func):
-    """Check if source measure vector are defined"""
+def valid_cfactor(func):
+    """Check if composite landuse is defined"""
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self._vct_source_measure is None:
-            msg = (
-                "Please define source measure polygon vector (see "
-                "vct_source_measure-property)!"
-            )
+        if self._cfactor.is_empty():
+            msg = "Please define a non-empty C-factor raster (see also " \
+                  "self.create_composite_landuse)!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
     return wrapper
 
+def valid_ktc(func):
+    """Check if composite landuse is defined"""
+
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        """wrapper"""
+        if self._ktc.is_empty():
+            msg = "Please define a non-empty ktc raster (see also " \
+                  "self.create_composite_landuse)!"
+            raise IOError(msg)
+        return func(self, *args, **kwargs)
+
+    return wrapper
+
+def valid_river(func):
+    """Check if composite landuse is defined"""
+
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        """wrapper"""
+        if self.catchm._river.is_empty():
+            msg = "Please define a non-empty river raster (see also " \
+                  "self.create_composite_landuse)!"
+            raise IOError(msg)
+        return func(self, *args, **kwargs)
+
+    return wrapper
 
 def valid_vct_grass_strips(func):
     """Check if grass strips vector is defined"""
@@ -104,8 +127,8 @@ def valid_vct_grass_strips(func):
     def wrapper(self, *args, **kwargs):
         """wrapper"""
         if self.choices.dict_ecm_options["UseGras"] == 1:
-            if self._vct_grass_strips is None:
-                msg = "No grass strips defined, but option 'UseGras' equal to 1."
+            if self._vct_grass_strips.is_empty():
+                msg = "No (or empty) grass strips defined, but option 'UseGras' equal to 1."
                 raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -119,8 +142,8 @@ def valid_vct_buffers(func):
     def wrapper(self, *args, **kwargs):
         """wrapper"""
         if self.choices.dict_ecm_options["Include buffers"] == 1:
-            if self._vct_buffers is None:
-                msg = "No buffers defined, but option 'Include buffers' equal to 1."
+            if self._vct_buffers.is_empty():
+                msg = "No (or empty) buffers defined, but option 'Include buffers' equal to 1."
                 warnings.warn(msg)
         return func(self, *args, **kwargs)
 
@@ -133,28 +156,26 @@ def valid_vct_outlets(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self._vct_outlets is None:
-            msg = "Please define outlets point vector (see vct_outlets-property)!"
+        if self._vct_outlets.is_empty():
+            msg = "Please define non-empty outlets point vector (see vct_outlets-property)!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
     return wrapper
 
-
 def valid_dtm(func):
-    """Check if you have defined a DTM."""
+    """Check if you have defined a K-factor raster."""
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm.dtm is None:
-            msg = "Please first define a DTM!"
+        if self.catchm.dtm.is_empty():
+            msg = "Please first define a (non-empty) DTM raster!"
             raise IOError(msg)
 
         return func(self, *args, **kwargs)
 
     return wrapper
-
 
 def valid_kfactor(func):
     """Check if you have defined a K-factor raster."""
@@ -162,8 +183,8 @@ def valid_kfactor(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm.kfactor is None:
-            msg = "Please first define a K-factor raster!"
+        if self.catchm.kfactor.is_empty():
+            msg = "Please first define a (non-empty) K-factor raster!"
             raise IOError(msg)
 
         return func(self, *args, **kwargs)
@@ -177,46 +198,8 @@ def valid_pfactor(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm.pfactor is None:
-            msg = "Please first define a P-factor raster!"
-            raise IOError(msg)
-
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
-def valid_cnws_input(func):
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """wrapper"""
-        if self.choices.version == "CN-WS":
-            if self.cn is None:
-                msg = (
-                    "Please create a valid CN-raster with *prepare_cnws_model_input*"
-                    " for a WaTEM/SEDEM run."
-                )
-                raise IOError(msg)
-
-        if self.ktc is None:
-            if self.choices.dict_model_options["UserProvidedKTC"] == 1:
-                msg = (
-                    "Please create a valid kTC-raster with *prepare_cnws_model_input*."
-                )
-                raise IOError(msg)
-
-        if self.cfactor is None:
-            msg = (
-                "Please create a valid c-factor-raster with "
-                "*prepare_cnws_model_input*."
-            )
-            raise IOError(msg)
-
-        if self.composite_landuse is None:
-            msg = (
-                "Please define a WaTEM/SEDEM-landuse-raster with "
-                "*prepare_cnws_model_input*."
-            )
+        if self.catchm.pfactor.is_empty():
+            msg = "Please first define a (non-empty) P-factor raster!"
             raise IOError(msg)
 
         return func(self, *args, **kwargs)
@@ -246,23 +229,7 @@ class CNWSException(Exception):
 class Scenario:
     """Construct a new Scenario instance
 
-    The catchment class holds all dynamic information for a scenario, for a given year.
-    The class considers all data of which the content is user-option-dependent (i.e.
-    :class:`pywatemsedem.userchoices.UserChoices`.
-
-    - *vct_parcels*: polygon vector of parcels with obligated columns 'LANDUSE',
-      'C_crop' and 'CODE'.
-    - *vct_grass_strips*: polygon vector of grass stips with obligated columns
-      'scale_ktc' and 'width'.
-    - *vct_buffers*: polygon vector of grass stips with obligated columns 'buffercap'
-      (CN), 'hdam' (CN), 'hknijp' (CN), 'dknijp' (CN), 'qcoef' (CN), 'boverl' (CN),
-      'eff' (WS).
-    - *vct_bufferoutlets*: #TODO
-    - *vct_outlets*: point vector.
-    - *vct_ditches*: #TODO
-    - *vct_conductive_dams*: #TODO
-    - *vct_force_routing*: line vector.
-    - *vct_endpoints*: line vector, with optional columns 'efficiency' and 'type_id'.
+    The scenario class holds all dynamic information for a scenario.
     """
 
     def __init__(self, catchm, year, scenario_nr, userchoices):
@@ -290,86 +257,47 @@ class Scenario:
         self.raster_factory = self.catchm.raster_factory
 
         # properties
-        self._grass_strips = None  # raster
-        self._vct_grass_strips = None  # vector
-        self._vct_buffers = None  # vector
-        self._vct_bufferoutlets = None  # vector
-        self._vct_ditches = None
-        self._vct_condictive_dams = None
-        self._vct_source_measures = None
-        self._vct_endpoints = None
-        self._endpoints = None
-        self._endpoints_id = None
-        self._vct_force_routing = None
-        self._vct_outlets = None
-        self._outlets = None
-        self._vct_parcels = None
+        self._vct_grass_strips = AbstractVector()  # vector
+        self._vct_buffers = AbstractVector()  # vector
+        self._vct_bufferoutlets = AbstractVector()  # vector
+        self._vct_ditches = AbstractVector()
+        self._vct_condictive_dams = AbstractVector()
+        self._vct_source_measures = AbstractVector()
+        self._vct_endpoints = AbstractVector()
+        self._endpoints = AbstractRaster()
+        self._endpoints_id = AbstractRaster()
+        self._vct_force_routing = AbstractVector()
+        self._vct_outlets = AbstractVector()
+        self._outlets = AbstractRaster()
+        self._vct_parcels = AbstractVector()
 
-        # derivate properties
-        self._ktc = None
-        self._cn = None
+        # API rasters
+        self._grass_strips = AbstractRaster()  # raster
+        self._parcels = AbstractRaster()
+
+        # WaTEM/SEDEM input
+        self._ktc = AbstractRaster()
+        self._cn = AbstractRaster()
         self._cn_table = None
-        self._cfactor = None
-        self._composite_landuse = None
+        self._cfactor = AbstractRaster()
+        self._composite_landuse = AbstractRaster()
 
         # assign scenario number and user choices
         self.scenario_nr = scenario_nr
         self.year = year
         self.choices = deepcopy(userchoices)
-        self.rst_outlet = None
+        self.rst_outlet = AbstractRaster()
         self.ini = None
 
         # initialisation functionalities
         self.temporal_resolution()
-        self.create_folder_structure()
-        self.copy_data_layers_to_scenario_folder()
 
-    def create_folder_structure(self):
-        """#TODO"""
-
+        # Create folder structure
         self.scenario_folder_init = (
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
         )
-
         self.sfolder = ScenarioFolders(self.catchm.folder, self.scenario_nr, self.year)
         self.sfolder.create_all()
-
-    @valid_kfactor
-    @valid_dtm
-    @valid_pfactor
-    def copy_data_layers_to_scenario_folder(self):
-        """#TODO"""
-        self.catchm.kfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.kfactor_file
-        )
-        self.catchm.dtm.write(
-            self.sfolder.cnwsinput_folder / inputfilename.dtm_file, nodata=-99999
-        )
-        self.catchm.pfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
-        )
-        self.catchm.adjacent_edges.to_csv(
-            self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
-            sep="\t",
-            index=False,
-        )
-        self.catchm.up_edges.to_csv(
-            self.sfolder.cnwsinput_folder / inputfilename.upedges_file,
-            sep="\t",
-            index=False,
-        )
-
-        if self.choices.dict_model_options["River Routing"] == 1:
-            self.choices.dict_output["Output per river segment"] = 1
-            self.catchm.routing.write(
-                self.sfolder.cnwsinput_folder / inputfilename.routing_file
-            )
-        # if self.choices.dict_output["Output per river segment"] == 1:
-        self.catchm.segments.write(
-            self.sfolder.cnwsinput_folder / inputfilename.segments_file
-        )
-
-        self.catchm.mask.write(self.sfolder.cnwsinput_folder / inputfilename.mask_file)
 
     def temporal_resolution(self):
         """Calculates for which years and seasons the scenario needs data.
@@ -489,7 +417,7 @@ class Scenario:
             - *>0 and <=32767*: parcel id
             - *-9999*: nodata
         """
-        if self.parcels_ids is not None:
+        if not self.parcels_ids.is_empty():
             arr = self.parcels_ids.arr.copy()
             if np.any(arr > 32767):
                 msg = (
@@ -503,7 +431,7 @@ class Scenario:
 
             return self.raster_factory(arr, allow_nodata_array=True)
         else:
-            return None
+            return AbstractRaster()
 
     @property
     def parcels_ids(self):
@@ -520,13 +448,13 @@ class Scenario:
             - *>0*: parcel id
             - *-9999*: nodata
         """
-        if self._vct_parcels is not None:
+        if not self._vct_parcels.is_empty():
             arr = self._vct_parcels.rasterize(
                 self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
             )
             return self.raster_factory(arr, allow_nodata_array=True)
         else:
-            return None
+            return AbstractRaster()
 
     @property
     def parcels_landuse(self):
@@ -549,16 +477,16 @@ class Scenario:
         If all parcels have a landuse code of -9999, then a None is returned
         (no addition to landuse).
         """
-        if self._vct_parcels is not None:
+        if not self._vct_parcels.is_empty():
             arr = self.vct_parcels.rasterize(
                 self.catchm.mask_raster, self.rp.epsg, col="LANDUSE", gdal=True
             )
             if np.all(arr == self.rp.nodata):
-                return None
+                return AbstractRaster()
             else:
                 return self.raster_factory(arr)
         else:
-            return None
+            return AbstractRaster()
 
     @property
     def vct_grass_strips(self):
@@ -636,7 +564,7 @@ class Scenario:
                 " strips."
             )
             warnings.warn(msg)
-            return None
+            return AbstractRaster()
         else:
             return self._grass_strips
 
@@ -734,11 +662,14 @@ class Scenario:
         -------
         pywatemsedem.geo.rasters.AbstractRaster
         """
-        arr = self.vct_buffers.rasterize(
-            self.catchm.mask_raster, 31370, "buf_exid", gdal=True
-        )
-
-        return self.raster_factory(arr)
+        if not self.vct_buffers.is_empty():
+            arr = self.vct_buffers.rasterize(
+                self.catchm.mask_raster, 31370, "buf_exid", gdal=True
+            )
+            raster = self.raster_factory(arr)
+        else:
+            raster = AbstractRaster()
+        return raster
 
     @property
     def bufferoutlet(self):
@@ -748,15 +679,16 @@ class Scenario:
         -------
         pywatemsedem.geo.rasters.AbstractRaster
         """
-        if self.vct_bufferoutlets is not None:
+        if not self.vct_bufferoutlets.is_empty():
             self.vct_bufferoutlets.geodata = process_buffer_outlets(
                 self.vct_bufferoutlets.geodata, self.vct_buffers.geodata
             )
             arr = np.where(self.catchm.vct_river.arr == -1, 0, self.bufferoutlet)
+            raster = self.raster_factory(arr)
         else:
-            arr = np.zeros(self.catchm.dtm.arr.shape)
+            raster = AbstractRaster()
 
-        return self.raster_factory(arr)
+        return raster
 
     @property
     @valid_vct_buffers
@@ -781,13 +713,15 @@ class Scenario:
                 "returning None"
             )
             warnings.warn(msg)
-        elif self.vct_buffers is None:
-            self.choices.dict_ecm_options["Include buffers"] = 0
+            raster = AbstractRaster()
+        elif self.vct_buffers.is_empty():
+            msg = "Either define buffer vector of set 'Include buffers' to zero."
+            raise IOError(msg)
         else:
             self.vct_buffers.geodata = assign_buffer_id_to_df_buffer(
                 self.vct_buffers.geodata
             )
-            if self.catchm.vct_river is not None:
+            if not self.catchm.vct_river.isempty():
                 arr, self.vct_buffers.geodata = process_buffers_in_river(
                     self.vct_buffers.geodata,
                     self.buffers_exid.arr,
@@ -809,7 +743,7 @@ class Scenario:
                 arr = np.where(arr == self.catchm.rp.nodata, 0, arr).astype("int16")
                 arr = self.raster_factory(arr, flag_mask=False)
 
-        return arr
+        return raster
 
     @property
     def vct_ditches(self):
@@ -856,13 +790,13 @@ class Scenario:
             convert_lines_to_direction=True,
             gdal=True,
         )
-        if self.buffers is not None:
+        if not self.buffers.is_empty():
             # if there is a buffer on the same pixel of a ditch, remove the ditch
             arr = np.where(self.buffers.arr != 0, 0, arr)
-        if self.catchm.vct_river is not None:
+        if not self.catchm.vct_river.is_empty():
             arr = np.where(self.river.arr == -1, 0, arr)
-
-        return self.raster_factory(arr)
+        raster = self.raster_factory(arr)
+        return raster
 
     def ditches(self):
         """Getter ditches
@@ -877,13 +811,13 @@ class Scenario:
             convert_lines_to_direction=True,
             gdal=True,
         )
-        if self.buffers is not None:
+        if not self.buffers.is_empty():
             # if there is a buffer on the same pixel of a ditch, remove the ditch
             arr = np.where(self.buffers.arr != 0, 0, arr)
-        if self.catchm.vct_river is not None:
+        if not self.catchm.vct_river.is_empty():
             arr = np.where(self.river.arr == -1, 0, arr)
-
-        return self.raster_factory(arr)
+        raster = self.raster_factory(arr)
+        return raster
 
     @property
     def vct_outlets(self):
@@ -913,7 +847,7 @@ class Scenario:
         if len(self._vct_outlets.geodata) == 0:
             msg = r"Defined outlets are not in catchment."
             logger.warning(msg)
-            self._vct_outlets = None
+            self._vct_outlets = AbstractVector()
         else:
             if "NR" not in self.vct_outlets.geodata:
                 self._vct_outlets.geodata["NR"] = np.arange(
@@ -932,7 +866,6 @@ class Scenario:
         -------
         pywatemsedem.geo.raster.AbstractRaster
         """
-
         arr = self.vct_outlets.rasterize(
             self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
         )
@@ -1263,12 +1196,12 @@ class Scenario:
         this function to -2.
         """
         # preprocess grass strips
-        if self.grass_strips is None:
+        if self.grass_strips.is_empty():
             msg = "Will not include grass strips in composite landuse."
             warnings.warn(msg)
-            grass_strips = None
+            grass_strips = AbstractRaster()
         else:
-            if (self.catchm.river is None) or (self.catchm.infrastructure is None):
+            if self.catchm.river.isempty() or self.catchm.infrastructure.isempty():
                 msg = "The 'expand grass strips'-module needs defined rivers and" \
                       " infrastructure, skipping."
                 warnings.warn(msg)
@@ -1290,19 +1223,16 @@ class Scenario:
             self.rp.rasterio_profile,
             self.catchm.mask.arr,
         )
-        #TOO: more elegant fix?
-        landuse_parcels = None if self.parcels_landuse is None else self.parcels_landuse.arr
-        parcels = None if self.parcels is None else self.parcels.arr
 
         pl = ParcelsLanduse(
             landuse_core,
-            self.catchm.river.arr,
-            self.catchm.water.arr,
-            self.catchm.infrastructure.arr,
+            self.catchm.river,
+            self.catchm.water,
+            self.catchm.infrastructure,
             self.catchm.mask.arr,
             self.rp.nodata,
-            landuse_parcels=landuse_parcels,
-            parcels=parcels,
+            landuse_parcels=self.scenario.parcels_landuse,
+            parcels=self.parcels,
             grass_strips=grass_strips,
         )
         arr = pl.create_parcels_landuse_raster()
@@ -1313,15 +1243,23 @@ class Scenario:
 
         return composite_landuse
 
+    @valid_composite_landuse
     def create_cfactor(self, use_source_oriented_measures=False):
-        """Create C-factor raster"""
-        if self.composite_landuse is None:
-            msg = "First define a composite landuse."
-            raise IOError(msg)
+        """Create C-factor raster
+
+        Parameters
+        ---------
+        use_source_oriented_measures: bool, default False
+            Use source oriented-measures.
+
+        Return
+        ------
+        cfactor: numpy.ndarray
+        """
         if self.choices.version == "Only Routing":
             msg = "C-factor raster not generated for 'Only Routing'-mode."
             warnings.warn(msg)
-            cfactor=None
+            cfactor=AbstractRaster()
         else:
             _, cfactor = create_cfactor_cnws(
                 self.catchm.river,
@@ -1334,15 +1272,24 @@ class Scenario:
             )
         return cfactor
 
+    @valid_composite_landuse
+    @valid_cfactor
     def create_ktc(self, ktc_low, ktc_high, ktc_limit, user_provided_ktc = 1):
-        """Create ktc raster"""
-        if self.cfactor is None:
-            msg = "First define a C-factor."
-            raise IOError(msg)
-        if self.composite_landuse is None:
-            msg = "First define a composite landuse."
-            raise IOError(msg)
+        """Create C-factor raster
 
+        Parameters
+        ---------
+        ktc_low: float
+        ktc_high: float
+        ktc_limit: float
+            C-factor to make distinction between ktc_low and ktc_high
+        user_provided_ktc: int, default 1
+            Define KTC raster by user.
+
+        Return
+        ------
+        cfactor: numpy.ndarray
+        """
         if user_provided_ktc == 1:
             ktc, _ = create_ktc(
                 self.composite_landuse,
@@ -1354,11 +1301,50 @@ class Scenario:
                 grass=self.vct_grass_strips,
             )
         else:
-            ktc = None
+            ktc = AbstractRaster()
         return ktc
 
+    @valid_kfactor
+    @valid_dtm
+    @valid_pfactor
+    @valid_river
+    @valid_composite_landuse
+    @valid_cfactor
     def prepare_input_files(self):
         """Prepare all files (write to disk)"""
+        self.catchm.kfactor.write(
+            self.sfolder.cnwsinput_folder / inputfilename.kfactor_file
+        )
+        self.catchm.dtm.write(
+            self.sfolder.cnwsinput_folder / inputfilename.dtm_file, nodata=-99999
+        )
+        self.catchm.pfactor.write(
+            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
+        )
+        self.catchm.adjacent_edges.to_csv(
+            self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
+            sep="\t",
+            index=False,
+        )
+        self.catchm.up_edges.to_csv(
+            self.sfolder.cnwsinput_folder / inputfilename.upedges_file,
+            sep="\t",
+            index=False,
+        )
+
+        if self.choices.dict_model_options["River Routing"] == 1:
+            self.choices.dict_output["Output per river segment"] = 1
+            self.catchm.routing.write(
+                self.sfolder.cnwsinput_folder / inputfilename.routing_file
+            )
+        # if self.choices.dict_output["Output per river segment"] == 1:
+        self.catchm.segments.write(
+            self.sfolder.cnwsinput_folder / inputfilename.segments_file
+        )
+
+        self.catchm.mask.write(
+            self.sfolder.cnwsinput_folder / inputfilename.mask_file)
+
         self.composite_landuse.write(
             self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
             dtype=np.int32,
@@ -1367,11 +1353,11 @@ class Scenario:
             if self.cn is not None:
                 self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
             else:
-                msg = "Define a CN raster to run CN."
+                msg = "Model version in 'CN-WS', define a CN raster to run CN."
                 raise IOError(msg)
 
         if self.choices.dict_model_options["UserProvidedKTC"] == 1:
-            if self.ktc is not None:
+            if self.ktc.is_empty():
                 self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
             else:
                 msg = "UserProvidedKTC is 1 (True), provide ktc-raster."
@@ -1392,7 +1378,7 @@ class Scenario:
                 ]:
                     self.choices.dict_output[key] = 0
         if (self.choices.dict_ecm_options["Include buffers"] == 1) & (
-            self.buffers is not None
+            self.buffers.is_empty()
         ):
             self.buffers.write(
                 self.sfolder.cnwsinput_folder / inputfilename.buffers_file
@@ -1417,7 +1403,7 @@ class Scenario:
             )
 
         if self.choices.dict_model_options["Include sewers"] == 1:
-            if self.endpoints is not None:
+            if not self.endpoints.is_empty():
                 self.endpoints.write(
                     self.sfolder.cnwsinput_folder / inputfilename.endpoints_file,
                     format="idrisi",
@@ -1428,8 +1414,8 @@ class Scenario:
                     format="idrisi",
                     dtype=np.float64,
                 )
+        self.create_ini_file()
 
-    @valid_cnws_input
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
         logger.info("Aanmaken ini-file...")
@@ -1446,9 +1432,9 @@ class Scenario:
         ini.add_user_choices()
         ini.add_output_maps()
         ini.add_variables(
-            self.vct_buffers.geodata if self.vct_buffers is not None else None,
-            self.vct_force_routing,
-            self.catchm.vct_tubed_river,
+            self.vct_buffers.geodata,
+            self.vct_force_routing.geodata,
+            self.catchm.vct_tubed_river.geodata,
         )
         ini.write(self.ini)
 
