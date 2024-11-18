@@ -112,12 +112,12 @@ class TestCatchment:
 
         # check if functionality runs
         self.catchment.vct_river = non_tubed
-        self.catchment.vct_tubed_river = tubed
+        self.catchment.tubed_river = tubed
 
         # check for overlap
         self.catchment.vct_river = gdf
         with pytest.raises(IOError, match="are also present"):
-            self.catchment.vct_tubed_river = tubed
+            self.catchment.tubed_river = tubed
 
     def test_infrastructure(self):
         """Test assignment infrastructure vector"""
