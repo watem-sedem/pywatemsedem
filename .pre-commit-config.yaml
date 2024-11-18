@@ -23,7 +23,7 @@ repos:
 
 # If you want to avoid flake8 errors due to unused vars or imports:
 - repo: https://github.com/myint/autoflake.git
-  rev: v1.4
+  rev: v2.3.1
   hooks:
   - id: autoflake
     args: [
@@ -51,7 +51,7 @@ repos:
 #     additional_dependencies: [black]
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 3.9.2
+  rev: 7.1.1
   hooks:
   - id: flake8
     args: [
@@ -75,7 +75,7 @@ repos:
 
 # Interrogate for docstring coverage
 - repo: https://github.com/econchick/interrogate
-  rev: 1.5.0
+  rev: 1.7.0
   hooks:
     - id: interrogate
       name: check docstring coverage of functions
