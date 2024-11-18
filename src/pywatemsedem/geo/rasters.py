@@ -37,6 +37,7 @@ class AbstractRaster:
     ----
     If an array mask is provided, the array is automatically masked.
     """
+
     def __init__(self):
 
         self._arr = None

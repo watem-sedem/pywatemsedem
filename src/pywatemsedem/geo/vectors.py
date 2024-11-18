@@ -22,6 +22,7 @@ from .utils import (
 
 class AbstractVector:
     """Abstract Vector class based on geopandas GeoDataFrame"""
+
     def __init__(self):
         self._geodata = None
         self._geometry_type = None
@@ -249,6 +250,7 @@ class AbstractVector:
         True/False
         """
         return self._geodata is None
+
 
 class VectorMemory(AbstractVector):
     """Geopandas vector
