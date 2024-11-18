@@ -2,8 +2,6 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from pywatemsedem.geo.utils import write_arr_as_rst
-
 
 @dataclass
 class ParcelsLanduse:
@@ -178,12 +176,13 @@ def get_source_landuse(
     arr_mask,
 ):
     """Get landuse raster
+
     Parameters
     ----------
+    landuse: pywatemsedem.geo.vector.AbstractVectors
+
     maxprc_id : int
         Maximum perceelskaart id.
-    gdal_profile : dict
-        Rasterio profile dictionary holding all metadata for geotiff rasters.
     rasterio_profile : dict
         Gdal dictionary holding all metadata for idrisi rasters.
     arr_mask : numpy.ndarray

@@ -14,8 +14,7 @@ from matplotlib import pyplot as plt
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
-from pywatemsedem.geo.rasters import RasterMemory, AbstractRaster
-from pywatemsedem.geo.vectors import AbstractVector
+from pywatemsedem.geo.rasters import AbstractRaster, RasterMemory
 from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
     clean_up_tempfiles,
@@ -25,6 +24,7 @@ from pywatemsedem.geo.utils import (
     load_raster,
     read_rasterio_profile,
 )
+from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import CatchmentFolder
 from pywatemsedem.io.modeloutput import check_segment_edges
 from pywatemsedem.tools import (
@@ -210,14 +210,13 @@ class Catchment(Factory):
         self._segments = AbstractRaster()
         self._routing = AbstractRaster()
 
-
         # set name and logger
         self.name = str(name)
 
         # set other attributes to none
 
         self._vct_river = AbstractVector()
-        self._vct_tubed_river = AbstractVector()
+        self._tubed_river = None
         self._vct_water = AbstractVector()
         self._vct_infrastructure_buildings = AbstractVector()
         self._vct_infrastructure_roads = AbstractVector()
@@ -652,7 +651,7 @@ class Catchment(Factory):
         # clip
         vct_river_clipped = self.folder.vct_folder / f"river_{self.name}.shp"
         # remove temporary files
-        clean_up_tempfiles(vct_river_clipped, "shp")
+        # clean_up_tempfiles(vct_river_clipped, "shp")
         self._vct_river = self.vector_factory(
             vector_input, "LineString", allow_empty=True
         )
@@ -694,7 +693,7 @@ class Catchment(Factory):
             self._routing = AbstractRaster()
 
     @property
-    def vct_tubed_river(self):
+    def tubed_river(self):
         """Assign underground river-line vector
 
         The river tubed vector should be a line-vector file. No specific
@@ -705,10 +704,10 @@ class Catchment(Factory):
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             Line vector file.
         """
-        return self._vct_tubed_river
+        return self._tubed_river
 
-    @vct_tubed_river.setter
-    def vct_tubed_river(self, vector_input):
+    @tubed_river.setter
+    def tubed_river(self, vector_input):
         """Assign underground river-line vector
 
         The river tubed vector should be a line-vector file. No specific
@@ -734,7 +733,7 @@ class Catchment(Factory):
         vct_tubed_river = self.vector_factory(
             vector_input, "LineString", allow_empty=False
         )
-        self._vct_tubed_river = format_forced_routing(
+        self._tubed_river = format_forced_routing(
             vct_tubed_river.geodata,
             self.rp.gdal_profile["minmax"],
             self.rp.resolution,

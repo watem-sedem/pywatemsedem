@@ -1,11 +1,13 @@
-import numpy as np
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
+import numpy as np
+
 from pywatemsedem.grasstrips import scale_ktc_with_grass_strip_width, scale_ktc_zhang
 
 
 def create_ktc(
-    landuse_parcels,
+    composite_landuse,
     cfactor,
     mask,
     ktc_low,
@@ -14,29 +16,48 @@ def create_ktc(
     grass=None,
     correction_width=True,
 ):
-    """Create KTC map for a given year, season.
-
+    """
     Parameters
     ----------
-    # TODO
+    composite_landuse: numpy.ndarray
+        WaTEM/SEDEM composite landuse.
+    cfactor: numpy.ndarray
+        C-factor values.
+    mask: pywatemsedem.geo.rasters.AbstractRaster
+        Mask
+    ktc_low: float
+    ktc_high: float
+    ktc_limit: float
+        C-factor to make distinction between ktc_low and ktc_high
+    grass: pywatemsedem.geo.vectors.AbstractVector
+    correction_width: bool, default True
+        Scale kTC according to width of grass strip.
+
+    Returns
+    -------
+    arr_ktc: numpy.ndarray
+        kTC values.
+    grass: pywatemsedem.geo.vectors.AbstractVector
+        Updated grass strips
     """
+
     tiff_temp = Path(
         tempfile.NamedTemporaryFile(
             suffix=".tif", prefix="pywatemsedem", delete=False
         ).name
     )
-    mask.write(tiff_temp,format="tiff")
+    mask.write(tiff_temp, format="tiff")
 
     # reclass based on C-factor
     arr_ktc = np.where(cfactor <= ktc_limit, ktc_low, ktc_high)
 
     # give certain landuse classes an extremely high ktc-value
-    arr_ktc = np.where(np.isin(landuse_parcels.arr, [-2, -1, -5]), 9999, arr_ktc)
+    arr_ktc = np.where(np.isin(composite_landuse.arr, [-2, -1, -5]), 9999, arr_ktc)
 
     # set KTC outside modeldomain to zero
     # KTC_arr = np.where(self.catchm.binarr == 1, KTC_arr, 0)
 
-    if correction_width is not None and grass is not None:
+    if correction_width is not None and not grass.is_empty():
 
         grass._geodata = scale_ktc_gdf_grass_strips(
             grass.geodata,
@@ -44,20 +65,20 @@ def create_ktc(
             ktc_high,
         )
         arr_grass = grass.rasterize(
-            tiff_temp, landuse_parcels.rp.epsg, col="KTC", gdal=True
+            tiff_temp, composite_landuse.rp.epsg, col="KTC", gdal=True
         )
         arr_ktc = np.where(
-            np.logical_and(landuse_parcels.arr == -6, arr_grass != mask.rp.nodata),
+            np.logical_and(composite_landuse.arr == -6, arr_grass != mask.rp.nodata),
             arr_grass,
             arr_ktc,
         )
         arr_ktc = np.where(
-            np.logical_and(landuse_parcels.arr == -6, arr_grass == mask.rp.nodata),
+            np.logical_and(composite_landuse.arr == -6, arr_grass == mask.rp.nodata),
             ktc_low,
             arr_ktc,
         )
     else:
-        arr_ktc = np.where(landuse_parcels.arr == -6, ktc_low, arr_ktc)
+        arr_ktc = np.where(composite_landuse.arr == -6, ktc_low, arr_ktc)
 
     return arr_ktc, grass
 

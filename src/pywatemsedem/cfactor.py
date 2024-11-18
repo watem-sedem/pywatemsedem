@@ -1,14 +1,15 @@
+import tempfile
 import warnings
+from pathlib import Path
 
 import numpy as np
-import tempfile
-from pathlib import Path
-from .geo.utils import (
-    clean_up_tempfiles)
+
 from pywatemsedem.grasstrips import (
     scale_cfactor_linear,
     scale_cfactor_with_grass_strips_width,
 )
+
+from .geo.utils import clean_up_tempfiles
 
 
 def create_cfactor_cnws(
@@ -38,7 +39,7 @@ def create_cfactor_cnws(
     mask: #TODO: check how to simplify this
     sfolder: pathlib.Path
         Results necessary for saving mask
-    vct_parcels: geopandas.GeoDataFrame
+    vct_parcels: geopandas.GeoDataFrame, default None
         Dataframe holding C-factor values, columns:
         - *C_factor* (float)
     vct_grass_strips: geopandas.GeoDataFrame, default None
@@ -61,25 +62,25 @@ def create_cfactor_cnws(
             suffix=".tif", prefix="pywatemsedem", delete=False
         ).name
     )
-    mask.write(tiff_temp,format="tiff")
+    mask.write(tiff_temp, format="tiff")
 
     arr_cfactor = np.full(landuse.arr.shape, landuse.rp.nodata).astype("float32")
     nodata = landuse.rp.nodata
 
     # waterlopen
-    if rivers is not None:
+    if not rivers.is_empty():
         temp = np.where(rivers.arr != rivers.rp.nodata, 0, rivers.rp.nodata)
         arr_cfactor = np.where(arr_cfactor == nodata, temp, arr_cfactor)
 
     # infrastructuur
-    if infrastructure is not None:
+    if not infrastructure.is_empty():
         temp = np.where(
             np.isin(infrastructure.arr, np.array([-2, -7])), 0, infrastructure.arr
         )
         arr_cfactor = np.where(arr_cfactor == nodata, temp, arr_cfactor)
 
     # grass strips
-    if vct_grass_strips is not None:
+    if not vct_grass_strips.is_empty():
         res = rivers.rp.resolution
         vct_grass_strips._geodata["C_factor"] = scale_cfactor_with_grass_strips_width(
             vct_grass_strips._geodata["width"], scale_cfactor_linear, resolution=res
@@ -93,7 +94,7 @@ def create_cfactor_cnws(
         arr_cfactor = np.where(arr_cfactor == nodata, arr_grass_cfactor, arr_cfactor)
 
     # parcels
-    if vct_parcels is not None:
+    if not vct_parcels.is_empty():
         if "C_crop" in vct_parcels.geodata.columns:
             vct_parcels.geodata["C_factor"] = vct_parcels.geodata["C_crop"]
         if "default_cfactor" in vct_parcels.geodata:
@@ -131,7 +132,7 @@ def create_cfactor_cnws(
             warnings.warn(msg)
 
     # other landuse
-    if landuse is not None:
+    if not landuse.is_empty():
         # reclass landarr to C-factors
         temp = landuse.arr.copy()
         temp = np.where(temp == -1, 0, temp)
@@ -148,7 +149,6 @@ def create_cfactor_cnws(
     arr_cfactor = np.where(arr_cfactor == nodata, arr_mask, arr_cfactor)
     arr_cfactor = arr_cfactor.astype("float32")
     clean_up_tempfiles(tiff_temp, "tiff")
-
 
     return vct_grass_strips, arr_cfactor
 

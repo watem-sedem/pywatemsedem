@@ -748,6 +748,7 @@ def process_grass_strips(
         )
     return arr_grass_strips_ids
 
+
 def get_neighbour_grass_strips_ids_array(
     vct_grass_strips, rst_params, width_polygon=20
 ):

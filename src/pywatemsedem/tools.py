@@ -54,7 +54,6 @@ def format_forced_routing(gdf, minmax, resolution, trajectory_routing=False):
     df["torow"] = (np.floor(minmax[3] - df["toY"]) / resolution + 1).astype(int)
     cond = (df["fromcol"] == df["tocol"]) & (df["fromrow"] == df["torow"])
     df = df.loc[~cond]
-
     return df
 
 
