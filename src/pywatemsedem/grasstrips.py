@@ -746,11 +746,7 @@ def process_grass_strips(
             nodata=nodata,
             mode=1,
         )
-    arr_grass = arr_grass_strips_ids.copy()
-    arr_grass[arr_grass != nodata] = -6
-
-    return arr_grass_strips_ids, arr_grass
-
+    return arr_grass_strips_ids
 
 def get_neighbour_grass_strips_ids_array(
     vct_grass_strips, rst_params, width_polygon=20

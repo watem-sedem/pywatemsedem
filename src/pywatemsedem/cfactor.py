@@ -63,8 +63,8 @@ def create_cfactor_cnws(
     )
     mask.write(tiff_temp,format="tiff")
 
-    arr_cfactor = np.full(rivers.arr.shape, rivers.rp.nodata).astype("float32")
-    nodata = rivers.rp.nodata
+    arr_cfactor = np.full(landuse.arr.shape, landuse.rp.nodata).astype("float32")
+    nodata = landuse.rp.nodata
 
     # waterlopen
     if rivers is not None:

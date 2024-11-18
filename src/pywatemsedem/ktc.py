@@ -4,7 +4,7 @@ import tempfile
 from pywatemsedem.grasstrips import scale_ktc_with_grass_strip_width, scale_ktc_zhang
 
 
-def create_ktc_cnws(
+def create_ktc(
     landuse_parcels,
     cfactor,
     mask,
@@ -26,13 +26,6 @@ def create_ktc_cnws(
         ).name
     )
     mask.write(tiff_temp,format="tiff")
-
-    if cfactor is None:
-        msg = "Unable to create KTC map, C-factor map is not known"
-        raise FileNotFoundError(msg)
-    if landuse_parcels is None:
-        msg = "Unable to create KTC map, Prc map is not known"
-        raise FileNotFoundError(msg)
 
     # reclass based on C-factor
     arr_ktc = np.where(cfactor <= ktc_limit, ktc_low, ktc_high)

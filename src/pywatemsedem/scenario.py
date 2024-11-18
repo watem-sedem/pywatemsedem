@@ -5,7 +5,8 @@ import subprocess
 import warnings
 from copy import deepcopy
 from functools import wraps
-
+from matplotlib import colors
+import matplotlib.pyplot as plt
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -16,7 +17,8 @@ from pywatemsedem.geo.rasters import RasterMemory
 from pywatemsedem.geo.utils import nearly_identical, saga_intersection
 from pywatemsedem.io.folders import ScenarioFolders
 from pywatemsedem.io.ini import IniFile
-from pywatemsedem.ktc import create_ktc_cnws
+from pywatemsedem.io import plots
+from pywatemsedem.ktc import create_ktc
 from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
 
 from .buffers import (
@@ -1145,6 +1147,52 @@ class Scenario:
         self._composite_landuse = self.raster_factory(
             raster_input, flag_mask=False, flag_clip=False
         )
+        def plot(nodata=None, *args, **kwargs):
+            """Plotting fun"""
+            plt.subplots(figsize=[10, 10])
+
+            cmap = colors.ListedColormap(
+                [
+                    "#64cf1b",
+                    "#3b7db4",
+                    "#71b651",
+                    "#387b00",
+                    "#000000",
+                    "#00bfff",
+                    "#ffffff",
+                    "#a47158",
+                ]
+            )
+            bounds = [-6.5, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5]
+            norm = colors.BoundaryNorm(bounds, cmap.N)
+            arr = self._composite_landuse.arr.copy().astype(np.float32)
+            if nodata is not None:
+                arr[arr == nodata] = np.nan
+            img = plt.imshow(arr, cmap=cmap, norm=norm, *args, **kwargs)
+            cbar = plt.colorbar(
+                img,
+                cmap=cmap,
+                norm=norm,
+                boundaries=bounds,
+                ticks=[-6, -5, -4, -3, -2, -1, 0, 1],
+                shrink=0.5,
+            )
+            cbar.ax.set_yticklabels(
+                [
+                    "Grass strips (-6)",
+                    "Pools (-5)",
+                    "Meadow (-4)",
+                    "Forest (-3)",
+                    "Infrastructure (-2)",
+                    "River (-1)",
+                    "Outside boundaries (0)",
+                    "Agriculture (>0)",
+                ]
+            )
+            plt.show()
+
+        self._composite_landuse.plot = plot
+
 
     @property
     def cfactor(self):
@@ -1197,45 +1245,14 @@ class Scenario:
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
 
-    def create_perceelskaart_cnws(
+    def create_composite_landuse(
         self,
-        rivers,
-        water,
-        infrastructure,
-        landuse,
-        mask,
-        rp,
-        grass_strips=None,
-        parcels=None,
-        landuse_parcels=None,
         maximize_grass_strips=False,
     ):
         """Create CN_WS perceelskaart according to format of :ref:`here <watemsedem:prcmap>`.
 
         Parameters
         ----------
-        rivers: numpy.ndarray
-            River raster, should only contain nodata-value and -1 (river), see
-            :ref:`here <watemsedem:prcmap>`.
-        water: numpy.ndarray
-            Water raster, should only contain nodata-value and -3 (), see
-            :ref:`here <watemsedem:prcmap>`.
-        infrastructure: numpy.ndarray
-            Infrastructure raster, should only contain -2 (paved) and -7 (non-paved)
-            and nodata-value. #TODO: check if we can only use -7
-        landuse: numpy.ndarray
-            Landuse raster. This raster should be formatted according to the composite
-            landuse / WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`).
-        mask: numpy.ndarray
-            Mask raster,
-        rp: pywatemsedem.geo.rasterproperties.RasterProperties
-            Raster properties, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-        grass_strips: numpy.ndarray
-            Grass strips raster, can only contain nodata-value and -6 (see
-            :ref:`here <watemsedem:prcmap>`).
-        parcels: numpy.ndarray
-            Parcels ids raster, can only containt nodata-value and >0 (see
-            :ref:`here <watemsedem:prcmap>`)
         maximize_grass_strips: bool, default False
             See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`
 
@@ -1246,31 +1263,44 @@ class Scenario:
         this function to -2.
         """
         # preprocess grass strips
-        if grass_strips is not None:
-            _, grass_strips = process_grass_strips(grass_strips,
-                                                rivers,
-                                                infrastructure,
-                                                rp.rasterio_profile["nodata"],
-                                                parcels,
-                                                expand_grass_strips=maximize_grass_strips)
-            grass_strips[grass_strips != rp.rasterio_profile["nodata"]] = -6
+        if self.grass_strips is None:
+            msg = "Will not include grass strips in composite landuse."
+            warnings.warn(msg)
+            grass_strips = None
+        else:
+            if (self.catchm.river is None) or (self.catchm.infrastructure is None):
+                msg = "The 'expand grass strips'-module needs defined rivers and" \
+                      " infrastructure, skipping."
+                warnings.warn(msg)
+                grass_strips = self.grass_strips.arr
+            else:
+                grass_strips = process_grass_strips(self.grass_strips.arr,
+                                                    self.catchm.river.arr,
+                                                    self.catchm.infrastructure.arr,
+                                                    self.rp.rasterio_profile["nodata"],
+                                                    self.parcels.arr,
+                                                    expand_grass_strips=maximize_grass_strips)
+                grass_strips[grass_strips != self.rp.rasterio_profile["nodata"]] = -6
 
         # landuse
-        maxprc_id = np.max(parcels) if parcels is not None else 1
-
+        maxprc_id = np.max(self.parcels.arr) if self.parcels is not None else 1
         landuse_core = get_source_landuse(
-            landuse,
+            self.catchm.landuse,
             maxprc_id,
-            rp.rasterio_profile,
-            mask,
+            self.rp.rasterio_profile,
+            self.catchm.mask.arr,
         )
+        #TOO: more elegant fix?
+        landuse_parcels = None if self.parcels_landuse is None else self.parcels_landuse.arr
+        parcels = None if self.parcels is None else self.parcels.arr
+
         pl = ParcelsLanduse(
             landuse_core,
-            rivers,
-            water,
-            infrastructure,
-            mask,
-            rp.nodata,
+            self.catchm.river.arr,
+            self.catchm.water.arr,
+            self.catchm.infrastructure.arr,
+            self.catchm.mask.arr,
+            self.rp.nodata,
             landuse_parcels=landuse_parcels,
             parcels=parcels,
             grass_strips=grass_strips,
@@ -1278,71 +1308,61 @@ class Scenario:
         arr = pl.create_parcels_landuse_raster()
         arr = np.where(arr == -7, -2, arr)  # aardewegen infstructuur maken
         # safety check, fill last empty gaps with 32767
-        arr[(mask == 1) & (arr == 0)] = 32767
-        composite_landuse = np.where(mask == 1, arr, 0).astype("float64")
+        arr[(self.catchm.mask.arr == 1) & (arr == 0)] = 32767
+        composite_landuse = np.where(self.catchm.mask.arr == 1, arr, 0).astype("float64")
 
         return composite_landuse
 
-    def prepare_cnws_model_input(self, maximize_grass_strips=False):
-        """Create model input for a scenario
-
-        Parameters
-        ----------
-        maximize_grass_strips: bool, default False
-            See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`
-        """
-
-        #todo: fix this in the __init__
-        arr_parcels_lu = (
-            None if self.parcels_landuse is None else self.parcels_landuse.arr
-        )
-        arr_grass_strips = (None if self.grass_strips is None else self.grass_strips.arr)
-        arr_water = None if self.catchm.vct_water is None else self.catchm.water.arr
-
-        arr_parcels = None if self.parcels is None else self.parcels.arr
-        self.composite_landuse = self.create_perceelskaart_cnws(
-            self.catchm.river.arr,
-            arr_water,
-            self.catchm.infrastructure.arr,
-            self.catchm.landuse,
-            self.catchm.mask.arr_bin,
-            self.catchm.rp,
-            grass_strips=arr_grass_strips,
-            parcels=arr_parcels,
-            landuse_parcels=arr_parcels_lu,
-            maximize_grass_strips=maximize_grass_strips
-        )
-        if self.choices.version != "Only Routing":
-            _, self.cfactor = create_cfactor_cnws(
+    def create_cfactor(self, use_source_oriented_measures=False):
+        """Create C-factor raster"""
+        if self.composite_landuse is None:
+            msg = "First define a composite landuse."
+            raise IOError(msg)
+        if self.choices.version == "Only Routing":
+            msg = "C-factor raster not generated for 'Only Routing'-mode."
+            warnings.warn(msg)
+            cfactor=None
+        else:
+            _, cfactor = create_cfactor_cnws(
                 self.catchm.river,
                 self.catchm.infrastructure,
                 self.catchm.landuse,
                 self.catchm.mask,
                 vct_parcels=self.vct_parcels,
                 vct_grass_strips=self.vct_grass_strips,
-                use_source_oriented_measures=self.choices.dict_ecm_options["UseTeelttechn"]
+                use_source_oriented_measures=use_source_oriented_measures
             )
+        return cfactor
 
-            # kTC
-            if self.choices.dict_model_options["UserProvidedKTC"] == 1:
-                self.ktc, _ = create_ktc_cnws(
-                    self.composite_landuse,
-                    self.cfactor.arr,
-                    self.catchm.mask,
-                    self.choices.dict_variables["ktc low"],
-                    self.choices.dict_variables["ktc high"],
-                    self.choices.dict_variables["ktc limit"],
-                    grass=self.vct_grass_strips,
-                )
-            else:
-                self.ktc = None
+    def create_ktc(self, ktc_low, ktc_high, ktc_limit, user_provided_ktc = 1):
+        """Create ktc raster"""
+        if self.cfactor is None:
+            msg = "First define a C-factor."
+            raise IOError(msg)
+        if self.composite_landuse is None:
+            msg = "First define a composite landuse."
+            raise IOError(msg)
 
-        logger.info("Prepare files for run...")
+        if user_provided_ktc == 1:
+            ktc, _ = create_ktc(
+                self.composite_landuse,
+                self.cfactor.arr,
+                self.catchm.mask,
+                ktc_low,
+                ktc_high,
+                ktc_limit,
+                grass=self.vct_grass_strips,
+            )
+        else:
+            ktc = None
+        return ktc
+
+    def prepare_input_files(self):
+        """Prepare all files (write to disk)"""
         self.composite_landuse.write(
             self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
             dtype=np.int32,
         )
-
         if self.choices.version == "CN-WS":
             if self.cn is not None:
                 self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
