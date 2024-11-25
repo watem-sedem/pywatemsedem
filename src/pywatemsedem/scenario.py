@@ -1342,26 +1342,25 @@ class Scenario:
         self.catchm.pfactor.write(
             self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
         )
-        self.catchm.adjacent_edges.to_csv(
-            self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
-            sep="\t",
-            index=False,
-        )
-        self.catchm.up_edges.to_csv(
-            self.sfolder.cnwsinput_folder / inputfilename.upedges_file,
-            sep="\t",
-            index=False,
-        )
-
         if self.choices.dict_model_options["River Routing"] == 1:
+            self.catchm.adjacent_edges.to_csv(
+                self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
+                sep="\t",
+                index=False,
+            )
+            self.catchm.up_edges.to_csv(
+                self.sfolder.cnwsinput_folder / inputfilename.upedges_file,
+                sep="\t",
+                index=False,
+            )
             self.choices.dict_output["Output per river segment"] = 1
             self.catchm.routing.write(
                 self.sfolder.cnwsinput_folder / inputfilename.routing_file
             )
-        # if self.choices.dict_output["Output per river segment"] == 1:
-        self.catchm.segments.write(
-            self.sfolder.cnwsinput_folder / inputfilename.segments_file
-        )
+            # if self.choices.dict_output["Output per river segment"] == 1:
+            self.catchm.segments.write(
+                self.sfolder.cnwsinput_folder / inputfilename.segments_file
+            )
 
         self.catchm.mask.write(self.sfolder.cnwsinput_folder / inputfilename.mask_file)
 
