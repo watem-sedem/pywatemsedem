@@ -282,7 +282,7 @@ class Scenario:
         self._vct_endpoints = AbstractVector()
         self._endpoints = AbstractRaster()
         self._endpoints_id = AbstractRaster()
-        self._force_routing = None
+        self._force_routing = pandas.DataFrame()
         self._vct_outlets = AbstractVector()
         self._outlets = AbstractRaster()
         self._vct_parcels = AbstractVector()
@@ -1452,7 +1452,7 @@ class Scenario:
         ini.add_output_maps()
         ini.add_variables(
             self.vct_buffers.geodata,
-            self.force_routing.geodata,
+            self.force_routing,
             self.catchm.tubed_river,
         )
         ini.write(self.ini)
