@@ -1329,7 +1329,6 @@ class Scenario:
     @valid_kfactor
     @valid_dtm
     @valid_pfactor
-    @valid_river
     @valid_composite_landuse
     @valid_cfactor
     def prepare_input_files(self):
