@@ -282,7 +282,7 @@ class Scenario:
         self._vct_endpoints = AbstractVector()
         self._endpoints = AbstractRaster()
         self._endpoints_id = AbstractRaster()
-        self._force_routing = pandas.DataFrame()
+        self._force_routing = pd.DataFrame()
         self._vct_outlets = AbstractVector()
         self._outlets = AbstractRaster()
         self._vct_parcels = AbstractVector()
