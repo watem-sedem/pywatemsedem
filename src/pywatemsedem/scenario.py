@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import colors
 
-from pywatemsedem.cfactor import create_cfactor_cnws
+from pywatemsedem.cfactor import create_cfactor_degerick2015
 from pywatemsedem.geo.rasters import AbstractRaster
 from pywatemsedem.geo.utils import nearly_identical, saga_intersection
 from pywatemsedem.geo.vectors import AbstractVector
@@ -118,7 +118,7 @@ def valid_ktc(func):
 
 
 def valid_river(func):
-    """Check if composite landuse is defined"""
+    """Check if river is defined"""
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
@@ -128,6 +128,34 @@ def valid_river(func):
                 "Please define a non-empty river raster (see also "
                 "self.create_composite_landuse)!"
             )
+            raise IOError(msg)
+        return func(self, *args, **kwargs)
+
+    return wrapper
+
+
+def valid_landuse(func):
+    """Check if infrastructure is defined"""
+
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        """wrapper"""
+        if self.catchm._landuse.is_empty():
+            msg = "Please define a non-empty landuse raster"
+            raise IOError(msg)
+        return func(self, *args, **kwargs)
+
+    return wrapper
+
+
+def valid_infrastructure(func):
+    """Check if infrastructure is defined"""
+
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        """wrapper"""
+        if self.catchm._infrastructure.is_empty():
+            msg = "Please define a non-empty infrastructure raster"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -1194,22 +1222,33 @@ class Scenario:
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
 
+    @valid_landuse
+    @valid_river
     def create_composite_landuse(
         self,
         maximize_grass_strips=False,
     ):
-        """Create CN_WS perceelskaart according to format of :ref:`here <watemsedem:prcmap>`.
+        """Create composite landuse to format of :ref:`here <watemsedem:prcmap>`.
+
+        Uses specific algorithm of Degerick (2015)
+
+        Requires at least a defined landuse and river raster
 
         Parameters
         ----------
         maximize_grass_strips: bool, default False
-            See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`
+            Expand grass strips using rivers and infrastructure as boundary conditions.
+            Requires definition of infrastructure and rivers.
+
+        Returns
+        -------
+        composite_landuse: numpy.ndarray
 
         Notes
         -----
         The infrastructur value -7 does not follow the definition of
-        :ref:`here <watemsedem:prcmap>`. This value is converted in subfunctionalities of
-        this function to -2.
+        :ref:`here <watemsedem:prcmap>`. This value is converted in subfunctionalities
+        of this function to -2.
         """
         # preprocess grass strips
         if self.grass_strips.is_empty():
@@ -1265,25 +1304,38 @@ class Scenario:
 
         return composite_landuse
 
-    @valid_composite_landuse
+    @valid_landuse
+    @valid_infrastructure
+    @valid_river
     def create_cfactor(self, use_source_oriented_measures=False):
-        """Create C-factor raster
+        """Creates the C-factor raster based on river, infrastructure and landuse.
 
-        Parameters
-        ---------
-        use_source_oriented_measures: bool, default False
-            Use source oriented-measures.
+        Uses specific algorithm of Degerick (2015)
 
-        Return
-        ------
+        Requires landuse, infrastructure and river raster
+
+        The C-factor is set to (in order)
+
+        - 0 if the landuse is river or infrastructure.
+        - scaled according to the width of the grass strips.
+        - C-factor of the crop for parcels (any model possible).
+        - 0.001 if the landuse is forest
+        - 0.01 if the landuse is grass land
+        - 0 if the landuse is pond
+        - 0.01 if the landuse is grass strip (where not grass strip vector is defined)
+
+        Left-over pixels are set to 0.37
+
+        Returns
+        -------
         cfactor: numpy.ndarray
         """
         if self.choices.version == "Only Routing":
-            msg = "C-factor raster not generated for 'Only Routing'-mode."
+            msg = "C-factor raster is not generated for 'Only Routing'-mode."
             warnings.warn(msg)
-            cfactor = AbstractRaster()
+            cfactor = np.ndarray()
         else:
-            _, cfactor = create_cfactor_cnws(
+            _, cfactor = create_cfactor_degerick2015(
                 self.catchm.river,
                 self.catchm.infrastructure,
                 self.catchm.landuse,
@@ -1297,12 +1349,21 @@ class Scenario:
     @valid_composite_landuse
     @valid_cfactor
     def create_ktc(self, ktc_low, ktc_high, ktc_limit, user_provided_ktc=1):
-        """Create C-factor raster
+        """Create ktc raster based on C-factor raster
+
+        The ktc raster is generated by classifying low and high erosion potential based
+        on the C-factor and ktc_limit (i.e. C_factor < ktc_high -> ktc_low, C_factor
+        > ktc_limit -> ktc_high).
+
+        The ktc value for landuse rivers, infrastructure and ponds is set to 9999
+        (all sediment is routed downwards).
 
         Parameters
         ---------
         ktc_low: float
+            Transport coefficient for land covers with low erosion potential
         ktc_high: float
+            Transport coefficient for land covers with high erosion potential
         ktc_limit: float
             C-factor to make distinction between ktc_low and ktc_high
         user_provided_ktc: int, default 1
@@ -1310,7 +1371,14 @@ class Scenario:
 
         Return
         ------
-        cfactor: numpy.ndarray
+        ktc: numpy.ndarray
+            Raster with ktc-values, returns an empty user_provided_ktc is 0.
+
+        Notes
+        -----
+        1. Requires assignment of C-factor and composite land-use raster.
+        2. The ktc values for grass strips are scaled according to their width (see
+        :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`) if grass strips are used.
         """
         if user_provided_ktc == 1:
             ktc, _ = create_ktc(
@@ -1323,7 +1391,7 @@ class Scenario:
                 grass=self.vct_grass_strips,
             )
         else:
-            ktc = AbstractRaster()
+            ktc = np.ndarray()
         return ktc
 
     @valid_kfactor
