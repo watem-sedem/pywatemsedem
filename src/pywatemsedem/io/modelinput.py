@@ -33,7 +33,7 @@ def valid_segments(func):
     """Check if you have defined a river segments raster."""
 
     def wrapper(self, *args, **kwargs):
-        if self._riversegments is None:
+        if self._riversegments.is_empty():
             msg = (
                 f"Please first define WaTEM/SEDEM river segments, see "
                 f"{Modelinput.riversegments}!"

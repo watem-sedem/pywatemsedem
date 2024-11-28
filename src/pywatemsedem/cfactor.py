@@ -1,4 +1,6 @@
+import tempfile
 import warnings
+from pathlib import Path
 
 import numpy as np
 
@@ -7,21 +9,32 @@ from pywatemsedem.grasstrips import (
     scale_cfactor_with_grass_strips_width,
 )
 
+from .geo.utils import clean_up_tempfiles
 
-def create_cfactor_cnws(
+
+def create_cfactor_degerick2015(
     rivers,
     infrastructure,
-    landuse,
+    composite_landuse,
     mask,
-    sfolder,
     vct_parcels=None,
     vct_grass_strips=None,
     cfactor_aggriculture=0.37,
     use_source_oriented_measures=False,
 ):
-    """Creates the C-factor map for a given year and season.
+    """Creates the C-factor raster based on river, infrastructure and composite landuse.
 
-    Sets the scenario.Ckaarten[year][season] attribute
+    The C-factor is set to (in order)
+
+    - 0 if the landuse is river or infrastructure.
+    - scaled according to the width of the grass strips.
+    - C-factor of the crop for parcels (any model possible).
+    - 0.001 if the landuse is forest
+    - 0.01 if the landuse is grass land
+    - 0 if the landuse is pond
+    - 0.01 if the landuse is grass strip (where not grass strip vector is defined)
+
+    Left-over pixels are set to 0.37
 
     Parameters
     ----------
@@ -30,13 +43,11 @@ def create_cfactor_cnws(
     infrastructure: numpy.ndarray
         Infrastructure raster, all infrastructure pixels must have a no-nodata or
         no-0 value.
-    landuse: numpy.ndarray
-        Landuse raster. This raster should be formatted according to the composite
-        WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`).
-    mask: #TODO: check how to simplify this
-    sfolder: pathlib.Path
-        Results necessary for saving mask
-    vct_parcels: geopandas.GeoDataFrame
+    composite_landuse: numpy.ndarray
+        WaTEM/SEDEM composite landuse. (see :ref:`here <watemsedem:prcmap>`).
+    mask: pywatemsedem.geo.rasters.AbstractRaster
+        Mask
+    vct_parcels: geopandas.GeoDataFrame, default None
         Dataframe holding C-factor values, columns:
         - *C_factor* (float)
     vct_grass_strips: geopandas.GeoDataFrame, default None
@@ -47,18 +58,32 @@ def create_cfactor_cnws(
     use_source_oriented_measures: bool
         True / False. In case True, vct_parcels should contain the column 'C_reduct'.
 
+    Returns
+    -------
+    vct_grass_strips: geopandas.GeoDataFrame
+        Grass strips vector added with C-factor.
+    arr_cfactor: numpy.ndarray
+
     Notes
     -----
-    C-reduction based on source-oriented measures are only applied at the level of
-    parcel polygons
-    (see :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).
+    1. If users input parcels and/or grass strips vectors, then they are responsible of
+       defining 'C_factor' and/or grass strip 'width'. #TODO: optimize
+    2. C-reduction based on source-oriented measures ('C_reduc') are only applied at
+       the level of parcel polygons (see
+       :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).
     """
     # use to rasterize
-    rst_mask = sfolder.scenario_folder / "mask.rst"
-    mask.write(rst_mask)
+    tiff_temp = Path(
+        tempfile.NamedTemporaryFile(
+            suffix=".tif", prefix="pywatemsedem", delete=False
+        ).name
+    )
+    mask.write(tiff_temp, format="tiff")
 
-    arr_cfactor = np.full(rivers.arr.shape, rivers.rp.nodata).astype("float32")
-    nodata = rivers.rp.nodata
+    arr_cfactor = np.full(
+        composite_landuse.arr.shape, composite_landuse.rp.nodata
+    ).astype("float32")
+    nodata = composite_landuse.rp.nodata
 
     # waterlopen
     if rivers is not None:
@@ -73,21 +98,22 @@ def create_cfactor_cnws(
         arr_cfactor = np.where(arr_cfactor == nodata, temp, arr_cfactor)
 
     # grass strips
-    if vct_grass_strips is not None:
-        res = rivers.rp.resolution
+    # TODO: optimize workflow
+    if not vct_grass_strips.is_empty():
+        res = composite_landuse.rp.resolution
         vct_grass_strips._geodata["C_factor"] = scale_cfactor_with_grass_strips_width(
             vct_grass_strips._geodata["width"], scale_cfactor_linear, resolution=res
         )
-
         # write calculated C-factor to shapefile -> needed for efficiency plots
         # vct_grass = grass.write()
         arr_grass_cfactor = vct_grass_strips.rasterize(
-            rst_mask, epsg=rivers.rp.epsg, col="C_factor", gdal=True
+            tiff_temp, epsg=composite_landuse.rp.epsg, col="C_factor", gdal=True
         )
         arr_cfactor = np.where(arr_cfactor == nodata, arr_grass_cfactor, arr_cfactor)
 
     # parcels
-    if vct_parcels is not None:
+    # TODO: optimize workflow
+    if not vct_parcels.is_empty():
         if "C_crop" in vct_parcels.geodata.columns:
             vct_parcels.geodata["C_factor"] = vct_parcels.geodata["C_crop"]
         if "default_cfactor" in vct_parcels.geodata:
@@ -110,7 +136,7 @@ def create_cfactor_cnws(
                 use_source_oriented_measures,
             )
             arr = vct_parcels.rasterize(
-                rst_mask, rivers.rp.epsg, col="C_factor", gdal=True
+                tiff_temp, composite_landuse.rp.epsg, col="C_factor", gdal=True
             )
             arr_cfactor = np.where(
                 arr_cfactor == nodata,
@@ -125,9 +151,9 @@ def create_cfactor_cnws(
             warnings.warn(msg)
 
     # other landuse
-    if landuse is not None:
+    if not composite_landuse.is_empty():
         # reclass landarr to C-factors
-        temp = landuse.arr.copy()
+        temp = composite_landuse.arr.copy()
         temp = np.where(temp == -1, 0, temp)
         temp = np.where(temp == -2, 0, temp)
         temp = np.where(temp == -3, 0.001, temp)
@@ -141,6 +167,7 @@ def create_cfactor_cnws(
     arr_mask = np.where(mask.arr, cfactor_aggriculture, 0)
     arr_cfactor = np.where(arr_cfactor == nodata, arr_mask, arr_cfactor)
     arr_cfactor = arr_cfactor.astype("float32")
+    clean_up_tempfiles(tiff_temp, "tiff")
 
     return vct_grass_strips, arr_cfactor
 

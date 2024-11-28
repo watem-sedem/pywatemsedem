@@ -38,7 +38,12 @@ class AbstractRaster:
     If an array mask is provided, the array is automatically masked.
     """
 
-    def __init__(self, arr, rp, arr_mask=None, allow_nodata_array=False):
+    def __init__(self):
+
+        self._arr = None
+        self._rp = None
+
+    def initialize(self, arr, rp, arr_mask=None, allow_nodata_array=False):
         """Initialize array and rasterproperties"""
         if len(arr.shape) < 2:
             msg = "Dimensionality of input raster array should be larger than 1."
@@ -47,10 +52,6 @@ class AbstractRaster:
         self._rp = rp
         if arr_mask is not None:
             self.mask(arr_mask, allow_nodata_array)
-
-    def _repr_html_(self):
-        """notebook/ipython representation"""
-        return self.arr.__array__()
 
     @property
     def arr(self):
@@ -255,6 +256,15 @@ class AbstractRaster:
         ax.set_ylabel("density")
         return fig, ax
 
+    def is_empty(self):
+        """check if array (raster) is None (empty)
+
+        Returns
+        -------
+        True/False
+        """
+        return self._arr is None
+
 
 @dataclass
 class RasterMemory(AbstractRaster):
@@ -274,7 +284,7 @@ class RasterMemory(AbstractRaster):
 
     def __init__(self, arr, rp, arr_mask=None, allow_nodata_array=False):
         """Initialize RasterMemory"""
-        super().__init__(
+        super().initialize(
             arr, rp, arr_mask=arr_mask, allow_nodata_array=allow_nodata_array
         )
 
@@ -323,7 +333,7 @@ class RasterFile(AbstractRaster):
             arr, profile = load_raster(file_path)
             rp = RasterProperties.from_rasterio(profile)
 
-        super().__init__(arr, rp, arr_mask, allow_nodata_array)
+        super().initialize(arr, rp, arr_mask, allow_nodata_array)
 
     @staticmethod
     def clip(file_path, rp, resample="mode"):

@@ -10,6 +10,7 @@ from pywatemsedem.errors import (
     PywatemsedemVectorAttributeError,
     PywatemsedemVectorAttributeValueError,
 )
+from pywatemsedem.geo.vectors import AbstractVector
 
 
 class TestCreateModel:
@@ -42,7 +43,16 @@ class TestCreateModel:
     def test_all(self, scenario):
         """Create WaTEM/SEDEM parcels raster with all possible input vectors/rasters"""
         scenario.vct_parcels = scenario_data.parcels
-        scenario.prepare_cnws_model_input()
+        scenario.composite_landuse = scenario.create_composite_landuse()
+        scenario.cfactor = scenario.create_cfactor(
+            bool(scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        scenario.ktc = scenario.create_ktc(
+            scenario.choices.dict_variables["ktc low"],
+            scenario.choices.dict_variables["ktc high"],
+            scenario.choices.dict_variables["ktc limit"],
+            scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
 
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = scenario.composite_landuse.arr
@@ -62,18 +72,24 @@ class TestCreateModel:
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
         np.testing.assert_allclose(counts, [28236, 5137, 11537, 4534])
 
-        assert True
-
     @pytest.mark.saga
     def test_omit_water(self, scenario):
         """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used standard
         in the initial development of pywatemsedem in Flanders."""
         scenario.vct_parcels = scenario_data.parcels
-        scenario.catchm._vct_water = None
+        scenario.catchm._vct_water = AbstractVector()
 
         # test prepare model input on C-factor, ktc and landuse-raster
-        scenario.prepare_cnws_model_input()
-
+        scenario.composite_landuse = scenario.create_composite_landuse()
+        scenario.cfactor = scenario.create_cfactor(
+            bool(scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        scenario.ktc = scenario.create_ktc(
+            scenario.choices.dict_variables["ktc low"],
+            scenario.choices.dict_variables["ktc high"],
+            scenario.choices.dict_variables["ktc limit"],
+            scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = scenario.composite_landuse.arr
         arr[arr > 0] = 1
@@ -94,8 +110,16 @@ class TestCreateModel:
     @pytest.mark.saga
     def test_omit_parcels(self, scenario):
         """Omit parcels to create WaTEM/SEDEM parcels raster."""
-        scenario.prepare_cnws_model_input()
-        scenario.catchm._vct_water = None
+        scenario.composite_landuse = scenario.create_composite_landuse()
+        scenario.cfactor = scenario.create_cfactor(
+            bool(scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        scenario.ktc = scenario.create_ktc(
+            scenario.choices.dict_variables["ktc low"],
+            scenario.choices.dict_variables["ktc high"],
+            scenario.choices.dict_variables["ktc limit"],
+            scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
 
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = scenario.composite_landuse.arr
@@ -114,20 +138,27 @@ class TestCreateModel:
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
         np.testing.assert_allclose(counts, [28236, 5167, 11540, 4501])
 
-        assert True
-
     @pytest.mark.saga
     def test_add_grass_strips(self, scenario):
         """Test creating composite landuse-, C-factor-, kTC-raster for case without
         water, but with adding grass strips."""
         scenario.vct_parcels = scenario_data.parcels
-        scenario.catchm._vct_water = None
+        scenario.catchm._vct_water = AbstractVector()
 
         scenario.vct_grass_strips = scenario_data.grass_strips
         scenario.choices.dict_ecm_options["UseGras"] = 1
 
         # test prepare model input on C-factor, ktc and landuse-raster
-        scenario.prepare_cnws_model_input()
+        scenario.composite_landuse = scenario.create_composite_landuse()
+        scenario.cfactor = scenario.create_cfactor(
+            bool(scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        scenario.ktc = scenario.create_ktc(
+            scenario.choices.dict_variables["ktc low"],
+            scenario.choices.dict_variables["ktc high"],
+            scenario.choices.dict_variables["ktc limit"],
+            scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
 
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = scenario.composite_landuse.arr
@@ -226,8 +257,9 @@ class TestCreateModel:
 
     @pytest.mark.saga
     def test_omit_river(self, scenario):
-        """Omit river to create WaTEM/SEDEM parcels raster."""
+        """Omit river to create WaTEM/SEDEM inputs."""
         # TODO
+
         assert True
 
     @pytest.mark.saga
@@ -606,7 +638,7 @@ class TestBuffers:
         scenario.choices.dict_ecm_options["Include buffers"] = 0
         scenario.vct_buffers = scenario_data.buffers
         w = recwarn.pop(UserWarning)  # make sure prev waring is popped
-        assert scenario.buffers is None  # calling buffers raises warning
+        assert scenario.buffers.is_empty()  # calling buffers raises warning
         w = recwarn.pop(UserWarning)
         assert (
             str(w.message) == "Option 'Include buffers' in erosion control measure"
@@ -678,8 +710,8 @@ class TestForceRouting:
     @pytest.mark.saga
     def test_forcerouting(self, scenario):
         """Test vector assignment"""
-        scenario.vct_force_routing = scenario_data.force_routing
-        df = scenario.vct_force_routing
+        scenario.force_routing = scenario_data.force_routing
+        df = scenario.force_routing
         assert_almost_equal(
             df["fromX"].values, [163891.888238, 165939.062062], decimal=0
         )

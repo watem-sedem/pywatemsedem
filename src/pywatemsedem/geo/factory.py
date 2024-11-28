@@ -21,7 +21,7 @@ from .utils import (
     vct_to_rst_value,
 )
 from .valid import PywatemsedemInputError, valid_exists
-from .vectors import AbstractVector, VectorFile
+from .vectors import VectorFile, VectorMemory
 
 
 def valid_mask_factory(func):
@@ -280,10 +280,8 @@ class Factory:
             vector = VectorFile(
                 vector_input, geometry_type, self.mask_vector, allow_empty=allow_empty
             )
-        elif type(vector_input) == gpd.GeoDataFrame:
-            vector = AbstractVector(
-                vector_input, geometry_type, allow_empty=allow_empty
-            )
+        elif isinstance(vector_input, gpd.GeoDataFrame):
+            vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
         else:
             msg = "Input vector should be a geopandas GeoDataFrame or vector file."
             raise IOError(msg)
