@@ -56,7 +56,7 @@ Contact
 For technical questions, we refer to the documentation. If you have a
 technical issue with running the model, or if you encounter a bug, please
 use the issue-tracker on github:
-`https://github.com/watem-sedem/pywatemsedem/issues <https://github.com/pywatemsedem/issues>`_
+`https://github.com/watem-sedem/pywatemsedem/issues <https://github.com/watem-sedem/pywatemsedem/issues>`_
 
 
 Powered by
