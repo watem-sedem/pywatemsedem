@@ -1,26 +1,24 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io package &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem.io package &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -39,9 +37,6 @@
           <a href="../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -566,6 +561,34 @@ Output , Variables, Calibration, Buffer $id and Forced Routing $id.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.ini.get_item_from_ini">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.ini.</span></span><span class="sig-name descname"><span class="pre">get_item_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/ini.html#get_item_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.ini.get_item_from_ini" title="Link to this definition">¶</a></dt>
+<dd><p>Gets an item from an option in a certain section of an ini-file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the ini-file</p></li>
+<li><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the desired section</p></li>
+<li><p><strong>option</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the desired option</p></li>
+<li><p><strong>dtype</strong> (<em>dtype</em>) – <dl class="simple">
+<dt>Type of parameter to be read (str, int, float or bool).</dt><dd><p>If another string is given to this parameter, a</p>
+</dd>
+</dl>
+<p>TypeError is raised.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Settings value of ini-file. If the option or section does not exist in
+the ini-file or the value of the section-option None is returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a> or <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)">int</a> or <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a> or <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.ini.modify_field">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.ini.</span></span><span class="sig-name descname"><span class="pre">modify_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/ini.html#modify_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.ini.modify_field" title="Link to this definition">¶</a></dt>
 <dd><p>Add one specific key in ini-file</p>
@@ -751,7 +774,7 @@ of routing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -840,7 +863,7 @@ and up_edges must be present in the array from the segments raster.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>adj_edges</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Loaded adjacent edges text file, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#adjsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p></li>
 <li><p><strong>up_edges</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Loaded up edges text file, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#upstrsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p></li>
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Segment raster array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Segment raster array</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -864,7 +887,7 @@ from high to low</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe()</span></code>)</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.html#rasterio.open" title="(in rasterio v1.3.11)"><code class="xref py py-func docutils literal notranslate"><span class="pre">rasterio.open()</span></code></a></p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.html#rasterio.open" title="(in rasterio)"><code class="xref py py-func docutils literal notranslate"><span class="pre">rasterio.open()</span></code></a></p></li>
 <li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – x percentage highest load that the user wants to analyse</p></li>
 <li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Delta used to iterate percentage</p></li>
 <li><p><strong>plot</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – True if you want a cumulative SediExport plot</p></li>
@@ -1075,7 +1098,7 @@ and shapes dictionary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_sediout</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – numpy array format of sedout raster</p></li>
+<li><p><strong>arr_sediout</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – numpy array format of sedout raster</p></li>
 <li><p><strong>rst_profile</strong> (<em>rasterio profile</em>) – rasterio profile of the sedout raster</p></li>
 <li><p><strong>txt_routing_nonriver</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of the WaTEM/SEDEM routing table</p></li>
 <li><p><strong>nmax</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – maximum number of catchment</p></li>
@@ -1085,7 +1108,7 @@ and shapes dictionary</p>
 <dd class="field-even"><p><strong>subcatchmentpriority</strong> – catchment shapes with number of catchment</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1375,7 +1398,7 @@ of all the load in a catchment. If this is true, adapt threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.3)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
 </ul>
 </dd>
@@ -1398,7 +1421,7 @@ changes lower bound to smallest value above zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – rastervalues</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – rastervalues</p></li>
 <li><p><strong>cnorm</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – cnorm used for hvplot</p></li>
 </ul>
 </dd>
@@ -1429,7 +1452,7 @@ changes lower bound to smallest value above zero.</p>
 <dd class="field-even"><p><strong>norm</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.9.2)">matplotlib.colors.Normalize</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.9.3)">matplotlib.colors.Normalize</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1440,13 +1463,13 @@ changes lower bound to smallest value above zero.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.3)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – [left, bottom, right, upper] as obtained from RasterProperties.bounds
 (See <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>)</p></li>
-<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
+<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.3)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.9.3)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
 <li><p><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default = True</em>) – Choice of displaying a colorbar</p></li>
 <li><p><strong>ticks</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>optional</em>) – Supply [min, 25th percentile, 50th percentile ,75th percentile, max]
 when norm is used!</p></li>
@@ -1468,14 +1491,14 @@ when norm is used!</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.3)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – [left, bottom, right, upper] as obtained from RasterProperties.bounds
 (See <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>)</p></li>
 <li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Supply unique string for each value</p></li>
-<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis</em>)</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
+<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.3)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis</em>)</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.9.3)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1495,13 +1518,13 @@ when norm is used!</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.3)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
-<li><p><strong>mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Contains raster data, 0 outside of domain</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
+<li><p><strong>mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Contains raster data, 0 outside of domain</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – [left, bottom, right, upper] as obtained from RasterProperties.bounds
 (See <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>)</p></li>
-<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.2)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
+<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.9.3)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
 <li><p><strong>ticks</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>optional</em>) – When no list is given, 0th, 25th, 50th, 75th and 100th percentile are used</p></li>
 </ul>
 </dd>
@@ -1527,8 +1550,8 @@ when norm is used!</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Input array</p></li>
-<li><p><strong>required_type</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a>) – required datatype.</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Input array</p></li>
+<li><p><strong>required_type</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a>) – required datatype.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1544,7 +1567,7 @@ when norm is used!</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Input array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Input array</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Lower boundary</p></li>
 <li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Upper boundary</p></li>
 </ul>
@@ -1562,7 +1585,7 @@ when norm is used!</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Input array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Input array</p></li>
 <li><p><strong>nodata_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>default -9999</em>) – Value to be interpreted as no data present</p></li>
 </ul>
 </dd>
@@ -1578,7 +1601,7 @@ when norm is used!</p></li>
 <dd><p>Checks if Nan are present in the array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Input array</p>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Input array</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>True</p>
@@ -1594,7 +1617,7 @@ when norm is used!</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Input array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Input array</p></li>
 <li><p><strong>unique_values</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Unique values that the raster can have</p></li>
 </ul>
 </dd>

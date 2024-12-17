@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.ktc &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem.ktc &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -36,9 +34,6 @@
           <a href="../../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -95,50 +90,81 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.ktc</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">pywatemsedem.grasstrips</span> <span class="kn">import</span> <span class="n">scale_ktc_with_grass_strip_width</span><span class="p">,</span> <span class="n">scale_ktc_zhang</span>
 
 
-<div class="viewcode-block" id="create_ktc_cnws">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.ktc.create_ktc_cnws">[docs]</a>
-<span class="k">def</span> <span class="nf">create_ktc_cnws</span><span class="p">(</span>
-    <span class="n">landuse_parcels</span><span class="p">,</span>
+<div class="viewcode-block" id="create_ktc">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.ktc.create_ktc">[docs]</a>
+<span class="k">def</span> <span class="nf">create_ktc</span><span class="p">(</span>
+    <span class="n">composite_landuse</span><span class="p">,</span>
     <span class="n">cfactor</span><span class="p">,</span>
     <span class="n">mask</span><span class="p">,</span>
     <span class="n">ktc_low</span><span class="p">,</span>
     <span class="n">ktc_high</span><span class="p">,</span>
     <span class="n">ktc_limit</span><span class="p">,</span>
-    <span class="n">sfolder</span><span class="p">,</span>
     <span class="n">grass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">correction_width</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create KTC map for a given year, season.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create ktc raster based on C-factor raster</span>
+
+<span class="sd">    The ktc raster is generated by classifying low and high erosion potential based</span>
+<span class="sd">    on the C-factor and ktc_limit (i.e. C_factor &lt; ktc_high -&gt; ktc_low, C_factor</span>
+<span class="sd">    &gt; ktc_limit -&gt; ktc_high).</span>
+
+<span class="sd">    The ktc value for landuse rivers, infrastructure and ponds is set to 9999</span>
+<span class="sd">    (all sediment is routed downwards).</span>
+
+<span class="sd">    The ktc values for grass strips are scaled according to their width (see</span>
+<span class="sd">    :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    # TODO</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rst_mask</span> <span class="o">=</span> <span class="n">sfolder</span><span class="o">.</span><span class="n">scenario_folder</span> <span class="o">/</span> <span class="s2">&quot;mask.rst&quot;</span>
-    <span class="n">mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rst_mask</span><span class="p">)</span>
+<span class="sd">    composite_landuse: numpy.ndarray</span>
+<span class="sd">        WaTEM/SEDEM composite landuse. (see :ref:`here &lt;watemsedem:prcmap&gt;`).</span>
+<span class="sd">    cfactor: numpy.ndarray</span>
+<span class="sd">        C-factor.</span>
+<span class="sd">    mask: pywatemsedem.geo.rasters.AbstractRaster</span>
+<span class="sd">        Mask</span>
+<span class="sd">    ktc_low: float</span>
+<span class="sd">        Transport coefficient for land covers with low erosion potential</span>
+<span class="sd">    ktc_high: float</span>
+<span class="sd">        Transport coefficient for land covers with high erosion potential</span>
+<span class="sd">    ktc_limit: float</span>
+<span class="sd">        C-factor to make distinction between ktc_low and ktc_high</span>
+<span class="sd">    grass: pywatemsedem.geo.vectors.AbstractVector</span>
+<span class="sd">    correction_width: bool, default True</span>
+<span class="sd">        Scale kTC according to width of grass strip.</span>
 
-    <span class="k">if</span> <span class="n">cfactor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to create KTC map, C-factor map is not known&quot;</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">landuse_parcels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to create KTC map, Prc map is not known&quot;</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    arr_ktc: numpy.ndarray</span>
+<span class="sd">        kTC values.</span>
+<span class="sd">    grass: pywatemsedem.geo.vectors.AbstractVector</span>
+<span class="sd">        Updated grass strips</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tiff_temp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+        <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;pywatemsedem&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="p">)</span>
+    <span class="n">mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tiff_temp</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
 
     <span class="c1"># reclass based on C-factor</span>
     <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cfactor</span> <span class="o">&lt;=</span> <span class="n">ktc_limit</span><span class="p">,</span> <span class="n">ktc_low</span><span class="p">,</span> <span class="n">ktc_high</span><span class="p">)</span>
 
     <span class="c1"># give certain landuse classes an extremely high ktc-value</span>
-    <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">landuse_parcels</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">]),</span> <span class="mi">9999</span><span class="p">,</span> <span class="n">arr_ktc</span><span class="p">)</span>
+    <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">]),</span> <span class="mi">9999</span><span class="p">,</span> <span class="n">arr_ktc</span><span class="p">)</span>
 
     <span class="c1"># set KTC outside modeldomain to zero</span>
     <span class="c1"># KTC_arr = np.where(self.catchm.binarr == 1, KTC_arr, 0)</span>
 
-    <span class="k">if</span> <span class="n">correction_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">grass</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">correction_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">grass</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
 
         <span class="n">grass</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="n">scale_ktc_gdf_grass_strips</span><span class="p">(</span>
             <span class="n">grass</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span>
@@ -146,20 +172,20 @@
             <span class="n">ktc_high</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">arr_grass</span> <span class="o">=</span> <span class="n">grass</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-            <span class="n">rst_mask</span><span class="p">,</span> <span class="n">landuse_parcels</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;KTC&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">tiff_temp</span><span class="p">,</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;KTC&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">landuse_parcels</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">arr_grass</span> <span class="o">!=</span> <span class="n">mask</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">arr_grass</span> <span class="o">!=</span> <span class="n">mask</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
             <span class="n">arr_grass</span><span class="p">,</span>
             <span class="n">arr_ktc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">landuse_parcels</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">arr_grass</span> <span class="o">==</span> <span class="n">mask</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">arr_grass</span> <span class="o">==</span> <span class="n">mask</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
             <span class="n">ktc_low</span><span class="p">,</span>
             <span class="n">arr_ktc</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">landuse_parcels</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">ktc_low</span><span class="p">,</span> <span class="n">arr_ktc</span><span class="p">)</span>
+        <span class="n">arr_ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">ktc_low</span><span class="p">,</span> <span class="n">arr_ktc</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">arr_ktc</span><span class="p">,</span> <span class="n">grass</span></div>
 
@@ -176,9 +202,9 @@
 <span class="sd">        Grass strips geodataframe, &#39;width&#39; and &#39;scale_ktc&#39; should be present as</span>
 <span class="sd">        columns.</span>
 <span class="sd">    ktc_low: float</span>
+<span class="sd">        Transport coefficient for land covers with low erosion potential</span>
 <span class="sd">    ktc_high: float</span>
-<span class="sd">        See :func:`pywatemsedem.grasstrips.scale_ktc_linear` and</span>
-<span class="sd">        :func:`pywatemsedem.grasstrips.scale_ktc_zhang`.</span>
+<span class="sd">        Transport coefficient for land covers with high erosion potential</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>

@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.cfactor &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem.cfactor &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -36,9 +34,6 @@
           <a href="../../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -95,7 +90,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.cfactor</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -104,23 +101,34 @@
     <span class="n">scale_cfactor_with_grass_strips_width</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">.geo.utils</span> <span class="kn">import</span> <span class="n">clean_up_tempfiles</span>
 
-<div class="viewcode-block" id="create_cfactor_cnws">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.cfactor.create_cfactor_cnws">[docs]</a>
-<span class="k">def</span> <span class="nf">create_cfactor_cnws</span><span class="p">(</span>
+
+<div class="viewcode-block" id="create_cfactor_degerick2015">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.cfactor.create_cfactor_degerick2015">[docs]</a>
+<span class="k">def</span> <span class="nf">create_cfactor_degerick2015</span><span class="p">(</span>
     <span class="n">rivers</span><span class="p">,</span>
     <span class="n">infrastructure</span><span class="p">,</span>
-    <span class="n">landuse</span><span class="p">,</span>
+    <span class="n">composite_landuse</span><span class="p">,</span>
     <span class="n">mask</span><span class="p">,</span>
-    <span class="n">sfolder</span><span class="p">,</span>
     <span class="n">vct_parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">vct_grass_strips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">cfactor_aggriculture</span><span class="o">=</span><span class="mf">0.37</span><span class="p">,</span>
     <span class="n">use_source_oriented_measures</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates the C-factor map for a given year and season.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates the C-factor raster based on river, infrastructure and composite landuse.</span>
 
-<span class="sd">    Sets the scenario.Ckaarten[year][season] attribute</span>
+<span class="sd">    The C-factor is set to (in order)</span>
+
+<span class="sd">    - 0 if the landuse is river or infrastructure.</span>
+<span class="sd">    - scaled according to the width of the grass strips.</span>
+<span class="sd">    - C-factor of the crop for parcels (any model possible).</span>
+<span class="sd">    - 0.001 if the landuse is forest</span>
+<span class="sd">    - 0.01 if the landuse is grass land</span>
+<span class="sd">    - 0 if the landuse is pond</span>
+<span class="sd">    - 0.01 if the landuse is grass strip (where not grass strip vector is defined)</span>
+
+<span class="sd">    Left-over pixels are set to 0.37</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -129,13 +137,11 @@
 <span class="sd">    infrastructure: numpy.ndarray</span>
 <span class="sd">        Infrastructure raster, all infrastructure pixels must have a no-nodata or</span>
 <span class="sd">        no-0 value.</span>
-<span class="sd">    landuse: numpy.ndarray</span>
-<span class="sd">        Landuse raster. This raster should be formatted according to the composite</span>
-<span class="sd">        WaTEM/SEDEM parcels raster (see :ref:`here &lt;watemsedem:prcmap&gt;`).</span>
-<span class="sd">    mask: #TODO: check how to simplify this</span>
-<span class="sd">    sfolder: pathlib.Path</span>
-<span class="sd">        Results necessary for saving mask</span>
-<span class="sd">    vct_parcels: geopandas.GeoDataFrame</span>
+<span class="sd">    composite_landuse: numpy.ndarray</span>
+<span class="sd">        WaTEM/SEDEM composite landuse. (see :ref:`here &lt;watemsedem:prcmap&gt;`).</span>
+<span class="sd">    mask: pywatemsedem.geo.rasters.AbstractRaster</span>
+<span class="sd">        Mask</span>
+<span class="sd">    vct_parcels: geopandas.GeoDataFrame, default None</span>
 <span class="sd">        Dataframe holding C-factor values, columns:</span>
 <span class="sd">        - *C_factor* (float)</span>
 <span class="sd">    vct_grass_strips: geopandas.GeoDataFrame, default None</span>
@@ -146,18 +152,32 @@
 <span class="sd">    use_source_oriented_measures: bool</span>
 <span class="sd">        True / False. In case True, vct_parcels should contain the column &#39;C_reduct&#39;.</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vct_grass_strips: geopandas.GeoDataFrame</span>
+<span class="sd">        Grass strips vector added with C-factor.</span>
+<span class="sd">    arr_cfactor: numpy.ndarray</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    C-reduction based on source-oriented measures are only applied at the level of</span>
-<span class="sd">    parcel polygons</span>
-<span class="sd">    (see :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).</span>
+<span class="sd">    1. If users input parcels and/or grass strips vectors, then they are responsible of</span>
+<span class="sd">       defining &#39;C_factor&#39; and/or grass strip &#39;width&#39;. #TODO: optimize</span>
+<span class="sd">    2. C-reduction based on source-oriented measures (&#39;C_reduc&#39;) are only applied at</span>
+<span class="sd">       the level of parcel polygons (see</span>
+<span class="sd">       :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># use to rasterize</span>
-    <span class="n">rst_mask</span> <span class="o">=</span> <span class="n">sfolder</span><span class="o">.</span><span class="n">scenario_folder</span> <span class="o">/</span> <span class="s2">&quot;mask.rst&quot;</span>
-    <span class="n">mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rst_mask</span><span class="p">)</span>
+    <span class="n">tiff_temp</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+        <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;pywatemsedem&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="p">)</span>
+    <span class="n">mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tiff_temp</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
 
-    <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">rivers</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">rivers</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
-    <span class="n">nodata</span> <span class="o">=</span> <span class="n">rivers</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span>
+    <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+        <span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">nodata</span> <span class="o">=</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span>
 
     <span class="c1"># waterlopen</span>
     <span class="k">if</span> <span class="n">rivers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -172,21 +192,22 @@
         <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr_cfactor</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">arr_cfactor</span><span class="p">)</span>
 
     <span class="c1"># grass strips</span>
-    <span class="k">if</span> <span class="n">vct_grass_strips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">rivers</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span>
+    <span class="c1"># TODO: optimize workflow</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span>
         <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">&quot;C_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale_cfactor_with_grass_strips_width</span><span class="p">(</span>
             <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span> <span class="n">scale_cfactor_linear</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="n">res</span>
         <span class="p">)</span>
-
         <span class="c1"># write calculated C-factor to shapefile -&gt; needed for efficiency plots</span>
         <span class="c1"># vct_grass = grass.write()</span>
         <span class="n">arr_grass_cfactor</span> <span class="o">=</span> <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-            <span class="n">rst_mask</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">rivers</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;C_factor&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">tiff_temp</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;C_factor&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr_cfactor</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">arr_grass_cfactor</span><span class="p">,</span> <span class="n">arr_cfactor</span><span class="p">)</span>
 
     <span class="c1"># parcels</span>
-    <span class="k">if</span> <span class="n">vct_parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># TODO: optimize workflow</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">vct_parcels</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
         <span class="k">if</span> <span class="s2">&quot;C_crop&quot;</span> <span class="ow">in</span> <span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;C_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;C_crop&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s2">&quot;default_cfactor&quot;</span> <span class="ow">in</span> <span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="p">:</span>
@@ -209,7 +230,7 @@
                 <span class="n">use_source_oriented_measures</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">vct_parcels</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-                <span class="n">rst_mask</span><span class="p">,</span> <span class="n">rivers</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;C_factor&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+                <span class="n">tiff_temp</span><span class="p">,</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;C_factor&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
             <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
                 <span class="n">arr_cfactor</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">,</span>
@@ -224,9 +245,9 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># other landuse</span>
-    <span class="k">if</span> <span class="n">landuse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
         <span class="c1"># reclass landarr to C-factors</span>
-        <span class="n">temp</span> <span class="o">=</span> <span class="n">landuse</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">temp</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">temp</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">temp</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
@@ -240,6 +261,7 @@
     <span class="n">arr_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">cfactor_aggriculture</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr_cfactor</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">arr_mask</span><span class="p">,</span> <span class="n">arr_cfactor</span><span class="p">)</span>
     <span class="n">arr_cfactor</span> <span class="o">=</span> <span class="n">arr_cfactor</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tiff_temp</span><span class="p">,</span> <span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">vct_grass_strips</span><span class="p">,</span> <span class="n">arr_cfactor</span></div>
 

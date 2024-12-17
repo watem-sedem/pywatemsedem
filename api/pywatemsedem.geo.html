@@ -1,28 +1,26 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo package &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem.geo package &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -41,9 +39,6 @@
           <a href="../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -176,7 +171,7 @@ to False, one needs to self-define a RasterProperties instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>raster_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Input raster file or numpy array</p></li>
+<li><p><strong>raster_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Input raster file or numpy array</p></li>
 <li><p><strong>flag_clip</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Clip raster (True)</p></li>
 <li><p><strong>flag_mask</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Mask raster (True)</p></li>
 <li><p><strong>allow_nodata_array</strong> (<em>default False</em>) – Allow the returned array to only contian nodata-values,
@@ -211,7 +206,7 @@ see <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
+<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
 <li><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Mask vector (True), nodata value will be that one of
 <cite>pywatemsedem.geo.factory.Factory.rp</cite>.</p></li>
 <li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – Allow vector to be empty, see <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
@@ -426,7 +421,7 @@ see <a class="reference external" href="https://epsg.io/">https://epsg.io/</a></
 <dd><p>Returns 1D-vector array of x-coordinates</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -437,7 +432,7 @@ see <a class="reference external" href="https://epsg.io/">https://epsg.io/</a></
 <dd><p>Returns 1D-vector array of y-coordinates</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -499,15 +494,15 @@ boundaries.</p>
 <span id="pywatemsedem-geo-rasters-module"></span><h2>pywatemsedem.geo.rasters module<a class="headerlink" href="#module-pywatemsedem.geo.rasters" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pywatemsedem.geo.rasters.AbstractRaster">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.rasters.</span></span><span class="sig-name descname"><span class="pre">AbstractRaster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nodata_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.rasters.</span></span><span class="sig-name descname"><span class="pre">AbstractRaster</span></span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract raster class based on numpy arrays and raster properties</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Raster array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Raster array</p></li>
 <li><p><strong>rp</strong> (<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><em>RasterProperties</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p></li>
-<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
+<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 <li><p><strong>allow_nodata_array</strong> (<em>boolean</em><em>, </em><em>default False</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 </ul>
 </dd>
@@ -522,7 +517,7 @@ boundaries.</p>
 <dd><p>Return array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -541,8 +536,8 @@ percentiles</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.3)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.3)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Used to mask no data values</p></li>
 <li><p><strong>ylogscale</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default = False</em>) – Log transformation on density axis if True</p></li>
 </ul>
@@ -558,13 +553,30 @@ percentiles</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.geo.rasters.AbstractRaster.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nodata_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster.initialize" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize array and rasterproperties</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.geo.rasters.AbstractRaster.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster.is_empty" title="Link to this definition">¶</a></dt>
+<dd><p>check if array (raster) is None (empty)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True/False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.geo.rasters.AbstractRaster.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nodata_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="Link to this definition">¶</a></dt>
 <dd><p>Mask function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Array mask (1, nodata). Note that array mask should have same nodata value
+<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Array mask (1, nodata). Note that array mask should have same nodata value
 as raster array.</p></li>
 <li><p><strong>allow_nodata_array</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Allow to return a nodata-array.</p></li>
 </ul>
@@ -579,8 +591,8 @@ as raster array.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.2)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.2)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.9.3)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.9.3)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default = None</em>) – Used to mask certain values present in arr which represent
 nodata (e.g. -9999)</p></li>
 </ul>
@@ -626,7 +638,7 @@ nodata (e.g. -9999)</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outfile_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path output</p></li>
 <li><p><strong>format</strong> (<em>&quot;idrisi&quot;</em><em> or </em><em>&quot;tiff&quot;</em><em>, </em><em>default &quot;idrisi&quot;</em>)</p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a><em>, </em><em>default None</em>) – Output raster type. If None, dtype of array is used.</p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a><em>, </em><em>default None</em>) – Output raster type. If None, dtype of array is used.</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Nodata value for output raster. If None, nodata of rasterproperties is used.</p></li>
 </ul>
 </dd>
@@ -646,7 +658,7 @@ nodata (e.g. -9999)</p></li>
 <li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to user input raster.</p></li>
 <li><p><strong>rp</strong> (<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><em>RasterProperties</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>. If None,
 rasterproperties from inputfile are used.</p></li>
-<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
+<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 <li><p><strong>allow_nodata_array</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 </ul>
 </dd>
@@ -671,7 +683,7 @@ rasterproperties from inputfile are used.</p></li>
 <dd class="field-even"><p><strong>arr</strong> – Clipped array</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -689,9 +701,9 @@ rasterproperties from inputfile are used.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster" title="pywatemsedem.geo.rasters.AbstractRaster"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster</span></code></a></p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster" title="pywatemsedem.geo.rasters.AbstractRaster"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster</span></code></a></p></li>
 <li><p><strong>rp</strong> (<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><em>RasterProperties</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p></li>
-<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
+<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 <li><p><strong>allow_nodata_array</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 </ul>
 </dd>
@@ -713,7 +725,7 @@ dimension being temporal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – 3D Raster array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – 3D Raster array</p></li>
 <li><p><strong>rp</strong> (<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><em>RasterProperties</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p></li>
 <li><p><strong>arr_mask</strong> (<em>np.ndarray</em><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.mask" title="pywatemsedem.geo.rasters.AbstractRaster.mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.mask()</span></code></a></p></li>
 </ul>
@@ -750,7 +762,7 @@ dimension being temporal.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outfiles</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#tuple" title="(in Python v3.11)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – List of output files</p></li>
 <li><p><strong>format</strong> (<em>basestring</em>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.write" title="pywatemsedem.geo.rasters.AbstractRaster.write"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.write()</span></code></a></p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.write" title="pywatemsedem.geo.rasters.AbstractRaster.write"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.write()</span></code></a></p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster.write" title="pywatemsedem.geo.rasters.AbstractRaster.write"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster.write()</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -784,8 +796,8 @@ dimension being temporal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoSeries</em></a>)</p></li>
-<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoSeries</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -821,15 +833,15 @@ dimension being temporal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
-<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
+<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
+<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>condition</strong> – 1D array holding True/False if cuboid</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -1148,8 +1160,8 @@ see also
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
-<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
+<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
+<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
 <li><p><strong>nan_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The value to fill in for nan_values</p></li>
 </ul>
 </dd>
@@ -1157,7 +1169,7 @@ see also
 <dd class="field-even"><p><strong>arr_est_polygon_width</strong> – 1D array holding in each row the estimated width</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)">pandas.Series</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1309,7 +1321,7 @@ rasterio)</p></li>
 <dd class="field-even"><p><strong>arr_bindomain</strong> – In domain is equal to one, outside domain is equal to zero.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1331,7 +1343,7 @@ geodata and bin mask. Default the “P” raster is used.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
 <li><p><strong>rstparams</strong> (<em>dict</em>) – gdal dictionary holding all metadata for idrisi rasters</p></li>
 <li><p><strong>arr_bindomain</strong> (<em>numpy.ndarray</em>) – binary mask of modelling domain</p></li>
 </ul>
@@ -1494,7 +1506,7 @@ geodata and bin mask. Default the “P” raster is used.</p></li>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>arr</strong> (<em>numpy.ndarray</em>) – Array format of raster file.</p></li>
 <li><p><strong>bounds</strong> (<em>list</em>) – List of bounds (xmin,ymin,xmax,ymax).</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
 </ul>
 </p>
 </dd>
@@ -1508,8 +1520,8 @@ geodata and bin mask. Default the “P” raster is used.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – array of which values are masked</p></li>
-<li><p><strong>mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – masking array with same dimensions as arr</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – array of which values are masked</p></li>
+<li><p><strong>mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – masking array with same dimensions as arr</p></li>
 <li><p><strong>mask_val</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – masking arr when mask is mask_val</p></li>
 </ul>
 </dd>
@@ -1609,7 +1621,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoSeries</em></a>)</p></li>
 <li><p><strong>p</strong> (<em>shapely.Geometry</em>)</p></li>
 </ul>
 </dd>
@@ -1650,7 +1662,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
+<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
 <li><p><strong>catchment_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>default 1</em>) – value that is used to define catchment</p></li>
 </ul>
 </dd>
@@ -1658,7 +1670,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>gdf_catchment</strong> – dissolved dataframe holding mask, in one polygon (row)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1670,8 +1682,8 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_raster</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Array raster format</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>arr_raster</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Array raster format</p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1703,16 +1715,16 @@ format = “EPSG:XXXXX”</p></li>
 <li><p><em>val</em> (float): the value</p></li>
 </ul>
 </p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
 <li><p><strong>col</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Column name to convert to raster</p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a>)</p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>arr</strong> – Array of dataframe columns ‘val’</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1742,7 +1754,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd><p>Transform rasterprofile to rstparams</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p>
+<dd class="field-odd"><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>rstparams</strong> – gdal dictionary holding all metadata for idrisi rasters</p>
@@ -1765,7 +1777,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>dtype</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)">numpy.dtype</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)">numpy.dtype</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1856,7 +1868,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
 <li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – The epsg code defining the coordinate system of the raster,
 format = “EPSG:XXXXX”</p></li>
 </ul>
@@ -1896,15 +1908,15 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – arr of a raster for which dtype has to be changed</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a><em>, </em><em>default None</em>) – e.g. np.float64, np.float32, ..</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – arr of a raster for which dtype has to be changed</p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a><em>, </em><em>default None</em>) – e.g. np.float64, np.float32, ..</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>arr</strong> (<em>numpy.ndarray</em>) – dtype-updated arr of a raster for which dtype has to be changed</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a> with update dtype geo medata information</p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a> with update dtype geo medata information</p></li>
 </ul>
 </p>
 </dd>
@@ -1918,8 +1930,8 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – To mask array</p></li>
-<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Mask array</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – To mask array</p></li>
+<li><p><strong>arr_mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Mask array</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The no data value to set in input array</p></li>
 </ul>
 </dd>
@@ -1935,10 +1947,10 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of input raster to set no data values</p></li>
 <li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of output raster with no data values</p></li>
-<li><p><strong>arr_bindomain</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – Array used to define domain nodata. In domain is equal to one,
+<li><p><strong>arr_bindomain</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – Array used to define domain nodata. In domain is equal to one,
 outside domain is equal to zero.</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a><em>, </em><em>default None</em>) – e.g. np.float64, np.float32, ..</p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a><em>, </em><em>default None</em>) – e.g. np.float64, np.float32, ..</p></li>
 <li><p><strong>nodata_val</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>default -9999</em>) – Standard value for nodata</p></li>
 </ul>
 </dd>
@@ -1973,7 +1985,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>gdf</strong> – Geopandas representation of tiff raster</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2086,10 +2098,10 @@ touched by lines or polygons will be updated.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><em>numpy.ndarray</em></a>) – 2D numpy array to be written as a raster file</p></li>
+<li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><em>numpy.ndarray</em></a>) – 2D numpy array to be written as a raster file</p></li>
 <li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path to the output raster</p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.1)"><em>numpy.dtype</em></a>)</p></li>
-<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio v1.3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.2)"><em>numpy.dtype</em></a>)</p></li>
+<li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.profiles.html#rasterio.profiles.Profile" title="(in rasterio)"><code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.profiles.Profile</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -2299,7 +2311,7 @@ and None (i.e. don’t check).</p></li>
 <span id="pywatemsedem-geo-vectors-module"></span><h2>pywatemsedem.geo.vectors module<a class="headerlink" href="#module-pywatemsedem.geo.vectors" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pywatemsedem.geo.vectors.AbstractVector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.vectors.</span></span><span class="sig-name descname"><span class="pre">AbstractVector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geodata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_geometry_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/vectors.html#AbstractVector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.vectors.AbstractVector" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.vectors.</span></span><span class="sig-name descname"><span class="pre">AbstractVector</span></span><a class="reference internal" href="../_modules/pywatemsedem/geo/vectors.html#AbstractVector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.vectors.AbstractVector" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Abstract Vector class based on geopandas GeoDataFrame</p>
 <dl class="py method">
@@ -2333,6 +2345,34 @@ and None (i.e. don’t check).</p></li>
 <dt class="sig sig-object py" id="pywatemsedem.geo.vectors.AbstractVector.geodata">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">geodata</span></span><a class="headerlink" href="#pywatemsedem.geo.vectors.AbstractVector.geodata" title="Link to this definition">¶</a></dt>
 <dd><p>Property to override</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.geo.vectors.AbstractVector.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geodata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_geometry_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/vectors.html#AbstractVector.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.vectors.AbstractVector.initialize" title="Link to this definition">¶</a></dt>
+<dd><p>Abstract vector class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoDataFrame</em></a>) – Input data set.</p></li>
+<li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Geometry type of input dataset</p></li>
+<li><p><strong>req_geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – Geometry type, for implemented types, see
+<a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector.check_type" title="pywatemsedem.geo.vectors.AbstractVector.check_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector.check_type()</span></code></a></p></li>
+<li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – Allow an empty geodataframe</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.geo.vectors.AbstractVector.is_empty">
+<span class="sig-name descname"><span class="pre">is_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/vectors.html#AbstractVector.is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.vectors.AbstractVector.is_empty" title="Link to this definition">¶</a></dt>
+<dd><p>check if geodata (vector) is None (empty)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True/False</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2374,7 +2414,7 @@ convert_lines_to_direction:</p></li>
 <dd class="field-even"><p><strong>arr</strong> – Return numpy array</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2411,7 +2451,7 @@ convert_lines_to_direction:</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2426,7 +2466,7 @@ convert_lines_to_direction:</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+20)"><em>geopandas.GeoDataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.0.1.dev+50)"><em>geopandas.GeoDataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>req_geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>

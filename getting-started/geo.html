@@ -1,26 +1,24 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Geo-module &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>Geo-module &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -39,9 +37,6 @@
           <a href="../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,7 +119,8 @@ files in this tutorial can be found in <code class="docutils literal notranslate
 <p>For this example, we assume we have a raster available which defines the
 geographical boundaries, the resolution (20 m) and coordinate system (in this
 case Lambert72, i.e. EPSG:31370) of your model:</p>
-<a class="reference internal image-reference" href="../_images/example_dtm.png"><img alt="../_images/example_dtm.png" class="align-center" src="../_images/example_dtm.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="../_images/example_dtm.png"><img alt="../_images/example_dtm.png" class="align-center" src="../_images/example_dtm.png" style="width: 1000px;" />
+</a>
 <p>Defining the raster properties for this raster can be done by:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># imports</span>
 <span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">load_raster</span>
@@ -183,7 +179,8 @@ according to this definition using
 </pre></div>
 </div>
 <p>Which results to:</p>
-<a class="reference internal image-reference" href="../_images/example_dtm_clipped.png"><img alt="../_images/example_dtm_clipped.png" class="align-center" src="../_images/example_dtm_clipped.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="../_images/example_dtm_clipped.png"><img alt="../_images/example_dtm_clipped.png" class="align-center" src="../_images/example_dtm_clipped.png" style="width: 1000px;" />
+</a>
 <p>Do note that if no <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>
 <code class="docutils literal notranslate"><span class="pre">rp</span></code> is defined, no clipping will occur:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -239,7 +236,8 @@ the zeros indicate masking.</p>
 </pre></div>
 </div>
 <p>Our result should look like:</p>
-<a class="reference internal image-reference" href="../_images/example_dtm_masker.png"><img alt="../_images/example_dtm_masker.png" class="align-center" src="../_images/example_dtm_masker.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="../_images/example_dtm_masker.png"><img alt="../_images/example_dtm_masker.png" class="align-center" src="../_images/example_dtm_masker.png" style="width: 1000px;" />
+</a>
 <p>Besides static plots, also interactive plots can be made as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">hv_plot</span><span class="p">(</span><span class="n">nodata</span> <span class="o">=</span> <span class="n">nodata</span><span class="p">)</span>
 </pre></div>

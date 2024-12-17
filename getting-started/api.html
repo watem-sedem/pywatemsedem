@@ -1,29 +1,27 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem API &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem API &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -42,9 +40,6 @@
           <a href="../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -144,20 +139,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
 </pre></div>
 </div>
 </div>
@@ -166,7 +153,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">inputdata_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;..&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;tests&quot;</span> <span class="o">/</span> <span class="s2">&quot;pywatemsedem&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">inputdata_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;..&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;tests&quot;</span> <span class="o">/</span>  <span class="s2">&quot;data&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -188,7 +175,22 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
 <span class="n">load_dotenv</span><span class="p">(</span><span class="n">find_dotenv</span><span class="p">())</span>
-<span class="n">watem_sedem_binary</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WATEMSEDEM&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WATEMSEDEM&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span>
 </pre></div>
 </div>
 </div>
@@ -204,23 +206,15 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\Users\SachaGobeyn\miniconda3\envs\pywatemsedem\Library\bin&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;gdal_rasterize&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -336,14 +330,6 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">catchment</span><span class="o">.</span><span class="n">kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catchment</span><span class="o">.</span><span class="n">landuse</span> <span class="o">=</span> <span class="n">rst_landuse</span>
 <span class="n">catchment</span><span class="o">.</span><span class="n">landuse</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -385,6 +371,14 @@
 </pre></div>
 </div>
 </div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catchment</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <p>You can also have a look at the extracted segment</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -395,14 +389,6 @@
 </div>
 </div>
 <p>Assign and plot infrastructure polygons and lines</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catchment</span><span class="o">.</span><span class="n">vct_infrastructure_buildings</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
-</pre></div>
-</div>
-</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -499,7 +485,6 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">choices</span><span class="o">.</span><span class="n">set_model_options</span><span class="p">(</span><span class="n">default_choices</span><span class="p">)</span>
-<span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span>
 </pre></div>
 </div>
 </div>
@@ -556,6 +541,14 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -566,7 +559,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -574,7 +567,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -582,7 +575,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
@@ -598,7 +591,26 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -660,7 +672,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -668,7 +680,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -676,16 +688,29 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
-<p>Run the model</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Prepare run and execute</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -722,8 +747,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -731,7 +760,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -773,7 +804,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -781,7 +817,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -834,7 +872,22 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -895,7 +948,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -903,15 +961,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -931,7 +983,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_cnws_model_input</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_composite_landuse</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_cfactor</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]))</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">create_ktc</span><span class="p">(</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
+                                   <span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -939,7 +996,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">prepare_input_files</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -947,7 +1006,23 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">run_model</span><span class="p">(</span><span class="n">watem_sedem_binary</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">AbstractRaster</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>

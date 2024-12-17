@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.rasters &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem.geo.rasters &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -36,9 +34,6 @@
           <a href="../../../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -137,7 +132,14 @@
 <span class="sd">    If an array mask is provided, the array is automatically masked.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="AbstractRaster.initialize">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.initialize">[docs]</a>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize array and rasterproperties&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Dimensionality of input raster array should be larger than 1.&quot;</span>
@@ -145,11 +147,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="n">arr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span> <span class="o">=</span> <span class="n">rp</span>
         <span class="k">if</span> <span class="n">arr_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;notebook/ipython representation&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">__array__</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -370,6 +369,18 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;density&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="AbstractRaster.is_empty">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.is_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;check if array (raster) is None (empty)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True/False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="ow">is</span> <span class="kc">None</span></div>
 </div>
 
 
@@ -394,7 +405,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterMemory&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
             <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="n">allow_nodata_array</span>
         <span class="p">)</span>
 
@@ -449,7 +460,7 @@
             <span class="n">arr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
             <span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RasterFile.clip">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile.clip">[docs]</a>

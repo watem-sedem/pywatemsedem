@@ -1,25 +1,23 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.scenario &mdash; pywatemsedem 0.0.1a8.post1.dev5+g2ca4bde documentation</title>
+  <title>pywatemsedem.scenario &mdash; pywatemsedem 0.0.1a9 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=254ffe05"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -36,9 +34,6 @@
           <a href="../../index.html" class="icon icon-home">
             pywatemsedem
           </a>
-              <div class="version">
-                0.0.1a8.post1.dev5+g2ca4bde
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -104,16 +99,18 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.cfactor</span> <span class="kn">import</span> <span class="n">create_cfactor_cnws</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.cn</span> <span class="kn">import</span> <span class="n">process_cn_raster</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">RasterMemory</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.cfactor</span> <span class="kn">import</span> <span class="n">create_cfactor_degerick2015</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">AbstractRaster</span>
 <span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">nearly_identical</span><span class="p">,</span> <span class="n">saga_intersection</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.geo.vectors</span> <span class="kn">import</span> <span class="n">AbstractVector</span>
 <span class="kn">from</span> <span class="nn">pywatemsedem.io.folders</span> <span class="kn">import</span> <span class="n">ScenarioFolders</span>
 <span class="kn">from</span> <span class="nn">pywatemsedem.io.ini</span> <span class="kn">import</span> <span class="n">IniFile</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.ktc</span> <span class="kn">import</span> <span class="n">create_ktc_cnws</span>
+<span class="kn">from</span> <span class="nn">pywatemsedem.ktc</span> <span class="kn">import</span> <span class="n">create_ktc</span>
 <span class="kn">from</span> <span class="nn">pywatemsedem.parcelslanduse</span> <span class="kn">import</span> <span class="n">ParcelsLanduse</span><span class="p">,</span> <span class="n">get_source_landuse</span>
 
 <span class="kn">from</span> <span class="nn">.buffers</span> <span class="kn">import</span> <span class="p">(</span>
@@ -126,7 +123,7 @@
     <span class="n">attribute_discrete_value_error</span><span class="p">,</span>
     <span class="n">missing_attribute_error_in_vct</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.grasstrips</span> <span class="kn">import</span> <span class="n">create_grassstrips_cnws</span>
+<span class="kn">from</span> <span class="nn">.grasstrips</span> <span class="kn">import</span> <span class="n">process_grass_strips</span>
 <span class="kn">from</span> <span class="nn">.templates</span> <span class="kn">import</span> <span class="n">InputFileName</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">format_forced_routing</span><span class="p">,</span> <span class="n">zip_folder</span>
 
@@ -144,9 +141,9 @@
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Include sewers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_endpoints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_endpoints</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;Please define endpoints line vector (see &quot;</span>
+                    <span class="s2">&quot;Please define a non-empty endpoints line vector (see &quot;</span>
                     <span class="s2">&quot;vct_endpoints-property) or set &#39;Include sewers&#39; in &quot;</span>
                     <span class="s2">&quot;&#39;dict_model_options&#39; to 0!!&quot;</span>
                 <span class="p">)</span>
@@ -164,16 +161,19 @@
 
 
 
-<div class="viewcode-block" id="valid_vct_parcels">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_vct_parcels">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_vct_parcels</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if parcels vector are defined&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="valid_composite_landuse">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_composite_landuse">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_composite_landuse</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if composite landuse is defined&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define parcels polygon vector (see vct_parcels-property)!&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Please define a non-empty composite landuse (see also &quot;</span>
+                <span class="s2">&quot;self.create_composite_landuse)!&quot;</span>
+            <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -181,19 +181,93 @@
 
 
 
-<div class="viewcode-block" id="valid_vct_source_measure">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_vct_source_measure">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_vct_source_measure</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if source measure vector are defined&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="valid_cfactor">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_cfactor">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_cfactor</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if composite landuse is defined&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_source_measure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Please define source measure polygon vector (see &quot;</span>
-                <span class="s2">&quot;vct_source_measure-property)!&quot;</span>
+                <span class="s2">&quot;Please define a non-empty C-factor raster (see also &quot;</span>
+                <span class="s2">&quot;self.create_composite_landuse)!&quot;</span>
             <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="valid_ktc">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_ktc">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_ktc</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if composite landuse is defined&quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Please define a non-empty ktc raster (see also &quot;</span>
+                <span class="s2">&quot;self.create_composite_landuse)!&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="valid_river">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_river">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_river</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if river is defined&quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Please define a non-empty river raster (see also &quot;</span>
+                <span class="s2">&quot;self.create_composite_landuse)!&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="valid_landuse">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_landuse">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_landuse</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure is defined&quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">_landuse</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define a non-empty landuse raster&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="valid_infrastructure">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_infrastructure">[docs]</a>
+<span class="k">def</span> <span class="nf">valid_infrastructure</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure is defined&quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">_infrastructure</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define a non-empty infrastructure raster&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -210,8 +284,8 @@
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseGras&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_grass_strips</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No grass strips defined, but option &#39;UseGras&#39; equal to 1.&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_grass_strips</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No (or empty) grass strips defined, but option &#39;UseGras&#39; equal to 1.&quot;</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -228,8 +302,8 @@
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include buffers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_buffers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No buffers defined, but option &#39;Include buffers&#39; equal to 1.&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No (or empty) buffers defined, but option &#39;Include buffers&#39; equal to 1.&quot;</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -245,8 +319,8 @@
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define outlets point vector (see vct_outlets-property)!&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non-empty outlets point vector (see vct_outlets-property)!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -257,13 +331,13 @@
 <div class="viewcode-block" id="valid_dtm">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_dtm">[docs]</a>
 <span class="k">def</span> <span class="nf">valid_dtm</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a DTM.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a K-factor raster.&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">dtm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define a DTM!&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define a (non-empty) DTM raster!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -280,8 +354,8 @@
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">kfactor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define a K-factor raster!&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">kfactor</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define a (non-empty) K-factor raster!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -298,49 +372,8 @@
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">pfactor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define a P-factor raster!&quot;</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">wrapper</span></div>
-
-
-
-<div class="viewcode-block" id="valid_cnws_input">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.valid_cnws_input">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_cnws_input</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;CN-WS&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;Please create a valid CN-raster with *prepare_cnws_model_input*&quot;</span>
-                    <span class="s2">&quot; for a WaTEM/SEDEM run.&quot;</span>
-                <span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;Please create a valid kTC-raster with *prepare_cnws_model_input*.&quot;</span>
-                <span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Please create a valid c-factor-raster with &quot;</span>
-                <span class="s2">&quot;*prepare_cnws_model_input*.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Please define a WaTEM/SEDEM-landuse-raster with &quot;</span>
-                <span class="s2">&quot;*prepare_cnws_model_input*.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define a (non-empty) P-factor raster!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -379,23 +412,7 @@
 <span class="k">class</span> <span class="nc">Scenario</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a new Scenario instance</span>
 
-<span class="sd">    The catchment class holds all dynamic information for a scenario, for a given year.</span>
-<span class="sd">    The class considers all data of which the content is user-option-dependent (i.e.</span>
-<span class="sd">    :class:`pywatemsedem.userchoices.UserChoices`.</span>
-
-<span class="sd">    - *vct_parcels*: polygon vector of parcels with obligated columns &#39;LANDUSE&#39;,</span>
-<span class="sd">      &#39;C_crop&#39; and &#39;CODE&#39;.</span>
-<span class="sd">    - *vct_grass_strips*: polygon vector of grass stips with obligated columns</span>
-<span class="sd">      &#39;scale_ktc&#39; and &#39;width&#39;.</span>
-<span class="sd">    - *vct_buffers*: polygon vector of grass stips with obligated columns &#39;buffercap&#39;</span>
-<span class="sd">      (CN), &#39;hdam&#39; (CN), &#39;hknijp&#39; (CN), &#39;dknijp&#39; (CN), &#39;qcoef&#39; (CN), &#39;boverl&#39; (CN),</span>
-<span class="sd">      &#39;eff&#39; (WS).</span>
-<span class="sd">    - *vct_bufferoutlets*: #TODO</span>
-<span class="sd">    - *vct_outlets*: point vector.</span>
-<span class="sd">    - *vct_ditches*: #TODO</span>
-<span class="sd">    - *vct_conductive_dams*: #TODO</span>
-<span class="sd">    - *vct_force_routing*: line vector.</span>
-<span class="sd">    - *vct_endpoints*: line vector, with optional columns &#39;efficiency&#39; and &#39;type_id&#39;.</span>
+<span class="sd">    The scenario class holds all dynamic information for a scenario.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catchm</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">userchoices</span><span class="p">):</span>
@@ -423,92 +440,47 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">raster_factory</span>
 
         <span class="c1"># properties</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_grass_strips</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># raster</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_grass_strips</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># vector</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_buffers</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># vector</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_bufferoutlets</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># vector</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_ditches</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_condictive_dams</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_source_measures</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_endpoints</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_endpoints</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_endpoints_id</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_force_routing</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_grass_strips</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>  <span class="c1"># vector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_buffers</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>  <span class="c1"># vector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_bufferoutlets</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>  <span class="c1"># vector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_ditches</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_condictive_dams</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_source_measures</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_endpoints</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_endpoints</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_endpoints_id</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_force_routing</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
 
-        <span class="c1"># derivate properties</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># API rasters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grass_strips</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>  <span class="c1"># raster</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parcels</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+
+        <span class="c1"># WaTEM/SEDEM input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cn</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cn_table</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
         <span class="c1"># assign scenario number and user choices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="n">scenario_nr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">year</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">userchoices</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rst_outlet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rst_outlet</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ini</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># initialisation functionalities</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">temporal_resolution</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_folder_structure</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">copy_data_layers_to_scenario_folder</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Scenario.create_folder_structure">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_folder_structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;#TODO&quot;&quot;&quot;</span>
-
+        <span class="c1"># Create folder structure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder_init</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">folder</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;scenario_&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span> <span class="o">=</span> <span class="n">ScenarioFolders</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="Scenario.copy_data_layers_to_scenario_folder">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.copy_data_layers_to_scenario_folder">[docs]</a>
-    <span class="nd">@valid_kfactor</span>
-    <span class="nd">@valid_dtm</span>
-    <span class="nd">@valid_pfactor</span>
-    <span class="k">def</span> <span class="nf">copy_data_layers_to_scenario_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;#TODO&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">kfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">kfactor_file</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">dtm_file</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=-</span><span class="mi">99999</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">pfactor_file</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">adjacent_edges</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">adjacentedges_file</span><span class="p">,</span>
-            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">up_edges</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">upedges_file</span><span class="p">,</span>
-            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;River Routing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Output per river segment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">routing</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">routing_file</span>
-            <span class="p">)</span>
-        <span class="c1"># if self.choices.dict_output[&quot;Output per river segment&quot;] == 1:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">segments_file</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">mask_file</span><span class="p">)</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Scenario.temporal_resolution">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.temporal_resolution">[docs]</a>
@@ -631,7 +603,7 @@
 <span class="sd">            - *&gt;0 and &lt;=32767*: parcel id</span>
 <span class="sd">            - *-9999*: nodata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels_ids</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels_ids</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">32767</span><span class="p">):</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -643,9 +615,9 @@
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">32767</span><span class="p">,</span> <span class="mi">32767</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parcels_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -662,13 +634,13 @@
 <span class="sd">            - *&gt;0*: parcel id</span>
 <span class="sd">            - *-9999*: nodata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parcels_landuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -691,16 +663,16 @@
 <span class="sd">        If all parcels have a landuse code of -9999, then a None is returned</span>
 <span class="sd">        (no addition to landuse).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_parcels</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;LANDUSE&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">):</span>
-                <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">return</span> <span class="n">AbstractRaster</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vct_grass_strips</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -778,7 +750,7 @@
                 <span class="s2">&quot; strips.&quot;</span>
             <span class="p">)</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grass_strips</span>
 
@@ -876,11 +848,14 @@
 <span class="sd">        -------</span>
 <span class="sd">        pywatemsedem.geo.rasters.AbstractRaster</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="mi">31370</span><span class="p">,</span> <span class="s2">&quot;buf_exid&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="mi">31370</span><span class="p">,</span> <span class="s2">&quot;buf_exid&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">raster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raster</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">bufferoutlet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -890,15 +865,16 @@
 <span class="sd">        -------</span>
 <span class="sd">        pywatemsedem.geo.rasters.AbstractRaster</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_bufferoutlets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_bufferoutlets</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vct_bufferoutlets</span><span class="o">.</span><span class="n">geodata</span> <span class="o">=</span> <span class="n">process_buffer_outlets</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">vct_bufferoutlets</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span>
             <span class="p">)</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bufferoutlet</span><span class="p">)</span>
+            <span class="n">raster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">raster</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="nd">@valid_vct_buffers</span>
@@ -923,13 +899,15 @@
                 <span class="s2">&quot;returning None&quot;</span>
             <span class="p">)</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include buffers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">raster</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Either define buffer vector of set &#39;Include buffers&#39; to zero.&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span> <span class="o">=</span> <span class="n">assign_buffer_id_to_df_buffer</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
                 <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span> <span class="o">=</span> <span class="n">process_buffers_in_river</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">buffers_exid</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
@@ -949,9 +927,9 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="kc">None</span>
                 <span class="p">)</span>
                 <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int16&quot;</span><span class="p">)</span>
-                <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">raster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">arr</span>
+        <span class="k">return</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vct_ditches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1000,13 +978,13 @@
             <span class="n">convert_lines_to_direction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="c1"># if there is a buffer on the same pixel of a ditch, remove the ditch</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></div>
+        <span class="n">raster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raster</span></div>
 
 
 <div class="viewcode-block" id="Scenario.ditches">
@@ -1024,13 +1002,13 @@
             <span class="n">convert_lines_to_direction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="c1"># if there is a buffer on the same pixel of a ditch, remove the ditch</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></div>
+        <span class="n">raster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raster</span></div>
 
 
     <span class="nd">@property</span>
@@ -1061,7 +1039,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span><span class="o">.</span><span class="n">geodata</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Defined outlets are not in catchment.&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span> <span class="o">=</span> <span class="n">AbstractVector</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;NR&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_outlets</span><span class="o">.</span><span class="n">geodata</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_vct_outlets</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;NR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
@@ -1080,7 +1058,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        pywatemsedem.geo.raster.AbstractRaster</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_outlets</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -1089,17 +1066,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vct_force_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">force_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;#todo</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_force_routing</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_routing</span>
 
-    <span class="nd">@vct_force_routing</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">vct_force_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
+    <span class="nd">@force_routing</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">force_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Appoint force routing</span>
 
 <span class="sd">        Parameters</span>
@@ -1107,11 +1084,11 @@
 <span class="sd">        vector_input: str | pathlib.Path | geopandas.GeoDataFrame</span>
 <span class="sd">            See :func:`pywatemsedem.catchment.vector_factory`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">vct_forced_routing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_factory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_forced_routing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_factory</span><span class="p">(</span>
             <span class="n">vector_input</span><span class="p">,</span> <span class="s2">&quot;LineString&quot;</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_force_routing</span> <span class="o">=</span> <span class="n">format_forced_routing</span><span class="p">(</span>
-            <span class="n">vct_forced_routing</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_force_routing</span> <span class="o">=</span> <span class="n">format_forced_routing</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_forced_routing</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">gdal_profile</span><span class="p">[</span><span class="s2">&quot;minmax&quot;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1211,7 +1188,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s2">&quot;The efficiency is not defined for all sewer line strings, assigning&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; &#39;SewerInletEff&#39;-value defined in user choices &#39;variables&#39; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s1">&#39;SewerInletEff&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2"> %).&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s1">&#39;SewerInletEff&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">}</span><span class="s2"> %).&quot;</span>
             <span class="p">)</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -1296,6 +1273,52 @@
             <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
 
+        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plotting fun&quot;&quot;&quot;</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;#64cf1b&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#3b7db4&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#71b651&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#387b00&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#000000&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#00bfff&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;#a47158&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">6.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">nodata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+                <span class="n">img</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+                <span class="n">boundaries</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+                <span class="n">ticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;Grass strips (-6)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Pools (-5)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Meadow (-4)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Forest (-3)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Infrastructure (-2)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;River (-1)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Outside boundaries (0)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Agriculture (&gt;0)&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter cfactor 3-D raster&quot;&quot;&quot;</span>
@@ -1347,190 +1370,246 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Scenario.prepare_grass_strips">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.prepare_grass_strips">[docs]</a>
-    <span class="k">def</span> <span class="nf">prepare_grass_strips</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximize_grass_strips</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare grass strips array</span>
+<div class="viewcode-block" id="Scenario.create_composite_landuse">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_composite_landuse">[docs]</a>
+    <span class="nd">@valid_landuse</span>
+    <span class="nd">@valid_river</span>
+    <span class="k">def</span> <span class="nf">create_composite_landuse</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">maximize_grass_strips</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create composite landuse to format of :ref:`here &lt;watemsedem:prcmap&gt;`.</span>
+
+<span class="sd">        Uses specific algorithm of Degerick (2015)</span>
+
+<span class="sd">        Requires at least a defined landuse and river raster</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        maximize_grass_strips: bool, default False</span>
+<span class="sd">            Expand grass strips using rivers and infrastructure as boundary conditions.</span>
+<span class="sd">            Requires definition of infrastructure and rivers.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">arr_parcels</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">arr</span>
-            <span class="n">arr_grass_ids</span><span class="p">,</span> <span class="n">arr_grass</span> <span class="o">=</span> <span class="n">create_grassstrips_cnws</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">infrastructure</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span><span class="p">,</span>
-                <span class="n">arr_parcels</span><span class="o">=</span><span class="n">arr_parcels</span><span class="p">,</span>
-                <span class="n">expand_grass_strips</span><span class="o">=</span><span class="n">maximize_grass_strips</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># write_ids</span>
-            <span class="n">grass_ids</span> <span class="o">=</span> <span class="n">RasterMemory</span><span class="p">(</span><span class="n">arr_grass_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">)</span>
-            <span class="n">grass_ids</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">scenarioyear_folder</span>
-                <span class="o">/</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;grasstripsID_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_s&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span><span class="si">}</span><span class="s2">.tif&quot;</span>
-                <span class="p">),</span>
-                <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff&quot;</span><span class="p">,</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># grass</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span> <span class="o">=</span> <span class="n">arr_grass</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">scenarioyear_folder</span>
-                <span class="o">/</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gras_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_s</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">),</span>
-                <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff&quot;</span><span class="p">,</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span>
-            <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Scenario.create_perceelskaart_cnws">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_perceelskaart_cnws">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_perceelskaart_cnws</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">rivers</span><span class="p">,</span>
-        <span class="n">water</span><span class="p">,</span>
-        <span class="n">infrastructure</span><span class="p">,</span>
-        <span class="n">landuse</span><span class="p">,</span>
-        <span class="n">mask</span><span class="p">,</span>
-        <span class="n">yearfolder</span><span class="p">,</span>
-        <span class="n">rp</span><span class="p">,</span>
-        <span class="n">grass_strips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">landuse_parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create CN_WS perceelskaart according to format of :ref:`here &lt;watemsedem:prcmap&gt;`.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        rivers: numpy.ndarray</span>
-<span class="sd">            River raster, should only contain nodata-value and -1 (river), see</span>
-<span class="sd">            :ref:`here &lt;watemsedem:prcmap&gt;`.</span>
-<span class="sd">        water: numpy.ndarray</span>
-<span class="sd">            Water raster, should only contain nodata-value and -3 (), see</span>
-<span class="sd">            :ref:`here &lt;watemsedem:prcmap&gt;`.</span>
-<span class="sd">        infrastructure: numpy.ndarray</span>
-<span class="sd">            Infrastructure raster, should only contain -2 (paved) and -7 (non-paved)</span>
-<span class="sd">            and nodata-value. #TODO: check if we can only use -7</span>
-<span class="sd">        landuse: numpy.ndarray</span>
-<span class="sd">            Landuse raster. This raster should be formatted according to the composite</span>
-<span class="sd">            landuse / WaTEM/SEDEM parcels raster (see :ref:`here &lt;watemsedem:prcmap&gt;`).</span>
-<span class="sd">        mask: numpy.ndarray</span>
-<span class="sd">            Mask raster,</span>
-<span class="sd">        yearfolder: pathlib.Path</span>
-<span class="sd">            #TODO: try to ditch this</span>
-<span class="sd">        rp: pywatemsedem.geo.rasterproperties.RasterProperties</span>
-<span class="sd">            Raster properties, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">        grass_strips: numpy.ndarray</span>
-<span class="sd">            Grass strips raster, can only contain nodata-value and -6 (see</span>
-<span class="sd">            :ref:`here &lt;watemsedem:prcmap&gt;`).</span>
-<span class="sd">        parcels: numpy.ndarray</span>
-<span class="sd">            Parcels ids raster, can only containt nodata-value and &gt;0 (see</span>
-<span class="sd">            :ref:`here &lt;watemsedem:prcmap&gt;`)</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        composite_landuse: numpy.ndarray</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        The infrastructur value -7 does not follow the definition of</span>
-<span class="sd">        :ref:`here &lt;watemsedem:prcmap&gt;`. This value is converted in subfunctionalities of</span>
-<span class="sd">        this function to -2.</span>
+<span class="sd">        :ref:`here &lt;watemsedem:prcmap&gt;`. This value is converted in subfunctionalities</span>
+<span class="sd">        of this function to -2.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># parcels)</span>
-        <span class="c1"># TODO</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">maxprc_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+        <span class="c1"># preprocess grass strips</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Will not include grass strips in composite landuse.&quot;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">grass_strips</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">maxprc_id</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">infrastructure</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The &#39;expand grass strips&#39;-module needs defined rivers and&quot;</span>
+                    <span class="s2">&quot; infrastructure, skipping.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">grass_strips</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">grass_strips</span> <span class="o">=</span> <span class="n">process_grass_strips</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">infrastructure</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+                    <span class="n">expand_grass_strips</span><span class="o">=</span><span class="n">maximize_grass_strips</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">grass_strips</span><span class="p">[</span><span class="n">grass_strips</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
 
         <span class="c1"># landuse</span>
+        <span class="n">maxprc_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span> <span class="k">else</span> <span class="mi">1</span>
         <span class="n">landuse_core</span> <span class="o">=</span> <span class="n">get_source_landuse</span><span class="p">(</span>
-            <span class="n">landuse</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">landuse</span><span class="p">,</span>
             <span class="n">maxprc_id</span><span class="p">,</span>
-            <span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span><span class="p">,</span>
-            <span class="n">mask</span><span class="p">,</span>
-            <span class="n">yearfolder</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">pl</span> <span class="o">=</span> <span class="n">ParcelsLanduse</span><span class="p">(</span>
             <span class="n">landuse_core</span><span class="p">,</span>
-            <span class="n">rivers</span><span class="p">,</span>
-            <span class="n">water</span><span class="p">,</span>
-            <span class="n">infrastructure</span><span class="p">,</span>
-            <span class="n">mask</span><span class="p">,</span>
-            <span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
-            <span class="n">landuse_parcels</span><span class="o">=</span><span class="n">landuse_parcels</span><span class="p">,</span>
-            <span class="n">parcels</span><span class="o">=</span><span class="n">parcels</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">infrastructure</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+            <span class="n">landuse_parcels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parcels_landuse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+            <span class="n">parcels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
             <span class="n">grass_strips</span><span class="o">=</span><span class="n">grass_strips</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">create_parcels_landuse_raster</span><span class="p">()</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>  <span class="c1"># aardewegen infstructuur maken</span>
         <span class="c1"># safety check, fill last empty gaps with 32767</span>
-        <span class="n">arr</span><span class="p">[(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">32767</span>
-        <span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
+        <span class="n">arr</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">32767</span>
+        <span class="n">composite_landuse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="s2">&quot;float64&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">composite_landuse</span></div>
 
 
-<div class="viewcode-block" id="Scenario.prepare_cnws_model_input">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.prepare_cnws_model_input">[docs]</a>
-    <span class="k">def</span> <span class="nf">prepare_cnws_model_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximize_grass_strips</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create model input for a scenario</span>
+<div class="viewcode-block" id="Scenario.create_cfactor">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_cfactor">[docs]</a>
+    <span class="nd">@valid_landuse</span>
+    <span class="nd">@valid_infrastructure</span>
+    <span class="nd">@valid_river</span>
+    <span class="k">def</span> <span class="nf">create_cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_source_oriented_measures</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the C-factor raster based on river, infrastructure and landuse.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        maximize_grass_strips: bool, default False</span>
-<span class="sd">            See :func:`pywatemsedem.scenario.create_perceelskaart_cnws`</span>
+<span class="sd">        Uses specific algorithm of Degerick (2015)</span>
+
+<span class="sd">        Requires landuse, infrastructure and river raster</span>
+
+<span class="sd">        The C-factor is set to (in order)</span>
+
+<span class="sd">        - 0 if the landuse is river or infrastructure.</span>
+<span class="sd">        - scaled according to the width of the grass strips.</span>
+<span class="sd">        - C-factor of the crop for parcels (any model possible).</span>
+<span class="sd">        - 0.001 if the landuse is forest</span>
+<span class="sd">        - 0.01 if the landuse is grass land</span>
+<span class="sd">        - 0 if the landuse is pond</span>
+<span class="sd">        - 0.01 if the landuse is grass strip (where not grass strip vector is defined)</span>
+
+<span class="sd">        Left-over pixels are set to 0.37</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cfactor: numpy.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Aanmaken van alle nodige modelinput...&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_grass_strips</span><span class="p">(</span><span class="n">maximize_grass_strips</span><span class="o">=</span><span class="n">maximize_grass_strips</span><span class="p">)</span>
-
-        <span class="n">arr_parcels_lu</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels_landuse</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels_landuse</span><span class="o">.</span><span class="n">arr</span>
-        <span class="p">)</span>
-
-        <span class="c1"># todo: how could we fix following lines?</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">arr_grass_strips</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;Only Routing&quot;</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;C-factor raster is not generated for &#39;Only Routing&#39;-mode.&quot;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">cfactor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">arr_grass_strips</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="o">.</span><span class="n">arr</span>
-            <span class="n">arr_grass_strips</span><span class="p">[</span><span class="n">arr_grass_strips</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grass_strips</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
-
-        <span class="n">arr_water</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_water</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">arr</span>
-
-        <span class="n">arr_parcels</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_perceelskaart_cnws</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">river</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-            <span class="n">arr_water</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">infrastructure</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">landuse</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr_bin</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">scenarioyear_folder</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span>
-            <span class="n">grass_strips</span><span class="o">=</span><span class="n">arr_grass_strips</span><span class="p">,</span>
-            <span class="n">parcels</span><span class="o">=</span><span class="n">arr_parcels</span><span class="p">,</span>
-            <span class="n">landuse_parcels</span><span class="o">=</span><span class="n">arr_parcels_lu</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">parcelmosaic_file</span><span class="p">,</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">version</span> <span class="o">!=</span> <span class="s2">&quot;Only Routing&quot;</span><span class="p">:</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">update_seasonal_data</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span><span class="p">,</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">cfactor</span> <span class="o">=</span> <span class="n">create_cfactor_degerick2015</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">river</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">infrastructure</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">landuse</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span>
                 <span class="n">vct_parcels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_parcels</span><span class="p">,</span>
                 <span class="n">vct_grass_strips</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="p">,</span>
+                <span class="n">use_source_oriented_measures</span><span class="o">=</span><span class="n">use_source_oriented_measures</span><span class="p">,</span>
             <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cfactor</span></div>
+
+
+<div class="viewcode-block" id="Scenario.create_ktc">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_ktc">[docs]</a>
+    <span class="nd">@valid_composite_landuse</span>
+    <span class="nd">@valid_cfactor</span>
+    <span class="k">def</span> <span class="nf">create_ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ktc_low</span><span class="p">,</span> <span class="n">ktc_high</span><span class="p">,</span> <span class="n">ktc_limit</span><span class="p">,</span> <span class="n">user_provided_ktc</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ktc raster based on C-factor raster</span>
+
+<span class="sd">        The ktc raster is generated by classifying low and high erosion potential based</span>
+<span class="sd">        on the C-factor and ktc_limit (i.e. C_factor &lt; ktc_high -&gt; ktc_low, C_factor</span>
+<span class="sd">        &gt; ktc_limit -&gt; ktc_high).</span>
+
+<span class="sd">        The ktc value for landuse rivers, infrastructure and ponds is set to 9999</span>
+<span class="sd">        (all sediment is routed downwards).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        ktc_low: float</span>
+<span class="sd">            Transport coefficient for land covers with low erosion potential</span>
+<span class="sd">        ktc_high: float</span>
+<span class="sd">            Transport coefficient for land covers with high erosion potential</span>
+<span class="sd">        ktc_limit: float</span>
+<span class="sd">            C-factor to make distinction between ktc_low and ktc_high</span>
+<span class="sd">        user_provided_ktc: int, default 1</span>
+<span class="sd">            Define KTC raster by user.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        ktc: numpy.ndarray</span>
+<span class="sd">            Raster with ktc-values, returns an empty user_provided_ktc is 0.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        1. Requires assignment of C-factor and composite land-use raster.</span>
+<span class="sd">        2. The ktc values for grass strips are scaled according to their width (see</span>
+<span class="sd">        :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`) if grass strips are used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">user_provided_ktc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ktc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">create_ktc</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span>
+                <span class="n">ktc_low</span><span class="p">,</span>
+                <span class="n">ktc_high</span><span class="p">,</span>
+                <span class="n">ktc_limit</span><span class="p">,</span>
+                <span class="n">grass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ktc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ktc</span></div>
+
+
+<div class="viewcode-block" id="Scenario.prepare_input_files">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.prepare_input_files">[docs]</a>
+    <span class="nd">@valid_kfactor</span>
+    <span class="nd">@valid_dtm</span>
+    <span class="nd">@valid_pfactor</span>
+    <span class="nd">@valid_composite_landuse</span>
+    <span class="nd">@valid_cfactor</span>
+    <span class="k">def</span> <span class="nf">prepare_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare all files (write to disk)&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">kfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">kfactor_file</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">dtm_file</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=-</span><span class="mi">99999</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">pfactor_file</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;River Routing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">adjacent_edges</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">adjacentedges_file</span><span class="p">,</span>
+                <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">up_edges</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">upedges_file</span><span class="p">,</span>
+                <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Output per river segment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">routing</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">routing_file</span>
+            <span class="p">)</span>
+            <span class="c1"># if self.choices.dict_output[&quot;Output per river segment&quot;] == 1:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">segments_file</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">mask_file</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">parcelmosaic_file</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;CN-WS&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cn</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cn_file</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Model version in &#39;CN-WS&#39;, define a CN raster to run CN.&quot;</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ktc_file</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;UserProvidedKTC is 1 (True), provide ktc-raster.&quot;</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cfactor_file</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Manual outlet selection&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">outlets</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
@@ -1545,7 +1624,7 @@
                 <span class="p">]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include buffers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">buffers_file</span>
@@ -1570,7 +1649,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Include sewers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">endpoints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">endpoints</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">endpoints</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">endpoints_file</span><span class="p">,</span>
                     <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;idrisi&quot;</span><span class="p">,</span>
@@ -1580,85 +1659,12 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">endpoints_id_file</span><span class="p">,</span>
                     <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;idrisi&quot;</span><span class="p">,</span>
                     <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
-                <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Scenario.update_seasonal_data">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.update_seasonal_data">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_seasonal_data</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">composite_landuse</span><span class="p">,</span>
-        <span class="n">river</span><span class="p">,</span>
-        <span class="n">infrastructure</span><span class="p">,</span>
-        <span class="n">landuse</span><span class="p">,</span>
-        <span class="n">mask</span><span class="p">,</span>
-        <span class="n">vct_parcels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">vct_grass_strips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update seasonal data for prepare_cnws_model_input</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        year: int</span>
-<span class="sd">            Simulation year.</span>
-<span class="sd">        cn_table:</span>
-<span class="sd">            File path to CN table.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># C-factor</span>
-        <span class="n">vct_grass_strips</span><span class="p">,</span> <span class="n">cfactor</span> <span class="o">=</span> <span class="n">create_cfactor_cnws</span><span class="p">(</span>
-            <span class="n">river</span><span class="p">,</span>
-            <span class="n">infrastructure</span><span class="p">,</span>
-            <span class="n">landuse</span><span class="p">,</span>
-            <span class="n">mask</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="p">,</span>
-            <span class="n">vct_parcels</span><span class="o">=</span><span class="n">vct_parcels</span><span class="p">,</span>
-            <span class="n">vct_grass_strips</span><span class="o">=</span><span class="n">vct_grass_strips</span><span class="p">,</span>
-            <span class="n">use_source_oriented_measures</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;UseTeelttechn&quot;</span><span class="p">]</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span> <span class="o">=</span> <span class="n">cfactor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cfactor_file</span><span class="p">)</span>
-
-        <span class="c1"># CN</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;CN-WS&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cn</span><span class="p">,</span> <span class="n">gdf</span> <span class="o">=</span> <span class="n">process_cn_raster</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">hydrological_soil_group</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">composite_landuse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parcels_ids</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cn_table</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="s2">&quot;CN_table_parcels.shp&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cn</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cn_file</span><span class="p">)</span>
-        <span class="c1"># kTC</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">out</span><span class="p">,</span> <span class="n">vct_grass_strips</span> <span class="o">=</span> <span class="n">create_ktc_cnws</span><span class="p">(</span>
-                <span class="n">composite_landuse</span><span class="p">,</span>
-                <span class="n">cfactor</span><span class="p">,</span>
-                <span class="n">mask</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="p">,</span>
-                <span class="n">grass</span><span class="o">=</span><span class="n">vct_grass_strips</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># write results</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span> <span class="o">=</span> <span class="n">out</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ktc_file</span><span class="p">)</span>
-            <span class="c1"># write grass strips</span>
-            <span class="k">if</span> <span class="n">vct_grass_strips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">scenarioyear_folder</span>
-                    <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;gras_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_s</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span><span class="si">}</span><span class="s2">.shp&quot;</span>
-                <span class="p">)</span></div>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_ini_file</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Scenario.create_ini_file">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_ini_file">[docs]</a>
-    <span class="nd">@valid_cnws_input</span>
     <span class="k">def</span> <span class="nf">create_ini_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an ini-file for the scenario&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Aanmaken ini-file...&quot;</span><span class="p">)</span>
@@ -1675,9 +1681,9 @@
         <span class="n">ini</span><span class="o">.</span><span class="n">add_user_choices</span><span class="p">()</span>
         <span class="n">ini</span><span class="o">.</span><span class="n">add_output_maps</span><span class="p">()</span>
         <span class="n">ini</span><span class="o">.</span><span class="n">add_variables</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">vct_force_routing</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vct_tubed_river</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">force_routing</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">tubed_river</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ini</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ini</span><span class="p">)</span></div>
 
