@@ -1,6 +1,5 @@
 import logging
 import os
-import tempfile
 from pathlib import Path
 
 import geopandas as gpd
@@ -12,8 +11,8 @@ import shapely
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
-    clean_up_tempfiles,
     compute_statistics_rasters_per_polygon_vector,
+    create_filename,
     create_spatial_index,
     execute_saga,
     get_mask_template,
@@ -553,7 +552,7 @@ class PostProcess(Factory):
             Maximum number of catchment to identify
         """
         arr_sediout, profile = load_raster(self.files["rst_sediout"])
-        temp_routing_wide = tempfile.NamedTemporaryFile(suffix=".txt").name
+        temp_routing_wide = create_filename(".txt")
         self.routing_non_river_wide.to_csv(temp_routing_wide, sep="\t", index=False)
         identify_individual_priority_catchments(
             arr_sediout,
@@ -563,7 +562,7 @@ class PostProcess(Factory):
             resmap=self.sfolder.postprocess_folder,
             epsg=self.epsg,
         )
-        clean_up_tempfiles(Path(temp_routing_wide), "txt")
+        # clean_up_tempfiles(temp_routing_wide, "txt")
 
     def merge_overlapping_catchments(self, gdf_subcatchmpriority, merge=True):
         """Merge overlapping catchments and reassign priorities for
@@ -694,7 +693,7 @@ class PostProcess(Factory):
         df_sediexport, percentage = self.identify_sinks(percentage)
         dict_rst_subcatchmsinks = {}
         dict_vct_subcatchmsinks = {}
-        temp = tempfile.NamedTemporaryFile(suffix=".txt").name
+        temp = create_filename(".txt")
         self.routing_non_river.to_csv(temp, sep="\t", index=False)
         (
             dict_rst_subcatchmsinks[percentage],
@@ -717,7 +716,7 @@ class PostProcess(Factory):
         )
         # check lijn hieronder
         df_subcatchments.to_file(dict_vct_subcatchmsinks[percentage])
-        clean_up_tempfiles(Path(temp), "txt")
+        # clean_up_tempfiles(temp, "txt")
 
     def identify_sinks(self, percentage):
         """Identify X % highest sinks of sediment.

@@ -1,6 +1,4 @@
-import tempfile
 import warnings
-from pathlib import Path
 
 import numpy as np
 
@@ -9,7 +7,7 @@ from pywatemsedem.grasstrips import (
     scale_cfactor_with_grass_strips_width,
 )
 
-from .geo.utils import clean_up_tempfiles
+from .geo.utils import create_filename
 
 
 def create_cfactor_degerick2015(
@@ -73,11 +71,7 @@ def create_cfactor_degerick2015(
        :func:`pywatemsedem.cfactor.reduce_cfactor_with_source_oriented_measures`).
     """
     # use to rasterize
-    tiff_temp = Path(
-        tempfile.NamedTemporaryFile(
-            suffix=".tif", prefix="pywatemsedem", delete=False
-        ).name
-    )
+    tiff_temp = create_filename(".tif")
     mask.write(tiff_temp, format="tiff")
 
     arr_cfactor = np.full(
@@ -167,7 +161,7 @@ def create_cfactor_degerick2015(
     arr_mask = np.where(mask.arr, cfactor_aggriculture, 0)
     arr_cfactor = np.where(arr_cfactor == nodata, arr_mask, arr_cfactor)
     arr_cfactor = arr_cfactor.astype("float32")
-    clean_up_tempfiles(tiff_temp, "tiff")
+    # clean_up_tempfiles(tiff_temp, "tiff")
 
     return vct_grass_strips, arr_cfactor
 
