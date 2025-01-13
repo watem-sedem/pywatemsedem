@@ -83,7 +83,7 @@ dependencies):
 Ensure you:
 
 - Pick up the latest exe of the WaTEM/SEDEM Pascal model from the
-  `GitHub <https://watem-sedem.github.io/watem-sedem/releases>`_.
+  `GitHub <https://watem-sedem.github.io/watem-sedem/releases>`_., **current compatible version is 4.2.3**
 - Pick up the latest exe of the SAGA-GIS with **WaTEM**:
   https://github.com/DOV-Vlaanderen/saga-watem/releases.
 

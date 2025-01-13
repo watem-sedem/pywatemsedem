@@ -182,7 +182,7 @@ class Catchment(Factory):
 
         # get RasterProperties from catchment vector and bounds DTM
         rp = read_rasterio_profile(rst_dtm)
-        bounds = RasterProperties.from_rasterio(rp).bounds
+        bounds = RasterProperties.from_rasterio(rp, epsg=epsg_code).bounds
         self.rp = define_extent_from_vct(
             self.vct_catchment,
             resolution,
