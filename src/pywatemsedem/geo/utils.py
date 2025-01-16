@@ -1,8 +1,11 @@
 # Standard libraries
 import logging
 import os
+import random
+import string
 import subprocess
 import tempfile
+import time
 from copy import deepcopy
 from functools import wraps
 from pathlib import Path
@@ -2096,6 +2099,28 @@ def define_extent_from_vct(
     rp = RasterProperties(minmax, resolution, nodata, epsg)
 
     return rp
+
+
+def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
+    """Create temporary files in a dedicated directory
+
+    Parameters
+    ----------
+    suffix: str
+    directory: pathlib.Path, default 'tempfiles_pywatemsedem'
+
+    Returns
+    -------
+    pathlib.Path
+    """
+    if not directory.exists():
+        directory.mkdir()
+    timestamp = int(time.time())
+    chars = string.ascii_letters + string.digits
+    random_part = "".join(random.choices(chars, k=6))
+    fname = Path(directory) / f"tempfile_{timestamp}_{random_part}_pywatemsedem{suffix}"
+
+    return fname
 
 
 def clean_up_tempfiles(temporary_file, file_format):

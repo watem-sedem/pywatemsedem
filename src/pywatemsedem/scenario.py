@@ -1442,7 +1442,6 @@ class Scenario:
             else:
                 msg = "Model version in 'CN-WS', define a CN raster to run CN."
                 raise IOError(msg)
-
         if self.choices.dict_model_options["UserProvidedKTC"] == 1:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)

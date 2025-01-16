@@ -1,6 +1,5 @@
 """pywatemsedem grass strips processing functions"""
 import logging
-import tempfile
 from pathlib import Path
 from typing import Callable
 
@@ -8,9 +7,8 @@ import geopandas as gpd
 import numpy as np
 from scipy import signal
 
-from pywatemsedem.defaults import PREFIX_TEMP
 from pywatemsedem.geo.utils import (
-    clean_up_tempfiles,
+    create_filename,
     estimate_width_of_polygon,
     saga_intersection,
     vct_to_rst_field,
@@ -807,7 +805,7 @@ def extract_grass_strips_from_parcels(vct_parcels, year, resmap=Path.cwd(), tag=
 
 
 def create_grass_strips_from_line_string(
-    line_string, polygons=None, width=20, width_polygon=20
+    line_string, polygons=None, width=20, width_polygon=20, dir=Path(".")
 ):
     """Add bank grass strips
 
@@ -824,6 +822,8 @@ def create_grass_strips_from_line_string(
         Width (m) of the bank grass strip stored in the attribute table.
     width_polygon: int, optional, default 20
         width (m) of the bank grass strip polygon
+    dir: pathlib.Path
+        Name of temporary directory
 
     Returns
     -------
@@ -855,17 +855,11 @@ def create_grass_strips_from_line_string(
     # if no intersection with parcels: assign same bank grass strip for every
     # year
     if polygons is not None:
-        tmp_bankgrasstrips = tempfile.NamedTemporaryFile(
-            prefix=PREFIX_TEMP, suffix=".shp"
-        ).name
+        tmp_bankgrasstrips = create_filename(".shp")
         grass_strips.to_file(tmp_bankgrasstrips)
-        tmp_polygons = tempfile.NamedTemporaryFile(
-            prefix=PREFIX_TEMP, suffix=".shp"
-        ).name
+        tmp_polygons = create_filename(".shp")
         polygons.to_file(tmp_polygons)
-        tmp_bankstrips_polygons = tempfile.NamedTemporaryFile(
-            prefix=PREFIX_TEMP, suffix=".shp"
-        ).name
+        tmp_bankstrips_polygons = create_filename(".shp")
         saga_intersection(
             tmp_bankgrasstrips,
             tmp_polygons,
@@ -876,8 +870,8 @@ def create_grass_strips_from_line_string(
         grass_strips = grass_strips.dissolve("NR")
         grass_strips["width"] = width
         grass_strips["scale_ktc"] = 1
-        clean_up_tempfiles(tmp_bankgrasstrips, "shp")
-        clean_up_tempfiles(tmp_polygons, "shp")
-        clean_up_tempfiles(tmp_bankstrips_polygons, "shp")
+        # clean_up_tempfiles(tmp_bankgrasstrips, "shp")
+        # clean_up_tempfiles(tmp_polygons, "shp")
+        # clean_up_tempfiles(tmp_bankstrips_polygons, "shp")
 
     return grass_strips.reset_index()[["width", "scale_ktc", "geometry"]]

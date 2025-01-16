@@ -1,14 +1,12 @@
-import tempfile
 from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
 
-from ..defaults import PREFIX_TEMP
 from .rasterproperties import RasterProperties
 from .utils import (
-    clean_up_tempfiles,
     clip_vct,
+    create_filename,
     create_spatial_index,
     get_geometry_type,
     lines_to_direction,
@@ -194,51 +192,42 @@ class AbstractVector:
             self._geodata["NR"] = np.arange(0, len(self._geodata), 1)
         if nodata is not None:
             self._geodata.loc[self._geodata[col] == nodata, col] = -99999.0
-        vct_temp = tempfile.NamedTemporaryFile(prefix=PREFIX_TEMP, suffix=".shp").name
+        vct_temp = create_filename(".shp")
         self.write(vct_temp)
 
         rp = RasterProperties.from_rasterio(
             read_rasterio_profile(rst_reference), epsg=epsg
         )
         if gdal:
-            tf_rst = tempfile.NamedTemporaryFile(
-                suffix=".tif", prefix=PREFIX_TEMP, delete=False, mode="w"
-            )
-            vct_to_rst_field(vct_temp, tf_rst.name, rp.gdal_profile, col)
-            arr, _ = load_raster(tf_rst.name)
-            clean_up_tempfiles(tf_rst, "tiff")
+            tf_rst = create_filename(".tif")
+            vct_to_rst_field(vct_temp, tf_rst, rp.gdal_profile, col)
+            arr, _ = load_raster(tf_rst)
+            # clean_up_tempfiles(tf_rst, "tiff")
 
         else:
-            tf_rst = tempfile.NamedTemporaryFile(
-                suffix=".sgrid", prefix=PREFIX_TEMP, delete=False
-            )
+            tf_rst = create_filename(".sgrid")
             if self._geometry_type == "LineString":
                 if convert_lines_to_direction:
-                    lines_to_direction(vct_temp, Path(tf_rst.name), rst_reference)
+                    lines_to_direction(vct_temp, tf_rst, rst_reference)
                 else:
-                    lines_to_raster(
-                        vct_temp, Path(tf_rst.name), rst_reference, col, dtype_raster
-                    )
+                    lines_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
             elif self._geometry_type == "Polygon":
                 if convert_lines_to_direction:
                     msg = "Cannot convert polygons to directions"
                     raise IOError(msg)
-                polygons_to_raster(
-                    vct_temp, Path(tf_rst.name), rst_reference, col, dtype_raster
-                )
+                polygons_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
             elif self._geometry_type == "Point":
                 msg = "Rasterisation of points is not implemented."
                 raise NotImplementedError(msg)
 
-            arr, profile = load_raster(Path(tf_rst.name).with_suffix(".sdat"))
+            arr, profile = load_raster(tf_rst.with_suffix(".sdat"))
             # correct no data value if necessary
             if profile["nodata"] != rp.nodata:
                 arr[arr == profile["nodata"]] = rp.nodata
-            tf_rst.close()
-            clean_up_tempfiles(tf_rst, "tiff")
-            clean_up_tempfiles(tf_rst, "saga")
+            # clean_up_tempfiles(tf_rst, "tiff")
+            # clean_up_tempfiles(tf_rst, "saga")
 
-        clean_up_tempfiles(vct_temp, "shp")
+        # clean_up_tempfiles(vct_temp, "shp")
 
         return arr
 
@@ -331,11 +320,9 @@ class VectorFile(AbstractVector):
         -------
         geopandas.GeoDataFrame
         """
-        vct_temp = Path(
-            tempfile.NamedTemporaryFile(suffix=".shp", prefix=PREFIX_TEMP).name
-        )
+        vct_temp = create_filename(".shp")
         clip_vct(file_path, vct_temp, vct_clip)
         geodata = gpd.read_file(vct_temp)
-        clean_up_tempfiles(vct_temp, "shp")
+        # clean_up_tempfiles(vct_temp, "shp")
 
         return geodata
