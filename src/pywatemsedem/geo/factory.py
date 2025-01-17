@@ -1,5 +1,4 @@
 import inspect
-import tempfile
 from functools import wraps
 from pathlib import Path
 
@@ -10,11 +9,11 @@ import rasterio
 from fiona.collection import DriverError
 from rasterio import RasterioIOError
 
-from ..defaults import PREFIX_TEMP
 from .rasterproperties import RasterProperties
 from .rasters import RasterFile, RasterMemory, TemporalRaster
 from .utils import (
     clean_up_tempfiles,
+    create_filename,
     define_extent_from_vct,
     generate_vct_mask_from_raster_mask,
     load_raster,
@@ -121,7 +120,7 @@ class Factory:
 
         Parameters
         ----
-        file_path: pathlib.Path | str
+        mask: pathlib.Path | str
             File path to mask vector raster file
 
         Notes
@@ -157,11 +156,9 @@ class Factory:
                         self._epsg_code,
                         self._bounds,
                     )
-                tf_rst = tempfile.NamedTemporaryFile(
-                    suffix=".tif", prefix=PREFIX_TEMP, delete=False
-                )
-                vct_to_rst_value(mask, tf_rst.name, 1, self.rp.gdal_profile)
-                arr, _ = load_raster(tf_rst.name)
+                tf_rst = create_filename(".tif")
+                vct_to_rst_value(mask, tf_rst, 1, self.rp.gdal_profile)
+                arr, _ = load_raster(tf_rst)
                 clean_up_tempfiles(tf_rst, "tiff")
                 self._vct_mask = VectorFile(mask)
         else:

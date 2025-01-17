@@ -1,5 +1,4 @@
 import logging
-import tempfile
 import warnings
 from functools import wraps
 from pathlib import Path
@@ -18,6 +17,7 @@ from pywatemsedem.geo.rasters import AbstractRaster, RasterMemory
 from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
     clean_up_tempfiles,
+    create_filename,
     create_spatial_index,
     define_extent_from_vct,
     execute_subprocess,
@@ -253,9 +253,9 @@ class Catchment(Factory):
 
         def filter_within_parcels():
             """Filter dtm within parcel boundaries"""
-            temp_landuse = Path(tempfile.NamedTemporaryFile(suffix=".rst").name)
-            temp_dtm_in = Path(tempfile.NamedTemporaryFile(suffix=".rst").name)
-            temp_dtm = Path(tempfile.NamedTemporaryFile(suffix=".sgrd").name)
+            temp_landuse = create_filename(".rst")
+            temp_dtm_in = create_filename(".rst")
+            temp_dtm = create_filename(".sgrd")
             self.dtm.write(temp_dtm_in)
             self.parcels.write(temp_landuse)
 
@@ -651,7 +651,7 @@ class Catchment(Factory):
         # clip
         vct_river_clipped = self.folder.vct_folder / f"river_{self.name}.shp"
         # remove temporary files
-        # clean_up_tempfiles(vct_river_clipped, "shp")
+        clean_up_tempfiles(vct_river_clipped, "shp")
         self._vct_river = self.vector_factory(
             vector_input, "LineString", allow_empty=True
         )
@@ -801,10 +801,7 @@ class Catchment(Factory):
 
     @staticmethod
     def topologize_river(
-        vct_input,
-        vct_output,
-        rst_mask,
-        tolerance=None,
+        vct_input, vct_output, rst_mask, tolerance=None, dir=Path(".")
     ):
         """Prepare topology of the river segments with SAGA-GIS
 
@@ -819,6 +816,7 @@ class Catchment(Factory):
         tolerance: float
             If not None, the ``TOLERANCE`` command line argument of the saga topology
             command is given this value.
+        dir: pathlib.Path, default cwd
 
         Returns
         -------
@@ -836,8 +834,8 @@ class Catchment(Factory):
         if tolerance is not None:
             cmd_args += ["-TOLERANCE", str(tolerance)]
 
-        temp_adjacent_edges = tempfile.NamedTemporaryFile(suffix=".txt").name
-        temp_up_edges = tempfile.NamedTemporaryFile(suffix=".txt").name
+        temp_adjacent_edges = create_filename(".txt")
+        temp_up_edges = create_filename(".txt")
 
         # temp fix
         try:
@@ -868,8 +866,8 @@ class Catchment(Factory):
         adjacent_edges = pd.read_csv(str(temp_adjacent_edges), sep="\t")
         up_edges = pd.read_csv(str(temp_up_edges), sep="\t")
 
-        clean_up_tempfiles(Path(temp_up_edges), "txt")
-        clean_up_tempfiles(Path(temp_adjacent_edges), "txt")
+        clean_up_tempfiles(temp_up_edges, "txt")
+        clean_up_tempfiles(temp_adjacent_edges, "txt")
 
         return adjacent_edges, up_edges
 
