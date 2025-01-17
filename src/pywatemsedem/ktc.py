@@ -2,7 +2,7 @@ import numpy as np
 
 from pywatemsedem.grasstrips import scale_ktc_with_grass_strip_width, scale_ktc_zhang
 
-from .geo.utils import create_filename
+from .geo.utils import clean_up_tempfiles, create_filename
 
 
 def create_ktc(
@@ -88,7 +88,7 @@ def create_ktc(
     else:
         arr_ktc = np.where(composite_landuse.arr == -6, ktc_low, arr_ktc)
 
-    # clean_up_tempfiles(tiff_temp, "tiff")
+    clean_up_tempfiles(tiff_temp, "tiff")
 
     return arr_ktc, grass
 

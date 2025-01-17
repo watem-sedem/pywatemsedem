@@ -870,8 +870,8 @@ def create_grass_strips_from_line_string(
         grass_strips = grass_strips.dissolve("NR")
         grass_strips["width"] = width
         grass_strips["scale_ktc"] = 1
-        # clean_up_tempfiles(tmp_bankgrasstrips, "shp")
-        # clean_up_tempfiles(tmp_polygons, "shp")
-        # clean_up_tempfiles(tmp_bankstrips_polygons, "shp")
+        clean_up_tempfiles(tmp_bankgrasstrips, "shp")
+        clean_up_tempfiles(tmp_polygons, "shp")
+        clean_up_tempfiles(tmp_bankstrips_polygons, "shp")
 
     return grass_strips.reset_index()[["width", "scale_ktc", "geometry"]]

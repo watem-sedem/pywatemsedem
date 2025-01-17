@@ -12,6 +12,7 @@ from rasterio import RasterioIOError
 from .rasterproperties import RasterProperties
 from .rasters import RasterFile, RasterMemory, TemporalRaster
 from .utils import (
+    clean_up_tempfiles,
     create_filename,
     define_extent_from_vct,
     generate_vct_mask_from_raster_mask,
@@ -158,7 +159,7 @@ class Factory:
                 tf_rst = create_filename(".tif")
                 vct_to_rst_value(mask, tf_rst, 1, self.rp.gdal_profile)
                 arr, _ = load_raster(tf_rst)
-                # clean_up_tempfiles(tf_rst, "tiff")
+                clean_up_tempfiles(tf_rst, "tiff")
                 self._vct_mask = VectorFile(mask)
         else:
             arr, rp = load_raster(mask)

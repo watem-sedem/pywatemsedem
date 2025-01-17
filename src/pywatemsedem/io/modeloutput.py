@@ -16,6 +16,7 @@ from pywatemsedem.plots import plot_cumulative_sedimentload
 from ..geo.factory import Factory
 from ..geo.utils import (
     check_raster_properties_raster_with_template,
+    clean_up_tempfiles,
     create_filename,
     create_spatial_index,
     execute_saga,
@@ -1609,7 +1610,7 @@ def map_rank_sediment_loads(
     gdf_out = gdf_out.merge(df_sediexport, on="rank")
     if unit == "ton":
         gdf_out["sediexport"] = gdf_out["sediexport"] / 1000
-    # clean_up_tempfiles(Path(rst_out), "rst")
+    clean_up_tempfiles(Path(rst_out), "rst")
 
     return gdf_out
 

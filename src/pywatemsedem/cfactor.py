@@ -7,7 +7,7 @@ from pywatemsedem.grasstrips import (
     scale_cfactor_with_grass_strips_width,
 )
 
-from .geo.utils import create_filename
+from .geo.utils import clean_up_tempfiles, create_filename
 
 
 def create_cfactor_degerick2015(
@@ -161,7 +161,7 @@ def create_cfactor_degerick2015(
     arr_mask = np.where(mask.arr, cfactor_aggriculture, 0)
     arr_cfactor = np.where(arr_cfactor == nodata, arr_mask, arr_cfactor)
     arr_cfactor = arr_cfactor.astype("float32")
-    # clean_up_tempfiles(tiff_temp, "tiff")
+    clean_up_tempfiles(tiff_temp, "tiff")
 
     return vct_grass_strips, arr_cfactor
 

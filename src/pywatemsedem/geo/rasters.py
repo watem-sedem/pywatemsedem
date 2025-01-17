@@ -175,7 +175,7 @@ class AbstractRaster:
             tiff_temp = create_filename(".tif")
             write_arr_as_rst(self._arr, tiff_temp, dtype, profile)
             tiff_to_idrisi(tiff_temp, outfile_path, dtype=dtype)
-            # clean_up_tempfiles(tiff_temp, "tiff")
+            clean_up_tempfiles(tiff_temp, "tiff")
 
         return True
 
@@ -367,7 +367,7 @@ class RasterFile(AbstractRaster):
         )
         arr, profile = load_raster(rst_temp)
         shape = arr[arr != profile["nodata"]].shape
-        # clean_up_tempfiles(rst_temp, "rst")
+        clean_up_tempfiles(rst_temp, "rst")
 
         if shape == (0,):
             msg = (

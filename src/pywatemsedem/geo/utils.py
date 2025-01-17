@@ -2102,7 +2102,11 @@ def define_extent_from_vct(
 
 
 def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
-    """Create temporary files in a dedicated directory
+    """Create temporary filename in a dedicated directory
+
+    Create directory if it is not exists
+
+    Only filenames are generated, not the files
 
     Parameters
     ----------
@@ -2113,8 +2117,7 @@ def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
     -------
     pathlib.Path
     """
-    if not directory.exists():
-        directory.mkdir()
+    directory.mkdir(exists_ok=True)
     timestamp = int(time.time())
     chars = string.ascii_letters + string.digits
     random_part = "".join(random.choices(chars, k=6))

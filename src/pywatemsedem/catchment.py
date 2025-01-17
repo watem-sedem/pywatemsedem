@@ -16,6 +16,7 @@ from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.rasters import AbstractRaster, RasterMemory
 from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
+    clean_up_tempfiles,
     create_filename,
     create_spatial_index,
     define_extent_from_vct,
@@ -265,9 +266,9 @@ class Catchment(Factory):
             msg = "failed to filter_within_parcels dtm"
             execute_subprocess(cmd_args, msg)
             self._dtm._arr, _ = load_raster(temp_dtm.with_suffix(".sdat"))
-            # clean_up_tempfiles(temp_landuse, "tiff")
-            # clean_up_tempfiles(temp_dtm, "saga")
-            # clean_up_tempfiles(temp_dtm_in, "rst")
+            clean_up_tempfiles(temp_landuse, "tiff")
+            clean_up_tempfiles(temp_dtm, "saga")
+            clean_up_tempfiles(temp_dtm_in, "rst")
 
         self._dtm.filter = filter_within_parcels
 
@@ -650,7 +651,7 @@ class Catchment(Factory):
         # clip
         vct_river_clipped = self.folder.vct_folder / f"river_{self.name}.shp"
         # remove temporary files
-        # clean_up_tempfiles(vct_river_clipped, "shp")
+        clean_up_tempfiles(vct_river_clipped, "shp")
         self._vct_river = self.vector_factory(
             vector_input, "LineString", allow_empty=True
         )
@@ -659,7 +660,7 @@ class Catchment(Factory):
         # set topologize
         logger.info("Preparing river topology...")
         vct_river_topo = self.folder.vct_folder / f"topology_{self.name}.shp"
-        # clean_up_tempfiles(vct_river_topo, "shp")
+        clean_up_tempfiles(vct_river_topo, "shp")
         self._adjacent_edges, self._up_edges = self.topologize_river(
             vct_river_clipped, vct_river_topo, self.mask_raster
         )
@@ -865,8 +866,8 @@ class Catchment(Factory):
         adjacent_edges = pd.read_csv(str(temp_adjacent_edges), sep="\t")
         up_edges = pd.read_csv(str(temp_up_edges), sep="\t")
 
-        # clean_up_tempfiles(temp_up_edges, "txt")
-        # clean_up_tempfiles(temp_adjacent_edges, "txt")
+        clean_up_tempfiles(temp_up_edges, "txt")
+        clean_up_tempfiles(temp_adjacent_edges, "txt")
 
         return adjacent_edges, up_edges
 

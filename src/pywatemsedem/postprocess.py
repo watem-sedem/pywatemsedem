@@ -11,6 +11,7 @@ import shapely
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
+    clean_up_tempfiles,
     compute_statistics_rasters_per_polygon_vector,
     create_filename,
     create_spatial_index,
@@ -562,7 +563,7 @@ class PostProcess(Factory):
             resmap=self.sfolder.postprocess_folder,
             epsg=self.epsg,
         )
-        # clean_up_tempfiles(temp_routing_wide, "txt")
+        clean_up_tempfiles(temp_routing_wide, "txt")
 
     def merge_overlapping_catchments(self, gdf_subcatchmpriority, merge=True):
         """Merge overlapping catchments and reassign priorities for
@@ -716,7 +717,7 @@ class PostProcess(Factory):
         )
         # check lijn hieronder
         df_subcatchments.to_file(dict_vct_subcatchmsinks[percentage])
-        # clean_up_tempfiles(temp, "txt")
+        clean_up_tempfiles(temp, "txt")
 
     def identify_sinks(self, percentage):
         """Identify X % highest sinks of sediment.

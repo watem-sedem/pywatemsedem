@@ -5,6 +5,7 @@ import numpy as np
 
 from .rasterproperties import RasterProperties
 from .utils import (
+    clean_up_tempfiles,
     clip_vct,
     create_filename,
     create_spatial_index,
@@ -202,7 +203,7 @@ class AbstractVector:
             tf_rst = create_filename(".tif")
             vct_to_rst_field(vct_temp, tf_rst, rp.gdal_profile, col)
             arr, _ = load_raster(tf_rst)
-            # clean_up_tempfiles(tf_rst, "tiff")
+            clean_up_tempfiles(tf_rst, "tiff")
 
         else:
             tf_rst = create_filename(".sgrid")
@@ -224,10 +225,10 @@ class AbstractVector:
             # correct no data value if necessary
             if profile["nodata"] != rp.nodata:
                 arr[arr == profile["nodata"]] = rp.nodata
-            # clean_up_tempfiles(tf_rst, "tiff")
-            # clean_up_tempfiles(tf_rst, "saga")
+            clean_up_tempfiles(tf_rst, "tiff")
+            clean_up_tempfiles(tf_rst, "saga")
 
-        # clean_up_tempfiles(vct_temp, "shp")
+        clean_up_tempfiles(vct_temp, "shp")
 
         return arr
 
@@ -323,6 +324,6 @@ class VectorFile(AbstractVector):
         vct_temp = create_filename(".shp")
         clip_vct(file_path, vct_temp, vct_clip)
         geodata = gpd.read_file(vct_temp)
-        # clean_up_tempfiles(vct_temp, "shp")
+        clean_up_tempfiles(vct_temp, "shp")
 
         return geodata
