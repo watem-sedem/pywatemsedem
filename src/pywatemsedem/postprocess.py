@@ -126,12 +126,12 @@ class PostProcess(Factory):
     ----------
     name: str
         Name of catchment to which results of scenario run are written too
-    scenario_nr: int
+    resolution: int
+        model resolution
+    scenario_label: int
         scenario number
     year: int
         simulation year
-    resolution: int
-        model resolution
     epsg: int, default 31370
         epsg-code
 
@@ -139,13 +139,13 @@ class PostProcess(Factory):
     Examples
     --------
     >>> from pywatemsedem.postprocess import PostProcess()
-    >>> pp = PostProcess(r"molenbeek", 1, 2019, 20, 31370) # note that the folder
+    >>> pp = PostProcess(r"molenbeek", 20, 1, 2019, 31370) # note that the folder
     >>> #modelbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
     >>> pp.make_routing_vct() #make a vector file of the text routig file.
 
     """
 
-    def __init__(self, name, resolution, scenario_label, year, epsg):
+    def __init__(self, name, resolution, scenario_label, year, epsg=31370):
 
         # general
         self.epsg = epsg
