@@ -127,7 +127,7 @@ class PostProcess(Factory):
     name: str
         Name of catchment to which results of scenario run are written too
     resolution: int
-        model resolution        
+        model resolution
     scenario_label: int
         scenario number
     year: int
