@@ -126,12 +126,12 @@ class PostProcess(Factory):
     ----------
     name: str
         Name of catchment to which results of scenario run are written too
-    scenario_nr: int
+    resolution: int
+        model resolution        
+    scenario_label: int
         scenario number
     year: int
         simulation year
-    resolution: int
-        model resolution
     epsg: int, default 31370
         epsg-code
 
