@@ -315,14 +315,13 @@ class RasterFile(AbstractRaster):
         if rp:
             with rasterio.open(file_path) as src:
                 rst_profile = src.profile
-            if rst_profile["crs"].is_valid:
-                if rst_profile["crs"] is not None:
-                    if rst_profile["crs"].to_epsg() != rp.epsg:
-                        msg = (
-                            f"EPSG-code of {file_path} ({rst_profile['crs']}) should "
-                            f"be same as epsg of input raster properties ({rp.epsg})."
-                        )
-                        raise IOError(msg)
+            if rst_profile["crs"] is not None:
+                if rst_profile["crs"].to_epsg() != rp.epsg:
+                    msg = (
+                        f"EPSG-code of {file_path} ({rst_profile['crs']}) should "
+                        f"be same as epsg of input raster properties ({rp.epsg})."
+                    )
+                    raise IOError(msg)
             arr = self.clip(file_path, rp)
         else:
             if file_path.suffix == ".sgrd":

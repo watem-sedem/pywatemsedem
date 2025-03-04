@@ -454,7 +454,7 @@ def compute_nash_sutcliffe(
     df_me[f"NS {variable}"] = 1 - (df_me[col] / denominator)
     df_me = df_me.reset_index()
     df_me[f"NS {variable}"] = np.where(
-        df_me["ktc_high"] > df_me["ktc_low"], df_me[f"NS {variable}"], np.NaN
+        df_me["ktc_high"] > df_me["ktc_low"], df_me[f"NS {variable}"], np.nan
     )
 
     return df_me
