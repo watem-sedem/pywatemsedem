@@ -8,6 +8,7 @@ import rasterio
 from ..defaults import ALLOWED_RASTER_FORMATS
 from .rasterproperties import RasterProperties
 from .utils import (
+    clean_up_tempfiles,
     clip_rst,
     create_filename,
     load_raster,

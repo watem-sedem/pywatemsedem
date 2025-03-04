@@ -2117,7 +2117,7 @@ def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
     -------
     pathlib.Path
     """
-    directory.mkdir(exists_ok=True)
+    directory.mkdir(exist_ok=True)
     timestamp = int(time.time())
     chars = string.ascii_letters + string.digits
     random_part = "".join(random.choices(chars, k=6))
