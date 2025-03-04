@@ -1,4 +1,3 @@
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -6,11 +5,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
 
-from ..defaults import ALLOWED_RASTER_FORMATS, PREFIX_TEMP
+from ..defaults import ALLOWED_RASTER_FORMATS
 from .rasterproperties import RasterProperties
 from .utils import (
-    clean_up_tempfiles,
     clip_rst,
+    create_filename,
     load_raster,
     mask_array_with_val,
     set_no_data_arr,
@@ -117,7 +116,9 @@ class AbstractRaster:
             else:
                 self._arr = set_no_data_arr(self._arr, arr_mask, self.rp.nodata)
 
-    def write(self, outfile_path, format="idrisi", dtype=None, nodata=None):
+    def write(
+        self, outfile_path, format="idrisi", dtype=None, nodata=None, dir=Path(".")
+    ):
         """Write raster data to disk.
 
         Parameters
@@ -171,11 +172,7 @@ class AbstractRaster:
                 profile,
             )
         elif format == "idrisi":
-            tiff_temp = Path(
-                tempfile.NamedTemporaryFile(
-                    suffix=".tif", prefix="pywatemsedem", delete=False
-                ).name
-            )
+            tiff_temp = create_filename(".tif")
             write_arr_as_rst(self._arr, tiff_temp, dtype, profile)
             tiff_to_idrisi(tiff_temp, outfile_path, dtype=dtype)
             clean_up_tempfiles(tiff_temp, "tiff")
@@ -336,7 +333,7 @@ class RasterFile(AbstractRaster):
         super().initialize(arr, rp, arr_mask, allow_nodata_array)
 
     @staticmethod
-    def clip(file_path, rp, resample="mode"):
+    def clip(file_path, rp, resample="mode", dir=Path(".")):
         """Clip function
 
         Parameters
@@ -345,6 +342,8 @@ class RasterFile(AbstractRaster):
             File path to user input raster.
         rp: RasterProperties
             See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+        dir: pathlib.Path, default cwd
+            Directory for temporary files
         resample: str, default "mode"
             Either "near" or "mode", see :func:`pywatemsedem.geo.utils.clip_rst`
 
@@ -359,18 +358,15 @@ class RasterFile(AbstractRaster):
         :func:`pywatemsedem.geo.utils.clip_rst`.
 
         """
-        rst_temp = tempfile.NamedTemporaryFile(
-            suffix=".rst", prefix=PREFIX_TEMP, delete=False
-        )
+        rst_temp = create_filename(".rst")
         clip_rst(
             file_path,
-            Path(rst_temp.name),
+            rst_temp,
             rp.gdal_profile,
             resampling=resample,
         )
-        arr, profile = load_raster(Path(rst_temp.name))
+        arr, profile = load_raster(rst_temp)
         shape = arr[arr != profile["nodata"]].shape
-        rst_temp.close()
         clean_up_tempfiles(rst_temp, "rst")
 
         if shape == (0,):

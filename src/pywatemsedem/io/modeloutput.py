@@ -1,5 +1,4 @@
 # seperate plotting funcion
-import tempfile
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,6 +17,7 @@ from ..geo.factory import Factory
 from ..geo.utils import (
     check_raster_properties_raster_with_template,
     clean_up_tempfiles,
+    create_filename,
     create_spatial_index,
     execute_saga,
     load_raster,
@@ -1600,7 +1600,7 @@ def map_rank_sediment_loads(
     if unit not in ["kg", "ton"]:
         f"Unit '{unit}' should be either 'kg' op 'ton'."
 
-    rst_out = tempfile.NamedTemporaryFile(suffix=".rst").name
+    rst_out = create_filename(".rst")
     df_sediexport, threshold = identify_rank_sediment_loads(
         rst_sediexport, threshold, rst_out, rst_endpoints
     )
