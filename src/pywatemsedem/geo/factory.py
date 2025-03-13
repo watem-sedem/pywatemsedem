@@ -165,13 +165,13 @@ class Factory:
             arr, rp = load_raster(mask)
             if self.create_rasterproperties:
                 self.rp = RasterProperties.from_rasterio(rp, epsg=self._epsg_code)
-            vct_mask = mask.with_suffix(".shp")
+            vct_mask = self.mask_vector
             generate_vct_mask_from_raster_mask(mask, vct_mask, self._resolution)
             self._vct_mask = VectorFile(vct_mask)
             self._vct_mask._geodata = self._vct_mask._geodata.set_crs(self.rp.epsg)
 
         self._mask = RasterMemory(arr, self.rp)
-        self.vct_mask.write(self.mask_vector)
+        # self.vct_mask.write(self.mask_vector)
         self._mask.write(self.mask_raster, "idrisi")
         self._mask.arr_bin = np.where(
             self._mask.arr == self.rp.nodata, 0, self._mask.arr
