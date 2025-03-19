@@ -432,8 +432,8 @@ class Scenario:
             self._vct_parcels.geodata,
             "Parcels",
             "LANDUSE",
-            {-9999, -2, -3, -4, -5},
-            classes={"agriculture", "infrastructure", "forest", "grass land", "water"},
+            [-9999, -2, -3, -4, -5],
+            classes=["agriculture", "infrastructure", "forest", "grass land", "water"],
         )
 
         if "NR" not in self._vct_parcels.geodata.columns:
