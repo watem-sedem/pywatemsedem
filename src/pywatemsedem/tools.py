@@ -117,8 +117,8 @@ def zip_folder(folder2zip, outfile=None):
 
 
 def extract_tags_from_template_file(template):
-    """Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart template
-    file.
+    """Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart
+    template file.
 
 
     Parameters
