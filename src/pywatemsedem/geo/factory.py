@@ -145,7 +145,7 @@ class Factory:
             try:
                 fiona.open(mask)
             except DriverError:
-                msg = "Input mask should be raster or vector polygon file."
+                msg = f"Input mask '{mask}' should be raster or vector polygon file."
                 raise IOError(msg)
             else:
                 if self.create_rasterproperties:
@@ -230,13 +230,11 @@ class Factory:
             else:
                 raster = TemporalRaster(raster_input, self.rp, arr_mask)
         else:
-            print(type(raster_input))
-            print(raster_input)
             m = inspect.currentframe()
             calframe = inspect.getouterframes(m, 2)
             [cal.function for cal in calframe]
             msg = (
-                f"Input raster should be a numpy array or raster file, current type"
+                f"Input raster '{raster_input}'should be a numpy array or raster file, current type"
                 f" is '{type(raster_input)}'"
             )
             raise IOError(msg)
@@ -280,7 +278,7 @@ class Factory:
         elif isinstance(vector_input, gpd.GeoDataFrame):
             vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
         else:
-            msg = "Input vector should be a geopandas GeoDataFrame or vector file."
+            msg = f"Input vector '{vector_input}'should be a geopandas GeoDataFrame or vector file."
             raise IOError(msg)
 
         return vector
