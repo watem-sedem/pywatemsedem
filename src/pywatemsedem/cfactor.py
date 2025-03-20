@@ -122,12 +122,12 @@ def create_cfactor_degerick2015(
             vct_parcels.geodata.loc[cond, "GWSCOD_H"] = 9999
             vct_parcels.geodata.loc[cond, "C_factor"] = cfactor_aggriculture
         if "C_factor" in vct_parcels.geodata.columns:
-            vct_parcels.geodata[
-                "C_factor"
-            ] = reduce_cfactor_with_source_oriented_measures(
-                vct_parcels.geodata["C_factor"],
-                vct_parcels.geodata["C_reduct"],
-                use_source_oriented_measures,
+            vct_parcels.geodata["C_factor"] = (
+                reduce_cfactor_with_source_oriented_measures(
+                    vct_parcels.geodata["C_factor"],
+                    vct_parcels.geodata["C_reduct"],
+                    use_source_oriented_measures,
+                )
             )
             arr = vct_parcels.rasterize(
                 tiff_temp, composite_landuse.rp.epsg, col="C_factor", gdal=True

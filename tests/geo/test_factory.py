@@ -8,7 +8,6 @@ from pywatemsedem.geo.valid import PywatemsedemInputError
 
 
 class TestFactory:
-
     """Test class for factory
 
     Parameters

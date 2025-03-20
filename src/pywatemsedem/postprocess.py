@@ -855,9 +855,12 @@ class PostProcess(Factory):
 
         # calculate percentage
         df_sediexport["perc"] = [
-            df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
-            if i != 0
-            else df_sediexport["cum_perc"].iloc[i]
+            (
+                df_sediexport["cum_perc"].iloc[i]
+                - df_sediexport["cum_perc"].iloc[i - 1]
+                if i != 0
+                else df_sediexport["cum_perc"].iloc[i]
+            )
             for i in range(0, len(df_sediexport))
         ]
 
@@ -1937,9 +1940,9 @@ def merge_grass_strip_id_and_sediout_to_routing(
         df_grass_strips[f"gras_id_{i}"] = df_grass_strips["val"]
 
     for target_id in [1, 2]:
-        df_grass_strips[
-            [f"target{target_id}row", f"target{target_id}col"]
-        ] = df_grass_strips[["row", "col"]]
+        df_grass_strips[[f"target{target_id}row", f"target{target_id}col"]] = (
+            df_grass_strips[["row", "col"]]
+        )
 
     # define sedout and index cols to join on
     df_sediout["sediout"] = df_sediout["val"]
