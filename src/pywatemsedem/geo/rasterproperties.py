@@ -338,7 +338,8 @@ def get_bounds_from_vct(vct_catchment, resolution, n_pixels_buffer=5):
     vct_catchment: pathlib.Path
         Vector file of catchment.
     resolution: int
-        Spatial resolution, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+        Spatial resolution, see
+        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
     n_pixels_buffer: int, default 5
         Number of pixels that have to be taken into account to expand boundaries
 

@@ -195,7 +195,8 @@ class IniFile:
             - *BUF_ID* (float): Buffer id
 
         forced_routing: pandas.DataFrame
-            Forced routing table with columns, see :ref:`here <watemsedem:forcedroutingdata>`
+            Forced routing table with columns,
+            see :ref:`here <watemsedem:forcedroutingdata>`
 
             - *NR* (int):
             - *from col* (int): source pixel column
