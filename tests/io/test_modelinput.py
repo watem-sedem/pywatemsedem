@@ -1,11 +1,17 @@
 # implicit testing of the modelinput class
 from pathlib import Path
 
+import pytest
+
 from pywatemsedem.io.modelinput import Modelinput
 
 # testing normal functioning
 
 
+@pytest.mark.skip(
+    reason="test gives saga-issues in conda pipeline, ommited, raised as"
+    " issue in saga"
+)
 def test_modelinput_all():
     """tests for Modelinput class"""
     # folder = Path(r"pywatemsedem/tests/io/data")
