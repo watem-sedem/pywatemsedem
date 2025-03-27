@@ -236,8 +236,8 @@ class Factory:
             calframe = inspect.getouterframes(m, 2)
             [cal.function for cal in calframe]
             msg = (
-                f"Input raster '{raster_input}'should be a numpy array or raster file, current type"
-                f" is '{type(raster_input)}'"
+                f"Input '{raster_input}' should be a numpy array or raster file, "
+                f"current type is '{type(raster_input)}'"
             )
             raise IOError(msg)
 
@@ -283,7 +283,7 @@ class Factory:
         elif isinstance(vector_input, gpd.GeoDataFrame):
             vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
         else:
-            msg = f"Input vector '{vector_input}'should be a geopandas GeoDataFrame or vector file."
+            msg = f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector file."
             raise IOError(msg)
 
         return vector
