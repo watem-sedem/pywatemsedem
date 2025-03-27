@@ -375,6 +375,7 @@ class Scenario:
         The parcels vector should be polygon vector. Should contain a definition of
         land-use (column "LANDUSE"):
 
+            - *-5*: open water
             - *-4*: grass land
             - *-3*: forest
             - *-2*: infrastructure (farms)
@@ -397,8 +398,8 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             Polygon vector
 
-            - *LANDUSE* (int): landuse value (-4: grass land, -3: forest,
-               -2: infrastructure (farms), -9999: agricultural land).
+            - *LANDUSE* (int): landuse value (-5: open water, -4: grass land, -3:
+            forest, -2: infrastructure (farms), -9999: agricultural land).
             - *C_crop* (float): C-factor for crop, valid for considered time period
               ([0,1], NULL-values allowed).
             - *NR* (int, optional): id.
@@ -509,6 +510,7 @@ class Scenario:
         pywatemsedem.geo.rasters.AbstractRaster, else None
             Float64 raster with values:
 
+            - *-5*: open water
             - *-4*: grass land
             - *-3*: forest
             - *-2*: infrastructure (farms)

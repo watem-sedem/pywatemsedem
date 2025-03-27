@@ -425,6 +425,7 @@ class Catchment(Factory):
         Raster should contain:
 
             - *-9999*: nodata
+            - *-6*: grass strips
             - *-5*: open water
             - *-4*: grass
             - *-3*: forest
