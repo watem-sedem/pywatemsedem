@@ -380,8 +380,6 @@ class Scenario:
             - *-2*: infrastructure (farms)
             - *-9999*: agricultural land
 
-        Should contain a definition of crop code (column "CODE").
-
         Should contain a definition of the crop C-factor (column 'C_crop', see
         :ref:`here <watemsedem:cmap>`.):
 
@@ -420,7 +418,7 @@ class Scenario:
         missing_attribute_error_in_vct(
             self._vct_parcels.geodata,
             "Parcels",
-            {"C_crop", "CODE", "LANDUSE", "C_reduct"},
+            {"C_crop", "LANDUSE", "C_reduct"},
         )
         attribute_continuous_value_error(
             self._vct_parcels.geodata, "Parcels", "C_crop", lower=0, upper=1
