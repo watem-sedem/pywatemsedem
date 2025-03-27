@@ -12,8 +12,6 @@ from rasterio import RasterioIOError
 from .rasterproperties import RasterProperties
 from .rasters import RasterFile, RasterMemory, TemporalRaster
 from .utils import (
-    clean_up_tempfiles,
-    create_filename,
     define_extent_from_vct,
     generate_vct_mask_from_raster_mask,
     load_raster,
@@ -75,13 +73,11 @@ class Factory:
         self._rp = None
         self._mask = None
         self._bounds = None
-        resmap = Path(resmap) / "factory"
-        if not resmap.exists():
-            resmap.mkdir(exist_ok=True)
-        self.mask_vector = resmap / "mask.shp"
-        self.mask_raster = resmap / "mask.rst"
-        # standard rasterproperties are generated in mask pahe from vector or raster
-        # input
+        self.resmap = Path(resmap) / "factory"
+        if not self.resmap.exists():
+            self.resmap.mkdir(exist_ok=True)
+        self.vectorfile_mask = self.resmap / "mask.shp"
+        self.rasterfile_mask = self.resmap / "mask.rst"
         self.create_rasterproperties = True
 
     @property
@@ -120,8 +116,8 @@ class Factory:
 
         Parameters
         ----
-        mask: pathlib.Path | str
-            File path to mask vector raster file
+        file_path: pathlib.Path | str
+            File path to mask vector or raster file
 
         Notes
         -----
@@ -129,6 +125,8 @@ class Factory:
         to False, one needs to self-define a RasterProperties instance.
         """
         valid_exists(mask, None)
+        create_mask_vector = False
+        create_mask_raster = False
         if self.create_rasterproperties is False:
             if self.rp is None:
                 msg = (
@@ -141,6 +139,7 @@ class Factory:
 
         try:
             rasterio.open(mask)
+            create_mask_vector = True
         except RasterioIOError:
             try:
                 fiona.open(mask)
@@ -148,31 +147,34 @@ class Factory:
                 msg = "Input mask should be raster or vector polygon file."
                 raise IOError(msg)
             else:
-                if self.create_rasterproperties:
-                    self.rp = define_extent_from_vct(
-                        mask,
-                        self._resolution,
-                        self._nodata,
-                        self._epsg_code,
-                        self._bounds,
-                    )
-                tf_rst = create_filename(".tif")
-                vct_to_rst_value(mask, tf_rst, 1, self.rp.gdal_profile)
-                arr, _ = load_raster(tf_rst)
-                clean_up_tempfiles(tf_rst, "tiff")
-                self._vct_mask = VectorFile(mask)
-        else:
+                create_mask_raster = True
+
+        if create_mask_raster:
+            if self.create_rasterproperties:
+                self.rp = define_extent_from_vct(
+                    mask,
+                    self._resolution,
+                    self._nodata,
+                    self._epsg_code,
+                    self._bounds,
+                )
+            vct_to_rst_value(mask, self.resmap / "mask.rst", 1, self.rp.gdal_profile)
+            arr, _ = load_raster(self.resmap / "mask.rst")
+            self._vct_mask = VectorFile(mask)
+            if mask != self.vectorfile_mask:
+                self._vct_mask._geodata.to_file(self.vectorfile_mask)
+
+        if create_mask_vector:
             arr, rp = load_raster(mask)
             if self.create_rasterproperties:
                 self.rp = RasterProperties.from_rasterio(rp, epsg=self._epsg_code)
-            vct_mask = mask.with_suffix(".shp")
-            generate_vct_mask_from_raster_mask(mask, vct_mask, self._resolution)
-            self._vct_mask = VectorFile(vct_mask)
+            generate_vct_mask_from_raster_mask(
+                mask, self.vectorfile_mask, self._resolution
+            )
+            self._vct_mask = VectorFile(self.vectorfile_mask)
             self._vct_mask._geodata = self._vct_mask._geodata.set_crs(self.rp.epsg)
 
         self._mask = RasterMemory(arr, self.rp)
-        self.vct_mask.write(self.mask_vector)
-        self._mask.write(self.mask_raster, "idrisi")
         self._mask.arr_bin = np.where(
             self._mask.arr == self.rp.nodata, 0, self._mask.arr
         )
@@ -275,7 +277,10 @@ class Factory:
                 )
                 raise IOError(msg)
             vector = VectorFile(
-                vector_input, geometry_type, self.mask_vector, allow_empty=allow_empty
+                vector_input,
+                geometry_type,
+                self.vectorfile_mask,
+                allow_empty=allow_empty,
             )
         elif isinstance(vector_input, gpd.GeoDataFrame):
             vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)

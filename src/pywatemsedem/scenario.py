@@ -494,7 +494,7 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self._vct_parcels.rasterize(
-                self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
+                self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=True
             )
             return self.raster_factory(arr, allow_nodata_array=True)
         else:
@@ -523,7 +523,7 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self.vct_parcels.rasterize(
-                self.catchm.mask_raster, self.rp.epsg, col="LANDUSE", gdal=True
+                self.catchm.rasterfile_mask, self.rp.epsg, col="LANDUSE", gdal=True
             )
             if np.all(arr == self.rp.nodata):
                 return AbstractRaster()
@@ -589,7 +589,7 @@ class Scenario:
             "NR"
         ].astype(float)
         arr = self.vct_grass_strips.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             self.rp.epsg,
             col="NR",
             nodata=-9999,
@@ -708,7 +708,7 @@ class Scenario:
         """
         if not self.vct_buffers.is_empty():
             arr = self.vct_buffers.rasterize(
-                self.catchm.mask_raster, 31370, "buf_exid", gdal=True
+                self.catchm.rasterfile_mask, 31370, "buf_exid", gdal=True
             )
             raster = self.raster_factory(arr)
         else:
@@ -829,7 +829,7 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_conductive_dams.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             self.rp.epsg,
             convert_lines_to_direction=True,
             gdal=True,
@@ -850,7 +850,7 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_ditches.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             self.rp.epsg,
             convert_lines_to_direction=True,
             gdal=True,
@@ -911,7 +911,7 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_outlets.rasterize(
-            self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
+            self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=True
         )
         self._outlets = self.raster_factory(arr)
         self._outlets.arr = self._outlets.arr.astype(np.int16)
@@ -1010,7 +1010,7 @@ class Scenario:
             - *not equal to 0*: id.
         """
         arr_id = self.vct_endpoints.rasterize(
-            self.catchm.mask_raster, 31370, col="type_id", gdal=True
+            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=True
         )
         arr_id[arr_id == self.rp.nodata] = 0
 
@@ -1048,7 +1048,7 @@ class Scenario:
             "efficiency"
         ].astype(float)
         arr = self.vct_endpoints.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             31370,
             nodata=self.rp.nodata,
             col="efficiency",
