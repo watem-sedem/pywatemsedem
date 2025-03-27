@@ -332,9 +332,6 @@ class Catchment(Factory):
             )
             warnings.warn(msg, UserWarning)
             self._kfactor.arr[cond_neg] = 0.0
-        self._kfactor.arr[cond] = self._kfactor.arr[cond] * 1000
-        self._kfactor.arr[cond] = np.round(self._kfactor.arr[cond])
-        self._kfactor.arr = self._kfactor.arr.astype(np.int32)
 
     @property
     def hydrological_soil_group(self):
