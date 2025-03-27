@@ -662,7 +662,7 @@ class Catchment(Factory):
         vct_river_topo = self.folder.vct_folder / f"topology_{self.name}.shp"
         clean_up_tempfiles(vct_river_topo, "shp")
         self._adjacent_edges, self._up_edges = self.topologize_river(
-            vct_river_clipped, vct_river_topo, self.mask_raster
+            vct_river_clipped, vct_river_topo, self.rasterfile_mask
         )
 
         self._vct_river = self.vector_factory(
@@ -670,7 +670,7 @@ class Catchment(Factory):
         )
 
         river = self._vct_river.rasterize(
-            self.mask_raster, self.rp.epsg, "line_id", "integer", gdal=True
+            self.rasterfile_mask, self.rp.epsg, "line_id", "integer", gdal=True
         )
         self._river = self.raster_factory(river, allow_nodata_array=True)
         self._adjacent_edges, self._up_edges, flag = check_segment_edges(
@@ -680,7 +680,7 @@ class Catchment(Factory):
         # set routing
         if self._vct_river.geodata.shape[0] > 0:
             routing = self._vct_river.rasterize(
-                self.mask_raster,
+                self.rasterfile_mask,
                 self.rp.epsg,
                 convert_lines_to_direction=True,
                 gdal=True,
@@ -921,7 +921,7 @@ class Catchment(Factory):
                 float
             )
             water = self._vct_water.rasterize(
-                self.mask_raster, self.rp.epsg, "value", "integer", gdal=True
+                self.rasterfile_mask, self.rp.epsg, "value", "integer", gdal=True
             )
             arr = self.raster_factory(water)
         else:
@@ -977,7 +977,7 @@ class Catchment(Factory):
         ] = self._vct_infrastructure_buildings.geodata["paved"].astype(float)
 
         infra = self._vct_infrastructure_buildings.rasterize(
-            self.mask_raster, self.rp.epsg, col="paved", gdal=True
+            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=True
         )
 
         return self.raster_factory(infra)
@@ -1001,7 +1001,7 @@ class Catchment(Factory):
         ] = self._vct_infrastructure_roads.geodata["paved"].astype(float)
 
         arr = self._vct_infrastructure_roads.rasterize(
-            self.mask_raster, self.rp.epsg, col="paved", gdal=True
+            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=True
         )
         return self.raster_factory(arr)
 
