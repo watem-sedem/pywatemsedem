@@ -82,7 +82,7 @@ class TestFactory:
         # feed numpy array to vector factory
         with pytest.raises(IOError) as excinfo:
             f.vector_factory(array([]), "Polygon")
-        assert "Input vector should be a geopandas GeoDataFrame or vector file." in str(
+        assert "Input '[]' should be a geopandas GeoDataFrame or vector file." in str(
             excinfo.value
         )
 
@@ -97,6 +97,7 @@ class TestFactory:
         # feed geopandas dataframe to raster factory
         with pytest.raises(IOError) as excinfo:
             f.raster_factory(GeoDataFrame())
-        assert "Input raster should be a numpy array or raster file," in str(
-            excinfo.value
+        assert (
+            "Input 'Empty GeoDataFrame\nColumns: []\nIndex: []' should be a numpy array or raster file,"
+            in str(excinfo.value)
         )
