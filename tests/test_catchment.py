@@ -3,9 +3,8 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 import pytest
-from conftest import catchment_data
+from conftest import CatchmentTestBase, catchment_data
 
-from pywatemsedem.catchment import Catchment
 from pywatemsedem.errors import (
     PywatemsedemRasterValueError,
     PywatemsedemVectorAttributeValueError,
@@ -13,7 +12,7 @@ from pywatemsedem.errors import (
 from pywatemsedem.geo.utils import load_raster, write_arr_as_rst
 
 
-class TestCatchment:
+class TestCatchment(CatchmentTestBase):
     """Test Catchment properties
 
     Test main functionalities for Catchment class.
@@ -25,11 +24,6 @@ class TestCatchment:
     - Are the unique values and counts equal?
     - Are data types equal?
     """
-
-    name = "langegracht"
-    catchment = Catchment(
-        name, catchment_data.catchment, catchment_data.dtm, 20, 31370, -9999
-    )
 
     def test_kfactor(self):
         """Test assignment kfactor raster"""
