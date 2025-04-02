@@ -1,5 +1,4 @@
 # implicit testing of the modelinput class
-
 from pathlib import Path
 
 import pytest

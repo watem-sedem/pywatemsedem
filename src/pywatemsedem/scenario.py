@@ -385,12 +385,11 @@ class Scenario:
         The parcels vector should be polygon vector. Should contain a definition of
         land-use (column "LANDUSE"):
 
+            - *-5*: open water
             - *-4*: grass land
             - *-3*: forest
             - *-2*: infrastructure (farms)
             - *-9999*: agricultural land
-
-        Should contain a definition of crop code (column "CODE").
 
         Should contain a definition of the crop C-factor (column 'C_crop', see
         :ref:`here <watemsedem:cmap>`.):
@@ -409,8 +408,8 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             Polygon vector
 
-            - *LANDUSE* (int): landuse value (-4: grass land, -3: forest,
-               -2: infrastructure (farms), -9999: agricultural land).
+            - *LANDUSE* (int): landuse value (-5: open water, -4: grass land, -3:
+            forest, -2: infrastructure (farms), -9999: agricultural land).
             - *C_crop* (float): C-factor for crop, valid for considered time period
               ([0,1], NULL-values allowed).
             - *NR* (int, optional): id.
@@ -430,7 +429,7 @@ class Scenario:
         missing_attribute_error_in_vct(
             self._vct_parcels.geodata,
             "Parcels",
-            {"C_crop", "CODE", "LANDUSE", "C_reduct"},
+            {"C_crop", "LANDUSE", "C_reduct"},
         )
         attribute_continuous_value_error(
             self._vct_parcels.geodata, "Parcels", "C_crop", lower=0, upper=1
@@ -442,8 +441,8 @@ class Scenario:
             self._vct_parcels.geodata,
             "Parcels",
             "LANDUSE",
-            {-9999, -2, -3, -4, -5},
-            classes={"agriculture", "infrastructure", "forest", "grass land", "water"},
+            [-9999, -2, -3, -4, -5],
+            classes=["agriculture", "infrastructure", "forest", "grass land", "water"],
         )
 
         if "NR" not in self._vct_parcels.geodata.columns:
@@ -504,7 +503,7 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self._vct_parcels.rasterize(
-                self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
+                self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=True
             )
             return self.raster_factory(arr, allow_nodata_array=True)
         else:
@@ -521,6 +520,7 @@ class Scenario:
         pywatemsedem.geo.rasters.AbstractRaster, else None
             Float64 raster with values:
 
+            - *-5*: open water
             - *-4*: grass land
             - *-3*: forest
             - *-2*: infrastructure (farms)
@@ -533,7 +533,7 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self.vct_parcels.rasterize(
-                self.catchm.mask_raster, self.rp.epsg, col="LANDUSE", gdal=True
+                self.catchm.rasterfile_mask, self.rp.epsg, col="LANDUSE", gdal=True
             )
             if np.all(arr == self.rp.nodata):
                 return AbstractRaster()
@@ -599,7 +599,7 @@ class Scenario:
             "NR"
         ].astype(float)
         arr = self.vct_grass_strips.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             self.rp.epsg,
             col="NR",
             nodata=-9999,
@@ -718,7 +718,7 @@ class Scenario:
         """
         if not self.vct_buffers.is_empty():
             arr = self.vct_buffers.rasterize(
-                self.catchm.mask_raster, 31370, "buf_exid", gdal=True
+                self.catchm.rasterfile_mask, 31370, "buf_exid", gdal=True
             )
             raster = self.raster_factory(arr)
         else:
@@ -839,7 +839,7 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_conductive_dams.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             self.rp.epsg,
             convert_lines_to_direction=True,
             gdal=True,
@@ -860,7 +860,7 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_ditches.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             self.rp.epsg,
             convert_lines_to_direction=True,
             gdal=True,
@@ -921,7 +921,7 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_outlets.rasterize(
-            self.catchm.mask_raster, self.rp.epsg, col="NR", gdal=True
+            self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=True
         )
         self._outlets = self.raster_factory(arr)
         self._outlets.arr = self._outlets.arr.astype(np.int16)
@@ -1020,7 +1020,7 @@ class Scenario:
             - *not equal to 0*: id.
         """
         arr_id = self.vct_endpoints.rasterize(
-            self.catchm.mask_raster, 31370, col="type_id", gdal=True
+            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=True
         )
         arr_id[arr_id == self.rp.nodata] = 0
 
@@ -1058,7 +1058,7 @@ class Scenario:
             "efficiency"
         ].astype(float)
         arr = self.vct_endpoints.rasterize(
-            self.catchm.mask_raster,
+            self.catchm.rasterfile_mask,
             31370,
             nodata=self.rp.nodata,
             col="efficiency",

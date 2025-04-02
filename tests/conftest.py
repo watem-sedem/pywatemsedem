@@ -2,10 +2,10 @@
 
 # -*- coding: utf-8 -*-
 
+import tempfile
 from pathlib import Path
 
 import pandas as pd
-import pytest
 from dotenv import find_dotenv, load_dotenv
 
 from pywatemsedem.catchment import Catchment
@@ -167,381 +167,90 @@ class tools:
 #     txt_parcels = folder_cfactor_model / "parcels.csv"
 
 
-@pytest.fixture(scope="session")
-def scenario():
-    """Initialize catchment
+class CatchmentTestBase:
+    """Base test class that sets up a temporary directory and initializes Catchment."""
 
-    Save it to cache with request.config.cache once it is made (faster rerun)
+    name = "langegracht"  # Default name, can be overridden
+
+    @classmethod
+    def setup_class(cls):
+        """Set up a temporary results folder and initialize Catchment."""
+        cls.temp_dir = tempfile.TemporaryDirectory()
+        cls.results_folder = Path(cls.temp_dir.name)
+        cls.setup_catchment()
+        cls.setup_scenario()  # Calls the scenario setup method
+
+    @classmethod
+    def setup_catchment(cls):
+        """Initialize Catchment instance, can be overridden if needed."""
+        cls.catchment = Catchment(
+            cls.name,
+            catchment_data.catchment,
+            catchment_data.dtm,
+            20,
+            31370,
+            -9999,
+            cls.results_folder,
+        )
+
+    @classmethod
+    def setup_scenario(cls):
+        """Customize the catchment instance with scenario-specific modifications."""
+        pass  # To be overridden in subclasses
+
+    @classmethod
+    def teardown_class(cls):
+        """Clean up the temporary directory after tests."""
+        cls.temp_dir.cleanup()
+
+
+class ScenarioTestBase(CatchmentTestBase):
+    """Test class to test often used use cases in pywatemsedem model workflow.
+
+    This class focuses on specific use cases that are assumed to be used in the API:
+
+    - *test_all*: Create model input with base landuse, river vector, infrastructure
+      vector, parcels vector and water vector.
+    - *test_ommit_water* Create model input with base landuse, river vector,
+      infrastructure vector, parcels vector with:
+        - include grass strips vector
+        - include technical tillage vector
+    - *test_ommit_river* Create model input with base landuse, infrastructure vector,
+       parcels vector and water vector
+    - *test_ommit_inf* Create model input with base landuse, river vector, parcels
+       vector and water vector
+    - *test_ommit_parcels*: Create model input with base landuse, river vector,
+       infrastructure vector and water vector.
+    - *test_ommit_all*: Create model input with base landuse?
+
+    The means to test equality of the rasters is the unique values and their number of
+    occurence. Specically, the output C-factor, kTC and composite landuse rasters are
+    tested as these are raster to which WaTEM/SEDEM is most senstive to. For the
+    composite landuse raster, only number of agricultural pixels are tested, not the
+    occurence of individual parcels.
     """
-    name = "langegracht"
-    catchment = Catchment(
-        name, catchment_data.catchment, catchment_data.dtm, 20, 31370, -9999
-    )
-    catchment.kfactor = catchment_data.k
-    catchment.landuse = catchment_data.basemap
-    catchment.cn = catchment_data.hsg
-    catchment.vct_river = catchment_data.river
-    catchment.vct_infrastructure_buildings = catchment_data.infrastructure
-    catchment.vct_infrastructure_roads = catchment_data.roads
-    catchment.vct_water = catchment_data.water
 
-    """Initialize user choices"""
-    choices = UserChoices()
-    choices.set_ecm_options(userchoices_file)
-    choices.set_model_version("WS")
-    choices.set_model_options(userchoices_file)
-    choices.set_model_variables(userchoices_file)
-    choices.set_output(userchoices_file)
+    @classmethod
+    def setup_scenario(cls):
+        """Extend Catchment setup with additional self.scenario-specific attributes."""
+        # Ensure base catchment is set up
+        super().setup_scenario()
 
-    val = Scenario(catchment, 2019, 1, choices)
+        # Add self.scenario-specific modifications
+        cls.catchment.kfactor = catchment_data.k
+        cls.catchment.landuse = catchment_data.basemap
+        cls.catchment.cn = catchment_data.hsg
+        cls.catchment.vct_river = catchment_data.river
+        cls.catchment.vct_infrastructure_buildings = catchment_data.infrastructure
+        cls.catchment.vct_infrastructure_roads = catchment_data.roads
+        cls.catchment.vct_water = catchment_data.water
 
-    return val
+        # Add user choices
+        choices = UserChoices()
+        choices.set_ecm_options(userchoices_file)
+        choices.set_model_version("WS")
+        choices.set_model_options(userchoices_file)
+        choices.set_model_variables(userchoices_file)
+        choices.set_output(userchoices_file)
 
-
-# class non_specific_landuse_measures:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - No specific landuse: C-factor for agricultural fields is set to 0.37, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - Following symptom-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#         - 'erosiebestrijdingswerken'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Buffers and grass strips are used, source oriented measures not.
-#     """
-#
-#     # input choices
-#     specific_landuse = False
-#     c_factor_model = None
-#     symptom_oriented_packages = ["beheerovereenkomsten", "erosiebestrijdingswerken"]
-#     source_oriented_packages = None
-#     buffers = True
-#     grass_strips = True
-#     source_oriented = False
-#
-#     # output: ton
-#     erosion = -17.13
-#     deposition = 14.44
-#     to_river = 0.92
-#     outside_domain = 0.19
-#     buffers = 0.10
-#     to_ditches = 0.70
-#     to_sewers = 0.44
-#
-#
-# class non_specific_landuse_no_measures:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - No specific landuse: C-factor for agricultural fields is set to 0.37, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - No symptom-oriented measures are implemented:
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - No buffers, grass strips, source oriented measures are used.
-#     """
-#
-#     # input choices
-#     specific_landuse = False
-#     c_factor_model = None
-#     symptom_oriented_packages = None
-#     source_oriented_packages = None
-#     buffers = False
-#     grass_strips = False
-#     source_oriented = False
-#
-#     # output ws Molenbeek: ton
-#     erosion = -20.12
-#     deposition = 15.94
-#     to_river = 1.41
-#     outside_domain = 0.21
-#     buffers = 0.00
-#     to_ditches = 1.18
-#     to_sewers = 0.78
-#
-#     # output cnws Nukerke: m3/s ...
-#     runoff_count = 3.820000e02
-#     runoff_mean = 4.084430e-02
-#     runoff_std = 1.101224e-01
-#     runoff_min = 2.101948e-47
-#     runoff_max = 8.621105e-01
-#     runoff_50 = 6.997757e-04
-#
-#     # ... and g/L
-#     concentration_count = 382.000000
-#     concentration_mean = 1.546574
-#     concentration_std = 1.284577
-#     concentration_min = 0.355476
-#     concentration_max = 3.121928
-#     concentration_50 = 0.565378
-#
-#
-# class specific_landuse_indicator_current_measures:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - indicator: C-factors defined in the indicator are used, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - Following symptom-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#         - 'erosiebestrijdingswerken'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Following source-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#         - 'randvoorwaarden'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Buffers, grass strips and source-oriented measures are used.
-#     """
-#
-#     # input choices
-#     specific_landuse = True
-#     c_factor_model = "indicator"
-#     symptom_oriented_packages = ["beheerovereenkomsten", "erosiebestrijdingswerken"]
-#     source_oriented_packages = ["beheerovereenkomsten", "randvoorwaarden"]
-#     buffers = True
-#     grass_strips = True
-#     source_oriented = True
-#
-#     # output: ton
-#     erosion = -16.40
-#     deposition = 13.95
-#     to_river = 0.87
-#     outside_domain = 0.18
-#     buffers = 0.10
-#     to_ditches = 0.66
-#     to_sewers = 0.36
-#
-#
-# class specific_landuse_indicator_erosiebestrijdingswerken_randvoorwaarden:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - indicator: C-factors defined in the indicator are used, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - Following symptom-oriented measures are implemented:
-#
-#         - 'erosiebestrijdingswerken'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Following source-oriented measures are implemented:
-#
-#         - 'randvoorwaarden'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Buffers, grass strips and source-oriented measures are used.
-#     """
-#
-#     # input choices
-#     specific_landuse = True
-#     c_factor_model = "indicator"
-#     symptom_oriented_packages = ["erosiebestrijdingswerken"]
-#     source_oriented_packages = ["randvoorwaarden"]
-#     buffers = True
-#     grass_strips = True
-#     source_oriented = True
-#
-#     # output: ton
-#     erosion = -18.67
-#     deposition = 14.81
-#     to_river = 1.34
-#     outside_domain = 0.21
-#     buffers = 0.18
-#     to_ditches = 1.03
-#     to_sewers = 0.59
-#
-#
-# class specific_landuse_indicator_beheerovereenkomsten_randvoorwaarden:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - indicator: C-factors defined in the indicator are used, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - Following symptom-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Following source-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#         - 'randvoorwaarden'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Buffers, grass strips and source-oriented measures are used.
-#     """
-#
-#     # input choices
-#     specific_landuse = True
-#     c_factor_model = "indicator"
-#     symptom_oriented_packages = ["beheerovereenkomsten"]
-#     source_oriented_packages = ["beheerovereenkomsten", "randvoorwaarden"]
-#     buffers = True
-#     grass_strips = True
-#     source_oriented = True
-#
-#     # output: ton
-#     erosion = -17.47
-#     deposition = 15.01
-#     to_river = 0.91
-#     outside_domain = 0.18
-#     buffers = 0.00
-#     to_ditches = 0.70
-#     to_sewers = 0.38
-#
-#
-# class specific_landuse_indicator_beheerovereenkomsten_erosiebestrijdingswerken:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - indicator: C-factors defined in the indicator are used, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - Following symptom-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#         - 'erosiebestrijdingswerken'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Following source-oriented measures are implemented:
-#
-#         - 'beheerovereenkomsten'
-#
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Buffers, grass strips and source-oriented measures are used.
-#     """
-#
-#     # input choices
-#     specific_landuse = True
-#     c_factor_model = "indicator"
-#     symptom_oriented_packages = ["beheerovereenkomsten", "erosiebestrijdingswerken"]
-#     source_oriented_packages = ["beheerovereenkomsten"]
-#     buffers = True
-#     grass_strips = True
-#     source_oriented = True
-#
-#     # output: ton
-#     erosion = -16.69
-#     deposition = 14.12
-#     to_river = 0.90
-#     outside_domain = 0.19
-#     buffers = 0.10
-#     to_ditches = 0.68
-#     to_sewers = 0.41
-#
-#
-# class specific_landuse_indicator_no_measures:
-#     """Standard scenario parameters and output data for the flanders pipeline.
-#
-#     We encourage developers to have a look at the standard_scenarios_flanders-module
-#     for an explanation of the parameters.
-#
-#     Used for testing benchmarks for Flanders. The output numbers in this function are
-#     hardcoded and checked/adjusted manually.
-#
-#     This scenario covers the output data for the standard use case for Flanders:
-#
-#     - indicator: C-factors defined in the indicator are used, see
-#       :func:`pywatemsedem.flanders.standard_scenarios.apply_specific_landuse`.
-#
-#     - No symptom-oriented measures.
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - No source-oriented measures are implemented:
-#       See
-#       :func:`pywatemsedem.flanders.standard_scenarios_flanders.apply_erosion_control_measures`
-#
-#     - Buffers, grass strips and source-oriented measures are not used.
-#     """
-#
-#     # input choices
-#     specific_landuse = True
-#     c_factor_model = "indicator"
-#     symptom_oriented_packages = None
-#     source_oriented_packages = None
-#     buffers = False
-#     grass_strips = False
-#     source_oriented = False
-#
-#     # output: ton
-#     erosion = -19.85
-#     deposition = 15.86
-#     to_river = 1.41
-#     outside_domain = 0.21
-#     buffers = 0.00
-#     to_ditches = 1.09
-#     to_sewers = 0.73
+        cls.scenario = Scenario(cls.catchment, 2019, 1, choices)
