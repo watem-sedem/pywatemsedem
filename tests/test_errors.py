@@ -73,7 +73,7 @@ def test_raster_discrete_value_error_handling_with_classes(
 ):
     """Verify raster_discrete_value_error for both valid and invalid cases.
 
-    Special case where the classes are not considered.
+    Special case where the classes are provided.
 
     Parameters
     ----------
