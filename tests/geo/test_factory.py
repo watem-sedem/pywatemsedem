@@ -97,6 +97,6 @@ class TestFactory:
         with pytest.raises(IOError) as excinfo:
             f.raster_factory(GeoDataFrame())
         assert (
-            "Input 'Empty GeoDataFrame\nColumns: []\nIndex: []' should be a numpy array or raster file,"
-            in str(excinfo.value)
+            "Input 'Empty GeoDataFrame\nColumns: []\nIndex: []' should be a numpy array"
+            " or raster file," in str(excinfo.value)
         )

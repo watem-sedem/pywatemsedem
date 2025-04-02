@@ -286,7 +286,10 @@ class Factory:
         elif isinstance(vector_input, gpd.GeoDataFrame):
             vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
         else:
-            msg = f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector file."
+            msg = (
+                f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector"
+                " file."
+            )
             raise IOError(msg)
 
         return vector
