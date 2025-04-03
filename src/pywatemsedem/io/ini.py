@@ -195,7 +195,8 @@ class IniFile:
             - *BUF_ID* (float): Buffer id
 
         forced_routing: pandas.DataFrame
-            Forced routing table with columns, see :ref:`here <watemsedem:forcedroutingdata>`
+            Forced routing table with columns,
+            see :ref:`here <watemsedem:forcedroutingdata>`
 
             - *NR* (int):
             - *from col* (int): source pixel column
@@ -373,7 +374,7 @@ class IniFile:
                 )
             if n_fr > 0:
                 for nr, row in enumerate(forced_routing.itertuples()):
-                    sectie = f"Forced Routing {nr+1}"
+                    sectie = f"Forced Routing {nr + 1}"
                     self.cfg.add_section(sectie)
                     self.cfg.set(sectie, "from col", f"{int(row.fromcol)}")
                     self.cfg.set(sectie, "from row", f"{int(row.fromrow)}")

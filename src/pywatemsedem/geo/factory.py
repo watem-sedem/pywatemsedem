@@ -82,22 +82,24 @@ class Factory:
 
     @property
     def rp(self):
-        "RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"
+        """RasterProperties. See
+        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"""
         return self._rp
 
     @rp.setter
     def rp(self, rasterproperties):
-        "RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"
+        """RasterProperties. See
+        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"""
         self._rp = rasterproperties
 
     @property
     def mask(self):
-        "AbstractRaster mask"
+        """AbstractRaster mask"""
         return self._mask
 
     @property
     def vct_mask(self):
-        "AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`"
+        """AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`"""
         return self._vct_mask
 
     @mask.setter
@@ -255,7 +257,8 @@ class Factory:
             Mask vector (True), nodata value will be that one of
             `pywatemsedem.geo.factory.Factory.rp`.
         allow_empty: bool, default False
-            Allow vector to be empty, see :class:`pywatemsedem.geo.vectors.AbstractVector`
+            Allow vector to be empty, see
+            :class:`pywatemsedem.geo.vectors.AbstractVector`
 
         Returns
         -------
@@ -283,7 +286,10 @@ class Factory:
         elif isinstance(vector_input, gpd.GeoDataFrame):
             vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
         else:
-            msg = f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector file."
+            msg = (
+                f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector"
+                " file."
+            )
             raise IOError(msg)
 
         return vector

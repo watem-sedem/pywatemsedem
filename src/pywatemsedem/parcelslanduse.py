@@ -83,11 +83,11 @@ def create_parcels_landuse_degerick2015(
     (version VPO).
 
     This schemes map rasters from top to bottom : rivers, water, infrastructure,
-    grass strips, landuse from parcels data source, parcelsand finally pywatemsedem landuse.
-    Incemental mapping to the parcels landuse raster is done by mapping pixels from the
-    input raster to empty pixels in the landuse raster
-    (see also :func:`pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem landuse
-    raster is used to fill gaps.
+    grass strips, landuse from parcels data source, parcelsand finally pywatemsedem
+    landuse. Incemental mapping to the parcels landuse raster is done by mapping pixels
+    from the input raster to empty pixels in the landuse raster
+    (see also :func:`pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem
+    landuse raster is used to fill gaps.
 
     Parameters
     ----------

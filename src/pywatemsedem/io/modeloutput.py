@@ -1749,9 +1749,11 @@ def compute_cumulative_loads_in_sinks(
 
     # calculate percentage
     df_sediexport["perc"] = [
-        df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
-        if i != 0
-        else df_sediexport["cum_perc"].iloc[i]
+        (
+            df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
+            if i != 0
+            else df_sediexport["cum_perc"].iloc[i]
+        )
         for i in range(0, len(df_sediexport))
     ]
 

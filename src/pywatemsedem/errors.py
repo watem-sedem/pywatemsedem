@@ -4,17 +4,17 @@ from pywatemsedem.io.valid import valid_boundaries
 
 
 class PywatemsedemVectorAttributeError(Exception):
-    """Raise error when input data are not conform the required pywatemsedem attributes."""
+    """Raise error when input data don't conform the required pywatemsedem
+    attributes."""
 
 
 class PywatemsedemVectorAttributeValueError(Exception):
-    """Raise error when input data attribute values are not conform required attributes
+    """Raise error when input data attribute values don't conform required attributes
     values"""
 
 
 class PywatemsedemRasterValueError(Exception):
-    """Raise error when input data attribute values are not conform required
-    attributes
+    """Raise error when input data attribute values don't conform required attributes
     values"""
 
 

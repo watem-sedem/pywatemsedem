@@ -1,4 +1,5 @@
 """pywatemsedem grass strips processing functions"""
+
 import logging
 from pathlib import Path
 from typing import Callable
@@ -13,6 +14,8 @@ from pywatemsedem.geo.utils import (
     saga_intersection,
     vct_to_rst_field,
 )
+
+from .geo.utils import clean_up_tempfiles
 
 # Add new kte scaling functions here
 logger = logging.getLogger(__name__)
@@ -631,11 +634,11 @@ def core_expand_grass_strips_with_triggers(
     arr_grass_strips: numpy.ndarray
         Array with unique id's per grass strips
     arr_grass_strips_neighbours:
-        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
-        on grass strips array.
+        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`
+        applied on grass strips array.
     arr_triggers_neighbours: nump.ndarray
-        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
-        on triggers array.
+        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`
+        applied on triggers array.
     arr_parcels: nump.ndarray, default None
         Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
         value zero indicates that no parcel is present. If None, the expansion is not

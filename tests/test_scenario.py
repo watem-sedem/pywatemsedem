@@ -73,11 +73,11 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(counts, [28236, 5137, 11537, 4534])
 
     @pytest.mark.saga
-    def test_omit_water(self):
-        """Omit water to create WaTEM/SEDEM parcels raster. This self.scenario is used standard
-        in the initial development of pywatemsedem in Flanders."""
-        self.scenario.vct_parcels = scenario_data.parcels
-        self.scenario.catchm._vct_water = AbstractVector()
+    def test_omit_water(self, scenario):
+        """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
+        standard in the initial development of pywatemsedem in Flanders."""
+        scenario.vct_parcels = scenario_data.parcels
+        scenario.catchm._vct_water = AbstractVector()
 
         # test prepare model input on C-factor, ktc and landuse-raster
         self.scenario.composite_landuse = self.scenario.create_composite_landuse()
@@ -269,9 +269,9 @@ class TestCreateModel(ScenarioTestBase):
         assert True
 
     @pytest.mark.saga
-    def test_ommit_all(self):
-        """Ommit all input sources to create WaTEM/SEDEM parcels raster, except base land-use
-        raster"""
+    def test_ommit_all(self, scenario):
+        """Ommit all input sources to create WaTEM/SEDEM parcels raster, except base
+        land-use raster"""
         # TODO
         assert True
 
