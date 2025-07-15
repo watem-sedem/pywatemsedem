@@ -84,7 +84,8 @@ class TestGetItemFromIni:
         assert value == expected_bool
 
     def test_non_existant_section(self):
-        """Test if a ValueError is raised when a value from a non-existing section in the ini-file is wanted"""
+        """Test if a ValueError is raised when a value from a non-existing section in
+        the ini-file is wanted"""
         with pytest.raises(ValueError) as excinfo:
             get_item_from_ini(
                 ini_file,
@@ -97,7 +98,8 @@ class TestGetItemFromIni:
         )
 
     def test_non_existant_option(self):
-        """Test if a ValueError is raised when a value from a non-existing option in the ini-file is wanted"""
+        """Test if a ValueError is raised when a value from a non-existing option in
+        the ini-file is wanted"""
         with pytest.raises(ValueError) as excinfo:
             get_item_from_ini(
                 ini_file,
@@ -106,7 +108,8 @@ class TestGetItemFromIni:
                 dtype=bool,
             )
         assert (
-            "Option Not existing option does not exist in ini-file (section Test Section)"
+            "Option Not existing option does not exist in ini-file (section Test"
+            " Section)"
         ) in str(excinfo.value)
 
     def test_wrong_dtype_from_ini(self):

@@ -79,8 +79,8 @@ class TestCreateModel(ScenarioTestBase):
 
     @pytest.mark.saga
     def test_omit_water(self):
-        """Omit water to create WaTEM/SEDEM parcels raster. This self.scenario is used standard
-        in the initial development of pywatemsedem in Flanders."""
+        """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
+        standard in the initial development of pywatemsedem in Flanders."""
         self.scenario.vct_parcels = scenario_data.parcels
         self.scenario.catchm._vct_water = AbstractVector()
 
@@ -259,6 +259,27 @@ class TestCreateModel(ScenarioTestBase):
                 ]
             ),
         )
+
+    @pytest.mark.saga
+    def test_omit_river(self):
+        """Omit river to create WaTEM/SEDEM inputs."""
+        # TODO
+
+        assert True
+
+    @pytest.mark.saga
+    def test_omit_infrastructure(self):
+        """Omit infrastructure to create WaTEM/SEDEM parcels raster."""
+        # TODO
+        assert True
+
+    @pytest.mark.saga
+    def test_ommit_all(self):
+        """Ommit all input sources to create WaTEM/SEDEM parcels raster, except base
+        land-use raster"""
+        # TODO
+        assert True
+
 
 class TestEndpoints(ScenarioTestBase):
     """Tests functionalities for endpoints"""

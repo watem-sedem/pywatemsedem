@@ -16,7 +16,8 @@ class PywatemsedemInputError(Exception):
 
 
 class PywatemsedemTypeError(Exception):
-    """Raise when input data type are not conform the pywatemsedem required type format."""
+    """Raise when input data type don't conform the pywatemsedem required type
+    format."""
 
 
 def valid_polygonvector(vct, fun):
@@ -100,7 +101,8 @@ def valid_vectorlist(lst_vct, fun, req_type=None):
     fun: callable
         See :func:`pywatemsedem.geo.valid.valid_input`.
     req_type:
-        Required geometry type of vector. See :func:`pywatemsedem.geo.valid.valid_vector`
+        Required geometry type of vector. See
+        :func:`pywatemsedem.geo.valid.valid_vector`
 
     Note
     -----
@@ -247,7 +249,9 @@ def valid_input(func=None, dict=None):
 
     ::
 
-        from pywatemsedem.geo.utils import valid_input,valid_rasterlist,valid_polygonvector
+        from pywatemsedem.geo.utils import (
+            valid_input,valid_rasterlist,valid_polygonvector
+        )
         #note: only on-keyword arguments!
         @valid_input(dict={"lst_rst": valid_rasterlist, "vct_in": valid_polygonvector})
         def grid_statistics(lst_rst,vct_in):

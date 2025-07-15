@@ -170,7 +170,10 @@ def valid_vct_grass_strips(func):
         """wrapper"""
         if self.choices.dict_ecm_options["UseGras"] == 1:
             if self._vct_grass_strips.is_empty():
-                msg = "No (or empty) grass strips defined, but option 'UseGras' equal to 1."
+                msg = (
+                    "No (or empty) grass strips defined, but option 'UseGras' equal "
+                    "to 1."
+                )
                 raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -185,7 +188,10 @@ def valid_vct_buffers(func):
         """wrapper"""
         if self.choices.dict_ecm_options["Include buffers"] == 1:
             if self._vct_buffers.is_empty():
-                msg = "No (or empty) buffers defined, but option 'Include buffers' equal to 1."
+                msg = (
+                    "No (or empty) buffers defined, but option 'Include buffers' equal"
+                    " to 1."
+                )
                 warnings.warn(msg)
         return func(self, *args, **kwargs)
 
@@ -199,7 +205,10 @@ def valid_vct_outlets(func):
     def wrapper(self, *args, **kwargs):
         """wrapper"""
         if self._vct_outlets.is_empty():
-            msg = "Please define non-empty outlets point vector (see vct_outlets-property)!"
+            msg = (
+                "Please define non-empty outlets point vector "
+                "(see vct_outlets-property)!"
+            )
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -283,7 +292,8 @@ class Scenario:
         Parameters
         ----------
         catchm: pywatemsedem.core.catchment.Catchment
-            Instance of :class:`pywatemsedem catchment <pywatemsedem.catchment.Catchment>`
+            Instance of
+            :class:`pywatemsedem catchment <pywatemsedem.catchment.Catchment>`
             containing the catchment characteristics.
         year: int
             Simulation year
@@ -803,7 +813,7 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
-        self._vct_ditches = self.vector_factory(vector_input, "Polygon")
+        self._vct_ditches = self.vector_factory(vector_input, "LineString")
 
     @property
     def vct_conductive_dams(self):
@@ -819,7 +829,7 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
-        self._vct_condictive_dams = self.vector_factory(vector_input, "Polygon")
+        self._vct_condictive_dams = self.vector_factory(vector_input, "LineString")
 
     def conductive_dams(self):
         """Getter conductive dams
@@ -968,9 +978,9 @@ class Scenario:
 
         Notes
         -----
-        1. In the WaTEM/SEDEM pywatemsedem engine, endpoints are named "sewers", see also
-           :ref:`here <watemsedem:sewermapfile>`. Note that in pywatemsedem, type of endpoints can
-           be defined (ditches, sewers).
+        1. In the WaTEM/SEDEM pywatemsedem engine, endpoints are named "sewers", see
+         also :ref:`here <watemsedem:sewermapfile>`. Note that in pywatemsedem, type
+         of endpoints can be defined (ditches, sewers).
         """
         self._vct_endpoints = self.vector_factory(
             vector_input, "LineString", allow_empty=True
