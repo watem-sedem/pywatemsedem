@@ -803,7 +803,7 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
-        self._vct_ditches = self.vector_factory(vector_input, "Polygon")
+        self._vct_ditches = self.vector_factory(vector_input, "LineString")
 
     @property
     def vct_conductive_dams(self):
@@ -819,7 +819,7 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
-        self._vct_condictive_dams = self.vector_factory(vector_input, "Polygon")
+        self._vct_condictive_dams = self.vector_factory(vector_input, "LineString")
 
     def conductive_dams(self):
         """Getter conductive dams
