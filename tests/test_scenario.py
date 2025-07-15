@@ -41,7 +41,6 @@ class TestCreateModel(ScenarioTestBase):
 
     @pytest.mark.saga
     def test_all(self):
-
         """Create WaTEM/SEDEM parcels raster with all possible input vectors/rasters"""
         self.scenario.vct_parcels = scenario_data.parcels
         self.scenario.composite_landuse = self.scenario.create_composite_landuse()
