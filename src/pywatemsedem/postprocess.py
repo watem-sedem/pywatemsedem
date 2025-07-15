@@ -855,9 +855,12 @@ class PostProcess(Factory):
 
         # calculate percentage
         df_sediexport["perc"] = [
-            df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
-            if i != 0
-            else df_sediexport["cum_perc"].iloc[i]
+            (
+                df_sediexport["cum_perc"].iloc[i]
+                - df_sediexport["cum_perc"].iloc[i - 1]
+                if i != 0
+                else df_sediexport["cum_perc"].iloc[i]
+            )
             for i in range(0, len(df_sediexport))
         ]
 
@@ -1711,8 +1714,8 @@ def split_endpoints_in_raster(
 
     Note
     ----
-    Note that sewers in WaTEM/SEDEM are endpoints in pywatemsedem, such to make a distinction
-    between sewers and ditches in pywatemsedem.
+    Note that sewers in WaTEM/SEDEM are endpoints in pywatemsedem, such to make a
+    distinction between sewers and ditches in pywatemsedem.
     """
 
     # load sewer id's and sewer in (kg per pixel)
@@ -1937,9 +1940,9 @@ def merge_grass_strip_id_and_sediout_to_routing(
         df_grass_strips[f"gras_id_{i}"] = df_grass_strips["val"]
 
     for target_id in [1, 2]:
-        df_grass_strips[
-            [f"target{target_id}row", f"target{target_id}col"]
-        ] = df_grass_strips[["row", "col"]]
+        df_grass_strips[[f"target{target_id}row", f"target{target_id}col"]] = (
+            df_grass_strips[["row", "col"]]
+        )
 
     # define sedout and index cols to join on
     df_sediout["sediout"] = df_sediout["val"]
@@ -2820,12 +2823,12 @@ def process_filename(
 
 
 def read_filestructure(txt_filestructure=None, sep=","):
-    """Read the pywatemsedem filestructure flanders file containing an overview of the files
-    used for pywatemsedem flanders.
+    """Read the pywatemsedem filestructure flanders file containing an overview of the
+    files used for pywatemsedem flanders.
 
-    The filestructure contains information on files written on disk by pywatemsedem. This
-    file is used by the :class:`pywatemsedem.core.postprocess.PostProcess` object and
-    :class:`pywatemsedem.core.merge_scenarios.SpatialMergeScenarios`.
+    The filestructure contains information on files written on disk by pywatemsedem.
+    This file is used by the :class:`pywatemsedem.core.postprocess.PostProcess` object
+    and :class:`pywatemsedem.core.merge_scenarios.SpatialMergeScenarios`.
 
     The filestructure pywatemsedem file can be used for to regenerate the filenames
     in a ``scenario_x`` folder without having to have the pywatemsedem objects loaded in
@@ -2834,8 +2837,8 @@ def read_filestructure(txt_filestructure=None, sep=","):
     Parameters
     ----------
     txt_filestructure : str or pathlib.Path, default None
-        File path of table holding all data files/folder path references used in pywatemsedem
-        flanders.
+        File path of table holding all data files/folder path references used in
+        pywatemsedem flanders.
     sep : str, default ","
         Delimiter of the text file.
 
@@ -2864,11 +2867,11 @@ def read_filestructure(txt_filestructure=None, sep=","):
 
     Note
     ----
-    1. When no text data set file is defined, than the default defined in this
-       package is used.
+    1. When no text data set file is defined, than the default defined in this package
+       is used.
     2. Although the filestructure applies to pywatemsedem flanders, it is defined in the
-       pywatemsedem postprocess.py core function, as the postprocess.py script contains many
-       functionalities only coupled to flanders.
+       pywatemsedem postprocess.py core function, as the postprocess.py script contains
+       many functionalities only coupled to flanders.
 
     Example
     -------
