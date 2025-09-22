@@ -446,24 +446,25 @@ def expand_grass_strips_with_triggers(
 
     Examples
     --------
+    >>> import numpy as np
     >>> # triggers (for instance river, road)
     >>> arr_triggers = np.array([[1, 0, 0, 0],
-    >>>                        [0, 1, 0, 0],
-    >>>                        [0, 0, 1, 0],
-    >>>                        [0, 0, 0, 1]])
+    ...                          [0, 1, 0, 0],
+    ...                          [0, 0, 1, 0],
+    ...                          [0, 0, 0, 1]])
     >>> # parcel ids
     >>> arr_parcels_id = np.array([[0, 3, 3, 3],
-    >>>                            [1, 0, 2, 2],
-    >>>                            [1, 1, 0, 2],
-    >>>                            [1, 1, 1, 0]])
+    ...                            [1, 0, 2, 2],
+    ...                            [1, 1, 0, 2],
+    ...                            [1, 1, 1, 0]])
     >>> # input gras id's
     >>> arr_grass_strips = np.array([[0, 0, 0, 0],
-    >>>                            [0, 0, 0, 0],
-    >>>                            [0, 0, 0, 1],
-    >>>                            [0, 0, 0, 1]])
+    ...                              [0, 0, 0, 0],
+    ...                              [0, 0, 0, 1],
+    ...                              [0, 0, 0, 1]])
     >>> # execute
     >>> arr_out = expand_grass_strips_with_triggers(
-    >>>    arr_grass_strips, arr_triggers, arr_parcels_id)
+    ...    arr_grass_strips, arr_triggers, arr_parcels_id)
 
     Notes
     -----
