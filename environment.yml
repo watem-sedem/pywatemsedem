@@ -8,9 +8,7 @@ dependencies:
   - pandas
   - numpy
   - rasterio
-  - xlrd
   - matplotlib
-  - openpyxl
   - scikit-learn
   - libgdal
   - pandoc
