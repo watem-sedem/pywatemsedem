@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - python
+  - fiona
   - geopandas
   - pandas
   - numpy
