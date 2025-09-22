@@ -447,6 +447,7 @@ def expand_grass_strips_with_triggers(
     Examples
     --------
     >>> import numpy as np
+    >>> from pywatemsedem.grasstrips import expand_grass_strips_with_triggers
     >>> # triggers (for instance river, road)
     >>> arr_triggers = np.array([[1, 0, 0, 0],
     ...                          [0, 1, 0, 0],
