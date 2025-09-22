@@ -1,7 +1,6 @@
 name: pywatemsedem
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python
   - fiona
