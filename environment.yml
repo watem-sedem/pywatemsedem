@@ -11,4 +11,3 @@ dependencies:
   - matplotlib
   - scikit-learn
   - libgdal
-  - pandoc
