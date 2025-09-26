@@ -1,6 +1,7 @@
 import logging
 import platform
 import shutil
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -280,3 +281,25 @@ def check_courant_criterium(velocity, time_step, resolution, factor=0.75):
     else:
         time_step_posterior = time_step
     return time_step_posterior
+
+
+def package_resource(folder_paths, file_path):
+    """Provide backward compatible package resources load function
+
+    Parameters
+    ----------
+    folder_paths : list
+        List of folders and subfolders to get resources from.
+    file_path : str
+        File name of the package resource.
+    """
+    if sys.version_info < (3, 10):
+        from pkg_resources import resource_filename
+
+        return resource_filename(
+            "pywatemsedem", f"{'/'.join(folder_paths)}/{file_path}"
+        )
+    else:
+        from importlib.resources import files
+
+        return files(f"pywatemsedem.{'.'.join(folder_paths)}").joinpath(file_path)
