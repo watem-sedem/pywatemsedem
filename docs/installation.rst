@@ -16,7 +16,7 @@ Using conda
 -----------
 
 When using conda, you can setup the environment using the ``environment.yml``
-file included in this repository:
+file included in this repository.
 
 .. code-block:: bash
 
