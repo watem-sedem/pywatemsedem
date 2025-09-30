@@ -16,17 +16,7 @@ Using conda
 -----------
 
 When using conda, you can setup the environment using the ``environment.yml``
-file included in this repository. However, it is important to configure
-the channel conda-forge as the default channel to get up-to-date
-scientific and data science packages like gdal:
-
-.. conda-block:: bash
-
-    conda config --add channels conda-forge
-
-    conda config --set channel_priority strict
-
-Next, you can create the pywatemsedem environment and install pywatemsedem:
+file included in this repository.
 
 .. code-block:: bash
 
