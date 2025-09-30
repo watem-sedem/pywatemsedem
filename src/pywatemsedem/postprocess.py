@@ -2891,11 +2891,9 @@ def read_filestructure(txt_filestructure=None, sep=","):
     if txt_filestructure is None:
         ds = package_resource(["data"], "postprocess_files.csv")
     else:
-        ds = open(txt_filestructure, mode="r")
+        ds = txt_filestructure
 
     df_filestructure_flanders = pd.read_csv(ds, sep=sep)
-
-    ds.close()
 
     cols = {
         "tag_variable",
