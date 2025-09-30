@@ -44,9 +44,26 @@ class TestCreateModel(ScenarioTestBase):
         """Create WaTEM/SEDEM parcels raster with all possible input vectors/rasters"""
         self.scenario.vct_parcels = scenario_data.parcels
         self.scenario.composite_landuse = self.scenario.create_composite_landuse()
+
+        # Composite land-use (test number of parcels pixels, and not unique id's)
+        arr = self.scenario.composite_landuse.arr
+        arr[arr > 0] = 1
+        un, counts = np.unique(arr, return_counts=True)
+        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
+        np.testing.assert_allclose(counts, [53, 4031, 1107, 3947, 534, 28236, 11536])
+
+        # Assign C-factor
         self.scenario.cfactor = self.scenario.create_cfactor(
             bool(self.scenario.choices.dict_ecm_options["UseTeelttechn"])
         )
+
+        # c-factor
+        un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
+
+        np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
+        np.testing.assert_allclose(counts, np.array([32737, 1111, 4057, 11539]))
+
+        # Assign ktc
         self.scenario.ktc = self.scenario.create_ktc(
             self.scenario.choices.dict_variables["ktc low"],
             self.scenario.choices.dict_variables["ktc high"],
@@ -54,23 +71,10 @@ class TestCreateModel(ScenarioTestBase):
             self.scenario.choices.dict_model_options["UserProvidedKTC"],
         )
 
-        # Composite land-use (test number of parcels pixels, and not unique id's)
-        arr = self.scenario.composite_landuse.arr
-        arr[arr > 0] = 1
-        un, counts = np.unique(arr, return_counts=True)
-        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [53, 4030, 1107, 3947, 534, 28236, 11537])
-
-        # c-factor
-        un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
-
-        np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32737, 1111, 4056, 11540]))
-
         # kTC
         un, counts = np.unique(self.scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28236, 5137, 11537, 4534])
+        np.testing.assert_allclose(counts, [28236, 5138, 11536, 4534])
 
     @pytest.mark.saga
     def test_omit_water(self):
@@ -95,17 +99,17 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4056, 1111, 3965, 534, 28236, 11540])
+        np.testing.assert_allclose(counts, [2, 4057, 1111, 3965, 534, 28236, 11539])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32737, 1111, 4056, 11540]))
+        np.testing.assert_allclose(counts, np.array([32737, 1111, 4057, 11539]))
 
         # kTC
         un, counts = np.unique(self.scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28236, 5167, 11540, 4501])
+        np.testing.assert_allclose(counts, [28236, 5168, 11539, 4501])
 
     @pytest.mark.saga
     def test_omit_parcels(self):
@@ -126,17 +130,17 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4056, 1111, 3965, 534, 28236, 11540])
+        np.testing.assert_allclose(counts, [2, 4057, 1111, 3965, 534, 28236, 11539])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32737, 1111, 4056, 11540]))
+        np.testing.assert_allclose(counts, np.array([32737, 1111, 4057, 11539]))
 
         # kTC
         un, counts = np.unique(self.scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28236, 5167, 11540, 4501])
+        np.testing.assert_allclose(counts, [28236, 5168, 11539, 4501])
 
     @pytest.mark.saga
     def test_add_grass_strips(self):
@@ -166,7 +170,7 @@ class TestCreateModel(ScenarioTestBase):
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-6, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
         np.testing.assert_allclose(
-            counts, [1529, 2, 3844, 1011, 3965, 534, 28236, 10323]
+            counts, [1529, 2, 3845, 1011, 3965, 534, 28236, 10322]
         )
 
         # c-factor
@@ -196,7 +200,7 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(
             counts,
             np.array(
-                [32737, 1011, 4164, 39, 199, 43, 201, 19, 433, 2, 15, 245, 13, 10323]
+                [32737, 1011, 4165, 39, 199, 43, 201, 19, 433, 2, 15, 245, 13, 10322]
             ),
         )
 
@@ -246,10 +250,10 @@ class TestCreateModel(ScenarioTestBase):
                     433,
                     2,
                     15,
-                    4855,
+                    4856,
                     245,
                     13,
-                    10323,
+                    10322,
                     4501,
                 ]
             ),
