@@ -23,14 +23,14 @@ class DeltaScenario:
 
     Examples
     --------
-    Define inputs
-        >>> pp1 = PostProcess(molenbeek, 1, 2019, 20, 31370)
-        >>> pp2 = PostProcess(molenbeek, 2, 2019, 20, 31370)
-
-    Run
+        >>> # Define inputs
+        >>> from pywatemsedem.postprocess import PostProcess
+        >>> pp1 = PostProcess("molenbeek", 1, 2019, 20, 31370)
+        >>> pp2 = PostProcess("molenbeek", 2, 2019, 20, 31370)
+        >>> # run
+        >>> from pywatemsedem.compare_scenario import DeltaScenario
         >>> delta_scenario = DeltaScenario(pp1,pp2)
         >>> delta_scenario.comparison_total_sediment_file()
-        >>> ...
     """
 
     def __init__(self, pp1, pp2, resmap=None):

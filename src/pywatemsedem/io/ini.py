@@ -766,7 +766,7 @@ def get_item_from_ini(ini, section, option, dtype):
     dtype: dtype
         Type of parameter to be read (str, int, float or bool).
         If another string is given to this parameter, a
-       TypeError is raised.
+        TypeError is raised.
 
     Returns
     -------
