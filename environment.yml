@@ -2,11 +2,11 @@ name: pywatemsedem
 channels:
   - conda-forge
 dependencies:
-  - python
+  - python=3.11
   - geopandas
   - pandas
   - numpy
   - rasterio
   - matplotlib
   - scikit-learn
-  - libgdal
+  - libgdal=3.11
