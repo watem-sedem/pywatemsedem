@@ -10,10 +10,10 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import pyogrio
 import rasterio
 from rasterio.features import shapes
 from rasterio.merge import merge
@@ -292,9 +292,8 @@ def get_fields_vct(vct):
     list
         Field names of the shape/vector-file.
     """
-    with fiona.open(vct) as c:
-        fields = c.schema["properties"].keys()
-        return fields
+    fields = pyogrio.read_info(vct)["fields"]
+    return fields
 
 
 @valid_input(dict={"vct": valid_vector})
@@ -309,10 +308,9 @@ def get_geometry_type(vct):
     Returns
     -------
     str
-        Geometry type (see fiona documentation for all possibilities)
+        Geometry type (see gdal documentation for all possibilities)
     """
-    with fiona.open(vct) as c:
-        geom = c.schema["geometry"]
+    geom = pyogrio.read_info(vct)["geometry_type"]
     return geom
 
 
@@ -542,8 +540,7 @@ def get_feature_count(vct):
     nr_features: int
         Number of features in the shapefile
     """
-    with fiona.open(vct) as c:
-        nr_features = len(c)
+    nr_features = pyogrio.read_info(vct)["features"]
     return nr_features
 
 
@@ -671,8 +668,7 @@ def get_extent_vct(vct):
     tuple
         xmin, ymin, xmax, ymax
     """
-    with fiona.open(vct) as c:
-        extent = c.bounds
+    extent = pyogrio.read_info(vct)["total_bounds"]
     return extent  # xmin, ymin, xmax, ymax
 
 
@@ -1004,14 +1000,14 @@ def check_single_polygon(vct):
     vct: str or pathlib.Path
         File path of the shapefile
     """
-    with fiona.open(vct) as c:
-        nr_polygons = len(c)
-        if nr_polygons != 1:
-            msg = (
-                f"Catchment polygon should be a single polygon, current "
-                f"catchment polygon holds '{nr_polygons}' polygons."
-            )
-            IOError(msg)
+    nr_polygons = pyogrio.read_info(vct)["features"]
+
+    if nr_polygons != 1:
+        msg = (
+            f"Catchment polygon should be a single polygon, current "
+            f"catchment polygon holds '{nr_polygons}' polygons."
+        )
+        IOError(msg)
 
 
 @valid_input(dict={"vct_in": valid_vector})
@@ -2001,7 +1997,7 @@ def execute_subprocess(cmd_args):
     """
     try:
         logger.debug(cmd_args)
-        subprocess.run(cmd_args, check=True, capture_output=True)
+        subprocess.run(cmd_args, check=True, capture_output=True, shell=True)
     except subprocess.CalledProcessError as e:
         logger.error(e.stdout.decode())
         logger.error(e.stderr.decode())
@@ -2075,15 +2071,15 @@ def define_extent_from_vct(
     rp: RasterProperties see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
 
     """
-    with fiona.open(vct_catchment) as c:
-        # Get spatial extent of catchment.
-        extent = c.bounds
-        minmax = [
-            round(extent[0]) - buffer,
-            round(extent[1]) - buffer,
-            round(extent[2]) + buffer,
-            round(extent[3]) + buffer,
-        ]
+    # Get spatial extent of catchment.
+    extent = get_extent_vct(vct_catchment)
+
+    minmax = [
+        round(extent[0]) - buffer,
+        round(extent[1]) - buffer,
+        round(extent[2]) + buffer,
+        round(extent[3]) + buffer,
+    ]
 
     if bounds is not None:
         for i in range(4):
