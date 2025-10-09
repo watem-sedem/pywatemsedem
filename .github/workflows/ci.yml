@@ -12,11 +12,11 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.11']
 
     steps:
     - uses: actions/checkout@v3
@@ -31,7 +31,7 @@ jobs:
         pip install tox
         sudo apt-get install -y gdal-bin saga wget pandoc
         gdal_translate --version # echo version for debugging
-        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2023.10.24/saga-vpo_20231024090715-6-g45d8ba6.jammy_amd64.deb
+        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2023.10.24/saga-vpo_20231024090715-6-g45d8ba6.noble_amd64.deb
         sudo dpkg -i saga-vpo*.deb
     - name: Run precommit hooks & linting
       run: |
