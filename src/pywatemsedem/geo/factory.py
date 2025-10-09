@@ -2,11 +2,10 @@ import inspect
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
+import pyogrio
 import rasterio
-from fiona.collection import DriverError
 from rasterio import RasterioIOError
 
 from .rasterproperties import RasterProperties
@@ -144,8 +143,8 @@ class Factory:
             create_mask_vector = True
         except RasterioIOError:
             try:
-                fiona.open(mask)
-            except DriverError:
+                pyogrio.read_info(mask)
+            except pyogrio.errors.DataSourceError:
                 msg = f"Input mask '{mask}' should be raster or vector polygon file."
                 raise IOError(msg)
             else:
@@ -270,8 +269,8 @@ class Factory:
             vector_input = Path(vector_input)
         if isinstance(vector_input, Path):
             try:
-                fiona.open(vector_input)
-            except fiona.errors.DriverError:
+                pyogrio.read_info(vector_input)
+            except pyogrio.errors.DataSourceError:
                 msg = (
                     f"Input vector file '{vector_input}' should be a valid "
                     f"vector file (e.g. ESRI shape file)."
