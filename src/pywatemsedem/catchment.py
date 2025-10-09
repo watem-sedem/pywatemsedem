@@ -3,10 +3,10 @@ import warnings
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import pyogrio
 from matplotlib import colors
 from matplotlib import pyplot as plt
 
@@ -533,8 +533,8 @@ class Catchment(Factory):
                 except OSError as e:
                     if "corrupted size vs. prev_size in fastbins" in str(e):
                         try:
-                            fiona.open(vct_output)
-                        except fiona.errors.DriverError:
+                            pyogrio.read_info(vct_output)
+                        except pyogrio.errors.DataSourceError:
                             raise IOError(e)
                 create_spatial_index(vct_output)
         else:
@@ -845,8 +845,8 @@ class Catchment(Factory):
         except OSError as e:
             if "corrupted size vs. prev_size in fastbins" in str(e):
                 try:
-                    fiona.open(vct_output)
-                except fiona.errors.DriverError:
+                    pyogrio.read_info(vct_output)
+                except pyogrio.errors.DataSourceError:
                     raise IOError(e)
 
         cmd_args = ["saga_cmd", SAGA_FLAGS, "topology", "1"]
@@ -862,7 +862,7 @@ class Catchment(Factory):
                 try:
                     pd.read_csv(str(temp_adjacent_edges), sep="\t")
                     pd.read_csv(str(temp_up_edges), sep="\t")
-                except fiona.errors.DriverError:
+                except Exception:
                     raise IOError(e)
 
         adjacent_edges = pd.read_csv(str(temp_adjacent_edges), sep="\t")

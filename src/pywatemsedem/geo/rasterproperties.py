@@ -1,8 +1,8 @@
 import warnings
 from typing import List
 
-import fiona
 import numpy as np
+import pyogrio
 from pyproj import CRS
 from pyproj.exceptions import CRSError
 from rasterio import Affine
@@ -348,15 +348,14 @@ def get_bounds_from_vct(vct_catchment, resolution, n_pixels_buffer=5):
     bounds: list
         See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
     """
-    with fiona.open(vct_catchment) as c:
-        # Get spatial extent of catchment.
-        bounds = c.bounds
-        bounds = [
-            round(bounds[0]) - n_pixels_buffer * resolution,
-            round(bounds[1]) - n_pixels_buffer * resolution,
-            round(bounds[2]) + n_pixels_buffer * resolution,
-            round(bounds[3]) + n_pixels_buffer * resolution,
-        ]
+    _, bounds = pyogrio.read_bounds(vct_catchment)
+
+    bounds = [
+        round(bounds[0]) - n_pixels_buffer * resolution,
+        round(bounds[1]) - n_pixels_buffer * resolution,
+        round(bounds[2]) + n_pixels_buffer * resolution,
+        round(bounds[3]) + n_pixels_buffer * resolution,
+    ]
 
     return bounds
 

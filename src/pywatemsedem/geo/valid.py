@@ -2,10 +2,9 @@ from functools import wraps
 from inspect import signature
 from pathlib import Path
 
-import fiona
 import numpy as np
+import pyogrio
 import rasterio
-from fiona.errors import DriverError
 from rasterio.errors import RasterioIOError
 
 from .rasterproperties import RasterProperties
@@ -140,20 +139,19 @@ def valid_vector(vct, fun, req_type=None):
         msg = f"Geomtry type '{req_type}' not known."
         raise IOError(msg)
     try:
-        c = fiona.open(vct)
+        geometry = pyogrio.read_info(vct)["geometry_type"]
         if req_type is not None:
-            if c.schema["geometry"] is not req_type:
+            if geometry is not req_type:
                 msg = (
-                    f"Geometry input type ('{c.schema['geometry']}') of '{vct}' is "
+                    f"Geometry input type ('{geometry}') of '{vct}' is "
                     f"not of "
                     f"type '{req_type}', cannot execute '{fun.__name__}'."
                 )
                 raise PywatemsedemTypeError(msg)
-        c.close()
 
-    except DriverError:
+    except pyogrio.errors.DataSourceError:
         msg = (
-            f"The fiona engine in pywatemsedem cannot open '{vct}' as it is not "
+            f"The pyogrio engine in pywatemsedem cannot open '{vct}' as it is not "
             f"recognized as a supported file format, cannot execute '{fun.__name__}'."
         )
         raise PywatemsedemTypeError(msg)
