@@ -1997,7 +1997,7 @@ def execute_subprocess(cmd_args):
     """
     try:
         logger.debug(cmd_args)
-        subprocess.run(cmd_args, check=True, capture_output=True, shell=True)
+        subprocess.run(cmd_args, check=True, capture_output=True)
     except subprocess.CalledProcessError as e:
         logger.error(e.stdout.decode())
         logger.error(e.stderr.decode())
