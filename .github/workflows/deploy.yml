@@ -4,7 +4,7 @@ on:
     types: [created]
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     environment: release
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
