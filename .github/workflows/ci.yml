@@ -29,6 +29,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install tox
+        sudo apt-get update
         sudo apt-get install -y gdal-bin saga wget pandoc
         gdal_translate --version # echo version for debugging
         wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2025.6.11/saga-vpo_2025.6.11-1-ge95f136.noble_amd64.deb
