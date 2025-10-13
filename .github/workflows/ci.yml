@@ -31,7 +31,7 @@ jobs:
         pip install tox
         sudo apt-get install -y gdal-bin saga wget pandoc
         gdal_translate --version # echo version for debugging
-        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2023.10.24/saga-vpo_20231024090715-6-g45d8ba6.noble_amd64.deb
+        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2025.6.11/saga-vpo_2025.6.11-1-ge95f136.noble_amd64.deb
         sudo dpkg -i saga-vpo*.deb
     - name: Run precommit hooks & linting
       run: |
