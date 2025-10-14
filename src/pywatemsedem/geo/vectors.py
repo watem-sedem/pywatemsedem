@@ -206,7 +206,7 @@ class AbstractVector:
             clean_up_tempfiles(tf_rst, "tiff")
 
         else:
-            tf_rst = create_filename(".sgrid")
+            tf_rst = create_filename(".sgrd")
             if self._geometry_type == "LineString":
                 if convert_lines_to_direction:
                     lines_to_direction(vct_temp, tf_rst, rst_reference)

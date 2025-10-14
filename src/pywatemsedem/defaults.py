@@ -9,7 +9,6 @@ SUFFIXES_SAGA = [
     ".sgrd",
     ".sdat.aux.xml",
     ".mgrd",
-    ".sgrid",
     ".sdat",
     ".prj",
 ]  # TODO: why is .prj added?
