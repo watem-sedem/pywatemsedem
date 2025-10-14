@@ -764,16 +764,17 @@ def compute_statistics_rasters_per_polygon_vector(
     Examples
     --------
 
+    >>> from pywatemsedem.geo.utils import compute_statistics_rasters_per_polygon_vector
     >>> vct_aho = "AHO.shp"
     >>> vct_out = "statistics_aho.shp"
     >>> rst_sewerin ="sewerin.rst"
     >>> rst_sediexport ="SediExport.rst"
     >>> compute_statistics_rasters_per_polygon_vector(vct_aho,
-    >>>                                                   vct_out,
-    >>>                                                   [rst_sewerin,rst_sediexport]
-    >>>                                                   ["River","Sewers"],
-    >>>                                                   {"COUNT":True,"SUM":True},
-    >>>                                                   ton = True)
+    ...                                               vct_out,
+    ...                                               [rst_sewerin, rst_sediexport],
+    ...                                               ["River","Sewers"],
+    ...                                               {"COUNT":True,"SUM":True},
+    ...                                               ton = True)
     """
     grid_statistics(lst_rasters, vct_polygon, vct_out, **dict_operators)
 

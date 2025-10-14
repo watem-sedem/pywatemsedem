@@ -137,9 +137,9 @@ class PostProcess(Factory):
 
     Examples
     --------
-    >>> from pywatemsedem.postprocess import PostProcess()
+    >>> from pywatemsedem.postprocess import PostProcess
     >>> pp = PostProcess(r"molenbeek", 20, 1, 2019, 31370) # note that the folder
-    >>> #modelbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
+    >>> #molenbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
     >>> pp.make_routing_vct() #make a vector file of the text routig file.
 
     """

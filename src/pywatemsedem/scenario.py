@@ -1388,7 +1388,8 @@ class Scenario:
         -----
         1. Requires assignment of C-factor and composite land-use raster.
         2. The ktc values for grass strips are scaled according to their width (see
-        :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`) if grass strips are used.
+           :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`) if grass strips are used
+
         """
         if user_provided_ktc == 1:
             ktc, _ = create_ktc(
