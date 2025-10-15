@@ -303,7 +303,6 @@ class TestEndpoints(ScenarioTestBase):
         np.testing.assert_allclose(counts, [48970, 394, 80])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_vct_endpoints_efficiency(self, recwarn):
         """Test vector endpoints assignment with user-defined 'efficiency' column"""
         # feed a self-defined efficiency column (with 10 linestring to 75 %, remaining
