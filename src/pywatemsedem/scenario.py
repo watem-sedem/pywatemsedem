@@ -1004,7 +1004,7 @@ class Scenario:
 
         self._vct_endpoints.geodata["efficiency"] = self._vct_endpoints.geodata[
             "efficiency"
-        ].astype(np.float64)
+        ].astype(np.float32)
 
     @property
     @valid_vct_endpoints
@@ -1056,7 +1056,7 @@ class Scenario:
 
         self.vct_endpoints.geodata["efficiency"] = self.vct_endpoints.geodata[
             "efficiency"
-        ].astype(float)
+        ].astype(np.float32)
         arr = self.vct_endpoints.rasterize(
             self.catchm.rasterfile_mask,
             31370,
