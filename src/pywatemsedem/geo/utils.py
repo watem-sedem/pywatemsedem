@@ -1141,7 +1141,8 @@ def polygons_to_raster(vct_polygon, rst_out, rst_template, field, dtype):
         grid_type = "7"  # 4 byte floating point
     else:
         grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-GRID_TYPE", grid_type]
+    cmd_args += ["-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
     execute_saga(cmd_args)
 
@@ -1171,15 +1172,16 @@ def lines_to_raster(vct_line, rst_out, rst_template, field, dtype):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_line), "-FIELD", str(field)]
     cmd_args += ["-OUTPUT", "2", "-LINE_TYPE", "1"]
+    grid_type = None
     if dtype == "integer":
-        grid_type = "6"  # 4 byte unsigned integer
+        grid_type = "unsigned 4 byte integer"
     elif dtype == "float":
-        grid_type = "7"  # 4 byte floating point
-    else:
-        grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
-    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+        grid_type = "4 byte floating point number"
 
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+    print(cmd_args)
     try:
         execute_subprocess(cmd_args)
     except OSError as e:

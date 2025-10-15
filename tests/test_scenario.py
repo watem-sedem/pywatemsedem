@@ -284,7 +284,6 @@ class TestEndpoints(ScenarioTestBase):
     """Tests functionalities for endpoints"""
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_vct_endpoints(self):
         """Test vector endpoints assignment"""
 
