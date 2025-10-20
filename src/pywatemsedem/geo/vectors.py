@@ -13,6 +13,7 @@ from .utils import (
     lines_to_direction,
     lines_to_raster,
     load_raster,
+    points_to_raster,
     polygons_to_raster,
     read_rasterio_profile,
     vct_to_rst_field,
@@ -218,8 +219,7 @@ class AbstractVector:
                     raise IOError(msg)
                 polygons_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
             elif self._geometry_type == "Point":
-                msg = "Rasterisation of points is not implemented."
-                raise NotImplementedError(msg)
+                points_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
 
             arr, profile = load_raster(tf_rst.with_suffix(".sdat"))
             # correct no data value if necessary

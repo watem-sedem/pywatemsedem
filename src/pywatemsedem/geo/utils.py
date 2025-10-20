@@ -1110,6 +1110,44 @@ def execute_saga(cmd_args):
             print(e.output.decode())
 
 
+@valid_input(dict={"vct_point": valid_pointvector, "rst_template": valid_raster})
+def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
+    """Converts a polygon shapefile to a raster
+
+    Parameters
+    ----------
+    vct_point: str or pathlib.Path
+        File path of input point shapefile
+    rst_out: str or pathlib.Path
+        File path of output rasterfile
+    rst_template: str or pathlib.Path
+        File path to a template raster
+    field: str
+        The field of the shapefile containing the values for the raster
+    dtype: str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+
+    Note
+    -----
+    Uses and relies on saga_cmd CLI
+
+    """
+    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
+    cmd_args += ["-INPUT", str(vct_point), "-FIELD", str(field)]
+    cmd_args += ["-OUTPUT", "2", "-POLY_TYPE", "1"]
+    grid_type = None
+    if dtype == "integer":
+        grid_type = "unsigned 4 byte integer"
+    elif dtype == "float":
+        grid_type = "4 byte floating point number"
+
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+    execute_saga(cmd_args)
+
+
 @valid_input(dict={"vct_polygon": valid_polygonvector, "rst_template": valid_raster})
 def polygons_to_raster(vct_polygon, rst_out, rst_template, field, dtype):
     """Converts a polygon shapefile to a raster
