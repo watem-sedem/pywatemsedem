@@ -394,9 +394,10 @@ class TestParcels(ScenarioTestBase):
         # catch warning
         w = recwarn.pop(UserWarning)
         assert (
-            str(w.message) == "Parcels raster has values higher than the maximum "
-            "allowed number for WaTEM/SEDEM definition (i.e. 32767). "
-            "Setting values above 32767 to 32767."
+            str(w.message)
+            == "Parcels NR has values higher than the maximum allowed number "
+            "for WaTEM/SEDEM definition (i.e. 32767). Setting values above "
+            "32767 to 32767."
         )
         assert np.max(self.scenario.parcels.arr) == 32767
         assert np.max(self.scenario.parcels_ids.arr) == 32767
