@@ -452,7 +452,7 @@ class Scenario:
 
         self._vct_parcels.geodata["LANDUSE"] = self._vct_parcels.geodata[
             "LANDUSE"
-        ].astype(float)
+        ].astype(int)
 
     @property
     def parcels(self):
@@ -506,6 +506,7 @@ class Scenario:
                 self.catchm.rasterfile_mask,
                 self.rp.epsg,
                 col="NR",
+                dtype_raster="integer",
                 gdal=False,
             )
             return self.raster_factory(arr, allow_nodata_array=True)
@@ -536,7 +537,11 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self.vct_parcels.rasterize(
-                self.catchm.rasterfile_mask, self.rp.epsg, col="LANDUSE", gdal=False
+                self.catchm.rasterfile_mask,
+                self.rp.epsg,
+                col="LANDUSE",
+                dtype_raster="integer",
+                gdal=False,
             )
             if np.all(arr == self.rp.nodata):
                 return AbstractRaster()
