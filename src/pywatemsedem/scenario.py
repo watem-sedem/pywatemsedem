@@ -506,7 +506,6 @@ class Scenario:
                 self.catchm.rasterfile_mask,
                 self.rp.epsg,
                 col="NR",
-                dtype_raster="float",
                 gdal=False,
             )
             return self.raster_factory(arr, allow_nodata_array=True)

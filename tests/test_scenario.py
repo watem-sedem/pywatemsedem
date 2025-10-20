@@ -373,7 +373,7 @@ class TestParcels(ScenarioTestBase):
 
         # test type
         assert self.scenario.parcels.arr.dtype == np.int16
-        assert self.scenario.parcels_ids.arr.dtype == np.float64
+        assert self.scenario.parcels_ids.arr.dtype == np.int16
 
         # test number of values
         un = np.unique(self.scenario.parcels_ids.arr)
