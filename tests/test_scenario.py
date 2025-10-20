@@ -74,7 +74,6 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(counts, [28236, 5137, 11537, 4534])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_omit_water(self):
         """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
         standard in the initial development of pywatemsedem in Flanders."""
