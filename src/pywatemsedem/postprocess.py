@@ -5,7 +5,6 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-import pkg_resources
 import shapely
 
 from pywatemsedem.defaults import SAGA_FLAGS
@@ -40,7 +39,7 @@ from pywatemsedem.io.modeloutput import (
 
 from .plots import plot_cumulative_sedimentload
 from .scenario import CNWSException
-from .tools import zip_folder
+from .tools import package_resource, zip_folder
 
 logger = logging.getLogger(__name__)
 
@@ -138,9 +137,9 @@ class PostProcess(Factory):
 
     Examples
     --------
-    >>> from pywatemsedem.postprocess import PostProcess()
+    >>> from pywatemsedem.postprocess import PostProcess
     >>> pp = PostProcess(r"molenbeek", 20, 1, 2019, 31370) # note that the folder
-    >>> #modelbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
+    >>> #molenbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
     >>> pp.make_routing_vct() #make a vector file of the text routig file.
 
     """
@@ -2890,12 +2889,11 @@ def read_filestructure(txt_filestructure=None, sep=","):
     This way, automated filename reconstruction can be guided by the use of this table.
     """
     if txt_filestructure is None:
-        ds = pkg_resources.resource_stream(__name__, "data/postprocess_files.csv")
+        ds = package_resource(["data"], "postprocess_files.csv")
     else:
-        ds = open(txt_filestructure, mode="r")
-    df_filestructure_flanders = pd.read_csv(ds, sep=sep)
+        ds = txt_filestructure
 
-    ds.close()
+    df_filestructure_flanders = pd.read_csv(ds, sep=sep)
 
     cols = {
         "tag_variable",

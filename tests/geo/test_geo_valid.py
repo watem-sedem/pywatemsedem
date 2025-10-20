@@ -137,7 +137,7 @@ def test_valid():
     # test feed wrong file format in valid vector
     with pytest.raises(PywatemsedemTypeError) as excinfo:
         valid_vector(rst, dummy_fun, "Polygon")
-    assert "The fiona engine in pywatemsedem cannot open" in str(excinfo.value)
+    assert "The pyogrio engine in pywatemsedem cannot open" in str(excinfo.value)
 
     # test not known required type
     with pytest.raises(IOError) as excinfo:

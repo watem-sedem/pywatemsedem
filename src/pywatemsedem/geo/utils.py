@@ -10,10 +10,10 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import pyogrio
 import rasterio
 from rasterio.features import shapes
 from rasterio.merge import merge
@@ -292,9 +292,8 @@ def get_fields_vct(vct):
     list
         Field names of the shape/vector-file.
     """
-    with fiona.open(vct) as c:
-        fields = c.schema["properties"].keys()
-        return fields
+    fields = pyogrio.read_info(vct)["fields"]
+    return fields
 
 
 @valid_input(dict={"vct": valid_vector})
@@ -309,10 +308,9 @@ def get_geometry_type(vct):
     Returns
     -------
     str
-        Geometry type (see fiona documentation for all possibilities)
+        Geometry type (see gdal documentation for all possibilities)
     """
-    with fiona.open(vct) as c:
-        geom = c.schema["geometry"]
+    geom = pyogrio.read_info(vct)["geometry_type"]
     return geom
 
 
@@ -542,8 +540,7 @@ def get_feature_count(vct):
     nr_features: int
         Number of features in the shapefile
     """
-    with fiona.open(vct) as c:
-        nr_features = len(c)
+    nr_features = pyogrio.read_info(vct)["features"]
     return nr_features
 
 
@@ -671,8 +668,7 @@ def get_extent_vct(vct):
     tuple
         xmin, ymin, xmax, ymax
     """
-    with fiona.open(vct) as c:
-        extent = c.bounds
+    extent = pyogrio.read_info(vct)["total_bounds"]
     return extent  # xmin, ymin, xmax, ymax
 
 
@@ -768,16 +764,17 @@ def compute_statistics_rasters_per_polygon_vector(
     Examples
     --------
 
+    >>> from pywatemsedem.geo.utils import compute_statistics_rasters_per_polygon_vector
     >>> vct_aho = "AHO.shp"
     >>> vct_out = "statistics_aho.shp"
     >>> rst_sewerin ="sewerin.rst"
     >>> rst_sediexport ="SediExport.rst"
     >>> compute_statistics_rasters_per_polygon_vector(vct_aho,
-    >>>                                                   vct_out,
-    >>>                                                   [rst_sewerin,rst_sediexport]
-    >>>                                                   ["River","Sewers"],
-    >>>                                                   {"COUNT":True,"SUM":True},
-    >>>                                                   ton = True)
+    ...                                               vct_out,
+    ...                                               [rst_sewerin, rst_sediexport],
+    ...                                               ["River","Sewers"],
+    ...                                               {"COUNT":True,"SUM":True},
+    ...                                               ton = True)
     """
     grid_statistics(lst_rasters, vct_polygon, vct_out, **dict_operators)
 
@@ -1004,14 +1001,14 @@ def check_single_polygon(vct):
     vct: str or pathlib.Path
         File path of the shapefile
     """
-    with fiona.open(vct) as c:
-        nr_polygons = len(c)
-        if nr_polygons != 1:
-            msg = (
-                f"Catchment polygon should be a single polygon, current "
-                f"catchment polygon holds '{nr_polygons}' polygons."
-            )
-            IOError(msg)
+    nr_polygons = pyogrio.read_info(vct)["features"]
+
+    if nr_polygons != 1:
+        msg = (
+            f"Catchment polygon should be a single polygon, current "
+            f"catchment polygon holds '{nr_polygons}' polygons."
+        )
+        IOError(msg)
 
 
 @valid_input(dict={"vct_in": valid_vector})
@@ -1144,7 +1141,8 @@ def polygons_to_raster(vct_polygon, rst_out, rst_template, field, dtype):
         grid_type = "7"  # 4 byte floating point
     else:
         grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-GRID_TYPE", grid_type]
+    cmd_args += ["-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
     execute_saga(cmd_args)
 
@@ -1174,15 +1172,16 @@ def lines_to_raster(vct_line, rst_out, rst_template, field, dtype):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_line), "-FIELD", str(field)]
     cmd_args += ["-OUTPUT", "2", "-LINE_TYPE", "1"]
+    grid_type = None
     if dtype == "integer":
-        grid_type = "6"  # 4 byte unsigned integer
+        grid_type = "unsigned 4 byte integer"
     elif dtype == "float":
-        grid_type = "7"  # 4 byte floating point
-    else:
-        grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
-    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+        grid_type = "4 byte floating point number"
 
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+    print(cmd_args)
     try:
         execute_subprocess(cmd_args)
     except OSError as e:
@@ -2075,15 +2074,15 @@ def define_extent_from_vct(
     rp: RasterProperties see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
 
     """
-    with fiona.open(vct_catchment) as c:
-        # Get spatial extent of catchment.
-        extent = c.bounds
-        minmax = [
-            round(extent[0]) - buffer,
-            round(extent[1]) - buffer,
-            round(extent[2]) + buffer,
-            round(extent[3]) + buffer,
-        ]
+    # Get spatial extent of catchment.
+    extent = get_extent_vct(vct_catchment)
+
+    minmax = [
+        round(extent[0]) - buffer,
+        round(extent[1]) - buffer,
+        round(extent[2]) + buffer,
+        round(extent[3]) + buffer,
+    ]
 
     if bounds is not None:
         for i in range(4):
