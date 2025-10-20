@@ -1173,14 +1173,14 @@ def polygons_to_raster(vct_polygon, rst_out, rst_template, field, dtype):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_polygon), "-FIELD", str(field)]
     cmd_args += ["-OUTPUT", "2", "-POLY_TYPE", "1"]
+    grid_type = None
     if dtype == "integer":
-        grid_type = "6"  # 4 byte unsigned integer
+        grid_type = "unsigned 4 byte integer"
     elif dtype == "float":
-        grid_type = "7"  # 4 byte floating point
-    else:
-        grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type]
-    cmd_args += ["-TARGET_DEFINITION", "1"]
+        grid_type = "4 byte floating point number"
+
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
     execute_saga(cmd_args)
 
