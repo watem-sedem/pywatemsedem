@@ -496,7 +496,7 @@ class Scenario:
         Returns
         -------
         pywatemsedem.geo.rasters.AbstractRaster, else None
-            Float64 raster with values:
+            int16 raster with values:
 
             - *>0*: parcel id
             - *-9999*: nodata
