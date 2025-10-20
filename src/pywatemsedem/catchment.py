@@ -672,7 +672,11 @@ class Catchment(Factory):
         )
 
         river = self._vct_river.rasterize(
-            self.rasterfile_mask, self.rp.epsg, "line_id", "integer", gdal=False
+            self.rasterfile_mask,
+            self.rp.epsg,
+            "line_id",
+            dtype_raster="integer",
+            gdal=False,
         )
         self._river = self.raster_factory(river, allow_nodata_array=True)
         self._adjacent_edges, self._up_edges, flag = check_segment_edges(
@@ -923,7 +927,11 @@ class Catchment(Factory):
                 float
             )
             water = self._vct_water.rasterize(
-                self.rasterfile_mask, self.rp.epsg, "value", "integer", gdal=False
+                self.rasterfile_mask,
+                self.rp.epsg,
+                "value",
+                dtype_raster="integer",
+                gdal=False,
             )
             arr = self.raster_factory(water)
         else:

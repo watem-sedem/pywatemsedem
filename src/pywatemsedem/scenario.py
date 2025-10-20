@@ -610,6 +610,7 @@ class Scenario:
             self.catchm.rasterfile_mask,
             self.rp.epsg,
             col="NR",
+            dtype_raster="integer",
             nodata=-9999,
             gdal=False,
         )
@@ -726,7 +727,11 @@ class Scenario:
         """
         if not self.vct_buffers.is_empty():
             arr = self.vct_buffers.rasterize(
-                self.catchm.rasterfile_mask, 31370, "buf_exid", gdal=False
+                self.catchm.rasterfile_mask,
+                31370,
+                "buf_exid",
+                dtype_raster="integer",
+                gdal=False,
             )
             raster = self.raster_factory(arr)
         else:
@@ -929,7 +934,11 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_outlets.rasterize(
-            self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=False
+            self.catchm.rasterfile_mask,
+            self.rp.epsg,
+            col="NR",
+            dtype_raster="integer",
+            gdal=False,
         )
         self._outlets = self.raster_factory(arr)
         self._outlets.arr = self._outlets.arr.astype(np.int16)
