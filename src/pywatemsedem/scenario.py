@@ -503,7 +503,11 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self._vct_parcels.rasterize(
-                self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=False
+                self.catchm.rasterfile_mask,
+                self.rp.epsg,
+                col="NR",
+                dtype_raster="float",
+                gdal=False,
             )
             return self.raster_factory(arr, allow_nodata_array=True)
         else:
