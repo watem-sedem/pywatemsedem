@@ -76,7 +76,7 @@ class Factory:
         if not self.resmap.exists():
             self.resmap.mkdir(exist_ok=True)
         self.vectorfile_mask = self.resmap / "mask.shp"
-        self.rasterfile_mask = self.resmap / "mask.rst"
+        self.rasterfile_mask = self.resmap / "mask.sgrd"
         self.create_rasterproperties = True
 
     @property
