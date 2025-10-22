@@ -76,7 +76,7 @@ class Factory:
         if not self.resmap.exists():
             self.resmap.mkdir(exist_ok=True)
         self.vectorfile_mask = self.resmap / "mask.shp"
-        self.rasterfile_mask = self.resmap / "mask.sgrd"
+        self.rasterfile_mask = self.resmap / "mask.tif"
         self.create_rasterproperties = True
 
     @property
@@ -161,12 +161,12 @@ class Factory:
                 )
             vct_to_rst_value(
                 mask,
-                self.resmap / "mask.sgrd",
+                self.resmap / "mask.tif",
                 self.rp.gdal_profile,
                 dtype="integer",
                 gdal=False,
             )
-            arr, _ = load_raster(self.resmap / "mask.sgrd")
+            arr, _ = load_raster(self.resmap / "mask.tif")
             self._vct_mask = VectorFile(mask)
             if mask != self.vectorfile_mask:
                 self._vct_mask._geodata.to_file(self.vectorfile_mask)
