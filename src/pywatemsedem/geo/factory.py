@@ -14,7 +14,6 @@ from .utils import (
     define_extent_from_vct,
     generate_vct_mask_from_raster_mask,
     load_raster,
-    tiff_to_idrisi,
     vct_to_rst_value,
 )
 from .valid import PywatemsedemInputError, valid_exists
@@ -77,7 +76,7 @@ class Factory:
         if not self.resmap.exists():
             self.resmap.mkdir(exist_ok=True)
         self.vectorfile_mask = self.resmap / "mask.shp"
-        self.rasterfile_mask = self.resmap / "mask.rst"
+        self.rasterfile_mask = self.resmap / "mask.tif"
         self.create_rasterproperties = True
 
     @property
@@ -167,11 +166,11 @@ class Factory:
                 dtype="integer",
                 gdal=False,
             )
-            tiff_to_idrisi(
-                self.resmap / "mask.tif", self.resmap / "mask.rst", dtype="Int16"
-            )
+            # tiff_to_idrisi(
+            #    self.resmap / "mask.tif", self.resmap / "mask.rst", dtype="Int16"
+            # )
 
-            arr, _ = load_raster(self.resmap / "mask.rst")
+            arr, _ = load_raster(self.resmap / "mask.tif")
             self._vct_mask = VectorFile(mask)
             if mask != self.vectorfile_mask:
                 self._vct_mask._geodata.to_file(self.vectorfile_mask)
