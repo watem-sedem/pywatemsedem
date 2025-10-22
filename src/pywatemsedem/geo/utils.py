@@ -971,7 +971,6 @@ def vct_to_rst_value(
             vct_in,
             rst_out,
             raster_properties,
-            nodata=-9999,
             alltouched=True,
             dtype=None,
         )
