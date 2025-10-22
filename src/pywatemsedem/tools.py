@@ -89,8 +89,8 @@ def reformat_LineString_to_source_targetf(coordinates, trajectory_routing=False)
         df[["fromX", "fromY"]] = [(x, y) for x, y in coordinates]
         df["toX"] = np.nan
         df["toY"] = np.nan
-        df["toX"].iloc[0:-1] = df["fromX"].iloc[1:]
-        df["toY"].iloc[0:-1] = df["fromY"].iloc[1:]
+        df["toX"] = df["fromX"].shift(-1)
+        df["toY"] = df["fromY"].shift(-1)
         df = df.iloc[:-1]
     else:
         df = pd.DataFrame(columns=["fromX", "fromY", "toX", "toY"], index=[0])
