@@ -172,9 +172,6 @@ def valid_raster(rst, fun):
 
     valid_exists(rst, fun)
 
-    if rst.suffix == ".sgrd":
-        rst = rst.parent / (rst.name + ".sdat")
-
     try:
         c = rasterio.open(rst)
         c.close()
