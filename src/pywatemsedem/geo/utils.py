@@ -1134,12 +1134,12 @@ def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_point), "-FIELD", str(field)]
-    cmd_args += ["-OUTPUT", "2", "-POLY_TYPE", "1"]
+    cmd_args += ["-OUTPUT", "2"]
     grid_type = None
     if dtype == "integer":
-        grid_type = "signed 2 byte integer"
+        grid_type = "4"  # "signed 2 byte integer"
     elif dtype == "float":
-        grid_type = "4 byte floating point number"
+        grid_type = "9"  # "4 byte floating point number"
 
     if grid_type:
         cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
@@ -1175,9 +1175,9 @@ def polygons_to_raster(vct_polygon, rst_out, rst_template, field, dtype):
     cmd_args += ["-OUTPUT", "2", "-POLY_TYPE", "1"]
     grid_type = None
     if dtype == "integer":
-        grid_type = "signed 2 byte integer"
+        grid_type = "4"  # "signed 2 byte integer"
     elif dtype == "float":
-        grid_type = "4 byte floating point number"
+        grid_type = "9"  # "4 byte floating point number"
 
     if grid_type:
         cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
@@ -1212,9 +1212,9 @@ def lines_to_raster(vct_line, rst_out, rst_template, field, dtype):
     cmd_args += ["-OUTPUT", "2", "-LINE_TYPE", "1"]
     grid_type = None
     if dtype == "integer":
-        grid_type = "signed 2 byte integer"
+        grid_type = "4"  # "signed 2 byte integer"
     elif dtype == "float":
-        grid_type = "4 byte floating point number"
+        grid_type = "9"  # "4 byte floating point number"
 
     if grid_type:
         cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
