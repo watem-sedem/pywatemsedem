@@ -219,6 +219,9 @@ class AbstractVector:
                     raise IOError(msg)
                 polygons_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
             elif self._geometry_type == "Point":
+                if convert_lines_to_direction:
+                    msg = "Cannot convert polygons to directions"
+                    raise IOError(msg)
                 points_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
 
             arr, profile = load_raster(tf_rst.with_suffix(".sdat"))

@@ -159,8 +159,14 @@ class Factory:
                     self._epsg_code,
                     self._bounds,
                 )
-            vct_to_rst_value(mask, self.resmap / "mask.rst", 1, self.rp.gdal_profile)
-            arr, _ = load_raster(self.resmap / "mask.rst")
+            vct_to_rst_value(
+                mask,
+                self.resmap / "mask.sgrd",
+                self.rp.gdal_profile,
+                dtype="integer",
+                gdal=False,
+            )
+            arr, _ = load_raster(self.resmap / "mask.sgrd")
             self._vct_mask = VectorFile(mask)
             if mask != self.vectorfile_mask:
                 self._vct_mask._geodata.to_file(self.vectorfile_mask)

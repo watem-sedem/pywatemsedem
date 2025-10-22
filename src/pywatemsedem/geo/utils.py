@@ -815,10 +815,10 @@ def rst_to_vct_points(rst_in, vct_out):
 
 
 @valid_input(dict={"vct_in": valid_vector})
-def vct_to_rst_value(
-    vct_in, rst_out, rstval, Cnst, nodata=-9999, alltouched=True, dtype=None
+def vct_to_rst_value_gdal(
+    vct_in, rst_out, raster_properties, nodata=-9999, alltouched=True, dtype=None
 ):
-    """Rasterizes a shapefile by a given constant value
+    """Rasterizes a shapefile as data/no-data
 
     Parameters
     ----------
@@ -826,15 +826,12 @@ def vct_to_rst_value(
         File path of the shapefile to be rasterized.
     rst_out: pathlib.Path
         File path of the destination rst
-    Cnst: dict
+    raster_properties: dict
         Dictionary with following keys:
 
         - *res* (int): resolution
         - *nodata* (int): nodata flag
         - *minmax* (list): list with xmin, ymin, xmax, ymax
-
-    rstval: str
-        The value all features of the shapefile will get in the raster.
     alltouched: bool, default true
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
@@ -848,18 +845,136 @@ def vct_to_rst_value(
     cmd_args = ["gdal_rasterize", "-q", "-a_nodata", str(nodata)]
     if alltouched:
         cmd_args += ["-at"]
-    cmd_args += ["-burn", str(rstval)]
+    cmd_args += ["-burn", "1"]  # make binary grid
     cmd_args += ["-l", vct_in.stem]
-    cmd_args += ["-of", "GTiff", "-te"]
-    for oor in Cnst["minmax"]:
+    cmd_args += ["-of", "SAGA", "-te"]
+    for oor in raster_properties["minmax"]:
         cmd_args += [str(oor)]
-    if dtype is not None:
-        cmd_args += ["-ot", dtype]
-    cmd_args += ["-tr", str(Cnst["res"]), str(Cnst["res"])]
+
+    if dtype == "integer":
+        cmd_args += ["-ot", "Int16"]
+    elif dtype == "float":
+        cmd_args += ["-ot", "Float32"]
+
+    cmd_args += ["-tr", str(raster_properties["res"]), str(raster_properties["res"])]
     cmd_args += ["-co", "COMPRESS=DEFLATE"]
     cmd_args += [str(vct_in), str(rst_out)]
 
     execute_subprocess(cmd_args)
+
+
+@valid_input(dict={"vct_in": valid_vector})
+def vct_to_rst_value_saga(
+    vct_in, rst_out, raster_properties, alltouched=True, dtype=None
+):
+    """Rasterizes a shapefile as data/no-data
+
+    Parameters
+    ----------
+    vct_in: str or pathlib.Path
+        File path of the shapefile to be rasterized.
+    rst_out: pathlib.Path
+        File path of the destination rst
+    raster_properties: dict
+        Dictionary with following keys:
+
+        - *res* (int): resolution
+        - *nodata* (int): nodata flag
+        - *minmax* (list): list with xmin, ymin, xmax, ymax
+    alltouched: bool, default true
+        Enables the ALL_TOUCHED rasterization option so that all pixels
+        touched by lines or polygons will be updated.
+    dtype: str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+
+    Note
+    -----
+    Uses and relies on saga_cmd CLI
+    """
+
+    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
+    cmd_args += ["-INPUT", str(vct_in)]
+    cmd_args += ["-OUTPUT", "0"]
+
+    if alltouched:
+        cmd_args += ["-LINE_TYPE", "1"]
+        cmd_args += ["-POLY_TYPE", "1"]
+    else:
+        cmd_args += ["-LINE_TYPE", "0"]
+        cmd_args += ["-POLY_TYPE", "0"]
+
+    grid_type = None
+    if dtype == "integer":
+        grid_type = "4"  # "signed 2 byte integer"
+    elif dtype == "float":
+        grid_type = "9"  # "4 byte floating point number"
+
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "0"]
+    cmd_args += ["-TARGET_USER_SIZE", str(raster_properties["res"])]
+    cmd_args += ["-TARGET_USER_XMIN", str(raster_properties["minmax"][0])]
+    cmd_args += ["-TARGET_USER_XMAX", str(raster_properties["minmax"][2])]
+    cmd_args += ["-TARGET_USER_YMIN", str(raster_properties["minmax"][1])]
+    cmd_args += ["-TARGET_USER_YMIN", str(raster_properties["minmax"][3])]
+    cmd_args += ["-TARGET_USER_COLS", str(raster_properties["ncols"])]
+    cmd_args += ["-TARGET_USER_ROWS", str(raster_properties["nrows"])]
+    cmd_args += ["-GRID", str(rst_out)]
+    execute_saga(cmd_args)
+
+
+@valid_input(dict={"vct_in": valid_vector})
+def vct_to_rst_value(
+    vct_in,
+    rst_out,
+    raster_properties,
+    alltouched=True,
+    dtype=None,
+    gdal=True,
+):
+    """Rasterizes a shapefile by a given constant value
+
+    Parameters
+    ----------
+    vct_in: str or pathlib.Path
+        File path of the shapefile to be rasterized.
+    rst_out: pathlib.Path
+        File path of the destination rst
+    raster_properties: dict
+        Dictionary with following keys:
+
+        - *res* (int): resolution
+        - *nodata* (int): nodata flag
+        - *minmax* (list): list with xmin, ymin, xmax, ymax
+    nodata: int, default -9999
+        No data value for the raster
+    alltouched: bool, default true
+        Enables the ALL_TOUCHED rasterization option so that all pixels
+        touched by lines or polygons will be updated.
+    dtype: str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+    gdal: bool, default True
+        rasterize using gdal_rasterize or via saga CLI
+
+    """
+
+    if gdal:
+        vct_to_rst_value_gdal(
+            vct_in,
+            rst_out,
+            raster_properties,
+            nodata=-9999,
+            alltouched=True,
+            dtype=None,
+        )
+    else:
+        vct_to_rst_value_saga(
+            vct_in,
+            rst_out,
+            raster_properties,
+            nodata=-9999,
+            alltouched=True,
+            dtype=None,
+        )
 
 
 @valid_input(dict={"rst_in": valid_raster})
