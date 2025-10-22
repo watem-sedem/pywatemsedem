@@ -167,7 +167,9 @@ class Factory:
                 dtype="integer",
                 gdal=False,
             )
-            tiff_to_idrisi(self.resmap / "mask.tif", self.resmap / "mask.rst", "int16")
+            tiff_to_idrisi(
+                self.resmap / "mask.tif", self.resmap / "mask.rst", dtype="Int16"
+            )
 
             arr, _ = load_raster(self.resmap / "mask.rst")
             self._vct_mask = VectorFile(mask)
