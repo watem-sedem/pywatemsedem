@@ -918,6 +918,7 @@ def vct_to_rst_value_saga(
     cmd_args += ["-TARGET_USER_YMAX", str(raster_properties["minmax"][3])]
     cmd_args += ["-TARGET_USER_COLS", str(raster_properties["ncols"])]
     cmd_args += ["-TARGET_USER_ROWS", str(raster_properties["nrows"])]
+    cmd_args += ["-TARGET_USER_FITS", "1"]
     cmd_args += ["-GRID", str(rst_out)]
     execute_saga(cmd_args)
 
