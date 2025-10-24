@@ -15,6 +15,7 @@ from .utils import (
     generate_vct_mask_from_raster_mask,
     load_raster,
     vct_to_rst_value,
+    write_arr_as_rst,
 )
 from .valid import PywatemsedemInputError, valid_exists
 from .vectors import VectorFile, VectorMemory
@@ -76,7 +77,7 @@ class Factory:
         if not self.resmap.exists():
             self.resmap.mkdir(exist_ok=True)
         self.vectorfile_mask = self.resmap / "mask.shp"
-        self.rasterfile_mask = self.resmap / "mask.sgrd"
+        self.rasterfile_mask = self.resmap / "mask.tif"
         self.create_rasterproperties = True
 
     @property
@@ -172,10 +173,14 @@ class Factory:
                 gdal=False,
             )
 
-            arr, profile = load_raster(self.rasterfile_mask.with_suffix(".sdat"))
+            arr, profile = load_raster(self.rasterfile_mask)
+            arr = arr.astype("int16")
             # correct no data value if necessary
             if profile["nodata"] != self.rp.nodata:
                 arr[arr == profile["nodata"]] = self.rp.nodata
+            write_arr_as_rst(
+                arr, self.rasterfile_mask, "int16", self.rp.rasterio_profile
+            )
 
         if create_mask_vector:
             arr, rp = load_raster(mask)
