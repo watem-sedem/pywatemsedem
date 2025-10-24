@@ -923,26 +923,6 @@ def vct_to_rst_value_saga(
     execute_saga(cmd_args)
 
 
-@valid_input(dict={"rst_in": valid_raster})
-def change_nodata_value_raster(rst_in, nodata=-9999):
-    """Change the nodata-value of a raster to another nodata-value
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path of the raster to be changed
-    nodata: int, default -9999
-        No data value for the raster
-
-    """
-    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_tools", "36"]
-    cmd_args += ["-GRID", str(rst_in)]
-    cmd_args += ["-OUTPUT", str(rst_in)]
-    cmd_args += ["-VALUE", str(nodata)]
-    cmd_args += ["-CHANGE", "1"]
-    execute_saga(cmd_args)
-
-
 @valid_input(dict={"vct_in": valid_vector})
 def vct_to_rst_value(
     vct_in,
