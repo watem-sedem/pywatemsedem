@@ -159,6 +159,11 @@ class Factory:
                     self._epsg_code,
                     self._bounds,
                 )
+
+            self._vct_mask = VectorFile(mask)
+            if mask != self.vectorfile_mask:
+                self._vct_mask._geodata.to_file(self.vectorfile_mask)
+
             vct_to_rst_value(
                 mask,
                 self.resmap / "mask.tif",
@@ -166,14 +171,11 @@ class Factory:
                 dtype="integer",
                 gdal=False,
             )
-            # tiff_to_idrisi(
-            #    self.resmap / "mask.tif", self.resmap / "mask.rst", dtype="Int16"
-            # )
 
-            arr, _ = load_raster(self.resmap / "mask.tif")
-            self._vct_mask = VectorFile(mask)
-            if mask != self.vectorfile_mask:
-                self._vct_mask._geodata.to_file(self.vectorfile_mask)
+            arr, profile = load_raster(self.resmap / "mask.tif")
+            # correct no data value if necessary
+            if profile["nodata"] != self.rp.nodata:
+                arr[arr == profile["nodata"]] = self.rp.nodata
 
         if create_mask_vector:
             arr, rp = load_raster(mask)
