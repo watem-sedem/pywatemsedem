@@ -198,7 +198,7 @@ class AbstractVector:
         self.write(vct_temp)
 
         rp = RasterProperties.from_rasterio(
-            read_rasterio_profile(rst_reference.with_suffix(".sdat")), epsg=epsg
+            read_rasterio_profile(rst_reference), epsg=epsg
         )
         if gdal:
             tf_rst = create_filename(".sgrd")
