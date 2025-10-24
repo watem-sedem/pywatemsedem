@@ -130,7 +130,7 @@ class AbstractVector:
         raise NotImplementedError
 
     def write(self, outfile_path):
-        """Write raster data to disk.
+        """Write vector data to disk.
 
         Parameters
         ----------
