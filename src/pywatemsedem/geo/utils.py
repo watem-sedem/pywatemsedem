@@ -995,7 +995,6 @@ def vct_to_rst_value(
             alltouched=True,
             dtype=None,
         )
-        change_nodata_value_raster(rst_out, nodata=-9999)
 
 
 @valid_input(dict={"rst_in": valid_raster})
