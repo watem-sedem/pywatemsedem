@@ -198,13 +198,15 @@ class AbstractVector:
         self.write(vct_temp)
 
         rp = RasterProperties.from_rasterio(
-            read_rasterio_profile(rst_reference), epsg=epsg
+            read_rasterio_profile(rst_reference.with_suffix(".sdat")), epsg=epsg
         )
         if gdal:
-            tf_rst = create_filename(".tif")
-            vct_to_rst_field(vct_temp, tf_rst, rp.gdal_profile, col)
+            tf_rst = create_filename(".sgrd")
+            vct_to_rst_field(
+                vct_temp, tf_rst.with_suffix(".sdat"), rp.gdal_profile, col
+            )
             arr, _ = load_raster(tf_rst)
-            clean_up_tempfiles(tf_rst, "tiff")
+            clean_up_tempfiles(tf_rst, "sgrd")
 
         else:
             tf_rst = create_filename(".sgrd")
