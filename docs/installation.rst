@@ -82,27 +82,37 @@ dependencies):
 
 Ensure you:
 
-- Pick up the latest exe of the WaTEM/SEDEM Pascal model from the
-  `GitHub <https://watem-sedem.github.io/watem-sedem/releases>`_., **current compatible version is 4.2.3**
-- Pick up the latest exe of the SAGA-GIS with **WaTEM**:
-  https://github.com/DOV-Vlaanderen/saga-watem/releases.
+- Pick up the supported exe of the WaTEM/SEDEM Pascal model from the
+  `GitHub <https://watem-sedem.github.io/watem-sedem/releases>`_. and follow
+  `the installation instructions of WaTEM/SEDEM <https://watem-sedem.github.io/watem-sedem/installation.html>`_
+- Pick up the supported version of SAGA-WaTEM:
+  https://github.com/DOV-Vlaanderen/saga-watem/releases., and follow
+  `the installation instructions of SAGA-WaTEM <https://dov-vlaanderen.github.io/saga-watem/installation.html>`_
 
 Note that the required version of WaTEM/SEDEM and SAGA are mentioned in the
-release page. Define the saga and WaTEM/SEDEM version by adding a path to the
-executables in a ``.env``-file in the locations main folder of this repo:
+release page and Changelog.
+
+Once you have downloaded both SAGA-WaTEM and WaTEM/SEDEM, pywatemsdem must
+know the locations of these binaries. This can be done in two ways:
+
+The first way is to add the locations of the binaries to the environment variable PATH of your system.
+This method has the advantage that you will be able to use these software packages
+in a terminal in every directory. However, you might need admin rights to do this.
+
+A second way, it to define the locations of the binaries of saga and WaTEM/SEDEM
+by adding a path to these executables in a ``.env``-file in the locations main folder of this repo:
 
 ::
 
-    WATEMSEDEM = $YOUR_PATH/watem-sedem/watem-sedem/watem-sedem #executable reference
-    SAGA = $YOUR_PATH/2022.12.8/saga #folder reference
+    WATEMSEDEM = $YOUR_PATH/watem-sedem/watem_sedem #folder reference
+    SAGA = $YOUR_PATH/saga-9.3.1_x64 #folder reference
 
-In your scripts/notebooks, add following:
+In your scripts/notebooks, add following before importing pywatemsedem:
 
 ::
 
     from dotenv import load_dotenv, find_dotenv
     load_dotenv(find_dotenv())
-    # setting SAGA GIS with WaTEM
-    os.environ["SAGA_TLB"]=os.environ.get("SAGA")
-    # setting WaTEM/SEDEM
-    watemsedem = Path(os.environ.get("WATEMSEDEM"))
+
+When importing pywatemsedem, it will add the directories of saga and watem-sedem
+to your PATH envrionment variable.
