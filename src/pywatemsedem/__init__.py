@@ -24,8 +24,17 @@ if shutil.which("saga_cmd") is None:  # saga_cmd cannot be found in the PATH var
             os.environ.get("SAGA") + os.pathsep + os.environ["PATH"]
         )  # Add saga location to PATH
         if shutil.which("saga_cmd") is None:
-            msg = "SAGA is not properly installed, pywatemsedem cannot access saga_cmd"
+            msg = (
+                "SAGA is not properly installed, pywatemsedem cannot"
+                " access saga_cmd via PATH or SAGA"
+            )
             raise OSError(msg)
+    else:
+        msg = (
+            "SAGA is not available in the environment variable PATH "
+            "and there is no environment variable SAGA"
+        )
+        raise OSError(msg)
 
 # Check if the topology module is installed
 try:
