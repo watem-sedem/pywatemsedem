@@ -787,18 +787,18 @@ def get_item_from_ini(ini, section, option, dtype):
         the ini-file or the value of the section-option None is returned.
     """
 
-    Cfg = configparser.ConfigParser()
+    cfg = configparser.ConfigParser()
     if ini.exists():
-        Cfg.read(ini)
+        cfg.read(ini)
         try:
             if dtype == str:
-                a = Cfg.get(section, option)
+                a = cfg.get(section, option)
             elif dtype == int:
-                a = Cfg.getint(section, option)
+                a = cfg.getint(section, option)
             elif dtype == float:
-                a = Cfg.getfloat(section, option)
+                a = cfg.getfloat(section, option)
             elif dtype == bool:
-                a = Cfg.getboolean(section, option)
+                a = cfg.getboolean(section, option)
             else:
                 raise TypeError("not a correct Type")
         except configparser.NoOptionError:
