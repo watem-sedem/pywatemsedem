@@ -19,6 +19,7 @@ class InputFileName:
             self.cfactor_file = "cfactor.rst"
             self.outlet_file = "outlet.rst"
             self.ktc_file = "ktc_map.rst"
+            self.ktil_file = "ktil_map.rst"
             self.mask_file = "mask.rst"
             self.ditches_file = "ditches.rst"
             self.conductivedams_file = "conductivedams.rst"
