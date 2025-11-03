@@ -101,7 +101,7 @@ def create_cfactor_degerick2015(
         # write calculated C-factor to shapefile -> needed for efficiency plots
         # vct_grass = grass.write()
         arr_grass_cfactor = vct_grass_strips.rasterize(
-            tiff_temp, epsg=composite_landuse.rp.epsg, col="C_factor", gdal=True
+            tiff_temp, epsg=composite_landuse.rp.epsg, col="C_factor", gdal=False
         )
         arr_cfactor = np.where(arr_cfactor == nodata, arr_grass_cfactor, arr_cfactor)
 
@@ -130,7 +130,7 @@ def create_cfactor_degerick2015(
                 )
             )
             arr = vct_parcels.rasterize(
-                tiff_temp, composite_landuse.rp.epsg, col="C_factor", gdal=True
+                tiff_temp, composite_landuse.rp.epsg, col="C_factor", gdal=False
             )
             arr_cfactor = np.where(
                 arr_cfactor == nodata,

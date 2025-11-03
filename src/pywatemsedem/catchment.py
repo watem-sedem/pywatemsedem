@@ -672,7 +672,11 @@ class Catchment(Factory):
         )
 
         river = self._vct_river.rasterize(
-            self.rasterfile_mask, self.rp.epsg, "line_id", "integer", gdal=True
+            self.rasterfile_mask,
+            self.rp.epsg,
+            "line_id",
+            dtype_raster="integer",
+            gdal=False,
         )
         self._river = self.raster_factory(river, allow_nodata_array=True)
         self._adjacent_edges, self._up_edges, flag = check_segment_edges(
@@ -685,7 +689,7 @@ class Catchment(Factory):
                 self.rasterfile_mask,
                 self.rp.epsg,
                 convert_lines_to_direction=True,
-                gdal=True,
+                gdal=False,
             )
             routing[routing == self.rp.nodata] = 0
             self._routing = self.raster_factory(routing, flag_mask=False)
@@ -923,7 +927,11 @@ class Catchment(Factory):
                 float
             )
             water = self._vct_water.rasterize(
-                self.rasterfile_mask, self.rp.epsg, "value", "integer", gdal=True
+                self.rasterfile_mask,
+                self.rp.epsg,
+                "value",
+                dtype_raster="integer",
+                gdal=False,
             )
             arr = self.raster_factory(water)
         else:
@@ -979,7 +987,7 @@ class Catchment(Factory):
         )
 
         infra = self._vct_infrastructure_buildings.rasterize(
-            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=True
+            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=False
         )
 
         return self.raster_factory(infra)
@@ -1003,7 +1011,7 @@ class Catchment(Factory):
         )
 
         arr = self._vct_infrastructure_roads.rasterize(
-            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=True
+            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=False
         )
         return self.raster_factory(arr)
 
