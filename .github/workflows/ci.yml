@@ -35,6 +35,9 @@ jobs:
         saga_cmd --version # echo version for debugging
         wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2025.6.11/saga-vpo_2025.6.11-1-ge95f136.noble_amd64.deb
         sudo dpkg -i saga-vpo*.deb
+        wget https://github.com/watem-sedem/watem-sedem/releases/download/5.0.3/watem-sedem_5.0.3.330.gbp3f65b4_amd64.deb
+        sudo dpkg -i watem-sedem*.deb
+        watem_sedem || true # report the version, but don't fail because there is no ini file
     - name: Run precommit hooks & linting
       run: |
         python -m pip install --upgrade pre-commit
