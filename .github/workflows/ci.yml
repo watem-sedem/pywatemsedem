@@ -37,7 +37,7 @@ jobs:
         sudo dpkg -i saga-vpo*.deb
         wget https://github.com/watem-sedem/watem-sedem/releases/download/5.0.3/watem-sedem_5.0.3.330.gbp3f65b4_amd64.deb
         sudo dpkg -i watem-sedem*.deb
-        watem_sedem && true # report the version, but don't fail because there is no ini file
+        watem_sedem || true # report the version, but don't fail because there is no ini file
     - name: Run precommit hooks & linting
       run: |
         python -m pip install --upgrade pre-commit
