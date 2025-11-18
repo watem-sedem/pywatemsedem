@@ -1,10 +1,13 @@
 import logging
+import os
+import shutil
 
 # Standard libraries
 import subprocess
 import warnings
 from copy import deepcopy
 from functools import wraps
+from pathlib import Path
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -1536,24 +1539,50 @@ class Scenario:
         ini.write(self.ini)
 
     @valid_ini
-    def run_model(self, cnws_binary):
+    def run_model(self, ws_binary="watem_sedem"):
         """Run the WaTEM/SEDEM model
 
         Parameters
         ----------
-        cnws_binary : str
-            Name of CN_WS pascal compiled executable.
+        ws_binary : str
+            Name of watem_sedem pascal compiled executable.
 
         """
         logger.info(f"Modeling scenario {self.scenario_nr}")
+
+        # Check if watem_sedem executable can be found
+        if (
+            shutil.which("watem_sedem") is None
+        ):  # watem_sedem cannot be found in the PATH variable
+            # Check if there is an environment variable "WATEMSEDEM"
+            if (
+                os.environ.get("WATEMSEDEM") is not None
+                and Path(os.environ.get("WATEMSEDEM")).exists()
+            ):
+                os.environ["PATH"] = (
+                    os.environ.get("WATEMSEDEM") + os.pathsep + os.environ["PATH"]
+                )  # Add watem sedem location to PATH
+                if shutil.which("watem_sedem") is None:
+                    msg = (
+                        "WATEM-SEDEM is not properly installed, pywatemsedem cannot"
+                        " access watem_sedem via PATH or WATEMSEDEM"
+                    )
+                    raise OSError(msg)
+            else:
+                msg = (
+                    "Watem_sedem is not available in the environment variable PATH "
+                    "and there is no environment variable WATEMSEDEM"
+                )
+                raise OSError(msg)
+
         try:
-            cmd_args = [cnws_binary, str(self.ini)]
+            cmd_args = [ws_binary, str(self.ini)]
             run = subprocess.run(cmd_args, capture_output=True)
             for line in run.stdout.splitlines():
                 logger.info(line.decode("utf-8"))
             logger.info("Modelrun finished!")
         except subprocess.CalledProcessError as e:
-            msg = "Failed to run CNWS-model"
+            msg = "Failed to run WaTEM-SEDEM"
             logger.exception(msg)
             logger.exception(e.cmd)
             raise IOError(e)
