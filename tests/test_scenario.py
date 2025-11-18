@@ -389,8 +389,10 @@ class TestParcels(ScenarioTestBase):
         df["NR"] = 1000**2
 
         self.scenario.vct_parcels = df
+        # max id should be max(int16)
         assert np.max(self.scenario.parcels.arr) < 2**15
-        assert np.max(self.scenario.parcels_ids.arr) == 1000**2
+        # any higher id should have been reduced to fit
+        assert np.max(self.scenario.parcels_ids.arr) == (1000**2) % (2**15)
 
         # catch warning
         w = recwarn.pop(UserWarning)

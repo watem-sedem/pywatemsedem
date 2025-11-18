@@ -462,7 +462,7 @@ class Scenario:
             warnings.warn(msg)
             self._vct_parcels.geodata["NR"] = np.where(
                 self._vct_parcels.geodata["NR"] > 32767,
-                32767,
+                self._vct_parcels.geodata["NR"] % 2**15,
                 self._vct_parcels.geodata["NR"],
             )
 
@@ -504,7 +504,7 @@ class Scenario:
                 )
                 warnings.warn(msg)
 
-            arr = np.where(arr > 0, arr % 2**15, arr)
+                arr = np.where(arr > 32767, arr % (2**15), arr)
             arr = arr.astype(np.int16)
 
             return self.raster_factory(arr, allow_nodata_array=True)
