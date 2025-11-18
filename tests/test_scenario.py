@@ -389,17 +389,14 @@ class TestParcels(ScenarioTestBase):
         df["NR"] = 1000**2
 
         self.scenario.vct_parcels = df
+        # max id should be max(int16)
+        assert np.max(self.scenario.parcels.arr) < 2**15
+        # any higher id should have been reduced to fit
+        assert np.max(self.scenario.parcels_ids.arr) == (1000**2) % (2**15)
 
         # catch warning
         w = recwarn.pop(UserWarning)
-        assert (
-            str(w.message)
-            == "Parcels NR has values higher than the maximum allowed number "
-            "for WaTEM/SEDEM definition (i.e. 32767). Setting values above "
-            "32767 to 32767."
-        )
-        assert np.max(self.scenario.parcels.arr) == 32767
-        assert np.max(self.scenario.parcels_ids.arr) == 32767
+        assert "32767" in str(w.message)
 
     @pytest.mark.saga
     def test_vct_parcels_value_error_landuse(self):
