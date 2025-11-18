@@ -13,6 +13,7 @@ from .utils import (
     lines_to_direction,
     lines_to_raster,
     load_raster,
+    points_to_raster,
     polygons_to_raster,
     read_rasterio_profile,
     vct_to_rst_field,
@@ -129,7 +130,7 @@ class AbstractVector:
         raise NotImplementedError
 
     def write(self, outfile_path):
-        """Write raster data to disk.
+        """Write vector data to disk.
 
         Parameters
         ----------
@@ -200,10 +201,12 @@ class AbstractVector:
             read_rasterio_profile(rst_reference), epsg=epsg
         )
         if gdal:
-            tf_rst = create_filename(".tif")
-            vct_to_rst_field(vct_temp, tf_rst, rp.gdal_profile, col)
+            tf_rst = create_filename(".sgrd")
+            vct_to_rst_field(
+                vct_temp, tf_rst.with_suffix(".sdat"), rp.gdal_profile, col
+            )
             arr, _ = load_raster(tf_rst)
-            clean_up_tempfiles(tf_rst, "tiff")
+            clean_up_tempfiles(tf_rst, "sgrd")
 
         else:
             tf_rst = create_filename(".sgrd")
@@ -218,8 +221,10 @@ class AbstractVector:
                     raise IOError(msg)
                 polygons_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
             elif self._geometry_type == "Point":
-                msg = "Rasterisation of points is not implemented."
-                raise NotImplementedError(msg)
+                if convert_lines_to_direction:
+                    msg = "Cannot convert polygons to directions"
+                    raise IOError(msg)
+                points_to_raster(vct_temp, tf_rst, rst_reference, col, dtype_raster)
 
             arr, profile = load_raster(tf_rst.with_suffix(".sdat"))
             # correct no data value if necessary

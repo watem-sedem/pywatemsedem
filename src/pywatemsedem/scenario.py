@@ -453,9 +453,30 @@ class Scenario:
                 0, len(self._vct_parcels.geodata), 1
             )
 
+        if np.any(self._vct_parcels.geodata["NR"] > 32767):
+            msg = (
+                "Parcels NR has values higher than the maximum allowed number "
+                "for WaTEM/SEDEM definition (i.e. 32767). Setting values above "
+                "32767 to 32767."
+            )
+            warnings.warn(msg)
+            self._vct_parcels.geodata["NR"] = np.where(
+                self._vct_parcels.geodata["NR"] > 32767,
+                32767,
+                self._vct_parcels.geodata["NR"],
+            )
+
+        attribute_continuous_value_error(
+            self._vct_parcels.geodata,
+            "Parcels",
+            "NR",
+            lower=0,
+            upper=32767,
+        )
+
         self._vct_parcels.geodata["LANDUSE"] = self._vct_parcels.geodata[
             "LANDUSE"
-        ].astype(float)
+        ].astype(int)
 
     @property
     def parcels(self):
@@ -475,14 +496,6 @@ class Scenario:
         """
         if not self.parcels_ids.is_empty():
             arr = self.parcels_ids.arr.copy()
-            if np.any(arr > 32767):
-                msg = (
-                    "Parcels raster has values higher than the maximum allowed number "
-                    "for WaTEM/SEDEM definition (i.e. 32767). Setting values above "
-                    "32767 to 32767."
-                )
-                warnings.warn(msg)
-            arr = np.where(arr > 32767, 32767, arr)
             arr = arr.astype(np.int16)
 
             return self.raster_factory(arr, allow_nodata_array=True)
@@ -499,14 +512,18 @@ class Scenario:
         Returns
         -------
         pywatemsedem.geo.rasters.AbstractRaster, else None
-            Float64 raster with values:
+            int16 raster with values:
 
             - *>0*: parcel id
             - *-9999*: nodata
         """
         if not self._vct_parcels.is_empty():
             arr = self._vct_parcels.rasterize(
-                self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=True
+                self.catchm.rasterfile_mask,
+                self.rp.epsg,
+                col="NR",
+                dtype_raster="integer",
+                gdal=False,
             )
             return self.raster_factory(arr, allow_nodata_array=True)
         else:
@@ -536,7 +553,11 @@ class Scenario:
         """
         if not self._vct_parcels.is_empty():
             arr = self.vct_parcels.rasterize(
-                self.catchm.rasterfile_mask, self.rp.epsg, col="LANDUSE", gdal=True
+                self.catchm.rasterfile_mask,
+                self.rp.epsg,
+                col="LANDUSE",
+                dtype_raster="integer",
+                gdal=False,
             )
             if np.all(arr == self.rp.nodata):
                 return AbstractRaster()
@@ -605,8 +626,9 @@ class Scenario:
             self.catchm.rasterfile_mask,
             self.rp.epsg,
             col="NR",
+            dtype_raster="integer",
             nodata=-9999,
-            gdal=True,
+            gdal=False,
         )
         self._grass_strips = self.raster_factory(arr)
 
@@ -721,7 +743,11 @@ class Scenario:
         """
         if not self.vct_buffers.is_empty():
             arr = self.vct_buffers.rasterize(
-                self.catchm.rasterfile_mask, 31370, "buf_exid", gdal=True
+                self.catchm.rasterfile_mask,
+                31370,
+                "buf_exid",
+                dtype_raster="integer",
+                gdal=False,
             )
             raster = self.raster_factory(arr)
         else:
@@ -845,7 +871,7 @@ class Scenario:
             self.catchm.rasterfile_mask,
             self.rp.epsg,
             convert_lines_to_direction=True,
-            gdal=True,
+            gdal=False,
         )
         if not self.buffers.is_empty():
             # if there is a buffer on the same pixel of a ditch, remove the ditch
@@ -866,7 +892,7 @@ class Scenario:
             self.catchm.rasterfile_mask,
             self.rp.epsg,
             convert_lines_to_direction=True,
-            gdal=True,
+            gdal=False,
         )
         if not self.buffers.is_empty():
             # if there is a buffer on the same pixel of a ditch, remove the ditch
@@ -924,7 +950,11 @@ class Scenario:
         pywatemsedem.geo.raster.AbstractRaster
         """
         arr = self.vct_outlets.rasterize(
-            self.catchm.rasterfile_mask, self.rp.epsg, col="NR", gdal=True
+            self.catchm.rasterfile_mask,
+            self.rp.epsg,
+            col="NR",
+            dtype_raster="integer",
+            gdal=False,
         )
         self._outlets = self.raster_factory(arr)
         self._outlets.arr = self._outlets.arr.astype(np.int16)
@@ -1023,7 +1053,7 @@ class Scenario:
             - *not equal to 0*: id.
         """
         arr_id = self.vct_endpoints.rasterize(
-            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=True
+            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=False
         )
         arr_id[arr_id == self.rp.nodata] = 0
 

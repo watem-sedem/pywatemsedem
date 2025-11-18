@@ -73,7 +73,7 @@ def create_ktc(
             ktc_high,
         )
         arr_grass = grass.rasterize(
-            tiff_temp, composite_landuse.rp.epsg, col="KTC", gdal=True
+            tiff_temp, composite_landuse.rp.epsg, col="KTC", gdal=False
         )
         arr_ktc = np.where(
             np.logical_and(composite_landuse.arr == -6, arr_grass != mask.rp.nodata),

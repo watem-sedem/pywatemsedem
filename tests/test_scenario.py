@@ -303,7 +303,6 @@ class TestEndpoints(ScenarioTestBase):
         np.testing.assert_allclose(counts, [48970, 394, 80])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_vct_endpoints_efficiency(self, recwarn):
         """Test vector endpoints assignment with user-defined 'efficiency' column"""
         # feed a self-defined efficiency column (with 10 linestring to 75 %, remaining
@@ -373,7 +372,7 @@ class TestParcels(ScenarioTestBase):
 
         # test type
         assert self.scenario.parcels.arr.dtype == np.int16
-        assert self.scenario.parcels_ids.arr.dtype == np.float64
+        assert self.scenario.parcels_ids.arr.dtype == np.int16
 
         # test number of values
         un = np.unique(self.scenario.parcels_ids.arr)
@@ -390,16 +389,17 @@ class TestParcels(ScenarioTestBase):
         df["NR"] = 1000**2
 
         self.scenario.vct_parcels = df
-        assert np.max(self.scenario.parcels.arr) == 32767
-        assert np.max(self.scenario.parcels_ids.arr) == 1000**2
 
         # catch warning
         w = recwarn.pop(UserWarning)
         assert (
-            str(w.message) == "Parcels raster has values higher than the maximum "
-            "allowed number for WaTEM/SEDEM definition (i.e. 32767). "
-            "Setting values above 32767 to 32767."
+            str(w.message)
+            == "Parcels NR has values higher than the maximum allowed number "
+            "for WaTEM/SEDEM definition (i.e. 32767). Setting values above "
+            "32767 to 32767."
         )
+        assert np.max(self.scenario.parcels.arr) == 32767
+        assert np.max(self.scenario.parcels_ids.arr) == 32767
 
     @pytest.mark.saga
     def test_vct_parcels_value_error_landuse(self):
