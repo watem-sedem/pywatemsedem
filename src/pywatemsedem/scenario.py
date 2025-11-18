@@ -475,11 +475,12 @@ class Scenario:
             if np.any(arr > 32767):
                 msg = (
                     "Parcels raster has values higher than the maximum allowed number "
-                    "for WaTEM/SEDEM definition (i.e. 32767). Setting values above "
-                    "32767 to 32767."
+                    "for WaTEM/SEDEM definition (i.e. 32767). Setting to remainder "
+                    "after division by 32768."
                 )
                 warnings.warn(msg)
-            arr = np.where(arr > 32767, 32767, arr)
+
+            arr = np.where(arr > 0, arr % 2**15, arr)
             arr = arr.astype(np.int16)
 
             return self.raster_factory(arr, allow_nodata_array=True)
