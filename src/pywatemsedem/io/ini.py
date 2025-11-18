@@ -34,9 +34,10 @@ class IniFile:
     >>> inifile.add_model_information()
     >>> inifile.add_working_directories()
     >>> inifile.add_files()
-    >>> inifile.add_user_choices()
-    >>> inifile.add_output_maps()
-    >>> inifile.add_variables(buffers, forced_routing, river_underground)
+    >>> inifile.add_parameters()
+    >>> inifile.add_options()
+    >>> inifile.add_output()
+    >>> inifile.add_extensions(buffers, forced_routing, river_underground)
     >>> inifile.write("modelinput/ini_file.ini")
     """
 
@@ -106,78 +107,155 @@ class IniFile:
                 "C factor map filename",
                 (self.cnwsinput_folder / inputfilename.cfactor_file).name,
             )
+
+            self.cfg.set(
+                "Files",
+                "K factor filename",
+                (self.cnwsinput_folder / inputfilename.kfactor_file).name,
+            )
+
         else:
             msg = "Ini-file for version 'Only Routing' not implemented."
             raise IOError(msg)
 
-    def add_user_choices(self):
-        """Add section user choices to config file"""
-        self.cfg.add_section("User Choices")
+    def add_parameters(self):
+        """Add section parameters to config file"""
+        self.cfg.add_section("Parameters")
         self.cfg.set(
-            "User Choices", "Max kernel", str(self.choices.dict_variables["Max kernel"])
+            "Parameters", "Max kernel", str(self.choices.dict_variables["Max kernel"])
         )
         self.cfg.set(
-            "User Choices",
+            "Parameters",
             "Max kernel river",
             str(self.choices.dict_variables["Max kernel river"]),
         )
-
-    def add_output_maps(self):
-        """Add section outputs config file"""
-        self.cfg.add_section("Output maps")
         self.cfg.set(
-            "Output maps", "Write aspect", str(self.choices.dict_output["Write aspect"])
+            "Parameters",
+            "Parcel connectivity grasstrips",
+            str(int(self.choices.dict_variables["Parcel connectivity grasstrips"])),
         )
         self.cfg.set(
-            "Output maps",
+            "Parameters",
+            "Parcel connectivity cropland",
+            str(int(self.choices.dict_variables["Parcel connectivity cropland"])),
+        )
+        self.cfg.set(
+            "Parameters",
+            "Parcel connectivity forest",
+            str(int(self.choices.dict_variables["Parcel connectivity forest"])),
+        )
+        self.cfg.set(
+            "Parameters",
+            "Parcel trapping efficiency cropland",
+            str(
+                int(self.choices.dict_variables["Parcel trapping efficiency cropland"])
+            ),
+        )
+        self.cfg.set(
+            "Parameters",
+            "Parcel trapping efficiency forest",
+            str(int(self.choices.dict_variables["Parcel trapping efficiency forest"])),
+        )
+        self.cfg.set(
+            "Parameters",
+            "Parcel trapping efficiency pasture",
+            str(int(self.choices.dict_variables["Parcel trapping efficiency pasture"])),
+        )
+
+        if self.version != "Only Routing":
+            self.cfg.set(
+                "Parameters",
+                "Bulk density",
+                str(int(self.choices.dict_variables["Bulk density"])),
+            )
+
+            # R-factor of regenvalfile?
+            self.cfg.set(
+                "Parameters",
+                "R factor",
+                str(self.choices.dict_variables["R factor"]),
+            )
+
+    def add_output(self):
+        """Add section outputs config file"""
+        self.cfg.add_section("Output")
+        self.cfg.set(
+            "Output", "Write aspect", str(self.choices.dict_output["Write aspect"])
+        )
+        self.cfg.set(
+            "Output",
             "Write LS factor",
             str(self.choices.dict_output["Write LS factor"]),
         )
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write rainfall excess",
             str(self.choices.dict_output["Write rainfall excess"]),
         )
         self.cfg.set(
-            "Output maps", "Write RUSLE", str(self.choices.dict_output["Write RUSLE"])
+            "Output", "Write RUSLE", str(self.choices.dict_output["Write RUSLE"])
         )
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write sediment export",
             str(self.choices.dict_output["Write sediment export"]),
         )
         self.cfg.set(
-            "Output maps", "Write slope", str(self.choices.dict_output["Write slope"])
+            "Output", "Write slope", str(self.choices.dict_output["Write slope"])
         )
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write total runoff",
             str(self.choices.dict_output["Write total runoff"]),
         )
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write upstream area",
             str(self.choices.dict_output["Write upstream area"]),
         )
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write water erosion",
             str(self.choices.dict_output["Write water erosion"]),
         )
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write routing table",
             str(self.choices.dict_output["Write routing table"]),
         )
 
         self.cfg.set(
-            "Output maps",
+            "Output",
             "Write routing column/row",
             str(self.choices.dict_output["Write routing table"]),
         )
 
-    def add_variables(self, buffers, forced_routing, river_underground):
-        """Add section variables to config file
+    def add_options(self):
+        self.cfg.add_section("Options")
+        # Advanced settings
+        if "L model" in self.choices.dict_model_options.keys():
+            self.cfg.set(
+                "Options", "L model", self.choices.dict_model_options["L model"]
+            )
+        if "S model" in self.choices.dict_model_options.keys():
+            self.cfg.set(
+                "Options", "S model", self.choices.dict_model_options["S model"]
+            )
+        if "TC model" in self.choices.dict_model_options.keys():
+            self.cfg.set(
+                "Options", "TC model", self.choices.dict_model_options["TC model"]
+            )
+        self.cfg.set(
+            "Options",
+            "Calculate Tillage Erosion",
+            str(self.choices.dict_model_options["Calculate Tillage Erosion"]),
+        )
+
+        if self.version == "Only Routing":
+            self.cfg.set("Options", "Only Routing", "1")
+
+    def add_extensions(self, buffers, forced_routing, river_underground):
+        """Add section parameters and parameters extensions to config file
 
         Parameters
         ----------
@@ -214,50 +292,36 @@ class IniFile:
             - *target col* (int): target pixel column
             - *target row* (int): target pixel row
         """
-        self.cfg.add_section("Variables")
+        self.cfg.add_section("Extensions")
+        self.cfg.add_section("Parameters Extensions")
+
+        self.add_cn_extension()
+        self.add_ktil_extension()
+        self.add_ktc_and_calibration_extensions()
+        self.add_river_routing_extension()
+        self.add_include_buffer_extension(buffers)
+        self.add_force_routing_extension(forced_routing, river_underground)
+
         self.cfg.set(
-            "Variables",
-            "Parcel connectivity grasstrips",
-            str(int(self.choices.dict_variables["Parcel connectivity grasstrips"])),
-        )
-        self.cfg.set(
-            "Variables",
-            "Parcel connectivity cropland",
-            str(int(self.choices.dict_variables["Parcel connectivity cropland"])),
-        )
-        self.cfg.set(
-            "Variables",
-            "Parcel connectivity forest",
-            str(int(self.choices.dict_variables["Parcel connectivity forest"])),
-        )
-        self.cfg.set(
-            "Variables",
-            "Parcel trapping efficiency cropland",
-            str(
-                int(self.choices.dict_variables["Parcel trapping efficiency cropland"])
-            ),
-        )
-        self.cfg.set(
-            "Variables",
-            "Parcel trapping efficiency forest",
-            str(int(self.choices.dict_variables["Parcel trapping efficiency forest"])),
-        )
-        self.cfg.set(
-            "Variables",
-            "Parcel trapping efficiency pasture",
-            str(int(self.choices.dict_variables["Parcel trapping efficiency pasture"])),
-        )
-        self.cfg.set(
-            "Variables",
+            "Parameters extensions",
             "LS correction",
             str(self.choices.dict_variables["LS correction"]),
         )
 
-        self.set_cfg_model_version()
+        self.cfg.set(
+            "Extensions",
+            "Adjusted Slope",
+            str(self.choices.dict_model_options["Adjusted Slope"]),
+        )
+        self.cfg.set(
+            "Extensions",
+            "Buffer reduce Area",
+            str(self.choices.dict_model_options["Buffer reduce Area"]),
+        )
 
         # output per rivier segment?
         self.cfg.set(
-            "User Choices",
+            "Extensions",
             "Output per river segment",
             str(self.choices.dict_output["Output per river segment"]),
         )
@@ -270,7 +334,7 @@ class IniFile:
 
         # manual outlet
         self.cfg.set(
-            "User Choices",
+            "Extensions",
             "Manual outlet selection",
             str(self.choices.dict_model_options["Manual outlet selection"]),
         )
@@ -281,11 +345,22 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.outlet_file).name,
             )
 
-        self.set_cfg_only_routing()
-
-        # Grachten gebruiken?
+        # estimate clay content extenison
         self.cfg.set(
-            "User Choices",
+            "Extensions",
+            "Estimate clay content",
+            str(self.choices.dict_model_options["Estimate clay content"]),
+        )
+        if self.choices.dict_model_options["Estimate clay content"] == 1:
+            self.cfg.set(
+                "Parameters Extensions",
+                "Clay content parent material",
+                str(int(self.choices.dict_variables["Clay content parent material"])),
+            )
+
+        # Include ditches
+        self.cfg.set(
+            "Extensions",
             "Include ditches",
             str(self.choices.dict_ecm_options["Include ditches"]),
         )
@@ -296,9 +371,9 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.ditches_files).name,
             )
 
-        # Geleidende dammen gebruiken?
+        # Include dams
         self.cfg.set(
-            "User Choices",
+            "Extensions",
             "Include dams",
             str(self.choices.dict_ecm_options["Include dams"]),
         )
@@ -309,15 +384,15 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.conductivedams_file).name,
             )
 
-        # Using sewers
+        # Include sewers
         self.cfg.set(
-            "User Choices",
+            "Extensions",
             "Include sewers",
             str(self.choices.dict_model_options["Include sewers"]),
         )
         if self.choices.dict_model_options["Include sewers"] == 1:
             self.cfg.set(
-                "Variables",
+                "Parameters extensions",
                 "Sewer exit",
                 str(self.choices.dict_variables["Sewer exit"]),
             )
@@ -327,9 +402,27 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.endpoints_file).name,
             )
 
-        # Using buffers in model?
+    def add_include_buffer_extension(self, buffers):
+        """Add buffer extension and buffer parameters to config file
+
+        Parameters
+        ----------
+        buffers: pandas.DataFrame
+            Holding buffer properties, with columns,
+
+            - *buffercap* (float): Volume
+            - *hdam* (float): Height dam
+            - *hknijp^* (float): Height opening
+            - *dknijp* (float): Opening area
+            - *qcoef* (float): Discharge coefficient
+            - *boverl* (float): Width dam
+            - *eff* (float): Trapping efficiency
+            - *BUF_EXID* (float): Extension ID
+            - *BUF_ID* (float): Buffer id
+        """
+        # Include buffers
         self.cfg.set(
-            "User Choices",
+            "Extensions",
             "Include buffers",
             str(self.choices.dict_ecm_options["Include buffers"]),
         )
@@ -340,7 +433,9 @@ class IniFile:
                 "Buffer map filename",
                 (self.cnwsinput_folder / inputfilename.buffers_file).name,
             )
-            self.cfg.set("Variables", "Number of buffers", str(len(buffers)))
+            self.cfg.set(
+                "Parameters extensions", "Number of buffers", str(len(buffers))
+            )
             if len(buffers) != 0:
                 for row in buffers.iterrows():
                     sectie = f"Buffer {row[1]['buf_id']}"
@@ -354,9 +449,34 @@ class IniFile:
                     self.cfg.set(sectie, "Trapping efficiency", f"{row[1]['eff']}")
                     self.cfg.set(sectie, "Extension ID", f"{row[1]['buf_exid']}")
 
+    def add_force_routing_extension(self, forced_routing, river_underground):
+        """Add force routing extension and force routing parameters to config file
+
+        Parameters
+        ----------
+        forced_routing: pandas.DataFrame
+            Forced routing table with columns,
+            see :ref:`here <watemsedem:forcedroutingdata>`
+
+            - *NR* (int):
+            - *from col* (int): source pixel column
+            - *from row* (int): source pixel row
+            - *target col* (int): target pixel column
+            - *target row* (int): target pixel row
+
+        river_underground: pandas.DataFrame
+            River underground routing table with columns, see
+            :ref:`here <watemsedem:forcedroutingdata>`
+
+            - *NR* (int):
+            - *from col* (int): source pixel column
+            - *from row* (int): source pixel row
+            - *target col* (int): target pixel column
+            - *target row* (int): target pixel row
+        """
         # force routing
         self.cfg.set(
-            "User Choices",
+            "Extensions",
             "Force Routing",
             str(self.choices.dict_model_options["Force Routing"]),
         )
@@ -368,7 +488,7 @@ class IniFile:
             n = n_ru + n_fr
             if n > 0:
                 self.cfg.set(
-                    "Variables",
+                    "Parameters extensions",
                     "Number of Forced Routing",
                     str(n),
                 )
@@ -394,10 +514,13 @@ class IniFile:
                     "forced routing or underground or river vectors defined."
                 )
                 warnings.warn(msg)
-        # river routing
+
+    def add_river_routing_extension(self):
+        """Add river routing extension to config file and
+        the needed files for this extension"""
         if self.choices.dict_model_options["River Routing"] == 1:
             self.cfg.set(
-                "User Choices",
+                "Extensions",
                 "river routing",
                 str(self.choices.dict_model_options["River Routing"]),
             )
@@ -417,41 +540,112 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.routing_file).name,
             )
 
-        # Advanced settings
-        if "L model" in self.choices.dict_model_options.keys():
+    def add_ktc_and_calibration_extensions(self):
+        """Add create ktc map and calibration extensions and
+        their extension parameters to config file"""
+        if self.choices.dict_model_options["Calibrate"] == 1:
+            self.cfg.add_section("Calibration")
             self.cfg.set(
-                "User Choices", "L model", self.choices.dict_model_options["L model"]
+                "Extensions",
+                "Calibrate",
+                str(self.choices.dict_model_options["Calibrate"]),
             )
-        if "S model" in self.choices.dict_model_options.keys():
             self.cfg.set(
-                "User Choices", "S model", self.choices.dict_model_options["S model"]
+                "Calibration",
+                "KTcHigh_lower",
+                str(self.choices.dict_variables["KTcHigh_lower"]),
             )
-        if "TC model" in self.choices.dict_model_options.keys():
             self.cfg.set(
-                "User Choices", "TC model", self.choices.dict_model_options["TC model"]
+                "Calibration",
+                "KTcHigh_upper",
+                str(self.choices.dict_variables["KTcHigh_upper"]),
+            )
+            self.cfg.set(
+                "Calibration",
+                "KTcLow_lower",
+                str(self.choices.dict_variables["KTcLow_lower"]),
+            )
+            self.cfg.set(
+                "Calibration",
+                "KTcLow_upper",
+                str(self.choices.dict_variables["KTcLow_upper"]),
+            )
+            self.cfg.set(
+                "Calibration", "steps", str(self.choices.dict_variables["steps"])
+            )
+            self.cfg.set(
+                "Parameters extensions",
+                "ktc limit",
+                str(self.choices.dict_variables["ktc limit"]),
+            )
+        elif self.choices.dict_model_options["UserProvidedKTC"] == 1:
+            self.cfg.set("Extensions", "Create ktc map", "0")
+            self.cfg.set(
+                "Files",
+                "ktc map filename",
+                (self.cnwsinput_folder / inputfilename.ktc_file).name,
             )
 
-        self.cfg.set(
-            "User Choices",
-            "Adjusted Slope",
-            str(self.choices.dict_model_options["Adjusted Slope"]),
-        )
-        self.cfg.set(
-            "User Choices",
-            "Buffer reduce Area",
-            str(self.choices.dict_model_options["Buffer reduce Area"]),
-        )
+        else:
+            self.cfg.set("Extensions", "Create ktc map", "1")
+            self.cfg.set(
+                "Parameters Extensions",
+                "ktc low",
+                str(self.choices.dict_variables["ktc low"]),
+            )
+            self.cfg.set(
+                "Parameters Extensions",
+                "ktc high",
+                str(self.choices.dict_variables["ktc high"]),
+            )
+            self.cfg.set(
+                "Parameters Extensions",
+                "ktc limit",
+                str(self.choices.dict_variables["ktc limit"]),
+            )
 
-    def set_cfg_model_version(self):
-        """Add model version to self.cfg."""
+    def add_ktil_extension(self):
+        """Add create ktil map extension and its extension parameters to config file"""
+        if self.choices.dict_model_options["Calculate Tillage Erosion"] == 1:
+            self.cfg.set(
+                "Extensions",
+                "Create ktil map",
+                str(self.choices.dict_model_options["Create ktil map"]),
+            )
+            if self.choices.dict_model_options["Create ktil map"] == 1:
+                self.cfg.set(
+                    "Parameters Extensions",
+                    "ktil default",
+                    str(self.choices.dict_variables["ktil default"]),
+                )
+                self.cfg.set(
+                    "Parameters Extensions",
+                    "ktil threshold",
+                    str(self.choices.dict_variables["ktil threshold"]),
+                )
+            else:
+                self.cfg.set(
+                    "Files",
+                    "ktil map filename",
+                    (self.cnwsinput_folder / inputfilename.ktil_file).name,
+                )
+
+    def add_cn_extension(self):
+        """Add CN-extension and its extension parameters/files to config file"""
         if self.version == "CN-WS":
-            self.cfg.set("User Choices", "Only WS", "0")
+            self.cfg.set("Extensions", "Curve Number", "1")
             self.cfg.set(
-                "Variables", "Alpha", str(self.choices.dict_variables["Alpha"])
+                "Parameters extensions",
+                "Alpha",
+                str(self.choices.dict_variables["Alpha"]),
             )
-            self.cfg.set("Variables", "Beta", str(self.choices.dict_variables["Beta"]))
             self.cfg.set(
-                "Variables",
+                "Parameters extensions",
+                "Beta",
+                str(self.choices.dict_variables["Beta"]),
+            )
+            self.cfg.set(
+                "Parameters extensions",
                 "Stream velocity",
                 str(self.choices.dict_variables["Stream velocity"]),
             )
@@ -460,163 +654,39 @@ class IniFile:
                 "CN map filename",
                 (self.cnwsinput_folder / inputfilename.cn_file).name,
             )
-
-        else:  # WS-model
-            self.cfg.set("User Choices", "Only WS", "1")
-            if self.version == "Only Routing":
-                self.cfg.set("User Choices", "Only Routing", "1")
-
-    def set_cfg_only_routing(self):
-        """Add variables for only routing version of WaTEM/SEDEM."""
-        if self.version != "Only Routing":
             self.cfg.set(
                 "Files",
-                "K factor filename",
-                (self.cnwsinput_folder / inputfilename.kfactor_file).name,
+                "Rainfall filename",
+                "Rainfall.txt",  # TODO: define in templates
             )
             self.cfg.set(
-                "Variables",
-                "Bulk density",
-                str(int(self.choices.dict_variables["Bulk density"])),
+                "Parameters extensions",
+                "5-day antecedent rainfall",
+                str(self.choices.dict_variables["5-day antecedent rainfall"]),
             )
-
-            # R-factor of regenvalfile?
             self.cfg.set(
-                "Variables",
-                "R factor",
-                str(self.choices.dict_variables["R factor"]),
+                "Parameters extensions",
+                "Desired timestep for model",
+                str(self.choices.dict_variables["Desired timestep for model"]),
             )
-            self.cfg.set("Variables", "Endtime model", "0")  # Aan te passen in model?
-            if self.version == "CN-WS":
-                self.cfg.set(
-                    "Files",
-                    "Rainfall filename",
-                    "Rainfall.txt",  # TODO: define in templates
-                )
-                self.cfg.set(
-                    "Variables",
-                    "5-day antecedent rainfall",
-                    str(self.choices.dict_variables["5-day antecedent rainfall"]),
-                )
-                self.cfg.set(
-                    "Variables",
-                    "Desired timestep for model",
-                    str(self.choices.dict_variables["Desired timestep for model"]),
-                )
-                self.cfg.set(
-                    "Variables",
-                    "Endtime model",
-                    str(self.choices.dict_variables["Endtime model"]),
-                )
-                if self.choices.dict_model_options["Convert output"] == 1:
-                    self.cfg.set(
-                        "User Choices",
-                        "Convert output",
-                        str(self.choices.dict_model_options["Convert output"]),
-                    )
-                    self.cfg.set(
-                        "Variables",
-                        "Final timestep output",
-                        str(self.choices.dict_variables["Final timestep output"]),
-                    )
-
-            # KTC and calibration KTC
-            if self.choices.dict_model_options["Calibrate"] == 1:
-                self.cfg.add_section("Calibration")
-                self.cfg.set(
-                    "Calibration",
-                    "Calibrate",
-                    str(self.choices.dict_model_options["Calibrate"]),
-                )
-                self.cfg.set(
-                    "Calibration",
-                    "KTcHigh_lower",
-                    str(self.choices.dict_variables["KTcHigh_lower"]),
-                )
-                self.cfg.set(
-                    "Calibration",
-                    "KTcHigh_upper",
-                    str(self.choices.dict_variables["KTcHigh_upper"]),
-                )
-                self.cfg.set(
-                    "Calibration",
-                    "KTcLow_lower",
-                    str(self.choices.dict_variables["KTcLow_lower"]),
-                )
-                self.cfg.set(
-                    "Calibration",
-                    "KTcLow_upper",
-                    str(self.choices.dict_variables["KTcLow_upper"]),
-                )
-                self.cfg.set(
-                    "Calibration", "steps", str(self.choices.dict_variables["steps"])
-                )
-                self.cfg.set(
-                    "Variables",
-                    "ktc limit",
-                    str(self.choices.dict_variables["ktc limit"]),
-                )
-            elif self.choices.dict_model_options["UserProvidedKTC"] == 1:
-                self.cfg.set("User Choices", "Create ktc map", "0")
-                self.cfg.set(
-                    "Files",
-                    "ktc map filename",
-                    (self.cnwsinput_folder / inputfilename.ktc_file).name,
-                )
-
-            else:
-                self.cfg.set("User Choices", "Create ktc map", "1")
-                self.cfg.set(
-                    "Variables", "ktc low", str(self.choices.dict_variables["ktc low"])
-                )
-                self.cfg.set(
-                    "Variables",
-                    "ktc high",
-                    str(self.choices.dict_variables["ktc high"]),
-                )
-                self.cfg.set(
-                    "Variables",
-                    "ktc limit",
-                    str(self.choices.dict_variables["ktc limit"]),
-                )
-
-            # KTIL
             self.cfg.set(
-                "User Choices",
-                "Calculate Tillage Erosion",
-                str(self.choices.dict_model_options["Calculate Tillage Erosion"]),
+                "Parameters extensions",
+                "Endtime model",
+                str(self.choices.dict_variables["Endtime model"]),
             )
-            if self.choices.dict_model_options["Calculate Tillage Erosion"] == 1:
+            if self.choices.dict_model_options["Convert output"] == 1:
                 self.cfg.set(
-                    "User Choices",
-                    "Create ktil map",
-                    str(self.choices.dict_model_options["Create ktil map"]),
+                    "Extensions",
+                    "Convert output",
+                    str(self.choices.dict_model_options["Convert output"]),
                 )
-                if self.choices.dict_model_options["Create ktil map"] == 1:
-                    self.cfg.set(
-                        "Variables",
-                        "ktil default",
-                        str(self.choices.dict_variables["ktil default"]),
-                    )
-                    self.cfg.set(
-                        "Variables",
-                        "ktil threshold",
-                        str(self.choices.dict_variables["ktil threshold"]),
-                    )
-
-            self.cfg.set(
-                "User Choices",
-                "Estimate clay content",
-                str(self.choices.dict_model_options["Estimate clay content"]),
-            )
-            if self.choices.dict_model_options["Estimate clay content"] == 1:
                 self.cfg.set(
-                    "Variables",
-                    "Clay content parent material",
-                    str(
-                        int(self.choices.dict_variables["Clay content parent material"])
-                    ),
+                    "Parameters extensions",
+                    "Final timestep output",
+                    str(self.choices.dict_variables["Final timestep output"]),
                 )
+        else:  # WS-model
+            self.cfg.set("Extensions", "Curve Number", "0")
 
 
 def open_ini(ini):
@@ -775,18 +845,18 @@ def get_item_from_ini(ini, section, option, dtype):
         the ini-file or the value of the section-option None is returned.
     """
 
-    Cfg = configparser.ConfigParser()
+    cfg = configparser.ConfigParser()
     if ini.exists():
-        Cfg.read(ini)
+        cfg.read(ini)
         try:
             if dtype == str:
-                a = Cfg.get(section, option)
+                a = cfg.get(section, option)
             elif dtype == int:
-                a = Cfg.getint(section, option)
+                a = cfg.getint(section, option)
             elif dtype == float:
-                a = Cfg.getfloat(section, option)
+                a = cfg.getfloat(section, option)
             elif dtype == bool:
-                a = Cfg.getboolean(section, option)
+                a = cfg.getboolean(section, option)
             else:
                 raise TypeError("not a correct Type")
         except configparser.NoOptionError:

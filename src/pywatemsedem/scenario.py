@@ -1529,9 +1529,10 @@ class Scenario:
         ini.add_model_information()
         ini.add_working_directories()
         ini.add_files()
-        ini.add_user_choices()
-        ini.add_output_maps()
-        ini.add_variables(
+        ini.add_options()
+        ini.add_parameters()
+        ini.add_output()
+        ini.add_extensions(
             self.vct_buffers.geodata,
             self.force_routing,
             self.catchm.tubed_river,
