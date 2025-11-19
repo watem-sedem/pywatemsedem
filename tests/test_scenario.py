@@ -40,7 +40,6 @@ class TestCreateModel(ScenarioTestBase):
     """
 
     @pytest.mark.saga
-    # @pytest.mark.skip(reason="test to fix")
     def test_all(self):
         """Create WaTEM/SEDEM parcels raster with all possible input vectors/rasters"""
         self.scenario.vct_parcels = scenario_data.parcels
@@ -74,7 +73,6 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(counts, [28234, 5135, 11541, 4534])
 
     @pytest.mark.saga
-    # @pytest.mark.skip(reason="test to fix")
     def test_omit_water(self):
         """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
         standard in the initial development of pywatemsedem in Flanders."""
@@ -110,7 +108,6 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
 
     @pytest.mark.saga
-    # @pytest.mark.skip(reason="test to fix")
     def test_omit_parcels(self):
         """Omit parcels to create WaTEM/SEDEM parcels raster."""
         self.scenario.composite_landuse = self.scenario.create_composite_landuse()
@@ -142,7 +139,6 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
 
     @pytest.mark.saga
-    # @pytest.mark.skip(reason="test to fix")
     def test_add_grass_strips(self):
         """Test creating composite landuse-, C-factor-, kTC-raster for case without
         water, but with adding grass strips."""
