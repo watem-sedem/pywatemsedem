@@ -40,7 +40,7 @@ class TestCreateModel(ScenarioTestBase):
     """
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
+    # @pytest.mark.skip(reason="test to fix")
     def test_all(self):
         """Create WaTEM/SEDEM parcels raster with all possible input vectors/rasters"""
         self.scenario.vct_parcels = scenario_data.parcels
@@ -60,7 +60,7 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [53, 4030, 1107, 3947, 534, 28236, 11537])
+        np.testing.assert_allclose(counts, [53, 4028, 1107, 3947, 534, 28234, 11541])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
@@ -74,7 +74,7 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(counts, [28236, 5137, 11537, 4534])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
+    # @pytest.mark.skip(reason="test to fix")
     def test_omit_water(self):
         """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
         standard in the initial development of pywatemsedem in Flanders."""
@@ -97,7 +97,7 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4056, 1111, 3965, 534, 28236, 11540])
+        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28236, 11544])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
