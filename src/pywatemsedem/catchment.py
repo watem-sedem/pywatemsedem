@@ -147,7 +147,7 @@ class Catchment(Factory):
         ----------
         name: str
             Name of the catchment.
-        vct_catchment: str or pathlib.Path
+        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame
             Vector file of catchment outline (mask). This should be a single polygon
             vector.
         resolution: int
