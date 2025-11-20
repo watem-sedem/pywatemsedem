@@ -61,7 +61,7 @@ def _check_grass_strip_width(arr_width: np.array):
 
 def scale_cfactor_linear(
     arr_width: np.ndarray,
-    resolution: (int, float) = 20,
+    resolution: int = 20,
     upper_cfactor=0.37,
     lower_cfactor=0.01,
 ):
@@ -703,7 +703,7 @@ def process_grass_strips(
 
     Parameters
     ----------
-    arr_grass_id: numpy.ndarray
+    arr_grass_strips_ids: numpy.ndarray
         Grass strips id's-raster. Pixel belonging to one grass strip share the same
         unique id. Other values should be have nodata-value described in the parameter
         profile.
