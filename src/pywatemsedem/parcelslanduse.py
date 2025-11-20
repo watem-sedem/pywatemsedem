@@ -13,7 +13,7 @@ class ParcelsLanduse:
     ----------
     landuse_core: numpy.ndarray
         Core landuse raster
-    rivers: numpy.ndarray
+    river: numpy.ndarray
         River raster (-1)
     water: numpy.ndarray
         Water raster (-3)
