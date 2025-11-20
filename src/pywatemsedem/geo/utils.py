@@ -302,7 +302,7 @@ def get_geometry_type(vct):
 
     Parameters
     ----------
-    vct: str
+    vct: str or pathlib.Path
         File path to shapefile
 
     Returns
