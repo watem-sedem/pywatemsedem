@@ -353,7 +353,9 @@ class Scenario:
         self.scenario_folder_init = (
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
         )
-        self.sfolder = ScenarioFolders(self.catchm.folder, self.scenario_nr, self.year)
+        self.sfolder = ScenarioFolders(
+            self.catchm.folder, str(self.scenario_nr), self.year
+        )
         self.sfolder.create_all()
 
     def temporal_resolution(self):
