@@ -871,6 +871,7 @@ class Scenario:
         """
         self._vct_condictive_dams = self.vector_factory(vector_input, "LineString")
 
+    @property
     def conductive_dams(self):
         """Getter conductive dams
 
@@ -892,6 +893,7 @@ class Scenario:
         raster = self.raster_factory(arr)
         return raster
 
+    @property
     def ditches(self):
         """Getter ditches
 
