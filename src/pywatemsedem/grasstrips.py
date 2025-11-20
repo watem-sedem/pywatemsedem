@@ -76,7 +76,7 @@ def scale_cfactor_linear(
         Spatial resolution of raster grid on which grass strips are projected.
     upper_cfactor: float, default 0.37
         Upper allowed C-factor.
-    upper_cfactor: float, default 0.01
+    lower_cfactor: float, default 0.01
         Lower allowed C-factor.
 
     Returns
