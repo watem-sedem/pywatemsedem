@@ -25,8 +25,6 @@ def plot_cumulative_sedimentload(df, fname):
         - *value* (float): sediment load value
         - *cum_perc* (float): cumulative percentage
         - *rank* (float): rank
-    percentage: int
-        Percentage (%) of cumulative sediment load that is to be analysed
     fname: str or pathlib Path
         File path of output figure
     """
