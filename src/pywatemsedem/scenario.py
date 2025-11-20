@@ -1781,7 +1781,9 @@ def assign_buffer_id_to_df_buffer(df):
     return df
 
 
-def add_tillage_technical_measures_to_parcels(gdf_parcels, gdf_tillage_technical):
+def add_tillage_technical_measures_to_parcels(
+    gdf_parcels, gdf_tillage_technical, overlap=0.75
+):
     """Add crop technical measures to parcels vector data.
 
     An overlap between the target parcel polygons and source technical polygons is
@@ -1794,13 +1796,13 @@ def add_tillage_technical_measures_to_parcels(gdf_parcels, gdf_tillage_technical
         Parcels polygon vector
     gdf_tillage_technical: geopandas.GeoDataFrame
         Tillage technical polygon vector
-    overlap: int
+    overlap: float
         Minimal required overlap between polygons to select the implementation of a
-        tillage technical measure to be applied for the parcel.
+        tillage technical measure to be applied for the parcel, default 0.75.
     """
 
     matches = gdf_parcels.geometry.apply(
-        lambda x: nearly_identical(gdf_tillage_technical, x, 0.75)
+        lambda x: nearly_identical(gdf_tillage_technical, x, overlap)
     )
     matches2 = matches.unstack().reset_index(0, drop=True).dropna()
     df_teelttech_matched = gdf_tillage_technical.reindex(index=matches2.values)
