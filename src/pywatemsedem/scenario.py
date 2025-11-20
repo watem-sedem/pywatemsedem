@@ -945,9 +945,9 @@ class Scenario:
             logger.warning(msg)
             self._vct_outlets = AbstractVector()
         else:
-            if "NR" not in self.vct_outlets.geodata:
+            if "NR" not in self._vct_outlets.geodata:
                 self._vct_outlets.geodata["NR"] = np.arange(
-                    1.0, len(self.vct_outlets.geodata) + 1, 1
+                    1.0, len(self._vct_outlets.geodata) + 1, 1
                 )
             self._vct_outlets.geodata["NR"] = self._vct_outlets.geodata["NR"].astype(
                 float
@@ -962,7 +962,7 @@ class Scenario:
         -------
         pywatemsedem.geo.raster.AbstractRaster
         """
-        arr = self.vct_outlets.rasterize(
+        arr = self._vct_outlets.rasterize(
             self.catchm.rasterfile_mask,
             self.rp.epsg,
             col="NR",
