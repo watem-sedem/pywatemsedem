@@ -129,7 +129,7 @@ class Factory:
         valid_exists(mask, None)
         create_mask_vector = False
         create_mask_raster = False
-        if self.create_rasterproperties is False:
+        if not self.create_rasterproperties:
             if self.rp is None:
                 msg = (
                     f"Define a 'RasterProperties'-instance for the "
