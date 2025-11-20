@@ -309,7 +309,7 @@ class IniFile:
         self.add_force_routing_extension(forced_routing, river_underground)
 
         self.cfg.set(
-            "Parameters extensions",
+            "Parameters Extensions",
             "LS correction",
             str(self.choices.dict_variables["LS correction"]),
         )
@@ -398,7 +398,7 @@ class IniFile:
         )
         if self.choices.dict_model_options["Include sewers"] == 1:
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Sewer exit",
                 str(self.choices.dict_variables["Sewer exit"]),
             )
@@ -440,7 +440,7 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.buffers_file).name,
             )
             self.cfg.set(
-                "Parameters extensions", "Number of buffers", str(len(buffers))
+                "Parameters Extensions", "Number of buffers", str(len(buffers))
             )
             if len(buffers) != 0:
                 for row in buffers.iterrows():
@@ -496,7 +496,7 @@ class IniFile:
             n = n_ru + n_fr
             if n > 0:
                 self.cfg.set(
-                    "Parameters extensions",
+                    "Parameters Extensions",
                     "Number of Forced Routing",
                     str(n),
                 )
@@ -582,7 +582,7 @@ class IniFile:
                 "Calibration", "steps", str(self.choices.dict_variables["steps"])
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "ktc limit",
                 str(self.choices.dict_variables["ktc limit"]),
             )
@@ -643,17 +643,17 @@ class IniFile:
         if self.version == "CN-WS":
             self.cfg.set("Extensions", "Curve Number", "1")
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Alpha",
                 str(self.choices.dict_variables["Alpha"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Beta",
                 str(self.choices.dict_variables["Beta"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Stream velocity",
                 str(self.choices.dict_variables["Stream velocity"]),
             )
@@ -668,17 +668,17 @@ class IniFile:
                 "Rainfall.txt",  # TODO: define in templates
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "5-day antecedent rainfall",
                 str(self.choices.dict_variables["5-day antecedent rainfall"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Desired timestep for model",
                 str(self.choices.dict_variables["Desired timestep for model"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Endtime model",
                 str(self.choices.dict_variables["Endtime model"]),
             )
@@ -689,7 +689,7 @@ class IniFile:
                     str(self.choices.dict_model_options["Convert output"]),
                 )
                 self.cfg.set(
-                    "Parameters extensions",
+                    "Parameters Extensions",
                     "Final timestep output",
                     str(self.choices.dict_variables["Final timestep output"]),
                 )
