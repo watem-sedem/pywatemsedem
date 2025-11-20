@@ -1553,7 +1553,6 @@ class Scenario:
                     format="idrisi",
                     dtype=np.float64,
                 )
-        self.create_ini_file()
 
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
