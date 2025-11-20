@@ -128,9 +128,9 @@ class TestGetItemFromIni:
         """Test if a FileNotFoundError is raised when no correct ini file is given"""
         with pytest.raises(FileNotFoundError) as excinfo:
             get_item_from_ini(
-                Path("This/File/Does/Not/Exist.ini"),
+                Path("This_File_Does_Not_Exist.ini"),
                 "Test Section",
                 "bool_option",
                 bool,
             )
-        assert "This/File/Does/Not/Exist.ini does not exist" in str(excinfo.value)
+        assert "This_File_Does_Not_Exist.ini does not exist" in str(excinfo.value)

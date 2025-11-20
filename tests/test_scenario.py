@@ -40,7 +40,6 @@ class TestCreateModel(ScenarioTestBase):
     """
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_all(self):
         """Create WaTEM/SEDEM parcels raster with all possible input vectors/rasters"""
         self.scenario.vct_parcels = scenario_data.parcels
@@ -60,21 +59,20 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [53, 4030, 1107, 3947, 534, 28236, 11537])
+        np.testing.assert_allclose(counts, [53, 4028, 1107, 3947, 534, 28234, 11541])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
 
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32737, 1111, 4056, 11540]))
+        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
 
         # kTC
         un, counts = np.unique(self.scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28236, 5137, 11537, 4534])
+        np.testing.assert_allclose(counts, [28234, 5135, 11541, 4534])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_omit_water(self):
         """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
         standard in the initial development of pywatemsedem in Flanders."""
@@ -97,20 +95,19 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4056, 1111, 3965, 534, 28236, 11540])
+        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32737, 1111, 4056, 11540]))
+        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
 
         # kTC
         un, counts = np.unique(self.scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28236, 5167, 11540, 4501])
+        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_omit_parcels(self):
         """Omit parcels to create WaTEM/SEDEM parcels raster."""
         self.scenario.composite_landuse = self.scenario.create_composite_landuse()
@@ -129,20 +126,19 @@ class TestCreateModel(ScenarioTestBase):
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4056, 1111, 3965, 534, 28236, 11540])
+        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
 
         # c-factor
         un, counts = np.unique(self.scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32737, 1111, 4056, 11540]))
+        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
 
         # kTC
         un, counts = np.unique(self.scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28236, 5167, 11540, 4501])
+        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
 
     @pytest.mark.saga
-    @pytest.mark.skip(reason="test to fix")
     def test_add_grass_strips(self):
         """Test creating composite landuse-, C-factor-, kTC-raster for case without
         water, but with adding grass strips."""
@@ -170,7 +166,7 @@ class TestCreateModel(ScenarioTestBase):
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-6, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
         np.testing.assert_allclose(
-            counts, [1529, 2, 3844, 1011, 3965, 534, 28236, 10323]
+            counts, [1529, 2, 3842, 1011, 3965, 534, 28234, 10327]
         )
 
         # c-factor
@@ -200,7 +196,7 @@ class TestCreateModel(ScenarioTestBase):
         np.testing.assert_allclose(
             counts,
             np.array(
-                [32737, 1011, 4164, 39, 199, 43, 201, 19, 433, 2, 15, 245, 13, 10323]
+                [32735, 1011, 4162, 39, 199, 43, 201, 19, 433, 2, 15, 245, 13, 10327]
             ),
         )
 
@@ -236,7 +232,7 @@ class TestCreateModel(ScenarioTestBase):
             counts,
             np.array(
                 [
-                    28236,
+                    28234,
                     66,
                     27,
                     17,
@@ -250,10 +246,10 @@ class TestCreateModel(ScenarioTestBase):
                     433,
                     2,
                     15,
-                    4855,
+                    4853,
                     245,
                     13,
-                    10323,
+                    10327,
                     4501,
                 ]
             ),

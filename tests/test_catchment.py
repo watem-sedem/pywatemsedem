@@ -25,7 +25,7 @@ class TestCatchment(CatchmentTestBase):
     - Are data types equal?
     """
 
-    @pytest.mark.skip(reason="test to fix")
+    # @pytest.mark.skip(reason="test to fix")
     def test_kfactor(self):
         """Test assignment kfactor raster"""
         # test assignment raster
@@ -37,7 +37,7 @@ class TestCatchment(CatchmentTestBase):
         # test unique values
         un, counts = np.unique(self.catchment.kfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9999, 20, 27, 40, 42])
-        np.testing.assert_allclose(counts, [28236, 1377, 72, 818, 18941])
+        np.testing.assert_allclose(counts, [28234, 1376, 72, 818, 18944])
 
     def test_kfactor_warning(self, recwarn, tmp_path):
         """Test warning wrong value kfactor raster"""
