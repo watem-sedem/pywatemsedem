@@ -118,7 +118,7 @@ class Factory:
 
         Parameters
         ----
-        file_path: pathlib.Path | str
+        mask: pathlib.Path | str
             File path to mask vector or raster file
 
         Notes
