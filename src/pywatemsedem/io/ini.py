@@ -444,16 +444,18 @@ class IniFile:
             )
             if len(buffers) != 0:
                 for row in buffers.iterrows():
-                    sectie = f"Buffer {row[1]['buf_id']}"
-                    self.cfg.add_section(sectie)
-                    self.cfg.set(sectie, "Volume", f"{row[1]['buffercap']}")
-                    self.cfg.set(sectie, "Height dam", f"{row[1]['hdam']}")
-                    self.cfg.set(sectie, "Height opening", f"{row[1]['hknijp']}")
-                    self.cfg.set(sectie, "Opening area", f"{row[1]['dknijp']}")
-                    self.cfg.set(sectie, "Discharge coefficient", f" {row[1]['qcoef']}")
-                    self.cfg.set(sectie, "Width dam", f"{row[1]['boverl']}")
-                    self.cfg.set(sectie, "Trapping efficiency", f"{row[1]['eff']}")
-                    self.cfg.set(sectie, "Extension ID", f"{row[1]['buf_exid']}")
+                    section = f"Buffer {row[1]['buf_id']}"
+                    self.cfg.add_section(section)
+                    self.cfg.set(section, "Volume", f"{row[1]['buffercap']}")
+                    self.cfg.set(section, "Height dam", f"{row[1]['hdam']}")
+                    self.cfg.set(section, "Height opening", f"{row[1]['hknijp']}")
+                    self.cfg.set(section, "Opening area", f"{row[1]['dknijp']}")
+                    self.cfg.set(
+                        section, "Discharge coefficient", f" {row[1]['qcoef']}"
+                    )
+                    self.cfg.set(section, "Width dam", f"{row[1]['boverl']}")
+                    self.cfg.set(section, "Trapping efficiency", f"{row[1]['eff']}")
+                    self.cfg.set(section, "Extension ID", f"{row[1]['buf_exid']}")
 
     def add_force_routing_extension(self, forced_routing, river_underground):
         """Add force routing extension and force routing parameters to config file
@@ -500,20 +502,20 @@ class IniFile:
                 )
             if n_fr > 0:
                 for nr, row in enumerate(forced_routing.itertuples()):
-                    sectie = f"Forced Routing {nr + 1}"
-                    self.cfg.add_section(sectie)
-                    self.cfg.set(sectie, "from col", f"{int(row.fromcol)}")
-                    self.cfg.set(sectie, "from row", f"{int(row.fromrow)}")
-                    self.cfg.set(sectie, "target col", f"{int(row.tocol)}")
-                    self.cfg.set(sectie, "target row", f"{int(row.torow)}")
+                    section = f"Forced Routing {nr + 1}"
+                    self.cfg.add_section(section)
+                    self.cfg.set(section, "from col", f"{int(row.fromcol)}")
+                    self.cfg.set(section, "from row", f"{int(row.fromrow)}")
+                    self.cfg.set(section, "target col", f"{int(row.tocol)}")
+                    self.cfg.set(section, "target row", f"{int(row.torow)}")
             elif n_ru > 0:
                 for nr, row in enumerate(river_underground.itertuples()):
-                    sectie = f"Forced Routing {nr + 1}"
-                    self.cfg.add_section(sectie)
-                    self.cfg.set(sectie, "from col", f"{int(row.fromcol)}")
-                    self.cfg.set(sectie, "from row", f"{int(row.fromrow)}")
-                    self.cfg.set(sectie, "target col", f"{int(row.tocol)}")
-                    self.cfg.set(sectie, "target row", f"{int(row.torow)}")
+                    section = f"Forced Routing {nr + 1}"
+                    self.cfg.add_section(section)
+                    self.cfg.set(section, "from col", f"{int(row.fromcol)}")
+                    self.cfg.set(section, "from row", f"{int(row.fromrow)}")
+                    self.cfg.set(section, "target col", f"{int(row.tocol)}")
+                    self.cfg.set(section, "target row", f"{int(row.torow)}")
             else:
                 msg = (
                     "'Force Routing' in 'dict_model_options' is equal to 1, but no "
