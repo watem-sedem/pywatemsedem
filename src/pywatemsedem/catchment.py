@@ -225,7 +225,7 @@ class Catchment(Factory):
 
     def zip(self):
         """Zip catchment folder"""
-        zip_folder((self.folder / "Data_Bekken"))
+        zip_folder(self.folder.catchment_folder)
 
     @property
     def dtm(self):
