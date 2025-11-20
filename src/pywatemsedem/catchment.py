@@ -1041,7 +1041,7 @@ class Catchment(Factory):
         if "paved" in self._vct_infrastructure_roads.geodata:
             attribute_discrete_value_error(
                 geodata,
-                "Infrastucture roads",
+                "Infrastructure roads",
                 "paved",
                 {self.rp.nodata, -2, -7},
                 {"nodata", "paved", " non-paved"},
