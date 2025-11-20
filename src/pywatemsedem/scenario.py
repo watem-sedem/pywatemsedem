@@ -911,7 +911,7 @@ class Scenario:
             # if there is a buffer on the same pixel of a ditch, remove the ditch
             arr = np.where(self.buffers.arr != 0, 0, arr)
         if not self.catchm.vct_river.is_empty():
-            arr = np.where(self.river.arr == -1, 0, arr)
+            arr = np.where(self.catchm.river.arr == -1, 0, arr)
         raster = self.raster_factory(arr)
         return raster
 
