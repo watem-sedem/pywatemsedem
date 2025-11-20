@@ -1174,7 +1174,7 @@ class Scenario:
 
         Parameters
         ----------
-        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
+        raster_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
         self._composite_landuse = self.raster_factory(
