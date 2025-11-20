@@ -56,9 +56,19 @@ class IniFile:
             self.cfg.write(f)
             f.close()
 
+    def add_sections(self):
+        self.cfg.add_section("Model information")
+        self.cfg.add_section("Working directories")
+        self.cfg.add_section("Files")
+        self.cfg.add_section("Parameters")
+        self.cfg.add_section("Output")
+        self.cfg.add_section("Options")
+        self.cfg.add_section("Extensions")
+        self.cfg.add_section("Parameters Extensions")
+
     def add_model_information(self):
         """Add section model information to config file"""
-        self.cfg.add_section("Model information")
+
         self.cfg.set(
             "Model information",
             "Date",
@@ -67,7 +77,6 @@ class IniFile:
 
     def add_working_directories(self):
         """Add section working directory to config file"""
-        self.cfg.add_section("Working directories")
         self.cfg.set(
             "Working directories", "Input directory", str(self.cnwsinput_folder)
         )
@@ -79,7 +88,6 @@ class IniFile:
 
     def add_files(self):
         """Add section files to config file"""
-        self.cfg.add_section("Files")
         self.cfg.set(
             "Files",
             "DTM filename",
@@ -120,7 +128,7 @@ class IniFile:
 
     def add_parameters(self):
         """Add section parameters to config file"""
-        self.cfg.add_section("Parameters")
+
         self.cfg.set(
             "Parameters", "Max kernel", str(self.choices.dict_variables["Max kernel"])
         )
@@ -178,7 +186,7 @@ class IniFile:
 
     def add_output(self):
         """Add section outputs config file"""
-        self.cfg.add_section("Output")
+
         self.cfg.set(
             "Output", "Write aspect", str(self.choices.dict_output["Write aspect"])
         )
@@ -231,7 +239,7 @@ class IniFile:
         )
 
     def add_options(self):
-        self.cfg.add_section("Options")
+
         # Advanced settings
         if "L model" in self.choices.dict_model_options.keys():
             self.cfg.set(
@@ -292,8 +300,6 @@ class IniFile:
             - *target col* (int): target pixel column
             - *target row* (int): target pixel row
         """
-        self.cfg.add_section("Extensions")
-        self.cfg.add_section("Parameters Extensions")
 
         self.add_cn_extension()
         self.add_ktil_extension()

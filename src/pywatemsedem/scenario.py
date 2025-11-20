@@ -1565,6 +1565,7 @@ class Scenario:
             self.sfolder.cnwsinput_folder,
             self.sfolder.cnwsoutput_folder,
         )
+        ini.add_sections()
         ini.add_model_information()
         ini.add_working_directories()
         ini.add_files()
