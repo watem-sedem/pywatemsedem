@@ -48,7 +48,7 @@ def check_rst_dimensions(rst_in, minmax, ncols, nrows, transform=None):
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path to input raster
     minmax: list
         Containing xmin, ymin, xmax, ymax
@@ -88,7 +88,7 @@ def read_rst_params(rst_in):
 
     Parameters
     ----------
-    rst_in: pathlib.Path
+    rst_in: pathlib.Path or str
         File path to the input raster
 
     Returns
@@ -163,7 +163,7 @@ def write_arr_as_rst(arr, rst_out, dtype, profile):
     ----------
     arr: numpy.ndarray
         2D numpy array to be written as a raster file
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path to the output raster
     dtype: numpy.dtype
     profile: rasterio.profiles
@@ -314,24 +314,24 @@ def get_geometry_type(vct):
     return geom
 
 
-def copy_rst(rst_in, rt_out):
+def copy_rst(rst_in, rst_out):
     """Copy a raster and converts it to an idrisi-raster
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path of input raster
-    rt_out: str
+    rst_out: pathlib.Path
         File path of output raster (extension must be .rst!)
 
     Note
     -----
     Uses and relies on gdal_translate CLI
     """
-    if rt_out.exists():
-        delete_rst(rt_out)
+    if rst_out.exists():
+        delete_rst(rst_out)
 
-    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rt_out)]
+    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rst_out)]
     execute_subprocess(cmd_args)
 
 
@@ -552,7 +552,7 @@ def merge_lst_vct(lst_vct, vct_out, epsg):
     ----------
     lst_vct: list
         List with file paths (str) of all shapefiles to be merged.
-    vct_out: str
+    vct_out: pathlib.Path
         File path of merged vct
     epsg: str
         The epsg code defining the coordinate system of the raster,
@@ -604,7 +604,7 @@ def delete_rst(rst_in):
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: str or  pathlib.Path
         File path of the raster dataset to be deleted
 
     """
@@ -946,8 +946,6 @@ def vct_to_rst_value(
         - *res* (int): resolution
         - *nodata* (int): nodata flag
         - *minmax* (list): list with xmin, ymin, xmax, ymax
-    nodata: int, default -9999
-        No data value for the raster
     alltouched: bool, default true
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
@@ -1208,7 +1206,7 @@ def execute_saga(cmd_args):
 
     Parameters
     ----------
-    saga_cmd: list
+    cmd_args: list
         Saga command
     """
     if "saga_cmd" not in cmd_args:
@@ -1750,7 +1748,7 @@ def rstparams_to_rasterprofile(rstparams, epsg=None):
 
     Parameters
     ----------
-    profile: rasterio.profiles
+    rstparams: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
     epsg: str, default None
         The epsg code defining the coordinate system of the raster,
