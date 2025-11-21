@@ -147,7 +147,7 @@ class Catchment(Factory):
         ----------
         name: str
             Name of the catchment.
-        vct_catchment: str or pathlib.Path
+        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame
             Vector file of catchment outline (mask). This should be a single polygon
             vector.
         resolution: int
@@ -225,7 +225,7 @@ class Catchment(Factory):
 
     def zip(self):
         """Zip catchment folder"""
-        zip_folder((self.folder / "Data_Bekken"))
+        zip_folder(self.folder.catchment_folder)
 
     @property
     def dtm(self):
@@ -624,15 +624,11 @@ class Catchment(Factory):
 
     @property
     def vct_river(self):
-        """Assign river-line vector
+        """Getter vct_river
 
-        The river vector should be a line-vector file. No specific attributes should be
-        defined.
-
-        Parameters
-        ----------
-        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            Line vector file.
+        Returns
+        -------
+        pywatemsedem.geo.vectors.AbstractVector
         """
         return self._vct_river
 
@@ -700,16 +696,7 @@ class Catchment(Factory):
 
     @property
     def tubed_river(self):
-        """Assign underground river-line vector
-
-        The river tubed vector should be a line-vector file. No specific
-        attributes should be defined.
-
-        Parameters
-        ----------
-        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            Line vector file.
-        """
+        """Getter tubed_river"""
         return self._tubed_river
 
     @tubed_river.setter
@@ -1041,7 +1028,7 @@ class Catchment(Factory):
         if "paved" in self._vct_infrastructure_roads.geodata:
             attribute_discrete_value_error(
                 geodata,
-                "Infrastucture roads",
+                "Infrastructure roads",
                 "paved",
                 {self.rp.nodata, -2, -7},
                 {"nodata", "paved", " non-paved"},
@@ -1053,7 +1040,7 @@ class Catchment(Factory):
 
     @property
     def infrastructure(self):
-        """Get infrastucture raster
+        """Get infrastructure raster
 
         Get rasterized polygon and line vectors. The procedure adds the line data
         (roads) to the  polygon data (buildings). As such buildings are considered as

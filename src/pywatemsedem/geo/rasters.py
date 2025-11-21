@@ -69,7 +69,7 @@ class AbstractRaster:
 
         Parameters
         ----------
-        input
+        input: numpy.ndarray
         """
         self._arr = input
 
@@ -342,10 +342,10 @@ class RasterFile(AbstractRaster):
             File path to user input raster.
         rp: RasterProperties
             See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-        dir: pathlib.Path, default cwd
-            Directory for temporary files
         resample: str, default "mode"
             Either "near" or "mode", see :func:`pywatemsedem.geo.utils.clip_rst`
+        dir: pathlib.Path, default cwd
+            Directory for temporary files
 
         Returns
         -------

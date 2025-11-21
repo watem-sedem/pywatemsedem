@@ -1393,7 +1393,7 @@ def create_id_raster_for_highest_value_arr(arr, id_, profile, resmap):
 
     # write to disk
     rst_id = resmap / f"id_{id_}.rst"
-    write_arr_as_rst(arr_id, rst_id, "int32", profile)
+    write_arr_as_rst(arr_id, rst_id, np.int32, profile)
 
     return rst_id, max_val
 

@@ -170,7 +170,7 @@ def reduce_cfactor_with_source_oriented_measures(
     c_factor, c_reduction, use_source_oriented_measures
 ):
     """Reduce the C-factor with the amount defined in 'C_reduction' for every element
-    in the vector. This formule is used to implement impact of source oriented measures
+    in the vector. This formula is used to implement impact of source oriented measures
     on C-factor.
 
     Formula:

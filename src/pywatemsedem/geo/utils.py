@@ -48,7 +48,7 @@ def check_rst_dimensions(rst_in, minmax, ncols, nrows, transform=None):
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path to input raster
     minmax: list
         Containing xmin, ymin, xmax, ymax
@@ -88,7 +88,7 @@ def read_rst_params(rst_in):
 
     Parameters
     ----------
-    rst_in: pathlib.Path
+    rst_in: pathlib.Path or str
         File path to the input raster
 
     Returns
@@ -163,7 +163,7 @@ def write_arr_as_rst(arr, rst_out, dtype, profile):
     ----------
     arr: numpy.ndarray
         2D numpy array to be written as a raster file
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path to the output raster
     dtype: numpy.dtype
     profile: rasterio.profiles
@@ -302,7 +302,7 @@ def get_geometry_type(vct):
 
     Parameters
     ----------
-    vct: str
+    vct: str or pathlib.Path
         File path to shapefile
 
     Returns
@@ -314,24 +314,24 @@ def get_geometry_type(vct):
     return geom
 
 
-def copy_rst(rst_in, rt_out):
+def copy_rst(rst_in, rst_out):
     """Copy a raster and converts it to an idrisi-raster
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path of input raster
-    rt_out: str
+    rst_out: pathlib.Path
         File path of output raster (extension must be .rst!)
 
     Note
     -----
     Uses and relies on gdal_translate CLI
     """
-    if rt_out.exists():
-        delete_rst(rt_out)
+    if rst_out.exists():
+        delete_rst(rst_out)
 
-    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rt_out)]
+    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rst_out)]
     execute_subprocess(cmd_args)
 
 
@@ -503,9 +503,9 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
 
     Parameters
     ----------
-    tiff_in: str
+    tiff_in: pathlib.Path or str
         File path of the input tiff file
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path of the destination rst
     dtype: str, default Float64
         Raster type
@@ -552,7 +552,7 @@ def merge_lst_vct(lst_vct, vct_out, epsg):
     ----------
     lst_vct: list
         List with file paths (str) of all shapefiles to be merged.
-    vct_out: str
+    vct_out: pathlib.Path
         File path of merged vct
     epsg: str
         The epsg code defining the coordinate system of the raster,
@@ -604,7 +604,7 @@ def delete_rst(rst_in):
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: str or  pathlib.Path
         File path of the raster dataset to be deleted
 
     """
@@ -614,16 +614,16 @@ def delete_rst(rst_in):
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def clip_rst(rst_in, rst_out, Cnst, resampling="near"):
+def clip_rst(rst_in, rst_out, cnst, resampling="near"):
     """Clips a raster to a certain bounding box with a given resolution
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path to in input raster.
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path to the destination raster.
-    Cnst: dict
+    cnst: dict
         Dictionary with following keys:
 
         - *epsg* (str): the EPSG-code of the rst_in
@@ -643,12 +643,12 @@ def clip_rst(rst_in, rst_out, Cnst, resampling="near"):
     rst_out = Path(rst_out)
 
     logger.info(f"Clipping {rst_in.name}...")
-    cmd_args = ["gdalwarp", "-q", "-s_srs", str(Cnst["epsg"])]
-    cmd_args += ["-t_srs", str(Cnst["epsg"])]
+    cmd_args = ["gdalwarp", "-q", "-s_srs", str(cnst["epsg"])]
+    cmd_args += ["-t_srs", str(cnst["epsg"])]
     cmd_args += ["-te"]
-    for oor in Cnst["minmax"]:
+    for oor in cnst["minmax"]:
         cmd_args += [str(oor)]
-    cmd_args += ["-tr", str(Cnst["res"]), str(Cnst["res"])]
+    cmd_args += ["-tr", str(cnst["res"]), str(cnst["res"])]
     cmd_args += ["-r", resampling]
     cmd_args += [str(rst_in), str(rst_out)]
     execute_subprocess(cmd_args)
@@ -678,11 +678,11 @@ def clip_vct(vct_in, vct_out, vct_clip, overwrite=False, lst_ignore_field=None):
 
     Parameters
     ----------
-    vct_in: pathlib.Path
+    vct_in: str or pathlib.Path
         File path of shapefile to be clipped.
-    vct_out: pathlib.Path
+    vct_out: str or pathlib.Path
         File path of the destination shapefile
-    vct_clip: str
+    vct_clip: str or pathlib.Path
         File path of the clip boundary vector
     overwrite: bool, default False
         If True, overwrite existing file
@@ -769,9 +769,9 @@ def compute_statistics_rasters_per_polygon_vector(
     >>> vct_out = "statistics_aho.shp"
     >>> rst_sewerin ="sewerin.rst"
     >>> rst_sediexport ="SediExport.rst"
-    >>> compute_statistics_rasters_per_polygon_vector(vct_aho,
+    >>> compute_statistics_rasters_per_polygon_vector([rst_sewerin, rst_sediexport],
+    ...                                               vct_polygon,
     ...                                               vct_out,
-    ...                                               [rst_sewerin, rst_sediexport],
     ...                                               ["River","Sewers"],
     ...                                               {"COUNT":True,"SUM":True},
     ...                                               ton = True)
@@ -946,8 +946,6 @@ def vct_to_rst_value(
         - *res* (int): resolution
         - *nodata* (int): nodata flag
         - *minmax* (list): list with xmin, ymin, xmax, ymax
-    nodata: int, default -9999
-        No data value for the raster
     alltouched: bool, default true
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
@@ -1102,7 +1100,7 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     profile["nodata"] = 0
     arr += 1
     arr = np.where(arr == 256, 0, arr).astype("int16")
-    write_arr_as_rst(arr, rst_out, "int16", profile)
+    write_arr_as_rst(arr, rst_out, np.int16, profile)
     return
 
 
@@ -1208,7 +1206,7 @@ def execute_saga(cmd_args):
 
     Parameters
     ----------
-    saga_cmd: list
+    cmd_args: list
         Saga command
     """
     if "saga_cmd" not in cmd_args:
@@ -1463,7 +1461,7 @@ def raster_dataframe_to_arr(df, profile, col, dtype):
     """
     nrows = profile["height"]
     ncols = profile["width"]
-    if col in df:
+    if col in df.columns:
         df[col] = deepcopy(df[col]).astype(dtype)
     else:
         raise ValueError(f"{col} not in list of raster")
@@ -1750,7 +1748,7 @@ def rstparams_to_rasterprofile(rstparams, epsg=None):
 
     Parameters
     ----------
-    profile: rasterio.profiles
+    rstparams: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
     epsg: str, default None
         The epsg code defining the coordinate system of the raster,
@@ -1762,9 +1760,7 @@ def rstparams_to_rasterprofile(rstparams, epsg=None):
         gdal dictionary holding all metadata for idrisi rasters
 
     """
-    profile = {}
-
-    profile["nodata"] = rstparams["nodata"]
+    profile = {"nodata": rstparams["nodata"]}
 
     if "init" in list(rstparams["crs"].to_dict().keys()):
         profile["epsg"] = rstparams["crs"].to_dict()["init"]

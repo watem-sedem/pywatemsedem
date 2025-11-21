@@ -25,7 +25,7 @@ class Calibration:
         Upper boundary for ktc low value
     ktc_high_min: float
         Lower boundary for ktc high value
-    ktch_high_max: float
+    ktc_high_max: float
         Upper boundary for ktc high value
     steps: int
         Amount of steps between lower and upper ktc low/high values

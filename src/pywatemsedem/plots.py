@@ -25,8 +25,6 @@ def plot_cumulative_sedimentload(df, fname):
         - *value* (float): sediment load value
         - *cum_perc* (float): cumulative percentage
         - *rank* (float): rank
-    percentage: int
-        Percentage (%) of cumulative sediment load that is to be analysed
     fname: str or pathlib Path
         File path of output figure
     """
@@ -76,15 +74,15 @@ def plot_time_series_for_in_river_points(
     """
     if variable == "Q":
         base_name = "Discharge"  # TO DO: ook neerslag!
-        baseTitle = "Debiet in "
+        base_title = "Debiet in "
         ylable = "Debiet [m^3/s]"
     elif variable == "Sedigram":
         base_name = "Sediment concentration"
-        baseTitle = "Sedigram "
+        base_title = "Sedigram "
         ylable = "Sediment concentratie [g/l]"
     elif variable == "Sediment":
         base_name = "Sediment"
-        baseTitle = "Sediment aanvoer in "
+        base_title = "Sediment aanvoer in "
         ylable = "Sedimentvracht [kg]"
     else:
         msg = "No valable type defined for plotting timeseries"
@@ -126,9 +124,9 @@ def plot_time_series_for_in_river_points(
         plt.figure(i)
         plt.ylabel(ylable)
         if col.startswith("VHA "):
-            title = baseTitle + f"segment {col[12:]}"
+            title = base_title + f"segment {col[12:]}"
         else:
-            title = baseTitle + f"outlet {col[7:]}"
+            title = base_title + f"outlet {col[7:]}"
         plt.title(title)
         df[col].plot()
         plt.savefig(resmap / title + ".png")

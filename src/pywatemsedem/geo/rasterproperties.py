@@ -96,8 +96,6 @@ class RasterProperties:
             No data values.
         epsg: int
             EPSG code should be a numeric value, see https://epsg.io/.
-        dtype: str, default "float64"
-            Raster type
         driver : GTiff | RST | SAGA
             Name of GDAL driver, see https://gdal.org/drivers/raster/index.html; only
             GTiff | RST | SAGA are supported.
