@@ -214,7 +214,7 @@ class Factory:
         flag_mask: bool, default True
             Mask raster (True)
         allow_nodata_array: default False
-            Allow the returned array to only contian nodata-values,
+            Allow the returned array to only contain nodata-values,
             see :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
 
         Returns
