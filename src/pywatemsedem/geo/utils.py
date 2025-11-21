@@ -1461,7 +1461,7 @@ def raster_dataframe_to_arr(df, profile, col, dtype):
     """
     nrows = profile["height"]
     ncols = profile["width"]
-    if col in df:
+    if col in df.columns:
         df[col] = deepcopy(df[col]).astype(dtype)
     else:
         raise ValueError(f"{col} not in list of raster")
