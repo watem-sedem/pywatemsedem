@@ -69,7 +69,7 @@ class AbstractRaster:
 
         Parameters
         ----------
-        input
+        input: numpy.ndarray
         """
         self._arr = input
 

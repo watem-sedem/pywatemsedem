@@ -503,9 +503,9 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
 
     Parameters
     ----------
-    tiff_in: str
+    tiff_in: pathlib.Path or str
         File path of the input tiff file
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path of the destination rst
     dtype: str, default Float64
         Raster type
@@ -614,16 +614,16 @@ def delete_rst(rst_in):
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def clip_rst(rst_in, rst_out, Cnst, resampling="near"):
+def clip_rst(rst_in, rst_out, cnst, resampling="near"):
     """Clips a raster to a certain bounding box with a given resolution
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path to in input raster.
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path to the destination raster.
-    Cnst: dict
+    cnst: dict
         Dictionary with following keys:
 
         - *epsg* (str): the EPSG-code of the rst_in
@@ -643,12 +643,12 @@ def clip_rst(rst_in, rst_out, Cnst, resampling="near"):
     rst_out = Path(rst_out)
 
     logger.info(f"Clipping {rst_in.name}...")
-    cmd_args = ["gdalwarp", "-q", "-s_srs", str(Cnst["epsg"])]
-    cmd_args += ["-t_srs", str(Cnst["epsg"])]
+    cmd_args = ["gdalwarp", "-q", "-s_srs", str(cnst["epsg"])]
+    cmd_args += ["-t_srs", str(cnst["epsg"])]
     cmd_args += ["-te"]
-    for oor in Cnst["minmax"]:
+    for oor in cnst["minmax"]:
         cmd_args += [str(oor)]
-    cmd_args += ["-tr", str(Cnst["res"]), str(Cnst["res"])]
+    cmd_args += ["-tr", str(cnst["res"]), str(cnst["res"])]
     cmd_args += ["-r", resampling]
     cmd_args += [str(rst_in), str(rst_out)]
     execute_subprocess(cmd_args)
