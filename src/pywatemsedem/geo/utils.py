@@ -678,11 +678,11 @@ def clip_vct(vct_in, vct_out, vct_clip, overwrite=False, lst_ignore_field=None):
 
     Parameters
     ----------
-    vct_in: pathlib.Path
+    vct_in: str or pathlib.Path
         File path of shapefile to be clipped.
-    vct_out: pathlib.Path
+    vct_out: str or pathlib.Path
         File path of the destination shapefile
-    vct_clip: str
+    vct_clip: str or pathlib.Path
         File path of the clip boundary vector
     overwrite: bool, default False
         If True, overwrite existing file
