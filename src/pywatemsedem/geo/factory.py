@@ -179,7 +179,7 @@ class Factory:
             if profile["nodata"] != self.rp.nodata:
                 arr[arr == profile["nodata"]] = self.rp.nodata
             write_arr_as_rst(
-                arr, self.rasterfile_mask, "int16", self.rp.rasterio_profile
+                arr, self.rasterfile_mask, np.int16, self.rp.rasterio_profile
             )
 
         if create_mask_vector:

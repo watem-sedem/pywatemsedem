@@ -1100,7 +1100,7 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     profile["nodata"] = 0
     arr += 1
     arr = np.where(arr == 256, 0, arr).astype("int16")
-    write_arr_as_rst(arr, rst_out, "int16", profile)
+    write_arr_as_rst(arr, rst_out, np.int16, profile)
     return
 
 
