@@ -1760,9 +1760,7 @@ def rstparams_to_rasterprofile(rstparams, epsg=None):
         gdal dictionary holding all metadata for idrisi rasters
 
     """
-    profile = {}
-
-    profile["nodata"] = rstparams["nodata"]
+    profile = {"nodata": rstparams["nodata"]}
 
     if "init" in list(rstparams["crs"].to_dict().keys()):
         profile["epsg"] = rstparams["crs"].to_dict()["init"]
