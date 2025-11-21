@@ -769,9 +769,9 @@ def compute_statistics_rasters_per_polygon_vector(
     >>> vct_out = "statistics_aho.shp"
     >>> rst_sewerin ="sewerin.rst"
     >>> rst_sediexport ="SediExport.rst"
-    >>> compute_statistics_rasters_per_polygon_vector(vct_aho,
+    >>> compute_statistics_rasters_per_polygon_vector([rst_sewerin, rst_sediexport],
+    ...                                               vct_polygon,
     ...                                               vct_out,
-    ...                                               [rst_sewerin, rst_sediexport],
     ...                                               ["River","Sewers"],
     ...                                               {"COUNT":True,"SUM":True},
     ...                                               ton = True)
