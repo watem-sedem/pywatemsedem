@@ -353,7 +353,9 @@ class Scenario:
         self.scenario_folder_init = (
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
         )
-        self.sfolder = ScenarioFolders(self.catchm.folder, self.scenario_nr, self.year)
+        self.sfolder = ScenarioFolders(
+            self.catchm.folder, str(self.scenario_nr), self.year
+        )
         self.sfolder.create_all()
 
     def temporal_resolution(self):
@@ -869,6 +871,7 @@ class Scenario:
         """
         self._vct_condictive_dams = self.vector_factory(vector_input, "LineString")
 
+    @property
     def conductive_dams(self):
         """Getter conductive dams
 
@@ -886,10 +889,11 @@ class Scenario:
             # if there is a buffer on the same pixel of a ditch, remove the ditch
             arr = np.where(self.buffers.arr != 0, 0, arr)
         if not self.catchm.vct_river.is_empty():
-            arr = np.where(self.river.arr == -1, 0, arr)
+            arr = np.where(self.catchm.river.arr == -1, 0, arr)
         raster = self.raster_factory(arr)
         return raster
 
+    @property
     def ditches(self):
         """Getter ditches
 
@@ -907,7 +911,7 @@ class Scenario:
             # if there is a buffer on the same pixel of a ditch, remove the ditch
             arr = np.where(self.buffers.arr != 0, 0, arr)
         if not self.catchm.vct_river.is_empty():
-            arr = np.where(self.river.arr == -1, 0, arr)
+            arr = np.where(self.catchm.river.arr == -1, 0, arr)
         raster = self.raster_factory(arr)
         return raster
 
@@ -941,9 +945,9 @@ class Scenario:
             logger.warning(msg)
             self._vct_outlets = AbstractVector()
         else:
-            if "NR" not in self.vct_outlets.geodata:
+            if "NR" not in self._vct_outlets.geodata:
                 self._vct_outlets.geodata["NR"] = np.arange(
-                    1.0, len(self.vct_outlets.geodata) + 1, 1
+                    1.0, len(self._vct_outlets.geodata) + 1, 1
                 )
             self._vct_outlets.geodata["NR"] = self._vct_outlets.geodata["NR"].astype(
                 float
@@ -958,7 +962,7 @@ class Scenario:
         -------
         pywatemsedem.geo.raster.AbstractRaster
         """
-        arr = self.vct_outlets.rasterize(
+        arr = self._vct_outlets.rasterize(
             self.catchm.rasterfile_mask,
             self.rp.epsg,
             col="NR",
@@ -1170,7 +1174,7 @@ class Scenario:
 
         Parameters
         ----------
-        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
+        raster_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
         self._composite_landuse = self.raster_factory(
@@ -1777,7 +1781,9 @@ def assign_buffer_id_to_df_buffer(df):
     return df
 
 
-def add_tillage_technical_measures_to_parcels(gdf_parcels, gdf_tillage_technical):
+def add_tillage_technical_measures_to_parcels(
+    gdf_parcels, gdf_tillage_technical, overlap=0.75
+):
     """Add crop technical measures to parcels vector data.
 
     An overlap between the target parcel polygons and source technical polygons is
@@ -1790,13 +1796,13 @@ def add_tillage_technical_measures_to_parcels(gdf_parcels, gdf_tillage_technical
         Parcels polygon vector
     gdf_tillage_technical: geopandas.GeoDataFrame
         Tillage technical polygon vector
-    overlap: int
+    overlap: float
         Minimal required overlap between polygons to select the implementation of a
-        tillage technical measure to be applied for the parcel.
+        tillage technical measure to be applied for the parcel, default 0.75.
     """
 
     matches = gdf_parcels.geometry.apply(
-        lambda x: nearly_identical(gdf_tillage_technical, x, 0.75)
+        lambda x: nearly_identical(gdf_tillage_technical, x, overlap)
     )
     matches2 = matches.unstack().reset_index(0, drop=True).dropna()
     df_teelttech_matched = gdf_tillage_technical.reindex(index=matches2.values)

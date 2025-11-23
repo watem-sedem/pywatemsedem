@@ -118,7 +118,7 @@ class Factory:
 
         Parameters
         ----
-        file_path: pathlib.Path | str
+        mask: pathlib.Path | str
             File path to mask vector or raster file
 
         Notes
@@ -129,7 +129,7 @@ class Factory:
         valid_exists(mask, None)
         create_mask_vector = False
         create_mask_raster = False
-        if self.create_rasterproperties is False:
+        if not self.create_rasterproperties:
             if self.rp is None:
                 msg = (
                     f"Define a 'RasterProperties'-instance for the "
@@ -179,7 +179,7 @@ class Factory:
             if profile["nodata"] != self.rp.nodata:
                 arr[arr == profile["nodata"]] = self.rp.nodata
             write_arr_as_rst(
-                arr, self.rasterfile_mask, "int16", self.rp.rasterio_profile
+                arr, self.rasterfile_mask, np.int16, self.rp.rasterio_profile
             )
 
         if create_mask_vector:
@@ -214,7 +214,7 @@ class Factory:
         flag_mask: bool, default True
             Mask raster (True)
         allow_nodata_array: default False
-            Allow the returned array to only contian nodata-values,
+            Allow the returned array to only contain nodata-values,
             see :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
 
         Returns
