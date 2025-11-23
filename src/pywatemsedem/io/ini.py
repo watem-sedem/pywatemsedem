@@ -56,9 +56,19 @@ class IniFile:
             self.cfg.write(f)
             f.close()
 
+    def add_sections(self):
+        self.cfg.add_section("Model information")
+        self.cfg.add_section("Working directories")
+        self.cfg.add_section("Files")
+        self.cfg.add_section("Parameters")
+        self.cfg.add_section("Output")
+        self.cfg.add_section("Options")
+        self.cfg.add_section("Extensions")
+        self.cfg.add_section("Parameters Extensions")
+
     def add_model_information(self):
         """Add section model information to config file"""
-        self.cfg.add_section("Model information")
+
         self.cfg.set(
             "Model information",
             "Date",
@@ -67,7 +77,6 @@ class IniFile:
 
     def add_working_directories(self):
         """Add section working directory to config file"""
-        self.cfg.add_section("Working directories")
         self.cfg.set(
             "Working directories", "Input directory", str(self.cnwsinput_folder)
         )
@@ -79,7 +88,6 @@ class IniFile:
 
     def add_files(self):
         """Add section files to config file"""
-        self.cfg.add_section("Files")
         self.cfg.set(
             "Files",
             "DTM filename",
@@ -120,7 +128,7 @@ class IniFile:
 
     def add_parameters(self):
         """Add section parameters to config file"""
-        self.cfg.add_section("Parameters")
+
         self.cfg.set(
             "Parameters", "Max kernel", str(self.choices.dict_variables["Max kernel"])
         )
@@ -178,7 +186,7 @@ class IniFile:
 
     def add_output(self):
         """Add section outputs config file"""
-        self.cfg.add_section("Output")
+
         self.cfg.set(
             "Output", "Write aspect", str(self.choices.dict_output["Write aspect"])
         )
@@ -231,7 +239,7 @@ class IniFile:
         )
 
     def add_options(self):
-        self.cfg.add_section("Options")
+
         # Advanced settings
         if "L model" in self.choices.dict_model_options.keys():
             self.cfg.set(
@@ -292,8 +300,6 @@ class IniFile:
             - *target col* (int): target pixel column
             - *target row* (int): target pixel row
         """
-        self.cfg.add_section("Extensions")
-        self.cfg.add_section("Parameters Extensions")
 
         self.add_cn_extension()
         self.add_ktil_extension()
@@ -303,7 +309,7 @@ class IniFile:
         self.add_force_routing_extension(forced_routing, river_underground)
 
         self.cfg.set(
-            "Parameters extensions",
+            "Parameters Extensions",
             "LS correction",
             str(self.choices.dict_variables["LS correction"]),
         )
@@ -392,7 +398,7 @@ class IniFile:
         )
         if self.choices.dict_model_options["Include sewers"] == 1:
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Sewer exit",
                 str(self.choices.dict_variables["Sewer exit"]),
             )
@@ -434,20 +440,22 @@ class IniFile:
                 (self.cnwsinput_folder / inputfilename.buffers_file).name,
             )
             self.cfg.set(
-                "Parameters extensions", "Number of buffers", str(len(buffers))
+                "Parameters Extensions", "Number of buffers", str(len(buffers))
             )
             if len(buffers) != 0:
                 for row in buffers.iterrows():
-                    sectie = f"Buffer {row[1]['buf_id']}"
-                    self.cfg.add_section(sectie)
-                    self.cfg.set(sectie, "Volume", f"{row[1]['buffercap']}")
-                    self.cfg.set(sectie, "Height dam", f"{row[1]['hdam']}")
-                    self.cfg.set(sectie, "Height opening", f"{row[1]['hknijp']}")
-                    self.cfg.set(sectie, "Opening area", f"{row[1]['dknijp']}")
-                    self.cfg.set(sectie, "Discharge coefficient", f" {row[1]['qcoef']}")
-                    self.cfg.set(sectie, "Width dam", f"{row[1]['boverl']}")
-                    self.cfg.set(sectie, "Trapping efficiency", f"{row[1]['eff']}")
-                    self.cfg.set(sectie, "Extension ID", f"{row[1]['buf_exid']}")
+                    section = f"Buffer {row[1]['buf_id']}"
+                    self.cfg.add_section(section)
+                    self.cfg.set(section, "Volume", f"{row[1]['buffercap']}")
+                    self.cfg.set(section, "Height dam", f"{row[1]['hdam']}")
+                    self.cfg.set(section, "Height opening", f"{row[1]['hknijp']}")
+                    self.cfg.set(section, "Opening area", f"{row[1]['dknijp']}")
+                    self.cfg.set(
+                        section, "Discharge coefficient", f" {row[1]['qcoef']}"
+                    )
+                    self.cfg.set(section, "Width dam", f"{row[1]['boverl']}")
+                    self.cfg.set(section, "Trapping efficiency", f"{row[1]['eff']}")
+                    self.cfg.set(section, "Extension ID", f"{row[1]['buf_exid']}")
 
     def add_force_routing_extension(self, forced_routing, river_underground):
         """Add force routing extension and force routing parameters to config file
@@ -488,26 +496,26 @@ class IniFile:
             n = n_ru + n_fr
             if n > 0:
                 self.cfg.set(
-                    "Parameters extensions",
+                    "Parameters Extensions",
                     "Number of Forced Routing",
                     str(n),
                 )
             if n_fr > 0:
                 for nr, row in enumerate(forced_routing.itertuples()):
-                    sectie = f"Forced Routing {nr + 1}"
-                    self.cfg.add_section(sectie)
-                    self.cfg.set(sectie, "from col", f"{int(row.fromcol)}")
-                    self.cfg.set(sectie, "from row", f"{int(row.fromrow)}")
-                    self.cfg.set(sectie, "target col", f"{int(row.tocol)}")
-                    self.cfg.set(sectie, "target row", f"{int(row.torow)}")
+                    section = f"Forced Routing {nr + 1}"
+                    self.cfg.add_section(section)
+                    self.cfg.set(section, "from col", f"{int(row.fromcol)}")
+                    self.cfg.set(section, "from row", f"{int(row.fromrow)}")
+                    self.cfg.set(section, "target col", f"{int(row.tocol)}")
+                    self.cfg.set(section, "target row", f"{int(row.torow)}")
             elif n_ru > 0:
                 for nr, row in enumerate(river_underground.itertuples()):
-                    sectie = f"Forced Routing {nr + 1}"
-                    self.cfg.add_section(sectie)
-                    self.cfg.set(sectie, "from col", f"{int(row.fromcol)}")
-                    self.cfg.set(sectie, "from row", f"{int(row.fromrow)}")
-                    self.cfg.set(sectie, "target col", f"{int(row.tocol)}")
-                    self.cfg.set(sectie, "target row", f"{int(row.torow)}")
+                    section = f"Forced Routing {nr + 1}"
+                    self.cfg.add_section(section)
+                    self.cfg.set(section, "from col", f"{int(row.fromcol)}")
+                    self.cfg.set(section, "from row", f"{int(row.fromrow)}")
+                    self.cfg.set(section, "target col", f"{int(row.tocol)}")
+                    self.cfg.set(section, "target row", f"{int(row.torow)}")
             else:
                 msg = (
                     "'Force Routing' in 'dict_model_options' is equal to 1, but no "
@@ -574,7 +582,7 @@ class IniFile:
                 "Calibration", "steps", str(self.choices.dict_variables["steps"])
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "ktc limit",
                 str(self.choices.dict_variables["ktc limit"]),
             )
@@ -635,17 +643,17 @@ class IniFile:
         if self.version == "CN-WS":
             self.cfg.set("Extensions", "Curve Number", "1")
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Alpha",
                 str(self.choices.dict_variables["Alpha"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Beta",
                 str(self.choices.dict_variables["Beta"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Stream velocity",
                 str(self.choices.dict_variables["Stream velocity"]),
             )
@@ -660,17 +668,17 @@ class IniFile:
                 "Rainfall.txt",  # TODO: define in templates
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "5-day antecedent rainfall",
                 str(self.choices.dict_variables["5-day antecedent rainfall"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Desired timestep for model",
                 str(self.choices.dict_variables["Desired timestep for model"]),
             )
             self.cfg.set(
-                "Parameters extensions",
+                "Parameters Extensions",
                 "Endtime model",
                 str(self.choices.dict_variables["Endtime model"]),
             )
@@ -681,7 +689,7 @@ class IniFile:
                     str(self.choices.dict_model_options["Convert output"]),
                 )
                 self.cfg.set(
-                    "Parameters extensions",
+                    "Parameters Extensions",
                     "Final timestep output",
                     str(self.choices.dict_variables["Final timestep output"]),
                 )

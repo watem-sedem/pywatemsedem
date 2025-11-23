@@ -1557,7 +1557,6 @@ class Scenario:
                     format="idrisi",
                     dtype=np.float64,
                 )
-        self.create_ini_file()
 
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
@@ -1569,6 +1568,7 @@ class Scenario:
             self.sfolder.cnwsinput_folder,
             self.sfolder.cnwsoutput_folder,
         )
+        ini.add_sections()
         ini.add_model_information()
         ini.add_working_directories()
         ini.add_files()
