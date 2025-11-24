@@ -7,7 +7,6 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pyogrio
-from matplotlib import colors
 from matplotlib import pyplot as plt
 
 from pywatemsedem.defaults import SAGA_FLAGS
@@ -27,6 +26,7 @@ from pywatemsedem.geo.utils import (
 from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import CatchmentFolder
 from pywatemsedem.io.modeloutput import check_segment_edges
+from pywatemsedem.plots import plot_landuse
 from pywatemsedem.tools import (
     format_forced_routing,
     get_df_area_unique_values_array,
@@ -462,47 +462,7 @@ class Catchment(Factory):
 
         def plot(nodata=None, *args, **kwargs):
             """Plotting fun"""
-            plt.subplots(figsize=[10, 10])
-
-            cmap = colors.ListedColormap(
-                [
-                    "#64cf1b",
-                    "#3b7db4",
-                    "#71b651",
-                    "#387b00",
-                    "#000000",
-                    "#00bfff",
-                    "#ffffff",
-                    "#a47158",
-                ]
-            )
-            bounds = [-6.5, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5]
-            norm = colors.BoundaryNorm(bounds, cmap.N)
-            arr = self._landuse.arr.copy().astype(np.float32)
-            if nodata is not None:
-                arr[arr == nodata] = np.nan
-            img = plt.imshow(arr, cmap=cmap, norm=norm, *args, **kwargs)
-            cbar = plt.colorbar(
-                img,
-                cmap=cmap,
-                norm=norm,
-                boundaries=bounds,
-                ticks=[-6, -5, -4, -3, -2, -1, 0, 1],
-                shrink=0.5,
-            )
-            cbar.ax.set_yticklabels(
-                [
-                    "Grass strips (-6)",
-                    "Pools (-5)",
-                    "Meadow (-4)",
-                    "Forest (-3)",
-                    "Infrastructure (-2)",
-                    "River (-1)",
-                    "Outside boundaries (0)",
-                    "Agriculture (>0)",
-                ]
-            )
-            plt.show()
+            plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._landuse.plot = plot
 
