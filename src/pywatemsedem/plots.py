@@ -129,6 +129,16 @@ def plot_time_series_for_in_river_points(
 
 
 def plot_landuse(arr, nodata, *args, **kwargs):
+    """
+    Plot landuse maps with standardized colors for the different classes
+
+    Parameters
+    ----------
+    arr: numpy array
+        the landuse raster
+    nodata: int
+        the nodata value
+    """
     plt.subplots(figsize=[10, 10])
 
     cmap = colors.ListedColormap(
