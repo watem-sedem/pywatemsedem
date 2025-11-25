@@ -970,11 +970,15 @@ class Catchment(Factory):
             - *-9999*: nodata
         """
         self._vct_infrastructure_buildings.geodata["paved"] = (
-            self._vct_infrastructure_buildings.geodata["paved"].astype(float)
+            self._vct_infrastructure_buildings.geodata["paved"].astype(int)
         )
 
         infra = self._vct_infrastructure_buildings.rasterize(
-            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=False
+            self.rasterfile_mask,
+            self.rp.epsg,
+            col="paved",
+            dtype_raster="integer",
+            gdal=False,
         )
 
         return self.raster_factory(infra)
@@ -994,11 +998,15 @@ class Catchment(Factory):
             - *-9999*: nodata
         """
         self._vct_infrastructure_roads.geodata["paved"] = (
-            self._vct_infrastructure_roads.geodata["paved"].astype(float)
+            self._vct_infrastructure_roads.geodata["paved"].astype(int)
         )
 
         arr = self._vct_infrastructure_roads.rasterize(
-            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=False
+            self.rasterfile_mask,
+            self.rp.epsg,
+            col="paved",
+            dtype_raster="integer",
+            gdal=False,
         )
         return self.raster_factory(arr)
 
