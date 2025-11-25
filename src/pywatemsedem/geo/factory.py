@@ -263,7 +263,7 @@ class Factory:
 
     @valid_mask_factory
     def vector_factory(self, vector_input, geometry_type, allow_empty=False):
-        """Vector factory to load rasters in memory
+        """Vector factory to load vectors in memory
 
         Parameters
         ----------
@@ -278,8 +278,8 @@ class Factory:
 
         Returns
         -------
-        vector: pywatemsedem.geo.rasters.AbstractRaster
-            See :class:`pywatemsedem.geo.rasters.AbstractRaster`
+        vector: pywatemsedem.geo.rasters.AbstractVector
+            See :class:`pywatemsedem.geo.vectors.AbstractVector`
         """
 
         if isinstance(vector_input, str):
