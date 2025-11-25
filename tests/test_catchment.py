@@ -56,7 +56,14 @@ class TestCatchment(CatchmentTestBase):
     def test_landuse(self):
         """Test assignment landuse raster"""
         self.catchment.landuse = catchment_data.basemap
-        print(np.unique(self.catchment.landuse.arr, return_counts=True))
+
+        # test type
+        assert self.catchment.landuse.arr.dtype == np.int16
+
+        # test unique values
+        un, counts = np.unique(self.catchment.landuse.arr, return_counts=True)
+        np.testing.assert_allclose(un, [-9999, -5, -4, -3, -2, 10])
+        np.testing.assert_allclose(counts, [28239, 5, 5717, 2003, 1140, 12340])
 
     def test_landuse_wrong_value(self, tmp_path):
         """Test wrong value in landuse raster"""
