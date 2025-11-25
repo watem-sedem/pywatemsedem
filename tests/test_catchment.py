@@ -127,12 +127,18 @@ class TestCatchment(CatchmentTestBase):
         self.catchment.vct_infrastructure_buildings = catchment_data.infrastructure
         self.catchment.vct_infrastructure_roads = catchment_data.roads
 
-        # test infrastructure river type and unique values
+        # test type
+        assert self.catchment.infrastructure_roads.arr.dtype == np.int16
+
+        # test infrastructure type and unique values
         un, counts = np.unique(
             self.catchment.infrastructure_roads.arr, return_counts=True
         )
         np.testing.assert_allclose(un, [-9999, -7.0, -2])
         np.testing.assert_allclose(counts, [46746, 1408, 1290])
+
+        # test type
+        assert self.catchment.infrastructure_buildings.arr.dtype == np.int16
 
         un, counts = np.unique(
             self.catchment.infrastructure_buildings.arr, return_counts=True
@@ -140,8 +146,11 @@ class TestCatchment(CatchmentTestBase):
         np.testing.assert_allclose(un, [-9999, -2])
         np.testing.assert_allclose(counts, [46834, 2610])
 
+        # test type
+        assert self.catchment.infrastructure.arr.dtype == np.int16
+
         un, counts = np.unique(self.catchment.infrastructure.arr, return_counts=True)
-        np.testing.assert_allclose(un, [-9999, -7.0, -2])
+        np.testing.assert_allclose(un, [-9999, -7, -2])
         np.testing.assert_allclose(counts, [45353, 1408, 2683])
 
     def test_infrastructure_wrong_value(self):
