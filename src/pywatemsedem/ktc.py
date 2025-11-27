@@ -60,7 +60,7 @@ def create_ktc(
     arr_ktc = np.where(cfactor <= ktc_limit, ktc_low, ktc_high)
 
     # give certain landuse classes an extremely high ktc-value
-    arr_ktc = np.where(np.isin(composite_landuse.arr, [-2, -1, -5]), 9999, arr_ktc)
+    arr_ktc = np.where(np.isin(composite_landuse, [-2, -1, -5]), 9999, arr_ktc)
 
     # set KTC outside modeldomain to zero
     # KTC_arr = np.where(self.catchm.binarr == 1, KTC_arr, 0)
@@ -72,21 +72,19 @@ def create_ktc(
             ktc_low,
             ktc_high,
         )
-        arr_grass = grass.rasterize(
-            tiff_temp, composite_landuse.rp.epsg, col="KTC", gdal=False
-        )
+        arr_grass = grass.rasterize(tiff_temp, mask.rp.epsg, col="KTC", gdal=False)
         arr_ktc = np.where(
-            np.logical_and(composite_landuse.arr == -6, arr_grass != mask.rp.nodata),
+            np.logical_and(composite_landuse == -6, arr_grass != mask.rp.nodata),
             arr_grass,
             arr_ktc,
         )
         arr_ktc = np.where(
-            np.logical_and(composite_landuse.arr == -6, arr_grass == mask.rp.nodata),
+            np.logical_and(composite_landuse == -6, arr_grass == mask.rp.nodata),
             ktc_low,
             arr_ktc,
         )
     else:
-        arr_ktc = np.where(composite_landuse.arr == -6, ktc_low, arr_ktc)
+        arr_ktc = np.where(composite_landuse == -6, ktc_low, arr_ktc)
 
     clean_up_tempfiles(tiff_temp, "tiff")
 
