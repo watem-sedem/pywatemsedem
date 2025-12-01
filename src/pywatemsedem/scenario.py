@@ -777,7 +777,7 @@ class Scenario:
             self.vct_bufferoutlets.geodata = process_buffer_outlets(
                 self.vct_bufferoutlets.geodata, self.vct_buffers.geodata
             )
-            arr = np.where(self.catchm.vct_river.arr == -1, 0, self.bufferoutlet)
+            arr = np.where(self.catchm.river.arr == -1, 0, self.bufferoutlet)
             raster = self.raster_factory(arr)
         else:
             raster = AbstractRaster()
