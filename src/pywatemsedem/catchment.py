@@ -969,19 +969,24 @@ class Catchment(Factory):
             - *-2*: paved
             - *-9999*: nodata
         """
-        self._vct_infrastructure_buildings.geodata["paved"] = (
-            self._vct_infrastructure_buildings.geodata["paved"].astype(int)
-        )
 
-        infra = self._vct_infrastructure_buildings.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            col="paved",
-            dtype_raster="integer",
-            gdal=False,
-        )
+        if not self._vct_infrastructure_buildings.is_empty():
+            self._vct_infrastructure_buildings.geodata["paved"] = (
+                self._vct_infrastructure_buildings.geodata["paved"].astype(int)
+            )
 
-        return self.raster_factory(infra)
+            infra = self._vct_infrastructure_buildings.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                col="paved",
+                dtype_raster="integer",
+                gdal=False,
+            )
+            arr = self.raster_factory(infra)
+        else:
+            arr = AbstractRaster()
+
+        return arr
 
     @property
     # @valid_req_property(req_property_name="vct_infrastructure_roads", mandatory=False)
@@ -997,18 +1002,22 @@ class Catchment(Factory):
             - *-7*: paved
             - *-9999*: nodata
         """
-        self._vct_infrastructure_roads.geodata["paved"] = (
-            self._vct_infrastructure_roads.geodata["paved"].astype(int)
-        )
+        if not self._vct_infrastructure_roads.is_empty():
+            self._vct_infrastructure_roads.geodata["paved"] = (
+                self._vct_infrastructure_roads.geodata["paved"].astype(int)
+            )
 
-        arr = self._vct_infrastructure_roads.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            col="paved",
-            dtype_raster="integer",
-            gdal=False,
-        )
-        return self.raster_factory(arr)
+            arr = self._vct_infrastructure_roads.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                col="paved",
+                dtype_raster="integer",
+                gdal=False,
+            )
+            arr = self.raster_factory(arr)
+        else:
+            arr = AbstractRaster()
+        return arr
 
     @property
     def vct_infrastructure_roads(self):
