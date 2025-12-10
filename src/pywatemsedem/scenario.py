@@ -1398,7 +1398,7 @@ class Scenario:
         """
         if user_provided_ktc == 1:
             ktc, _ = create_ktc(
-                self.composite_landuse,
+                self.composite_landuse.arr,
                 self.cfactor.arr,
                 self.catchm.mask,
                 ktc_low,
