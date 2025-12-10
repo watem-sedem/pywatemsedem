@@ -220,6 +220,27 @@ class CatchmentTestBase:
         cls.temp_dir.cleanup()
 
 
+@pytest.fixture
+def dummy_scenario(dummy_catchment):
+    """Create a Scenario instance for testing purposes."""
+
+    # Add self.scenario-specific modifications
+    dummy_catchment.kfactor = catchment_data.k
+    dummy_catchment.landuse = catchment_data.basemap
+    dummy_catchment.cn = catchment_data.hsg
+
+    # Add user choices
+    choices = UserChoices()
+    choices.set_ecm_options(userchoices_file)
+    choices.set_model_version("WS")
+    choices.set_model_options(userchoices_file)
+    choices.set_model_variables(userchoices_file)
+    choices.set_output(userchoices_file)
+
+    scenario = Scenario(dummy_catchment, 2019, 1, choices)
+    return scenario
+
+
 class ScenarioTestBase(CatchmentTestBase):
     """Test class to test often used use cases in pywatemsedem model workflow.
 
