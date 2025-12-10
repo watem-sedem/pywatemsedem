@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 
 import pandas as pd
+import pytest
 from dotenv import find_dotenv, load_dotenv
 
 from pywatemsedem.catchment import Catchment
@@ -165,6 +166,21 @@ class tools:
 #
 #     folder_cfactor_model = folder_flanders / "cfactor_model"
 #     txt_parcels = folder_cfactor_model / "parcels.csv"
+
+
+@pytest.fixture
+def dummy_catchment(tmp_path):
+    """Create a Catchment instance for testing purposes."""
+    catchment = Catchment(
+        "langegracht",
+        catchment_data.catchment,
+        catchment_data.dtm,
+        20,
+        31370,
+        -9999,
+        tmp_path,
+    )
+    return catchment
 
 
 class CatchmentTestBase:
