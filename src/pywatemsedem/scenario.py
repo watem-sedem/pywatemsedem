@@ -126,7 +126,7 @@ def valid_river(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm._river.is_empty():
+        if self.catchm.river.is_empty():
             msg = (
                 "Please define a non-empty river raster (see also "
                 "self.create_composite_landuse)!"
@@ -143,7 +143,7 @@ def valid_landuse(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm._landuse.is_empty():
+        if self.catchm.landuse.is_empty():
             msg = "Please define a non-empty landuse raster"
             raise IOError(msg)
         return func(self, *args, **kwargs)
@@ -157,7 +157,7 @@ def valid_infrastructure(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm._infrastructure.is_empty():
+        if self.catchm.infrastructure.is_empty():
             msg = "Please define a non-empty infrastructure raster"
             raise IOError(msg)
         return func(self, *args, **kwargs)
