@@ -276,24 +276,114 @@ class TestCreateModel:
             ),
         )
 
+    @pytest.mark.skip(reason="Test to fix later")
     @pytest.mark.saga
     def test_omit_river(self, dummy_scenario):
         """Omit river to create WaTEM/SEDEM inputs."""
-        # TODO
-        assert True
+        dummy_scenario.vct_parcels = scenario_data.parcels
+        dummy_scenario.catchm.vct_infrastructure_buildings = (
+            catchment_data.infrastructure
+        )
+        dummy_scenario.catchm.vct_infrastructure_roads = catchment_data.roads
+        dummy_scenario.catchm.vct_water = catchment_data.water
 
+        # test prepare model input on C-factor, ktc and landuse-raster
+        dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
+            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        dummy_scenario.ktc = dummy_scenario.create_ktc(
+            dummy_scenario.choices.dict_variables["ktc low"],
+            dummy_scenario.choices.dict_variables["ktc high"],
+            dummy_scenario.choices.dict_variables["ktc limit"],
+            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
+        # Composite land-use (test number of parcels pixels, and not unique id's)
+        arr = dummy_scenario.composite_landuse.arr
+        arr[arr > 0] = 1
+        un, counts = np.unique(arr, return_counts=True)
+        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
+        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+
+        # c-factor
+        un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
+        np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
+        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+
+        # kTC
+        un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
+        np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
+        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
+
+    @pytest.mark.skip(reason="Test to fix later")
     @pytest.mark.saga
     def test_omit_infrastructure(self, dummy_scenario):
         """Omit infrastructure to create WaTEM/SEDEM parcels raster."""
-        # TODO
-        assert True
+        dummy_scenario.vct_parcels = scenario_data.parcels
+        dummy_scenario.catchm.vct_river = catchment_data.river
+        dummy_scenario.catchm.vct_water = catchment_data.water
 
+        # test prepare model input on C-factor, ktc and landuse-raster
+        dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
+            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        dummy_scenario.ktc = dummy_scenario.create_ktc(
+            dummy_scenario.choices.dict_variables["ktc low"],
+            dummy_scenario.choices.dict_variables["ktc high"],
+            dummy_scenario.choices.dict_variables["ktc limit"],
+            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
+        # Composite land-use (test number of parcels pixels, and not unique id's)
+        arr = dummy_scenario.composite_landuse.arr
+        arr[arr > 0] = 1
+        un, counts = np.unique(arr, return_counts=True)
+        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
+        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+
+        # c-factor
+        un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
+        np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
+        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+
+        # kTC
+        un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
+        np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
+        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
+
+    @pytest.mark.skip(reason="Test to fix later")
     @pytest.mark.saga
     def test_ommit_all(self, dummy_scenario):
         """Ommit all input sources to create WaTEM/SEDEM parcels raster, except base
         land-use raster"""
-        # TODO
-        assert True
+
+        # test prepare model input on C-factor, ktc and landuse-raster
+        dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
+            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
+        )
+        dummy_scenario.ktc = dummy_scenario.create_ktc(
+            dummy_scenario.choices.dict_variables["ktc low"],
+            dummy_scenario.choices.dict_variables["ktc high"],
+            dummy_scenario.choices.dict_variables["ktc limit"],
+            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+        )
+        # Composite land-use (test number of parcels pixels, and not unique id's)
+        arr = dummy_scenario.composite_landuse.arr
+        arr[arr > 0] = 1
+        un, counts = np.unique(arr, return_counts=True)
+        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
+        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+
+        # c-factor
+        un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
+        np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
+        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+
+        # kTC
+        un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
+        np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
+        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
 
 
 class TestEndpoints:
