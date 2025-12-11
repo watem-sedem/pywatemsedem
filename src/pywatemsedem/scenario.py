@@ -10,10 +10,8 @@ from functools import wraps
 from pathlib import Path
 
 import geopandas as gpd
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib import colors
 
 from pywatemsedem.cfactor import create_cfactor_degerick2015
 from pywatemsedem.geo.rasters import AbstractRaster
@@ -23,6 +21,7 @@ from pywatemsedem.io.folders import ScenarioFolders
 from pywatemsedem.io.ini import IniFile
 from pywatemsedem.ktc import create_ktc
 from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
+from pywatemsedem.plots import plot_landuse
 
 from .buffers import (
     filter_outlets_in_arr_extension_id,
@@ -126,7 +125,7 @@ def valid_river(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm._river.is_empty():
+        if self.catchm.river.is_empty():
             msg = (
                 "Please define a non-empty river raster (see also "
                 "self.create_composite_landuse)!"
@@ -143,7 +142,7 @@ def valid_landuse(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm._landuse.is_empty():
+        if self.catchm.landuse.is_empty():
             msg = "Please define a non-empty landuse raster"
             raise IOError(msg)
         return func(self, *args, **kwargs)
@@ -157,7 +156,7 @@ def valid_infrastructure(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.catchm._infrastructure.is_empty():
+        if self.catchm.infrastructure.is_empty():
             msg = "Please define a non-empty infrastructure raster"
             raise IOError(msg)
         return func(self, *args, **kwargs)
@@ -777,7 +776,7 @@ class Scenario:
             self.vct_bufferoutlets.geodata = process_buffer_outlets(
                 self.vct_bufferoutlets.geodata, self.vct_buffers.geodata
             )
-            arr = np.where(self.catchm.vct_river.arr == -1, 0, self.bufferoutlet)
+            arr = np.where(self.catchm.river.arr == -1, 0, self.bufferoutlet)
             raster = self.raster_factory(arr)
         else:
             raster = AbstractRaster()
@@ -1183,47 +1182,7 @@ class Scenario:
 
         def plot(nodata=None, *args, **kwargs):
             """Plotting fun"""
-            plt.subplots(figsize=[10, 10])
-
-            cmap = colors.ListedColormap(
-                [
-                    "#64cf1b",
-                    "#3b7db4",
-                    "#71b651",
-                    "#387b00",
-                    "#000000",
-                    "#00bfff",
-                    "#ffffff",
-                    "#a47158",
-                ]
-            )
-            bounds = [-6.5, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5]
-            norm = colors.BoundaryNorm(bounds, cmap.N)
-            arr = self._composite_landuse.arr.copy().astype(np.float32)
-            if nodata is not None:
-                arr[arr == nodata] = np.nan
-            img = plt.imshow(arr, cmap=cmap, norm=norm, *args, **kwargs)
-            cbar = plt.colorbar(
-                img,
-                cmap=cmap,
-                norm=norm,
-                boundaries=bounds,
-                ticks=[-6, -5, -4, -3, -2, -1, 0, 1],
-                shrink=0.5,
-            )
-            cbar.ax.set_yticklabels(
-                [
-                    "Grass strips (-6)",
-                    "Pools (-5)",
-                    "Meadow (-4)",
-                    "Forest (-3)",
-                    "Infrastructure (-2)",
-                    "River (-1)",
-                    "Outside boundaries (0)",
-                    "Agriculture (>0)",
-                ]
-            )
-            plt.show()
+            plot_landuse(self._composite_landuse.arr, nodata, *args, **kwargs)
 
         self._composite_landuse.plot = plot
 
@@ -1439,7 +1398,7 @@ class Scenario:
         """
         if user_provided_ktc == 1:
             ktc, _ = create_ktc(
-                self.composite_landuse,
+                self.composite_landuse.arr,
                 self.cfactor.arr,
                 self.catchm.mask,
                 ktc_low,
