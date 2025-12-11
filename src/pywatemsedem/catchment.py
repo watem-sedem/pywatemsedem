@@ -202,6 +202,8 @@ class Catchment(Factory):
         self._landuse = AbstractRaster()
         self._water = AbstractRaster()
         self._infrastructure = AbstractRaster()
+        self._infrastructure_buildings = AbstractRaster()
+        self._infrastructure_roads = AbstractRaster()
         self._river = AbstractRaster()
 
         # WaTEM/SEDEM inputs
@@ -536,9 +538,23 @@ class Catchment(Factory):
             - *0*: no river
             - *-9999*: nodata
         """
-        arr = np.where(self._river.arr > 0, -1, self._river.rp.nodata)
 
-        return RasterMemory(arr, self.rp)
+        return self._river
+
+    @river.setter
+    def river(self, input_raster):
+        """Assign river raster
+
+        Parameters
+        ----------
+        input_raster: Pathlib.Path, str or numpy.array
+            File path/array river raster with values *-1*: river, *0*: no river,
+            *-9999*: nodata
+        """
+        self._river = self.raster_factory(
+            input_raster, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
+        self._river.arr = np.where(self._river.arr > 0, -1, self._river.rp.nodata)
 
     @property
     # @valid_req_property(req_property_name="vct_river", mandatory=False)
@@ -634,13 +650,16 @@ class Catchment(Factory):
             dtype_raster="integer",
             gdal=False,
         )
-        self._river = self.raster_factory(river, allow_nodata_array=True)
+
+        self.river = river
+        self.segments = river
+
         self._adjacent_edges, self._up_edges, flag = check_segment_edges(
-            self.adjacent_edges, self.up_edges, self._river.arr
+            self.adjacent_edges, self.up_edges, self.river.arr
         )
 
         # set routing
-        if self._vct_river.geodata.shape[0] > 0:
+        if not self._vct_river.is_empty():
             routing = self._vct_river.rasterize(
                 self.rasterfile_mask,
                 self.rp.epsg,
@@ -648,7 +667,7 @@ class Catchment(Factory):
                 gdal=False,
             )
             routing[routing == self.rp.nodata] = 0
-            self._routing = self.raster_factory(routing, flag_mask=False)
+            self.routing = routing
         else:
             msg = "River input vector is empty, setting river routing to None"
             logger.info(msg)
@@ -725,6 +744,32 @@ class Catchment(Factory):
         """
         return self._routing
 
+    @routing.setter
+    def routing(self, raster_input):
+        """Assign river routing raster
+
+        See :ref:`here <watemsedem:riverroutingmap>`
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array river routing raster with values from 0 to 8:
+
+            - *0*: do not route further
+            - *1*: route to upper pixel
+            - *2*: route to upper right pixel
+            - *3*: route to right pixel
+            - *4*: route to lower right pixel
+            - *5*: route to lower pixel
+            - *6*: route to lower left pixel
+            - *7*: route to left pixel
+            - *8*: route to upper left pixel
+            - *-9999*: nodata
+        """
+        self._routing = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
+
     @property
     # @valid_req_property(req_property_name="vct_river", mandatory=False)
     def segments(self):
@@ -738,19 +783,33 @@ class Catchment(Factory):
             Raster containing following values:
 
             - *>0*: segment_id
-            - *-9999*: nodata
+            - *0*: nodata
+
+        Notes
+        -----
+        The number of segments is limited to int16.
+        """
+        return self._segments
+
+    @segments.setter
+    def segments(self, raster_input):
+        """Assign river segments raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array river segments raster with values *>0*: segment_id,
+            *-9999*: nodata
 
         Notes
         -----
         The number of segments is limited to int16.
         """
         self._segments = self.raster_factory(
-            self._river.arr, self._river.rp, allow_nodata_array=True
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
         )
         self._segments.arr = np.where(self._segments.arr < 1, 0, self._segments.arr)
         self._segments.arr = self._segments.arr.astype(np.int16)
-
-        return self._segments
 
     @staticmethod
     def topologize_river(
@@ -856,6 +915,18 @@ class Catchment(Factory):
         self._vct_water = self.vector_factory(vector_input, "Polygon")
         self._vct_water.geodata["value"] = -5
 
+        self._vct_water.geodata["value"] = self._vct_water.geodata["value"].astype(
+            float
+        )
+        water = self._vct_water.rasterize(
+            self.rasterfile_mask,
+            self.rp.epsg,
+            "value",
+            dtype_raster="integer",
+            gdal=False,
+        )
+        self.water = water
+
     @property
     # @valid_req_property(req_property_name="vct_water", mandatory=False)
     def water(self):
@@ -869,21 +940,21 @@ class Catchment(Factory):
             - *-5*: open water
             - *-9999*: nodata
         """
-        if not self._vct_water.is_empty():
-            self._vct_water.geodata["value"] = self._vct_water.geodata["value"].astype(
-                float
-            )
-            water = self._vct_water.rasterize(
-                self.rasterfile_mask,
-                self.rp.epsg,
-                "value",
-                dtype_raster="integer",
-                gdal=False,
-            )
-            arr = self.raster_factory(water)
-        else:
-            arr = AbstractRaster()
-        return arr
+        return self._water
+
+    @water.setter
+    def water(self, raster_input):
+        """Assign water raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array water raster with values *-5*: open water,
+            *-9999*: nodata
+        """
+        self._water = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
 
     @property
     def vct_infrastructure_buildings(self):
@@ -914,6 +985,19 @@ class Catchment(Factory):
         )
         self._vct_infrastructure_buildings.geodata["paved"] = -2
 
+        self._vct_infrastructure_buildings.geodata["paved"] = (
+            self._vct_infrastructure_buildings.geodata["paved"].astype(int)
+        )
+
+        infra = self._vct_infrastructure_buildings.rasterize(
+            self.rasterfile_mask,
+            self.rp.epsg,
+            col="paved",
+            dtype_raster="integer",
+            gdal=False,
+        )
+        self.infrastructure_buildings = infra
+
     @property
     # @valid_req_property(
     #    req_property_name="vct_infrastructure_buildings", mandatory=False
@@ -929,15 +1013,21 @@ class Catchment(Factory):
             - *-2*: paved
             - *-9999*: nodata
         """
-        self._vct_infrastructure_buildings.geodata["paved"] = (
-            self._vct_infrastructure_buildings.geodata["paved"].astype(float)
-        )
+        return self._infrastructure_buildings
 
-        infra = self._vct_infrastructure_buildings.rasterize(
-            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=False
-        )
+    @infrastructure_buildings.setter
+    def infrastructure_buildings(self, raster_input):
+        """Assign infrastructure buildings raster
 
-        return self.raster_factory(infra)
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array infrastructure buildings raster with values *-2*: paved,
+            *-9999*: nodata
+        """
+        self._infrastructure_buildings = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
 
     @property
     # @valid_req_property(req_property_name="vct_infrastructure_roads", mandatory=False)
@@ -953,14 +1043,20 @@ class Catchment(Factory):
             - *-7*: paved
             - *-9999*: nodata
         """
-        self._vct_infrastructure_roads.geodata["paved"] = (
-            self._vct_infrastructure_roads.geodata["paved"].astype(float)
-        )
+        return self._infrastructure_roads
 
-        arr = self._vct_infrastructure_roads.rasterize(
-            self.rasterfile_mask, self.rp.epsg, col="paved", gdal=False
+    @infrastructure_roads.setter
+    def infrastructure_roads(self, raster_input):
+        """Assign infrastructure roads raster
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array infrastructure roads raster with values *-2*: paved,
+            *-7*: non-paved, *-9999*: nodata
+        """
+        self._infrastructure_roads = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
         )
-        return self.raster_factory(arr)
 
     @property
     def vct_infrastructure_roads(self):
@@ -997,6 +1093,20 @@ class Catchment(Factory):
             geodata["paved"] = -2
 
         self._vct_infrastructure_roads.geodata = geodata
+
+        self._vct_infrastructure_roads.geodata["paved"] = (
+            self._vct_infrastructure_roads.geodata["paved"].astype(int)
+        )
+
+        arr = self._vct_infrastructure_roads.rasterize(
+            self.rasterfile_mask,
+            self.rp.epsg,
+            col="paved",
+            dtype_raster="integer",
+            gdal=False,
+        )
+
+        self.infrastructure_roads = arr
 
     @property
     def infrastructure(self):
