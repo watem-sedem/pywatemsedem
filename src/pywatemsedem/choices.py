@@ -1642,22 +1642,3 @@ class Output(WSMixin):
         input_value:bool
         """
         self._export_saga.value = input_value
-
-
-class PyVariables:
-    def __init__(self):
-        """Initialise PyWSVariables"""
-        self._start_year = None
-        self._start_month = None
-        self._sewer_inlet_efficiency = None
-        self._spatial_resolution = None
-
-
-class PyOptions:
-    def __init__(self):
-        """Initialise PyWSOptions"""
-        self._filter_dtm = None
-        self._only_sewers_in_infrastructure = None
-        self._maximize_gras_strips = None
-        self._use_gras = None
-        self._use_crop_management = None
