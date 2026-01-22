@@ -31,7 +31,7 @@ def test_userchoice_not_allowed_value():
 
 
 def test_userchoice_wrong_dtype():
-    """Test if a ValueError is raised when a value with a wrong dtype is entered"""
+    """Test if a TypeError is raised when a value with a wrong dtype is entered"""
     user_choice = UserChoice(
         "Test2",
         "Tests",
