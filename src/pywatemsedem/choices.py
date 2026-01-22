@@ -36,7 +36,7 @@ class UserChoice:
 
     def validate_type(self, value):
         """Validate if the value has the correct dtype"""
-        if type(value) is not self.dtype:
+        if not isinstance(value, self.dtype):
             msg = f"Value assigned to key '{self.key}' should be dtype '{self.dtype}'."
             raise TypeError(msg)
 
@@ -104,7 +104,8 @@ class WSMixin:
             if isinstance(attribute, UserChoice):
                 if attribute.default_value is None:
                     logger.info(
-                        f"No default value for {key} given, value must be given manually"
+                        f"No default value for {key} given, "
+                        f"value must be given manually"
                     )
                 attribute.value = attribute.default_value
 
