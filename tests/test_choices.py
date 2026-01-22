@@ -1,14 +1,15 @@
 """Test functions for utils scripts"""
+
 import pytest
 from conftest import default_ini_file
 
 from pywatemsedem.choices import (
+    Extensions,
+    ExtensionsParameters,
+    Options,
+    Output,
+    Parameters,
     UserChoice,
-    WSExtensions,
-    WSExtensionsParameters,
-    WSOptions,
-    WSOutput,
-    WSParameters,
 )
 
 
@@ -69,7 +70,7 @@ def test_apply_default_value():
 
 def test_initiation_ws_options():
     """Test if the WSOptions model is initialised ok"""
-    ws_opt = WSOptions()
+    ws_opt = Options()
 
     assert ws_opt.l_model.default_value == "Desmet1996_Vanoost2003"
     assert ws_opt.l_model.key == "L model"
@@ -101,20 +102,21 @@ def test_initiation_ws_options():
 @pytest.mark.skip(reason="not yet implemented")
 def test_initialisation_ws_parameters():
     """Test if the WSParamaeters object is initialised ok"""
-    WSParameters()
+    Parameters()
 
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_initialisation_ws_extensions():
     """Test if the WSExtensions object is initialised ok"""
-    WSExtensions()
+    Extensions()
 
 
 def test_initialisation_ws_extension_parameters_cn():
-    """Test if the cn parameters are set to mandatory when cn is enabled as an extension"""
-    ws_ext = WSExtensions()
+    """Test if the cn parameters are set to mandatory
+    when cn is enabled as an extension"""
+    ws_ext = Extensions()
     ws_ext.curve_number = True
-    ws_ext_param = WSExtensionsParameters(ws_ext)
+    ws_ext_param = ExtensionsParameters(ws_ext)
 
     assert ws_ext_param.alpha.mandatory
     assert ws_ext_param.beta.mandatory
@@ -125,45 +127,48 @@ def test_initialisation_ws_extension_parameters_cn():
 
 
 def test_initialisation_ws_extension_parameters_create_ktc_map():
-    """Test if the ktc parameters are set to mandatory when create_ktc_map is enabled as an extension"""
-    ws_ext = WSExtensions()
+    """Test if the ktc parameters are set to mandatory
+    when create_ktc_map is enabled as an extension"""
+    ws_ext = Extensions()
     ws_ext.create_ktc_map = True
-    ws_ext_param = WSExtensionsParameters(ws_ext)
+    ws_ext_param = ExtensionsParameters(ws_ext)
     assert ws_ext_param.ktc_low.mandatory
     assert ws_ext_param.ktc_high.mandatory
     assert ws_ext_param.ktc_limit.mandatory
 
 
 def test_initialisation_ws_extension_parameters_create_ktil_map():
-    """Test if the ktil parameters are set to mandatory when create_ktil_map is enabled as an extension"""
-    ws_ext = WSExtensions()
+    """Test if the ktil parameters are set to mandatory
+    when create_ktil_map is enabled as an extension"""
+    ws_ext = Extensions()
     ws_ext.create_ktil_map = True
-    ws_ext_param = WSExtensionsParameters(ws_ext)
+    ws_ext_param = ExtensionsParameters(ws_ext)
     assert ws_ext_param.ktil_default.mandatory
     assert ws_ext_param.ktil_threshold.mandatory
 
 
 def test_initialisation_ws_extension_parameters_include_sewers():
-    """Test if the sewer_exit parameters is set to mandatory when iclude_sewer is enabled as an extension"""
-    ws_ext = WSExtensions()
+    """Test if the sewer_exit parameters is set to mandatory
+    when iclude_sewer is enabled as an extension"""
+    ws_ext = Extensions()
     ws_ext.include_sewers = True
-    ws_ext_param = WSExtensionsParameters(ws_ext)
+    ws_ext_param = ExtensionsParameters(ws_ext)
     assert ws_ext_param.sewer_exit.mandatory
 
 
 def test_initialisation_ws_extension_parameters_estimate_clay_content():
     """Test if the clay_content_parent_material parameter is set to mandatory
     when estimate_clay_content is enabled as an extension"""
-    ws_ext = WSExtensions()
+    ws_ext = Extensions()
     ws_ext.estimate_clay_content = True
-    ws_ext_param = WSExtensionsParameters(ws_ext)
+    ws_ext_param = ExtensionsParameters(ws_ext)
     assert ws_ext_param.clay_content_parent_material.mandatory
 
 
 @pytest.mark.skip(reason="Test fails due to recursionError?")
 def test_initialisation_ws_output():
     """Test if the WSOutput object is initialised ok"""
-    ws_out = WSOutput()
+    ws_out = Output()
 
     assert ws_out.write_aspect.key == "write aspect"
     assert ws_out.write_aspect.dtype == bool
@@ -220,7 +225,7 @@ def test_initialisation_ws_output():
 
 def test_mandatory_value_not_given():
     """Test when no mandatory value is given, a ValueError is raised"""
-    ws_params = WSParameters()
+    ws_params = Parameters()
 
     with pytest.raises(ValueError) as excinfo:
         ws_params.check_mandatory_values()
@@ -229,7 +234,7 @@ def test_mandatory_value_not_given():
 
 def test_apply_defaults():
     """Test if the mixin function apply defaults works as assumed"""
-    ws_opt = WSOptions()
+    ws_opt = Options()
     ws_opt.apply_defaults()
 
     assert ws_opt.l_model.value == ws_opt.l_model.default_value
