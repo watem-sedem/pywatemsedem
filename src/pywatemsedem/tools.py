@@ -1,6 +1,7 @@
 import logging
 import platform
 import shutil
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -54,7 +55,6 @@ def format_forced_routing(gdf, minmax, resolution, trajectory_routing=False):
     df["torow"] = (np.floor(minmax[3] - df["toY"]) / resolution + 1).astype(int)
     cond = (df["fromcol"] == df["tocol"]) & (df["fromrow"] == df["torow"])
     df = df.loc[~cond]
-
     return df
 
 
@@ -89,8 +89,8 @@ def reformat_LineString_to_source_targetf(coordinates, trajectory_routing=False)
         df[["fromX", "fromY"]] = [(x, y) for x, y in coordinates]
         df["toX"] = np.nan
         df["toY"] = np.nan
-        df["toX"].iloc[0:-1] = df["fromX"].iloc[1:]
-        df["toY"].iloc[0:-1] = df["fromY"].iloc[1:]
+        df["toX"] = df["fromX"].shift(-1)
+        df["toY"] = df["fromY"].shift(-1)
         df = df.iloc[:-1]
     else:
         df = pd.DataFrame(columns=["fromX", "fromY", "toX", "toY"], index=[0])
@@ -118,8 +118,8 @@ def zip_folder(folder2zip, outfile=None):
 
 
 def extract_tags_from_template_file(template):
-    """Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart template
-    file.
+    """Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart
+    template file.
 
 
     Parameters
@@ -281,3 +281,25 @@ def check_courant_criterium(velocity, time_step, resolution, factor=0.75):
     else:
         time_step_posterior = time_step
     return time_step_posterior
+
+
+def package_resource(folder_paths, file_path):
+    """Provide backward compatible package resources load function
+
+    Parameters
+    ----------
+    folder_paths : list
+        List of folders and subfolders to get resources from.
+    file_path : str
+        File name of the package resource.
+    """
+    if sys.version_info < (3, 10):
+        from pkg_resources import resource_filename
+
+        return resource_filename(
+            "pywatemsedem", f"{'/'.join(folder_paths)}/{file_path}"
+        )
+    else:
+        from importlib.resources import files
+
+        return files(f"pywatemsedem.{'.'.join(folder_paths)}").joinpath(file_path)

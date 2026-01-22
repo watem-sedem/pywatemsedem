@@ -1,4 +1,3 @@
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -6,11 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
 
-from ..defaults import ALLOWED_RASTER_FORMATS, PREFIX_TEMP
+from ..defaults import ALLOWED_RASTER_FORMATS
 from .rasterproperties import RasterProperties
 from .utils import (
     clean_up_tempfiles,
     clip_rst,
+    create_filename,
     load_raster,
     mask_array_with_val,
     set_no_data_arr,
@@ -38,7 +38,12 @@ class AbstractRaster:
     If an array mask is provided, the array is automatically masked.
     """
 
-    def __init__(self, arr, rp, arr_mask=None, allow_nodata_array=False):
+    def __init__(self):
+
+        self._arr = None
+        self._rp = None
+
+    def initialize(self, arr, rp, arr_mask=None, allow_nodata_array=False):
         """Initialize array and rasterproperties"""
         if len(arr.shape) < 2:
             msg = "Dimensionality of input raster array should be larger than 1."
@@ -47,10 +52,6 @@ class AbstractRaster:
         self._rp = rp
         if arr_mask is not None:
             self.mask(arr_mask, allow_nodata_array)
-
-    def _repr_html_(self):
-        """notebook/ipython representation"""
-        return self.arr.__array__()
 
     @property
     def arr(self):
@@ -68,7 +69,7 @@ class AbstractRaster:
 
         Parameters
         ----------
-        input
+        input: numpy.ndarray
         """
         self._arr = input
 
@@ -116,7 +117,9 @@ class AbstractRaster:
             else:
                 self._arr = set_no_data_arr(self._arr, arr_mask, self.rp.nodata)
 
-    def write(self, outfile_path, format="idrisi", dtype=None, nodata=None):
+    def write(
+        self, outfile_path, format="idrisi", dtype=None, nodata=None, dir=Path(".")
+    ):
         """Write raster data to disk.
 
         Parameters
@@ -170,11 +173,7 @@ class AbstractRaster:
                 profile,
             )
         elif format == "idrisi":
-            tiff_temp = Path(
-                tempfile.NamedTemporaryFile(
-                    suffix=".tif", prefix="pywatemsedem", delete=False
-                ).name
-            )
+            tiff_temp = create_filename(".tif")
             write_arr_as_rst(self._arr, tiff_temp, dtype, profile)
             tiff_to_idrisi(tiff_temp, outfile_path, dtype=dtype)
             clean_up_tempfiles(tiff_temp, "tiff")
@@ -255,6 +254,15 @@ class AbstractRaster:
         ax.set_ylabel("density")
         return fig, ax
 
+    def is_empty(self):
+        """check if array (raster) is None (empty)
+
+        Returns
+        -------
+        True/False
+        """
+        return self._arr is None
+
 
 @dataclass
 class RasterMemory(AbstractRaster):
@@ -274,7 +282,7 @@ class RasterMemory(AbstractRaster):
 
     def __init__(self, arr, rp, arr_mask=None, allow_nodata_array=False):
         """Initialize RasterMemory"""
-        super().__init__(
+        super().initialize(
             arr, rp, arr_mask=arr_mask, allow_nodata_array=allow_nodata_array
         )
 
@@ -308,14 +316,13 @@ class RasterFile(AbstractRaster):
         if rp:
             with rasterio.open(file_path) as src:
                 rst_profile = src.profile
-            if rst_profile["crs"].is_valid:
-                if rst_profile["crs"] is not None:
-                    if rst_profile["crs"].to_epsg() != rp.epsg:
-                        msg = (
-                            f"EPSG-code of {file_path} ({rst_profile['crs']}) should "
-                            f"be same as epsg of input raster properties ({rp.epsg})."
-                        )
-                        raise IOError(msg)
+            if rst_profile["crs"] is not None:
+                if rst_profile["crs"].to_epsg() != rp.epsg:
+                    msg = (
+                        f"EPSG-code of {file_path} ({rst_profile['crs']}) should "
+                        f"be same as epsg of input raster properties ({rp.epsg})."
+                    )
+                    raise IOError(msg)
             arr = self.clip(file_path, rp)
         else:
             if file_path.suffix == ".sgrd":
@@ -323,10 +330,10 @@ class RasterFile(AbstractRaster):
             arr, profile = load_raster(file_path)
             rp = RasterProperties.from_rasterio(profile)
 
-        super().__init__(arr, rp, arr_mask, allow_nodata_array)
+        super().initialize(arr, rp, arr_mask, allow_nodata_array)
 
     @staticmethod
-    def clip(file_path, rp, resample="mode"):
+    def clip(file_path, rp, resample="mode", dir=Path(".")):
         """Clip function
 
         Parameters
@@ -337,6 +344,8 @@ class RasterFile(AbstractRaster):
             See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
         resample: str, default "mode"
             Either "near" or "mode", see :func:`pywatemsedem.geo.utils.clip_rst`
+        dir: pathlib.Path, default cwd
+            Directory for temporary files
 
         Returns
         -------
@@ -349,18 +358,15 @@ class RasterFile(AbstractRaster):
         :func:`pywatemsedem.geo.utils.clip_rst`.
 
         """
-        rst_temp = tempfile.NamedTemporaryFile(
-            suffix=".rst", prefix=PREFIX_TEMP, delete=False
-        )
+        rst_temp = create_filename(".rst")
         clip_rst(
             file_path,
-            Path(rst_temp.name),
+            rst_temp,
             rp.gdal_profile,
             resampling=resample,
         )
-        arr, profile = load_raster(Path(rst_temp.name))
+        arr, profile = load_raster(rst_temp)
         shape = arr[arr != profile["nodata"]].shape
-        rst_temp.close()
         clean_up_tempfiles(rst_temp, "rst")
 
         if shape == (0,):

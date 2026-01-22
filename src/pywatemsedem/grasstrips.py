@@ -1,6 +1,6 @@
 """pywatemsedem grass strips processing functions"""
+
 import logging
-import tempfile
 from pathlib import Path
 from typing import Callable
 
@@ -8,13 +8,14 @@ import geopandas as gpd
 import numpy as np
 from scipy import signal
 
-from pywatemsedem.defaults import PREFIX_TEMP
 from pywatemsedem.geo.utils import (
-    clean_up_tempfiles,
+    create_filename,
     estimate_width_of_polygon,
     saga_intersection,
     vct_to_rst_field,
 )
+
+from .geo.utils import clean_up_tempfiles
 
 # Add new kte scaling functions here
 logger = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ def _check_grass_strip_width(arr_width: np.array):
 
 def scale_cfactor_linear(
     arr_width: np.ndarray,
-    resolution: (int, float) = 20,
+    resolution: int = 20,
     upper_cfactor=0.37,
     lower_cfactor=0.01,
 ):
@@ -75,7 +76,7 @@ def scale_cfactor_linear(
         Spatial resolution of raster grid on which grass strips are projected.
     upper_cfactor: float, default 0.37
         Upper allowed C-factor.
-    upper_cfactor: float, default 0.01
+    lower_cfactor: float, default 0.01
         Lower allowed C-factor.
 
     Returns
@@ -445,24 +446,26 @@ def expand_grass_strips_with_triggers(
 
     Examples
     --------
+    >>> import numpy as np
+    >>> from pywatemsedem.grasstrips import expand_grass_strips_with_triggers
     >>> # triggers (for instance river, road)
     >>> arr_triggers = np.array([[1, 0, 0, 0],
-    >>>                        [0, 1, 0, 0],
-    >>>                        [0, 0, 1, 0],
-    >>>                        [0, 0, 0, 1]])
+    ...                          [0, 1, 0, 0],
+    ...                          [0, 0, 1, 0],
+    ...                          [0, 0, 0, 1]])
     >>> # parcel ids
     >>> arr_parcels_id = np.array([[0, 3, 3, 3],
-    >>>                            [1, 0, 2, 2],
-    >>>                            [1, 1, 0, 2],
-    >>>                            [1, 1, 1, 0]])
+    ...                            [1, 0, 2, 2],
+    ...                            [1, 1, 0, 2],
+    ...                            [1, 1, 1, 0]])
     >>> # input gras id's
     >>> arr_grass_strips = np.array([[0, 0, 0, 0],
-    >>>                            [0, 0, 0, 0],
-    >>>                            [0, 0, 0, 1],
-    >>>                            [0, 0, 0, 1]])
+    ...                              [0, 0, 0, 0],
+    ...                              [0, 0, 0, 1],
+    ...                              [0, 0, 0, 1]])
     >>> # execute
     >>> arr_out = expand_grass_strips_with_triggers(
-    >>>    arr_grass_strips, arr_triggers, arr_parcels_id)
+    ...    arr_grass_strips, arr_triggers, arr_parcels_id)
 
     Notes
     -----
@@ -633,11 +636,11 @@ def core_expand_grass_strips_with_triggers(
     arr_grass_strips: numpy.ndarray
         Array with unique id's per grass strips
     arr_grass_strips_neighbours:
-        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
-        on grass strips array.
+        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`
+        applied on grass strips array.
     arr_triggers_neighbours: nump.ndarray
-        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours` applied
-        on triggers array.
+        See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`
+        applied on triggers array.
     arr_parcels: nump.ndarray, default None
         Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
         value zero indicates that no parcel is present. If None, the expansion is not
@@ -684,11 +687,11 @@ def core_expand_grass_strips_with_triggers(
     return arr_grass_strips
 
 
-def create_grassstrips_cnws(
+def process_grass_strips(
     arr_grass_strips_ids,
     arr_river,
     arr_infr,
-    profile,
+    nodata,
     arr_parcels=None,
     expand_grass_strips=False,
 ):
@@ -700,7 +703,7 @@ def create_grassstrips_cnws(
 
     Parameters
     ----------
-    arr_grass_id: numpy.ndarray
+    arr_grass_strips_ids: numpy.ndarray
         Grass strips id's-raster. Pixel belonging to one grass strip share the same
         unique id. Other values should be have nodata-value described in the parameter
         profile.
@@ -714,10 +717,8 @@ def create_grassstrips_cnws(
         Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
         value zero indicates that no parcel is present. If None, the expansion is not
         limited to the boundaries of a parcel.
-    profile: dict
-        Rasterio profile, see
-        :attr:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`. All the
-        input rasters must have the same nodata-value, defined in profile.
+    nodata: int
+        Nodata value
     expand_grass_strips: bool, default False
         Use expand grass strips algorithm with rivers as triggers, see
          :func:`pywatemsedem.grasstrips.expand_grass_strips_with_triggers`
@@ -732,11 +733,11 @@ def create_grassstrips_cnws(
 
     Notes
     -----
-    All the input rasters must have the same nodata-value, defined in profile.
+    All the input rasters must have the same nodata-value.
     """
     if expand_grass_strips:
-        arr_river[(arr_river == profile["nodata"])] = 0
-        arr_infr[(arr_infr == profile["nodata"])] = 0
+        arr_river[(arr_river == nodata)] = 0
+        arr_infr[(arr_infr == nodata)] = 0
         arr_triggers = arr_infr + arr_river
         arr_triggers[(arr_triggers != 0)] = 1
         # arr_gras[arr_gras==profile["nodata"]] = 0
@@ -745,13 +746,10 @@ def create_grassstrips_cnws(
             arr_grass_strips_ids,
             arr_triggers,
             arr_parcels=arr_parcels,
-            nodata=profile["nodata"],
+            nodata=nodata,
             mode=1,
         )
-    arr_grass = arr_grass_strips_ids.copy()
-    arr_grass[arr_grass != profile["nodata"]] = -6
-
-    return arr_grass_strips_ids, arr_grass
+    return arr_grass_strips_ids
 
 
 def get_neighbour_grass_strips_ids_array(
@@ -812,7 +810,7 @@ def extract_grass_strips_from_parcels(vct_parcels, year, resmap=Path.cwd(), tag=
 
 
 def create_grass_strips_from_line_string(
-    line_string, polygons=None, width=20, width_polygon=20
+    line_string, polygons=None, width=20, width_polygon=20, dir=Path(".")
 ):
     """Add bank grass strips
 
@@ -829,6 +827,8 @@ def create_grass_strips_from_line_string(
         Width (m) of the bank grass strip stored in the attribute table.
     width_polygon: int, optional, default 20
         width (m) of the bank grass strip polygon
+    dir: pathlib.Path
+        Name of temporary directory
 
     Returns
     -------
@@ -860,17 +860,11 @@ def create_grass_strips_from_line_string(
     # if no intersection with parcels: assign same bank grass strip for every
     # year
     if polygons is not None:
-        tmp_bankgrasstrips = tempfile.NamedTemporaryFile(
-            prefix=PREFIX_TEMP, suffix=".shp"
-        ).name
+        tmp_bankgrasstrips = create_filename(".shp")
         grass_strips.to_file(tmp_bankgrasstrips)
-        tmp_polygons = tempfile.NamedTemporaryFile(
-            prefix=PREFIX_TEMP, suffix=".shp"
-        ).name
+        tmp_polygons = create_filename(".shp")
         polygons.to_file(tmp_polygons)
-        tmp_bankstrips_polygons = tempfile.NamedTemporaryFile(
-            prefix=PREFIX_TEMP, suffix=".shp"
-        ).name
+        tmp_bankstrips_polygons = create_filename(".shp")
         saga_intersection(
             tmp_bankgrasstrips,
             tmp_polygons,

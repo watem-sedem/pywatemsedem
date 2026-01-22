@@ -1,8 +1,8 @@
 import warnings
 from typing import List
 
-import fiona
 import numpy as np
+import pyogrio
 from pyproj import CRS
 from pyproj.exceptions import CRSError
 from rasterio import Affine
@@ -96,8 +96,6 @@ class RasterProperties:
             No data values.
         epsg: int
             EPSG code should be a numeric value, see https://epsg.io/.
-        dtype: str, default "float64"
-            Raster type
         driver : GTiff | RST | SAGA
             Name of GDAL driver, see https://gdal.org/drivers/raster/index.html; only
             GTiff | RST | SAGA are supported.
@@ -338,7 +336,8 @@ def get_bounds_from_vct(vct_catchment, resolution, n_pixels_buffer=5):
     vct_catchment: pathlib.Path
         Vector file of catchment.
     resolution: int
-        Spatial resolution, see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+        Spatial resolution, see
+        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
     n_pixels_buffer: int, default 5
         Number of pixels that have to be taken into account to expand boundaries
 
@@ -347,15 +346,14 @@ def get_bounds_from_vct(vct_catchment, resolution, n_pixels_buffer=5):
     bounds: list
         See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
     """
-    with fiona.open(vct_catchment) as c:
-        # Get spatial extent of catchment.
-        bounds = c.bounds
-        bounds = [
-            round(bounds[0]) - n_pixels_buffer * resolution,
-            round(bounds[1]) - n_pixels_buffer * resolution,
-            round(bounds[2]) + n_pixels_buffer * resolution,
-            round(bounds[3]) + n_pixels_buffer * resolution,
-        ]
+    _, bounds = pyogrio.read_bounds(vct_catchment)
+
+    bounds = [
+        round(bounds[0]) - n_pixels_buffer * resolution,
+        round(bounds[1]) - n_pixels_buffer * resolution,
+        round(bounds[2]) + n_pixels_buffer * resolution,
+        round(bounds[3]) + n_pixels_buffer * resolution,
+    ]
 
     return bounds
 

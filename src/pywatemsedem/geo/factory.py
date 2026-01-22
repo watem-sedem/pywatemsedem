@@ -1,27 +1,24 @@
 import inspect
-import tempfile
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
+import pyogrio
 import rasterio
-from fiona.collection import DriverError
 from rasterio import RasterioIOError
 
-from ..defaults import PREFIX_TEMP
 from .rasterproperties import RasterProperties
 from .rasters import RasterFile, RasterMemory, TemporalRaster
 from .utils import (
-    clean_up_tempfiles,
     define_extent_from_vct,
     generate_vct_mask_from_raster_mask,
     load_raster,
     vct_to_rst_value,
+    write_arr_as_rst,
 )
 from .valid import PywatemsedemInputError, valid_exists
-from .vectors import AbstractVector, VectorFile
+from .vectors import VectorFile, VectorMemory
 
 
 def valid_mask_factory(func):
@@ -76,33 +73,33 @@ class Factory:
         self._rp = None
         self._mask = None
         self._bounds = None
-        resmap = Path(resmap) / "factory"
-        if not resmap.exists():
-            resmap.mkdir(exist_ok=True)
-        self.mask_vector = resmap / "mask.shp"
-        self.mask_raster = resmap / "mask.rst"
-        # standard rasterproperties are generated in mask pahe from vector or raster
-        # input
+        self.resmap = Path(resmap) / "factory"
+        if not self.resmap.exists():
+            self.resmap.mkdir(exist_ok=True)
+        self.vectorfile_mask = self.resmap / "mask.shp"
+        self.rasterfile_mask = self.resmap / "mask.tif"
         self.create_rasterproperties = True
 
     @property
     def rp(self):
-        "RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"
+        """RasterProperties. See
+        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"""
         return self._rp
 
     @rp.setter
     def rp(self, rasterproperties):
-        "RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"
+        """RasterProperties. See
+        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"""
         self._rp = rasterproperties
 
     @property
     def mask(self):
-        "AbstractRaster mask"
+        """AbstractRaster mask"""
         return self._mask
 
     @property
     def vct_mask(self):
-        "AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`"
+        """AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`"""
         return self._vct_mask
 
     @mask.setter
@@ -121,8 +118,8 @@ class Factory:
 
         Parameters
         ----
-        file_path: pathlib.Path | str
-            File path to mask vector raster file
+        mask: pathlib.Path | str
+            File path to mask vector or raster file
 
         Notes
         -----
@@ -130,7 +127,9 @@ class Factory:
         to False, one needs to self-define a RasterProperties instance.
         """
         valid_exists(mask, None)
-        if self.create_rasterproperties is False:
+        create_mask_vector = False
+        create_mask_raster = False
+        if not self.create_rasterproperties:
             if self.rp is None:
                 msg = (
                     f"Define a 'RasterProperties'-instance for the "
@@ -142,40 +141,58 @@ class Factory:
 
         try:
             rasterio.open(mask)
+            create_mask_vector = True
         except RasterioIOError:
             try:
-                fiona.open(mask)
-            except DriverError:
-                msg = "Input mask should be raster or vector polygon file."
+                pyogrio.read_info(mask)
+            except pyogrio.errors.DataSourceError:
+                msg = f"Input mask '{mask}' should be raster or vector polygon file."
                 raise IOError(msg)
             else:
-                if self.create_rasterproperties:
-                    self.rp = define_extent_from_vct(
-                        mask,
-                        self._resolution,
-                        self._nodata,
-                        self._epsg_code,
-                        self._bounds,
-                    )
-                tf_rst = tempfile.NamedTemporaryFile(
-                    suffix=".tif", prefix=PREFIX_TEMP, delete=False
+                create_mask_raster = True
+
+        if create_mask_raster:
+            if self.create_rasterproperties:
+                self.rp = define_extent_from_vct(
+                    mask,
+                    self._resolution,
+                    self._nodata,
+                    self._epsg_code,
+                    self._bounds,
                 )
-                vct_to_rst_value(mask, tf_rst.name, 1, self.rp.gdal_profile)
-                arr, _ = load_raster(tf_rst.name)
-                clean_up_tempfiles(tf_rst, "tiff")
-                self._vct_mask = VectorFile(mask)
-        else:
+
+            self._vct_mask = VectorFile(mask)
+            if mask != self.vectorfile_mask:
+                self._vct_mask._geodata.to_file(self.vectorfile_mask)
+
+            vct_to_rst_value(
+                mask,
+                self.rasterfile_mask,
+                self.rp.gdal_profile,
+                dtype="integer",
+                gdal=False,
+            )
+
+            arr, profile = load_raster(self.rasterfile_mask)
+            arr = arr.astype("int16")
+            # correct no data value if necessary
+            if profile["nodata"] != self.rp.nodata:
+                arr[arr == profile["nodata"]] = self.rp.nodata
+            write_arr_as_rst(
+                arr, self.rasterfile_mask, np.int16, self.rp.rasterio_profile
+            )
+
+        if create_mask_vector:
             arr, rp = load_raster(mask)
             if self.create_rasterproperties:
                 self.rp = RasterProperties.from_rasterio(rp, epsg=self._epsg_code)
-            vct_mask = mask.with_suffix(".shp")
-            generate_vct_mask_from_raster_mask(mask, vct_mask, self._resolution)
-            self._vct_mask = VectorFile(vct_mask)
+            generate_vct_mask_from_raster_mask(
+                mask, self.vectorfile_mask, self._resolution
+            )
+            self._vct_mask = VectorFile(self.vectorfile_mask)
             self._vct_mask._geodata = self._vct_mask._geodata.set_crs(self.rp.epsg)
 
         self._mask = RasterMemory(arr, self.rp)
-        self.vct_mask.write(self.mask_vector)
-        self._mask.write(self.mask_raster, "idrisi")
         self._mask.arr_bin = np.where(
             self._mask.arr == self.rp.nodata, 0, self._mask.arr
         )
@@ -197,7 +214,7 @@ class Factory:
         flag_mask: bool, default True
             Mask raster (True)
         allow_nodata_array: default False
-            Allow the returned array to only contian nodata-values,
+            Allow the returned array to only contain nodata-values,
             see :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
 
         Returns
@@ -233,14 +250,12 @@ class Factory:
             else:
                 raster = TemporalRaster(raster_input, self.rp, arr_mask)
         else:
-            print(type(raster_input))
-            print(raster_input)
             m = inspect.currentframe()
             calframe = inspect.getouterframes(m, 2)
             [cal.function for cal in calframe]
             msg = (
-                f"Input raster should be a numpy array or raster file, current type"
-                f" is '{type(raster_input)}'"
+                f"Input '{raster_input}' should be a numpy array or raster file, "
+                f"current type is '{type(raster_input)}'"
             )
             raise IOError(msg)
 
@@ -248,7 +263,7 @@ class Factory:
 
     @valid_mask_factory
     def vector_factory(self, vector_input, geometry_type, allow_empty=False):
-        """Vector factory to load rasters in memory
+        """Vector factory to load vectors in memory
 
         Parameters
         ----------
@@ -258,34 +273,39 @@ class Factory:
             Mask vector (True), nodata value will be that one of
             `pywatemsedem.geo.factory.Factory.rp`.
         allow_empty: bool, default False
-            Allow vector to be empty, see :class:`pywatemsedem.geo.vectors.AbstractVector`
+            Allow vector to be empty, see
+            :class:`pywatemsedem.geo.vectors.AbstractVector`
 
         Returns
         -------
-        vector: pywatemsedem.geo.rasters.AbstractRaster
-            See :class:`pywatemsedem.geo.rasters.AbstractRaster`
+        vector: pywatemsedem.geo.rasters.AbstractVector
+            See :class:`pywatemsedem.geo.vectors.AbstractVector`
         """
 
         if isinstance(vector_input, str):
             vector_input = Path(vector_input)
         if isinstance(vector_input, Path):
             try:
-                fiona.open(vector_input)
-            except fiona.errors.DriverError:
+                pyogrio.read_info(vector_input)
+            except pyogrio.errors.DataSourceError:
                 msg = (
                     f"Input vector file '{vector_input}' should be a valid "
                     f"vector file (e.g. ESRI shape file)."
                 )
                 raise IOError(msg)
             vector = VectorFile(
-                vector_input, geometry_type, self.mask_vector, allow_empty=allow_empty
+                vector_input,
+                geometry_type,
+                self.vectorfile_mask,
+                allow_empty=allow_empty,
             )
-        elif type(vector_input) == gpd.GeoDataFrame:
-            vector = AbstractVector(
-                vector_input, geometry_type, allow_empty=allow_empty
-            )
+        elif isinstance(vector_input, gpd.GeoDataFrame):
+            vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
         else:
-            msg = "Input vector should be a geopandas GeoDataFrame or vector file."
+            msg = (
+                f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector"
+                " file."
+            )
             raise IOError(msg)
 
         return vector

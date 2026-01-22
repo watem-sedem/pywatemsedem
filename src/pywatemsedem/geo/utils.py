@@ -1,16 +1,19 @@
 # Standard libraries
 import logging
 import os
+import random
+import string
 import subprocess
 import tempfile
+import time
 from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import pyogrio
 import rasterio
 from rasterio.features import shapes
 from rasterio.merge import merge
@@ -45,7 +48,7 @@ def check_rst_dimensions(rst_in, minmax, ncols, nrows, transform=None):
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path to input raster
     minmax: list
         Containing xmin, ymin, xmax, ymax
@@ -85,7 +88,7 @@ def read_rst_params(rst_in):
 
     Parameters
     ----------
-    rst_in: pathlib.Path
+    rst_in: pathlib.Path or str
         File path to the input raster
 
     Returns
@@ -160,7 +163,7 @@ def write_arr_as_rst(arr, rst_out, dtype, profile):
     ----------
     arr: numpy.ndarray
         2D numpy array to be written as a raster file
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path to the output raster
     dtype: numpy.dtype
     profile: rasterio.profiles
@@ -289,9 +292,8 @@ def get_fields_vct(vct):
     list
         Field names of the shape/vector-file.
     """
-    with fiona.open(vct) as c:
-        fields = c.schema["properties"].keys()
-        return fields
+    fields = pyogrio.read_info(vct)["fields"]
+    return fields
 
 
 @valid_input(dict={"vct": valid_vector})
@@ -300,37 +302,36 @@ def get_geometry_type(vct):
 
     Parameters
     ----------
-    vct: str
+    vct: str or pathlib.Path
         File path to shapefile
 
     Returns
     -------
     str
-        Geometry type (see fiona documentation for all possibilities)
+        Geometry type (see gdal documentation for all possibilities)
     """
-    with fiona.open(vct) as c:
-        geom = c.schema["geometry"]
+    geom = pyogrio.read_info(vct)["geometry_type"]
     return geom
 
 
-def copy_rst(rst_in, rt_out):
+def copy_rst(rst_in, rst_out):
     """Copy a raster and converts it to an idrisi-raster
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path of input raster
-    rt_out: str
+    rst_out: pathlib.Path
         File path of output raster (extension must be .rst!)
 
     Note
     -----
     Uses and relies on gdal_translate CLI
     """
-    if rt_out.exists():
-        delete_rst(rt_out)
+    if rst_out.exists():
+        delete_rst(rst_out)
 
-    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rt_out)]
+    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rst_out)]
     execute_subprocess(cmd_args)
 
 
@@ -502,9 +503,9 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
 
     Parameters
     ----------
-    tiff_in: str
+    tiff_in: pathlib.Path or str
         File path of the input tiff file
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path of the destination rst
     dtype: str, default Float64
         Raster type
@@ -539,8 +540,7 @@ def get_feature_count(vct):
     nr_features: int
         Number of features in the shapefile
     """
-    with fiona.open(vct) as c:
-        nr_features = len(c)
+    nr_features = pyogrio.read_info(vct)["features"]
     return nr_features
 
 
@@ -552,7 +552,7 @@ def merge_lst_vct(lst_vct, vct_out, epsg):
     ----------
     lst_vct: list
         List with file paths (str) of all shapefiles to be merged.
-    vct_out: str
+    vct_out: pathlib.Path
         File path of merged vct
     epsg: str
         The epsg code defining the coordinate system of the raster,
@@ -604,7 +604,7 @@ def delete_rst(rst_in):
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: str or  pathlib.Path
         File path of the raster dataset to be deleted
 
     """
@@ -614,16 +614,16 @@ def delete_rst(rst_in):
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def clip_rst(rst_in, rst_out, Cnst, resampling="near"):
+def clip_rst(rst_in, rst_out, cnst, resampling="near"):
     """Clips a raster to a certain bounding box with a given resolution
 
     Parameters
     ----------
-    rst_in: str
+    rst_in: pathlib.Path or str
         File path to in input raster.
-    rst_out: str
+    rst_out: pathlib.Path or str
         File path to the destination raster.
-    Cnst: dict
+    cnst: dict
         Dictionary with following keys:
 
         - *epsg* (str): the EPSG-code of the rst_in
@@ -643,12 +643,12 @@ def clip_rst(rst_in, rst_out, Cnst, resampling="near"):
     rst_out = Path(rst_out)
 
     logger.info(f"Clipping {rst_in.name}...")
-    cmd_args = ["gdalwarp", "-q", "-s_srs", str(Cnst["epsg"])]
-    cmd_args += ["-t_srs", str(Cnst["epsg"])]
+    cmd_args = ["gdalwarp", "-q", "-s_srs", str(cnst["epsg"])]
+    cmd_args += ["-t_srs", str(cnst["epsg"])]
     cmd_args += ["-te"]
-    for oor in Cnst["minmax"]:
+    for oor in cnst["minmax"]:
         cmd_args += [str(oor)]
-    cmd_args += ["-tr", str(Cnst["res"]), str(Cnst["res"])]
+    cmd_args += ["-tr", str(cnst["res"]), str(cnst["res"])]
     cmd_args += ["-r", resampling]
     cmd_args += [str(rst_in), str(rst_out)]
     execute_subprocess(cmd_args)
@@ -668,8 +668,7 @@ def get_extent_vct(vct):
     tuple
         xmin, ymin, xmax, ymax
     """
-    with fiona.open(vct) as c:
-        extent = c.bounds
+    extent = pyogrio.read_info(vct)["total_bounds"]
     return extent  # xmin, ymin, xmax, ymax
 
 
@@ -679,11 +678,11 @@ def clip_vct(vct_in, vct_out, vct_clip, overwrite=False, lst_ignore_field=None):
 
     Parameters
     ----------
-    vct_in: pathlib.Path
+    vct_in: str or pathlib.Path
         File path of shapefile to be clipped.
-    vct_out: pathlib.Path
+    vct_out: str or pathlib.Path
         File path of the destination shapefile
-    vct_clip: str
+    vct_clip: str or pathlib.Path
         File path of the clip boundary vector
     overwrite: bool, default False
         If True, overwrite existing file
@@ -765,16 +764,17 @@ def compute_statistics_rasters_per_polygon_vector(
     Examples
     --------
 
+    >>> from pywatemsedem.geo.utils import compute_statistics_rasters_per_polygon_vector
     >>> vct_aho = "AHO.shp"
     >>> vct_out = "statistics_aho.shp"
     >>> rst_sewerin ="sewerin.rst"
     >>> rst_sediexport ="SediExport.rst"
-    >>> compute_statistics_rasters_per_polygon_vector(vct_aho,
-    >>>                                                   vct_out,
-    >>>                                                   [rst_sewerin,rst_sediexport]
-    >>>                                                   ["River","Sewers"],
-    >>>                                                   {"COUNT":True,"SUM":True},
-    >>>                                                   ton = True)
+    >>> compute_statistics_rasters_per_polygon_vector([rst_sewerin, rst_sediexport],
+    ...                                               vct_polygon,
+    ...                                               vct_out,
+    ...                                               ["River","Sewers"],
+    ...                                               {"COUNT":True,"SUM":True},
+    ...                                               ton = True)
     """
     grid_statistics(lst_rasters, vct_polygon, vct_out, **dict_operators)
 
@@ -815,10 +815,10 @@ def rst_to_vct_points(rst_in, vct_out):
 
 
 @valid_input(dict={"vct_in": valid_vector})
-def vct_to_rst_value(
-    vct_in, rst_out, rstval, Cnst, nodata=-9999, alltouched=True, dtype=None
+def vct_to_rst_value_gdal(
+    vct_in, rst_out, raster_properties, nodata=-9999, alltouched=True, dtype=None
 ):
-    """Rasterizes a shapefile by a given constant value
+    """Rasterizes a shapefile as data/no-data
 
     Parameters
     ----------
@@ -826,15 +826,12 @@ def vct_to_rst_value(
         File path of the shapefile to be rasterized.
     rst_out: pathlib.Path
         File path of the destination rst
-    Cnst: dict
+    raster_properties: dict
         Dictionary with following keys:
 
         - *res* (int): resolution
         - *nodata* (int): nodata flag
         - *minmax* (list): list with xmin, ymin, xmax, ymax
-
-    rstval: str
-        The value all features of the shapefile will get in the raster.
     alltouched: bool, default true
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
@@ -848,18 +845,134 @@ def vct_to_rst_value(
     cmd_args = ["gdal_rasterize", "-q", "-a_nodata", str(nodata)]
     if alltouched:
         cmd_args += ["-at"]
-    cmd_args += ["-burn", str(rstval)]
+    cmd_args += ["-burn", "1"]  # make binary grid
     cmd_args += ["-l", vct_in.stem]
-    cmd_args += ["-of", "GTiff", "-te"]
-    for oor in Cnst["minmax"]:
+    cmd_args += ["-of", "SAGA", "-te"]
+    for oor in raster_properties["minmax"]:
         cmd_args += [str(oor)]
-    if dtype is not None:
-        cmd_args += ["-ot", dtype]
-    cmd_args += ["-tr", str(Cnst["res"]), str(Cnst["res"])]
+
+    if dtype == "integer":
+        cmd_args += ["-ot", "Int16"]
+    elif dtype == "float":
+        cmd_args += ["-ot", "Float32"]
+
+    cmd_args += ["-tr", str(raster_properties["res"]), str(raster_properties["res"])]
     cmd_args += ["-co", "COMPRESS=DEFLATE"]
     cmd_args += [str(vct_in), str(rst_out)]
 
     execute_subprocess(cmd_args)
+
+
+@valid_input(dict={"vct_in": valid_vector})
+def vct_to_rst_value_saga(
+    vct_in, rst_out, raster_properties, alltouched=True, dtype=None
+):
+    """Rasterizes a shapefile as data/no-data
+
+    Parameters
+    ----------
+    vct_in: str or pathlib.Path
+        File path of the shapefile to be rasterized.
+    rst_out: pathlib.Path
+        File path of the destination rst
+    raster_properties: dict
+        Dictionary with following keys:
+
+        - *res* (int): resolution
+        - *nodata* (int): nodata flag
+        - *minmax* (list): list with xmin, ymin, xmax, ymax
+    alltouched: bool, default true
+        Enables the ALL_TOUCHED rasterization option so that all pixels
+        touched by lines or polygons will be updated.
+    dtype: str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+
+    Note
+    -----
+    Uses and relies on saga_cmd CLI
+    """
+
+    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
+    cmd_args += ["-INPUT", str(vct_in)]
+    cmd_args += ["-OUTPUT", "0"]
+
+    if alltouched:
+        cmd_args += ["-LINE_TYPE", "1"]
+        cmd_args += ["-POLY_TYPE", "1"]
+    else:
+        cmd_args += ["-LINE_TYPE", "0"]
+        cmd_args += ["-POLY_TYPE", "0"]
+
+    grid_type = None
+    if dtype == "integer":
+        grid_type = "4"  # "signed 2 byte integer"
+    elif dtype == "float":
+        grid_type = "9"  # "4 byte floating point number"
+
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "0"]
+    cmd_args += ["-TARGET_USER_SIZE", str(raster_properties["res"])]
+    cmd_args += ["-TARGET_USER_XMIN", str(raster_properties["minmax"][0])]
+    cmd_args += ["-TARGET_USER_XMAX", str(raster_properties["minmax"][2])]
+    cmd_args += ["-TARGET_USER_YMIN", str(raster_properties["minmax"][1])]
+    cmd_args += ["-TARGET_USER_YMAX", str(raster_properties["minmax"][3])]
+    cmd_args += ["-TARGET_USER_COLS", str(raster_properties["ncols"])]
+    cmd_args += ["-TARGET_USER_ROWS", str(raster_properties["nrows"])]
+    cmd_args += ["-TARGET_USER_FITS", "1"]
+    cmd_args += ["-GRID", str(rst_out)]
+    execute_saga(cmd_args)
+
+
+@valid_input(dict={"vct_in": valid_vector})
+def vct_to_rst_value(
+    vct_in,
+    rst_out,
+    raster_properties,
+    alltouched=True,
+    dtype=None,
+    gdal=True,
+):
+    """Rasterizes a shapefile by a given constant value
+
+    Parameters
+    ----------
+    vct_in: str or pathlib.Path
+        File path of the shapefile to be rasterized.
+    rst_out: pathlib.Path
+        File path of the destination rst
+    raster_properties: dict
+        Dictionary with following keys:
+
+        - *res* (int): resolution
+        - *nodata* (int): nodata flag
+        - *minmax* (list): list with xmin, ymin, xmax, ymax
+    alltouched: bool, default true
+        Enables the ALL_TOUCHED rasterization option so that all pixels
+        touched by lines or polygons will be updated.
+    dtype: str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+    gdal: bool, default True
+        rasterize using gdal_rasterize or via saga CLI
+
+    """
+
+    if gdal:
+        vct_to_rst_value_gdal(
+            vct_in,
+            rst_out,
+            raster_properties,
+            nodata=-9999,
+            alltouched=True,
+            dtype=None,
+        )
+    else:
+        vct_to_rst_value_saga(
+            vct_in,
+            rst_out,
+            raster_properties,
+            alltouched=True,
+            dtype=None,
+        )
 
 
 @valid_input(dict={"rst_in": valid_raster})
@@ -987,7 +1100,7 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     profile["nodata"] = 0
     arr += 1
     arr = np.where(arr == 256, 0, arr).astype("int16")
-    write_arr_as_rst(arr, rst_out, "int16", profile)
+    write_arr_as_rst(arr, rst_out, np.int16, profile)
     return
 
 
@@ -1001,14 +1114,14 @@ def check_single_polygon(vct):
     vct: str or pathlib.Path
         File path of the shapefile
     """
-    with fiona.open(vct) as c:
-        nr_polygons = len(c)
-        if nr_polygons != 1:
-            msg = (
-                f"Catchment polygon should be a single polygon, current "
-                f"catchment polygon holds '{nr_polygons}' polygons."
-            )
-            IOError(msg)
+    nr_polygons = pyogrio.read_info(vct)["features"]
+
+    if nr_polygons != 1:
+        msg = (
+            f"Catchment polygon should be a single polygon, current "
+            f"catchment polygon holds '{nr_polygons}' polygons."
+        )
+        IOError(msg)
 
 
 @valid_input(dict={"vct_in": valid_vector})
@@ -1093,7 +1206,7 @@ def execute_saga(cmd_args):
 
     Parameters
     ----------
-    saga_cmd: list
+    cmd_args: list
         Saga command
     """
     if "saga_cmd" not in cmd_args:
@@ -1108,6 +1221,44 @@ def execute_saga(cmd_args):
             pass
         else:
             print(e.output.decode())
+
+
+@valid_input(dict={"vct_point": valid_pointvector, "rst_template": valid_raster})
+def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
+    """Converts a polygon shapefile to a raster
+
+    Parameters
+    ----------
+    vct_point: str or pathlib.Path
+        File path of input point shapefile
+    rst_out: str or pathlib.Path
+        File path of output rasterfile
+    rst_template: str or pathlib.Path
+        File path to a template raster
+    field: str
+        The field of the shapefile containing the values for the raster
+    dtype: str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+
+    Note
+    -----
+    Uses and relies on saga_cmd CLI
+
+    """
+    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
+    cmd_args += ["-INPUT", str(vct_point), "-FIELD", str(field)]
+    cmd_args += ["-OUTPUT", "2"]
+    grid_type = None
+    if dtype == "integer":
+        grid_type = "4"  # "signed 2 byte integer"
+    elif dtype == "float":
+        grid_type = "9"  # "4 byte floating point number"
+
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+    execute_saga(cmd_args)
 
 
 @valid_input(dict={"vct_polygon": valid_polygonvector, "rst_template": valid_raster})
@@ -1135,13 +1286,14 @@ def polygons_to_raster(vct_polygon, rst_out, rst_template, field, dtype):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_polygon), "-FIELD", str(field)]
     cmd_args += ["-OUTPUT", "2", "-POLY_TYPE", "1"]
+    grid_type = None
     if dtype == "integer":
-        grid_type = "6"  # 4 byte unsigned integer
+        grid_type = "4"  # "signed 2 byte integer"
     elif dtype == "float":
-        grid_type = "7"  # 4 byte floating point
-    else:
-        grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+        grid_type = "9"  # "4 byte floating point number"
+
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
     execute_saga(cmd_args)
 
@@ -1171,15 +1323,16 @@ def lines_to_raster(vct_line, rst_out, rst_template, field, dtype):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_line), "-FIELD", str(field)]
     cmd_args += ["-OUTPUT", "2", "-LINE_TYPE", "1"]
+    grid_type = None
     if dtype == "integer":
-        grid_type = "6"  # 4 byte unsigned integer
+        grid_type = "4"  # "signed 2 byte integer"
     elif dtype == "float":
-        grid_type = "7"  # 4 byte floating point
-    else:
-        grid_type = "9"  # same as attribute
-    cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
-    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+        grid_type = "9"  # "4 byte floating point number"
 
+    if grid_type:
+        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+    cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
+    print(cmd_args)
     try:
         execute_subprocess(cmd_args)
     except OSError as e:
@@ -1308,7 +1461,7 @@ def raster_dataframe_to_arr(df, profile, col, dtype):
     """
     nrows = profile["height"]
     ncols = profile["width"]
-    if col in df:
+    if col in df.columns:
         df[col] = deepcopy(df[col]).astype(dtype)
     else:
         raise ValueError(f"{col} not in list of raster")
@@ -1595,7 +1748,7 @@ def rstparams_to_rasterprofile(rstparams, epsg=None):
 
     Parameters
     ----------
-    profile: rasterio.profiles
+    rstparams: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
     epsg: str, default None
         The epsg code defining the coordinate system of the raster,
@@ -1607,9 +1760,7 @@ def rstparams_to_rasterprofile(rstparams, epsg=None):
         gdal dictionary holding all metadata for idrisi rasters
 
     """
-    profile = {}
-
-    profile["nodata"] = rstparams["nodata"]
+    profile = {"nodata": rstparams["nodata"]}
 
     if "init" in list(rstparams["crs"].to_dict().keys()):
         profile["epsg"] = rstparams["crs"].to_dict()["init"]
@@ -2072,15 +2223,15 @@ def define_extent_from_vct(
     rp: RasterProperties see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
 
     """
-    with fiona.open(vct_catchment) as c:
-        # Get spatial extent of catchment.
-        extent = c.bounds
-        minmax = [
-            round(extent[0]) - buffer,
-            round(extent[1]) - buffer,
-            round(extent[2]) + buffer,
-            round(extent[3]) + buffer,
-        ]
+    # Get spatial extent of catchment.
+    extent = get_extent_vct(vct_catchment)
+
+    minmax = [
+        round(extent[0]) - buffer,
+        round(extent[1]) - buffer,
+        round(extent[2]) + buffer,
+        round(extent[3]) + buffer,
+    ]
 
     if bounds is not None:
         for i in range(4):
@@ -2096,6 +2247,31 @@ def define_extent_from_vct(
     rp = RasterProperties(minmax, resolution, nodata, epsg)
 
     return rp
+
+
+def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
+    """Create temporary filename in a dedicated directory
+
+    Create directory if it is not exists
+
+    Only filenames are generated, not the files
+
+    Parameters
+    ----------
+    suffix: str
+    directory: pathlib.Path, default 'tempfiles_pywatemsedem'
+
+    Returns
+    -------
+    pathlib.Path
+    """
+    directory.mkdir(exist_ok=True)
+    timestamp = int(time.time())
+    chars = string.ascii_letters + string.digits
+    random_part = "".join(random.choices(chars, k=6))
+    fname = Path(directory) / f"tempfile_{timestamp}_{random_part}_pywatemsedem{suffix}"
+
+    return fname
 
 
 def clean_up_tempfiles(temporary_file, file_format):

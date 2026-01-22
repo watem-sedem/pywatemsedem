@@ -1,12 +1,10 @@
 import logging
 import os
-import tempfile
 from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-import pkg_resources
 import shapely
 
 from pywatemsedem.defaults import SAGA_FLAGS
@@ -14,6 +12,7 @@ from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
     compute_statistics_rasters_per_polygon_vector,
+    create_filename,
     create_spatial_index,
     execute_saga,
     get_mask_template,
@@ -40,7 +39,7 @@ from pywatemsedem.io.modeloutput import (
 
 from .plots import plot_cumulative_sedimentload
 from .scenario import CNWSException
-from .tools import zip_folder
+from .tools import package_resource, zip_folder
 
 logger = logging.getLogger(__name__)
 
@@ -126,26 +125,26 @@ class PostProcess(Factory):
     ----------
     name: str
         Name of catchment to which results of scenario run are written too
-    scenario_nr: int
+    resolution: int
+        model resolution
+    scenario_label: int
         scenario number
     year: int
         simulation year
-    resolution: int
-        model resolution
     epsg: int, default 31370
         epsg-code
 
 
     Examples
     --------
-    >>> from pywatemsedem.postprocess import PostProcess()
-    >>> pp = PostProcess(r"molenbeek", 1, 2019, 20, 31370) # note that the folder
-    >>> #modelbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
+    >>> from pywatemsedem.postprocess import PostProcess
+    >>> pp = PostProcess(r"molenbeek", 20, 1, 2019, 31370) # note that the folder
+    >>> #molenbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
     >>> pp.make_routing_vct() #make a vector file of the text routig file.
 
     """
 
-    def __init__(self, name, resolution, scenario_label, year, epsg):
+    def __init__(self, name, resolution, scenario_label, year, epsg=31370):
 
         # general
         self.epsg = epsg
@@ -553,7 +552,7 @@ class PostProcess(Factory):
             Maximum number of catchment to identify
         """
         arr_sediout, profile = load_raster(self.files["rst_sediout"])
-        temp_routing_wide = tempfile.NamedTemporaryFile(suffix=".txt").name
+        temp_routing_wide = create_filename(".txt")
         self.routing_non_river_wide.to_csv(temp_routing_wide, sep="\t", index=False)
         identify_individual_priority_catchments(
             arr_sediout,
@@ -563,7 +562,7 @@ class PostProcess(Factory):
             resmap=self.sfolder.postprocess_folder,
             epsg=self.epsg,
         )
-        clean_up_tempfiles(Path(temp_routing_wide), "txt")
+        clean_up_tempfiles(temp_routing_wide, "txt")
 
     def merge_overlapping_catchments(self, gdf_subcatchmpriority, merge=True):
         """Merge overlapping catchments and reassign priorities for
@@ -694,7 +693,7 @@ class PostProcess(Factory):
         df_sediexport, percentage = self.identify_sinks(percentage)
         dict_rst_subcatchmsinks = {}
         dict_vct_subcatchmsinks = {}
-        temp = tempfile.NamedTemporaryFile(suffix=".txt").name
+        temp = create_filename(".txt")
         self.routing_non_river.to_csv(temp, sep="\t", index=False)
         (
             dict_rst_subcatchmsinks[percentage],
@@ -717,7 +716,7 @@ class PostProcess(Factory):
         )
         # check lijn hieronder
         df_subcatchments.to_file(dict_vct_subcatchmsinks[percentage])
-        clean_up_tempfiles(Path(temp), "txt")
+        clean_up_tempfiles(temp, "txt")
 
     def identify_sinks(self, percentage):
         """Identify X % highest sinks of sediment.
@@ -855,9 +854,12 @@ class PostProcess(Factory):
 
         # calculate percentage
         df_sediexport["perc"] = [
-            df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
-            if i != 0
-            else df_sediexport["cum_perc"].iloc[i]
+            (
+                df_sediexport["cum_perc"].iloc[i]
+                - df_sediexport["cum_perc"].iloc[i - 1]
+                if i != 0
+                else df_sediexport["cum_perc"].iloc[i]
+            )
             for i in range(0, len(df_sediexport))
         ]
 
@@ -1711,8 +1713,8 @@ def split_endpoints_in_raster(
 
     Note
     ----
-    Note that sewers in WaTEM/SEDEM are endpoints in pywatemsedem, such to make a distinction
-    between sewers and ditches in pywatemsedem.
+    Note that sewers in WaTEM/SEDEM are endpoints in pywatemsedem, such to make a
+    distinction between sewers and ditches in pywatemsedem.
     """
 
     # load sewer id's and sewer in (kg per pixel)
@@ -1937,9 +1939,9 @@ def merge_grass_strip_id_and_sediout_to_routing(
         df_grass_strips[f"gras_id_{i}"] = df_grass_strips["val"]
 
     for target_id in [1, 2]:
-        df_grass_strips[
-            [f"target{target_id}row", f"target{target_id}col"]
-        ] = df_grass_strips[["row", "col"]]
+        df_grass_strips[[f"target{target_id}row", f"target{target_id}col"]] = (
+            df_grass_strips[["row", "col"]]
+        )
 
     # define sedout and index cols to join on
     df_sediout["sediout"] = df_sediout["val"]
@@ -2820,12 +2822,12 @@ def process_filename(
 
 
 def read_filestructure(txt_filestructure=None, sep=","):
-    """Read the pywatemsedem filestructure flanders file containing an overview of the files
-    used for pywatemsedem flanders.
+    """Read the pywatemsedem filestructure flanders file containing an overview of the
+    files used for pywatemsedem flanders.
 
-    The filestructure contains information on files written on disk by pywatemsedem. This
-    file is used by the :class:`pywatemsedem.core.postprocess.PostProcess` object and
-    :class:`pywatemsedem.core.merge_scenarios.SpatialMergeScenarios`.
+    The filestructure contains information on files written on disk by pywatemsedem.
+    This file is used by the :class:`pywatemsedem.core.postprocess.PostProcess` object
+    and :class:`pywatemsedem.core.merge_scenarios.SpatialMergeScenarios`.
 
     The filestructure pywatemsedem file can be used for to regenerate the filenames
     in a ``scenario_x`` folder without having to have the pywatemsedem objects loaded in
@@ -2834,8 +2836,8 @@ def read_filestructure(txt_filestructure=None, sep=","):
     Parameters
     ----------
     txt_filestructure : str or pathlib.Path, default None
-        File path of table holding all data files/folder path references used in pywatemsedem
-        flanders.
+        File path of table holding all data files/folder path references used in
+        pywatemsedem flanders.
     sep : str, default ","
         Delimiter of the text file.
 
@@ -2864,11 +2866,11 @@ def read_filestructure(txt_filestructure=None, sep=","):
 
     Note
     ----
-    1. When no text data set file is defined, than the default defined in this
-       package is used.
+    1. When no text data set file is defined, than the default defined in this package
+       is used.
     2. Although the filestructure applies to pywatemsedem flanders, it is defined in the
-       pywatemsedem postprocess.py core function, as the postprocess.py script contains many
-       functionalities only coupled to flanders.
+       pywatemsedem postprocess.py core function, as the postprocess.py script contains
+       many functionalities only coupled to flanders.
 
     Example
     -------
@@ -2887,12 +2889,11 @@ def read_filestructure(txt_filestructure=None, sep=","):
     This way, automated filename reconstruction can be guided by the use of this table.
     """
     if txt_filestructure is None:
-        ds = pkg_resources.resource_stream(__name__, "data/postprocess_files.csv")
+        ds = package_resource(["data"], "postprocess_files.csv")
     else:
-        ds = open(txt_filestructure, mode="r")
-    df_filestructure_flanders = pd.read_csv(ds, sep=sep)
+        ds = txt_filestructure
 
-    ds.close()
+    df_filestructure_flanders = pd.read_csv(ds, sep=sep)
 
     cols = {
         "tag_variable",

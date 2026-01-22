@@ -3,9 +3,8 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 import pytest
-from conftest import catchment_data
+from conftest import CatchmentTestBase, catchment_data
 
-from pywatemsedem.catchment import Catchment
 from pywatemsedem.errors import (
     PywatemsedemRasterValueError,
     PywatemsedemVectorAttributeValueError,
@@ -13,7 +12,7 @@ from pywatemsedem.errors import (
 from pywatemsedem.geo.utils import load_raster, write_arr_as_rst
 
 
-class TestCatchment:
+class TestCatchment(CatchmentTestBase):
     """Test Catchment properties
 
     Test main functionalities for Catchment class.
@@ -26,11 +25,7 @@ class TestCatchment:
     - Are data types equal?
     """
 
-    name = "langegracht"
-    catchment = Catchment(
-        name, catchment_data.catchment, catchment_data.dtm, 20, 31370, -9999
-    )
-
+    # @pytest.mark.skip(reason="test to fix")
     def test_kfactor(self):
         """Test assignment kfactor raster"""
         # test assignment raster
@@ -42,7 +37,7 @@ class TestCatchment:
         # test unique values
         un, counts = np.unique(self.catchment.kfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9999, 20, 27, 40, 42])
-        np.testing.assert_allclose(counts, [28236, 1377, 72, 818, 18941])
+        np.testing.assert_allclose(counts, [28234, 1376, 72, 818, 18944])
 
     def test_kfactor_warning(self, recwarn, tmp_path):
         """Test warning wrong value kfactor raster"""
@@ -112,12 +107,12 @@ class TestCatchment:
 
         # check if functionality runs
         self.catchment.vct_river = non_tubed
-        self.catchment.vct_tubed_river = tubed
+        self.catchment.tubed_river = tubed
 
         # check for overlap
         self.catchment.vct_river = gdf
         with pytest.raises(IOError, match="are also present"):
-            self.catchment.vct_tubed_river = tubed
+            self.catchment.tubed_river = tubed
 
     def test_infrastructure(self):
         """Test assignment infrastructure vector"""

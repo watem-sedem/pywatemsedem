@@ -1,5 +1,4 @@
 # seperate plotting funcion
-import tempfile
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,6 +17,7 @@ from ..geo.factory import Factory
 from ..geo.utils import (
     check_raster_properties_raster_with_template,
     clean_up_tempfiles,
+    create_filename,
     create_spatial_index,
     execute_saga,
     load_raster,
@@ -1393,7 +1393,7 @@ def create_id_raster_for_highest_value_arr(arr, id_, profile, resmap):
 
     # write to disk
     rst_id = resmap / f"id_{id_}.rst"
-    write_arr_as_rst(arr_id, rst_id, "int32", profile)
+    write_arr_as_rst(arr_id, rst_id, np.int32, profile)
 
     return rst_id, max_val
 
@@ -1600,7 +1600,7 @@ def map_rank_sediment_loads(
     if unit not in ["kg", "ton"]:
         f"Unit '{unit}' should be either 'kg' op 'ton'."
 
-    rst_out = tempfile.NamedTemporaryFile(suffix=".rst").name
+    rst_out = create_filename(".rst")
     df_sediexport, threshold = identify_rank_sediment_loads(
         rst_sediexport, threshold, rst_out, rst_endpoints
     )
@@ -1749,9 +1749,11 @@ def compute_cumulative_loads_in_sinks(
 
     # calculate percentage
     df_sediexport["perc"] = [
-        df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
-        if i != 0
-        else df_sediexport["cum_perc"].iloc[i]
+        (
+            df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
+            if i != 0
+            else df_sediexport["cum_perc"].iloc[i]
+        )
         for i in range(0, len(df_sediexport))
     ]
 

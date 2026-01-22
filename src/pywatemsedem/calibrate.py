@@ -25,7 +25,7 @@ class Calibration:
         Upper boundary for ktc low value
     ktc_high_min: float
         Lower boundary for ktc high value
-    ktch_high_max: float
+    ktc_high_max: float
         Upper boundary for ktc high value
     steps: int
         Amount of steps between lower and upper ktc low/high values
@@ -186,8 +186,8 @@ def process_calibrationrun_output(
             )
         else:
             msg = (
-                "No endpoints (sewerin-file) included in pywatemsedem model run, can not add"
-                " percentage to estimated sediment yield (P_sy)."
+                "No endpoints (sewerin-file) included in pywatemsedem model run, can "
+                "not add percentage to estimated sediment yield (P_sy)."
             )
             logger.warning(msg)
     # convert kg to tons
@@ -410,8 +410,8 @@ def calculate_model_efficiency(df_calibration_data, df_calibration_results):
 def compute_nash_sutcliffe(
     df_calibration_results, denominator, variable, squared_error=True
 ):
-    """Compute Nash-Sutcliffe model efficiency for calibration results of WaTEM/SEDEM for a
-    variable
+    """Compute Nash-Sutcliffe model efficiency for calibration results of WaTEM/SEDEM
+    for a variable
 
     Parameters
     ----------
@@ -454,7 +454,7 @@ def compute_nash_sutcliffe(
     df_me[f"NS {variable}"] = 1 - (df_me[col] / denominator)
     df_me = df_me.reset_index()
     df_me[f"NS {variable}"] = np.where(
-        df_me["ktc_high"] > df_me["ktc_low"], df_me[f"NS {variable}"], np.NaN
+        df_me["ktc_high"] > df_me["ktc_low"], df_me[f"NS {variable}"], np.nan
     )
 
     return df_me

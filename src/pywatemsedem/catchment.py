@@ -1,31 +1,32 @@
 import logging
-import tempfile
 import warnings
 from functools import wraps
 from pathlib import Path
 
-import fiona
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-from matplotlib import colors
+import pyogrio
 from matplotlib import pyplot as plt
 
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
-from pywatemsedem.geo.rasters import RasterMemory
+from pywatemsedem.geo.rasters import AbstractRaster, RasterMemory
 from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
     clean_up_tempfiles,
+    create_filename,
     create_spatial_index,
     define_extent_from_vct,
     execute_subprocess,
     load_raster,
     read_rasterio_profile,
 )
+from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import CatchmentFolder
 from pywatemsedem.io.modeloutput import check_segment_edges
+from pywatemsedem.plots import plot_landuse
 from pywatemsedem.tools import (
     format_forced_routing,
     get_df_area_unique_values_array,
@@ -44,8 +45,8 @@ def valid_dtm(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._dtm is None:
-            msg = "Please first define a DTM!"
+        if self._dtm.is_empty():
+            msg = "Please first define non-empty DTM!"
             raise IOError(msg)
 
         return func(self, *args, **kwargs)
@@ -58,8 +59,8 @@ def valid_vct_river(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_river is None:
-            msg = "Please define river vector!"
+        if self._vct_river.is_empty():
+            msg = "Please define non-empty river vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -71,7 +72,7 @@ def valid_vct_infra_line(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_infrastructure_roads is None:
+        if self._vct_infrastructure_roads.is_empty():
             msg = "Please define infrastructure line vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
@@ -84,8 +85,8 @@ def valid_vct_infra_poly(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_infrastructure_buildings is None:
-            msg = "Please define infrastructure polygon vector!"
+        if self._vct_infrastructure_buildings.is_empty():
+            msg = "Please define non-empty infrastructure polygon vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -97,8 +98,8 @@ def valid_vct_parcels(func):
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self._vct_parcels is None:
-            msg = "Please define parcels polygon vector!"
+        if self._vct_parcels.is_empty():
+            msg = "Please define non_empty parcels polygon vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -146,7 +147,7 @@ class Catchment(Factory):
         ----------
         name: str
             Name of the catchment.
-        vct_catchment: str or pathlib.Path
+        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame
             Vector file of catchment outline (mask). This should be a single polygon
             vector.
         resolution: int
@@ -182,7 +183,7 @@ class Catchment(Factory):
 
         # get RasterProperties from catchment vector and bounds DTM
         rp = read_rasterio_profile(rst_dtm)
-        bounds = RasterProperties.from_rasterio(rp).bounds
+        bounds = RasterProperties.from_rasterio(rp, epsg=epsg_code).bounds
         self.rp = define_extent_from_vct(
             self.vct_catchment,
             resolution,
@@ -196,32 +197,37 @@ class Catchment(Factory):
         # set dtm
         self.dtm = rst_dtm
 
-        # attributes
-        self._pfactor = None
-        self._kfactor = None
-        self._segments = None
-        self._routing = None
-        self._hydrosoilgroup = None
-        self._landuse = None
-        self._water = None
-        self._infrastructure = None
+        # API atttributes
+        self._hydrosoilgroup = AbstractRaster()
+        self._landuse = AbstractRaster()
+        self._water = AbstractRaster()
+        self._infrastructure = AbstractRaster()
+        self._infrastructure_buildings = AbstractRaster()
+        self._infrastructure_roads = AbstractRaster()
+        self._river = AbstractRaster()
+
+        # WaTEM/SEDEM inputs
+        self._pfactor = AbstractRaster()
+        self._kfactor = AbstractRaster()
+        self._segments = AbstractRaster()
+        self._routing = AbstractRaster()
 
         # set name and logger
         self.name = str(name)
 
         # set other attributes to none
-        self._river = None
-        self._vct_river = None
-        self._vct_tubed_river = None
-        self._vct_water = None
-        self._vct_infrastructure_buildings = None
-        self._vct_infrastructure_roads = None
-        self._adjacent_edges = None
-        self._up_edges = None
+
+        self._vct_river = AbstractVector()
+        self._tubed_river = None
+        self._vct_water = AbstractVector()
+        self._vct_infrastructure_buildings = AbstractVector()
+        self._vct_infrastructure_roads = AbstractVector()
+        self._adjacent_edges = AbstractVector()
+        self._up_edges = AbstractVector()
 
     def zip(self):
         """Zip catchment folder"""
-        zip_folder((self.folder / "Data_Bekken"))
+        zip_folder(self.folder.catchment_folder)
 
     @property
     def dtm(self):
@@ -249,9 +255,9 @@ class Catchment(Factory):
 
         def filter_within_parcels():
             """Filter dtm within parcel boundaries"""
-            temp_landuse = Path(tempfile.NamedTemporaryFile(suffix=".rst").name)
-            temp_dtm_in = Path(tempfile.NamedTemporaryFile(suffix=".rst").name)
-            temp_dtm = Path(tempfile.NamedTemporaryFile(suffix=".sgrd").name)
+            temp_landuse = create_filename(".rst")
+            temp_dtm_in = create_filename(".rst")
+            temp_dtm = create_filename(".sgrd")
             self.dtm.write(temp_dtm_in)
             self.parcels.write(temp_landuse)
 
@@ -421,6 +427,7 @@ class Catchment(Factory):
         Raster should contain:
 
             - *-9999*: nodata
+            - *-6*: grass strips
             - *-5*: open water
             - *-4*: grass
             - *-3*: forest
@@ -457,47 +464,7 @@ class Catchment(Factory):
 
         def plot(nodata=None, *args, **kwargs):
             """Plotting fun"""
-            plt.subplots(figsize=[10, 10])
-
-            cmap = colors.ListedColormap(
-                [
-                    "#64cf1b",
-                    "#3b7db4",
-                    "#71b651",
-                    "#387b00",
-                    "#000000",
-                    "#00bfff",
-                    "#ffffff",
-                    "#a47158",
-                ]
-            )
-            bounds = [-6.5, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5]
-            norm = colors.BoundaryNorm(bounds, cmap.N)
-            arr = self._landuse.arr.copy().astype(np.float32)
-            if nodata is not None:
-                arr[arr == nodata] = np.nan
-            img = plt.imshow(arr, cmap=cmap, norm=norm, *args, **kwargs)
-            cbar = plt.colorbar(
-                img,
-                cmap=cmap,
-                norm=norm,
-                boundaries=bounds,
-                ticks=[-6, -5, -4, -3, -2, -1, 0, 1],
-                shrink=0.5,
-            )
-            cbar.ax.set_yticklabels(
-                [
-                    "Grass strips (-6)",
-                    "Pools (-5)",
-                    "Meadow (-4)",
-                    "Forest (-3)",
-                    "Infrastructure (-2)",
-                    "River (-1)",
-                    "Outside boundaries (0)",
-                    "Agriculture (>0)",
-                ]
-            )
-            plt.show()
+            plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._landuse.plot = plot
 
@@ -528,8 +495,8 @@ class Catchment(Factory):
                 except OSError as e:
                     if "corrupted size vs. prev_size in fastbins" in str(e):
                         try:
-                            fiona.open(vct_output)
-                        except fiona.errors.DriverError:
+                            pyogrio.read_info(vct_output)
+                        except pyogrio.errors.DataSourceError:
                             raise IOError(e)
                 create_spatial_index(vct_output)
         else:
@@ -571,9 +538,23 @@ class Catchment(Factory):
             - *0*: no river
             - *-9999*: nodata
         """
-        arr = np.where(self._river.arr > 0, -1, self._river.rp.nodata)
 
-        return RasterMemory(arr, self.rp)
+        return self._river
+
+    @river.setter
+    def river(self, input_raster):
+        """Assign river raster
+
+        Parameters
+        ----------
+        input_raster: Pathlib.Path, str or numpy.array
+            File path/array river raster with values *-1*: river, *0*: no river,
+            *-9999*: nodata
+        """
+        self._river = self.raster_factory(
+            input_raster, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
+        self._river.arr = np.where(self._river.arr > 0, -1, self._river.rp.nodata)
 
     @property
     # @valid_req_property(req_property_name="vct_river", mandatory=False)
@@ -582,7 +563,8 @@ class Catchment(Factory):
 
         This property is generated by assigning a river line vector to the catchment
         class. Every row indicates a connection between two segments: segment *from*
-        (column 1) flows into segment to (column 2). See :ref:`here <watemsedem:adjsegments>`
+        (column 1) flows into segment to (column 2).
+        See :ref:`here <watemsedem:adjsegments>`
 
         Returns
         -------
@@ -618,15 +600,11 @@ class Catchment(Factory):
 
     @property
     def vct_river(self):
-        """Assign river-line vector
+        """Getter vct_river
 
-        The river vector should be a line-vector file. No specific attributes should be
-        defined.
-
-        Parameters
-        ----------
-        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            Line vector file.
+        Returns
+        -------
+        pywatemsedem.geo.vectors.AbstractVector
         """
         return self._vct_river
 
@@ -658,7 +636,7 @@ class Catchment(Factory):
         vct_river_topo = self.folder.vct_folder / f"topology_{self.name}.shp"
         clean_up_tempfiles(vct_river_topo, "shp")
         self._adjacent_edges, self._up_edges = self.topologize_river(
-            vct_river_clipped, vct_river_topo, self.mask_raster
+            vct_river_clipped, vct_river_topo, self.rasterfile_mask
         )
 
         self._vct_river = self.vector_factory(
@@ -666,44 +644,42 @@ class Catchment(Factory):
         )
 
         river = self._vct_river.rasterize(
-            self.mask_raster, self.rp.epsg, "line_id", "integer", gdal=True
+            self.rasterfile_mask,
+            self.rp.epsg,
+            "line_id",
+            dtype_raster="integer",
+            gdal=False,
         )
-        self._river = self.raster_factory(river, allow_nodata_array=True)
+
+        self.river = river
+        self.segments = river
+
         self._adjacent_edges, self._up_edges, flag = check_segment_edges(
-            self.adjacent_edges, self.up_edges, self._river.arr
+            self.adjacent_edges, self.up_edges, self.river.arr
         )
 
         # set routing
-        if self._vct_river.geodata.shape[0] > 0:
+        if not self._vct_river.is_empty():
             routing = self._vct_river.rasterize(
-                self.mask_raster,
+                self.rasterfile_mask,
                 self.rp.epsg,
                 convert_lines_to_direction=True,
-                gdal=True,
+                gdal=False,
             )
             routing[routing == self.rp.nodata] = 0
-            self._routing = self.raster_factory(routing, flag_mask=False)
+            self.routing = routing
         else:
             msg = "River input vector is empty, setting river routing to None"
             logger.info(msg)
-            self._routing = None
+            self._routing = AbstractRaster()
 
     @property
-    def vct_tubed_river(self):
-        """Assign underground river-line vector
+    def tubed_river(self):
+        """Getter tubed_river"""
+        return self._tubed_river
 
-        The river tubed vector should be a line-vector file. No specific
-        attributes should be defined.
-
-        Parameters
-        ----------
-        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
-            Line vector file.
-        """
-        return self._vct_tubed_river
-
-    @vct_tubed_river.setter
-    def vct_tubed_river(self, vector_input):
+    @tubed_river.setter
+    def tubed_river(self, vector_input):
         """Assign underground river-line vector
 
         The river tubed vector should be a line-vector file. No specific
@@ -729,12 +705,12 @@ class Catchment(Factory):
         vct_tubed_river = self.vector_factory(
             vector_input, "LineString", allow_empty=False
         )
-        self._vct_tubed_river = format_forced_routing(
+        self._tubed_river = format_forced_routing(
             vct_tubed_river.geodata,
             self.rp.gdal_profile["minmax"],
             self.rp.resolution,
         )
-        if self.vct_river is not None:
+        if not self.vct_river.is_empty():
             if any_equal_element_in_vector(
                 self.vct_river.geodata.geometry, vct_tubed_river.geodata.geometry
             ):
@@ -768,6 +744,32 @@ class Catchment(Factory):
         """
         return self._routing
 
+    @routing.setter
+    def routing(self, raster_input):
+        """Assign river routing raster
+
+        See :ref:`here <watemsedem:riverroutingmap>`
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array river routing raster with values from 0 to 8:
+
+            - *0*: do not route further
+            - *1*: route to upper pixel
+            - *2*: route to upper right pixel
+            - *3*: route to right pixel
+            - *4*: route to lower right pixel
+            - *5*: route to lower pixel
+            - *6*: route to lower left pixel
+            - *7*: route to left pixel
+            - *8*: route to upper left pixel
+            - *-9999*: nodata
+        """
+        self._routing = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
+
     @property
     # @valid_req_property(req_property_name="vct_river", mandatory=False)
     def segments(self):
@@ -781,26 +783,37 @@ class Catchment(Factory):
             Raster containing following values:
 
             - *>0*: segment_id
-            - *-9999*: nodata
+            - *0*: nodata
+
+        Notes
+        -----
+        The number of segments is limited to int16.
+        """
+        return self._segments
+
+    @segments.setter
+    def segments(self, raster_input):
+        """Assign river segments raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array river segments raster with values *>0*: segment_id,
+            *-9999*: nodata
 
         Notes
         -----
         The number of segments is limited to int16.
         """
         self._segments = self.raster_factory(
-            self._river.arr, self._river.rp, allow_nodata_array=True
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
         )
         self._segments.arr = np.where(self._segments.arr < 1, 0, self._segments.arr)
         self._segments.arr = self._segments.arr.astype(np.int16)
 
-        return self._segments
-
     @staticmethod
     def topologize_river(
-        vct_input,
-        vct_output,
-        rst_mask,
-        tolerance=None,
+        vct_input, vct_output, rst_mask, tolerance=None, dir=Path(".")
     ):
         """Prepare topology of the river segments with SAGA-GIS
 
@@ -815,6 +828,7 @@ class Catchment(Factory):
         tolerance: float
             If not None, the ``TOLERANCE`` command line argument of the saga topology
             command is given this value.
+        dir: pathlib.Path, default cwd
 
         Returns
         -------
@@ -832,8 +846,8 @@ class Catchment(Factory):
         if tolerance is not None:
             cmd_args += ["-TOLERANCE", str(tolerance)]
 
-        temp_adjacent_edges = tempfile.NamedTemporaryFile(suffix=".txt").name
-        temp_up_edges = tempfile.NamedTemporaryFile(suffix=".txt").name
+        temp_adjacent_edges = create_filename(".txt")
+        temp_up_edges = create_filename(".txt")
 
         # temp fix
         try:
@@ -841,8 +855,8 @@ class Catchment(Factory):
         except OSError as e:
             if "corrupted size vs. prev_size in fastbins" in str(e):
                 try:
-                    fiona.open(vct_output)
-                except fiona.errors.DriverError:
+                    pyogrio.read_info(vct_output)
+                except pyogrio.errors.DataSourceError:
                     raise IOError(e)
 
         cmd_args = ["saga_cmd", SAGA_FLAGS, "topology", "1"]
@@ -858,14 +872,14 @@ class Catchment(Factory):
                 try:
                     pd.read_csv(str(temp_adjacent_edges), sep="\t")
                     pd.read_csv(str(temp_up_edges), sep="\t")
-                except fiona.errors.DriverError:
+                except Exception:
                     raise IOError(e)
 
         adjacent_edges = pd.read_csv(str(temp_adjacent_edges), sep="\t")
         up_edges = pd.read_csv(str(temp_up_edges), sep="\t")
 
-        clean_up_tempfiles(Path(temp_up_edges), "txt")
-        clean_up_tempfiles(Path(temp_adjacent_edges), "txt")
+        clean_up_tempfiles(temp_up_edges, "txt")
+        clean_up_tempfiles(temp_adjacent_edges, "txt")
 
         return adjacent_edges, up_edges
 
@@ -901,6 +915,18 @@ class Catchment(Factory):
         self._vct_water = self.vector_factory(vector_input, "Polygon")
         self._vct_water.geodata["value"] = -5
 
+        self._vct_water.geodata["value"] = self._vct_water.geodata["value"].astype(
+            float
+        )
+        water = self._vct_water.rasterize(
+            self.rasterfile_mask,
+            self.rp.epsg,
+            "value",
+            dtype_raster="integer",
+            gdal=False,
+        )
+        self.water = water
+
     @property
     # @valid_req_property(req_property_name="vct_water", mandatory=False)
     def water(self):
@@ -914,14 +940,21 @@ class Catchment(Factory):
             - *-5*: open water
             - *-9999*: nodata
         """
-        self._vct_water.geodata["value"] = self._vct_water.geodata["value"].astype(
-            float
-        )
-        water = self._vct_water.rasterize(
-            self.mask_raster, self.rp.epsg, "value", "integer", gdal=True
-        )
+        return self._water
 
-        return self.raster_factory(water)
+    @water.setter
+    def water(self, raster_input):
+        """Assign water raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array water raster with values *-5*: open water,
+            *-9999*: nodata
+        """
+        self._water = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
+        )
 
     @property
     def vct_infrastructure_buildings(self):
@@ -952,6 +985,19 @@ class Catchment(Factory):
         )
         self._vct_infrastructure_buildings.geodata["paved"] = -2
 
+        self._vct_infrastructure_buildings.geodata["paved"] = (
+            self._vct_infrastructure_buildings.geodata["paved"].astype(int)
+        )
+
+        infra = self._vct_infrastructure_buildings.rasterize(
+            self.rasterfile_mask,
+            self.rp.epsg,
+            col="paved",
+            dtype_raster="integer",
+            gdal=False,
+        )
+        self.infrastructure_buildings = infra
+
     @property
     # @valid_req_property(
     #    req_property_name="vct_infrastructure_buildings", mandatory=False
@@ -967,15 +1013,21 @@ class Catchment(Factory):
             - *-2*: paved
             - *-9999*: nodata
         """
-        self._vct_infrastructure_buildings.geodata[
-            "paved"
-        ] = self._vct_infrastructure_buildings.geodata["paved"].astype(float)
+        return self._infrastructure_buildings
 
-        infra = self._vct_infrastructure_buildings.rasterize(
-            self.mask_raster, self.rp.epsg, col="paved", gdal=True
+    @infrastructure_buildings.setter
+    def infrastructure_buildings(self, raster_input):
+        """Assign infrastructure buildings raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array infrastructure buildings raster with values *-2*: paved,
+            *-9999*: nodata
+        """
+        self._infrastructure_buildings = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
         )
-
-        return self.raster_factory(infra)
 
     @property
     # @valid_req_property(req_property_name="vct_infrastructure_roads", mandatory=False)
@@ -991,14 +1043,20 @@ class Catchment(Factory):
             - *-7*: paved
             - *-9999*: nodata
         """
-        self._vct_infrastructure_roads.geodata[
-            "paved"
-        ] = self._vct_infrastructure_roads.geodata["paved"].astype(float)
+        return self._infrastructure_roads
 
-        arr = self._vct_infrastructure_roads.rasterize(
-            self.mask_raster, self.rp.epsg, col="paved", gdal=True
+    @infrastructure_roads.setter
+    def infrastructure_roads(self, raster_input):
+        """Assign infrastructure roads raster
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.array
+            File path/array infrastructure roads raster with values *-2*: paved,
+            *-7*: non-paved, *-9999*: nodata
+        """
+        self._infrastructure_roads = self.raster_factory(
+            raster_input, flag_mask=False, flag_clip=True, allow_nodata_array=True
         )
-        return self.raster_factory(arr)
 
     @property
     def vct_infrastructure_roads(self):
@@ -1026,7 +1084,7 @@ class Catchment(Factory):
         if "paved" in self._vct_infrastructure_roads.geodata:
             attribute_discrete_value_error(
                 geodata,
-                "Infrastucture roads",
+                "Infrastructure roads",
                 "paved",
                 {self.rp.nodata, -2, -7},
                 {"nodata", "paved", " non-paved"},
@@ -1036,9 +1094,23 @@ class Catchment(Factory):
 
         self._vct_infrastructure_roads.geodata = geodata
 
+        self._vct_infrastructure_roads.geodata["paved"] = (
+            self._vct_infrastructure_roads.geodata["paved"].astype(int)
+        )
+
+        arr = self._vct_infrastructure_roads.rasterize(
+            self.rasterfile_mask,
+            self.rp.epsg,
+            col="paved",
+            dtype_raster="integer",
+            gdal=False,
+        )
+
+        self.infrastructure_roads = arr
+
     @property
     def infrastructure(self):
-        """Get infrastucture raster
+        """Get infrastructure raster
 
         Get rasterized polygon and line vectors. The procedure adds the line data
         (roads) to the  polygon data (buildings). As such buildings are considered as
@@ -1058,8 +1130,8 @@ class Catchment(Factory):
         or roads and buildings (3). If no roads or buildings are defined, an error is
         thrown."""
 
-        if self.infrastructure_roads is not None:
-            if self.infrastructure_buildings is not None:
+        if not self.infrastructure_roads.is_empty():
+            if not self.infrastructure_buildings.is_empty():
                 arr1 = self.infrastructure_roads.arr.copy()
                 arr2 = self.infrastructure_buildings.arr.copy()
                 cond1 = arr1 == self.infrastructure_roads.rp.nodata
@@ -1072,7 +1144,7 @@ class Catchment(Factory):
             else:
                 self._infrastructure = self.infrastructure_roads
         else:
-            if self.infrastructure_buildings is not None:
+            if not self.infrastructure_buildings.is_empty():
                 self._infrastructure = self.infrastructure_buildings
             else:
                 msg = (
