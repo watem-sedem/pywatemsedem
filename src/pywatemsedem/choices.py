@@ -110,7 +110,7 @@ class WSMixin:
                 attribute.value = attribute.default_value
 
 
-class WSOptions(WSMixin):
+class Options(WSMixin):
     def __init__(self):
         """Initialise WSOptions"""
         self._l_model = UserChoice(
@@ -257,7 +257,7 @@ class WSOptions(WSMixin):
         self._calculate_tillage_erosion.value = input_value
 
 
-class WSParameters(WSMixin):
+class Parameters(WSMixin):
     def __init__(self):
         """Initialise WSParameters"""
         self._r_factor = UserChoice("R factor", "parameters", float, True, None)
@@ -506,7 +506,7 @@ class WSParameters(WSMixin):
         self._bulk_density.value = input_value
 
 
-class WSExtensions(WSMixin):
+class Extensions(WSMixin):
     def __init__(self):
         """Initialise WSExtensions"""
         self._curve_number = UserChoice(
@@ -923,7 +923,7 @@ class WSExtensions(WSMixin):
         self._cardinal_routing_river.value = input_value
 
 
-class WSExtensionsParameters(WSMixin):
+class ExtensionsParameters(WSMixin):
     def __init__(self, extensions):
         """Generate WSExtensionsParameters instance .
 
@@ -1357,7 +1357,7 @@ class WSExtensionsParameters(WSMixin):
         self._endtime_model.value = input_value
 
 
-class WSOutput(WSMixin):
+class Output(WSMixin):
     def __init__(self):
         """Initialise WSOutput"""
         self._write_aspect = UserChoice("write aspect", "output", bool, False, False)
