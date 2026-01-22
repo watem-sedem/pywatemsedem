@@ -78,7 +78,6 @@ class TestCreateModel:
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
         np.testing.assert_allclose(counts, [28234, 5135, 11541, 4534])
 
-    @pytest.mark.skip(reason="will be fixed later")
     @pytest.mark.saga
     def test_omit_water(self, dummy_scenario):
         """Omit water to create WaTEM/SEDEM parcels raster. This scenario is used
@@ -118,7 +117,6 @@ class TestCreateModel:
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
         np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
 
-    @pytest.mark.skip(reason="will be fixed later")
     @pytest.mark.saga
     def test_omit_parcels(self, dummy_scenario):
         """Omit parcels to create WaTEM/SEDEM parcels raster."""
@@ -156,7 +154,6 @@ class TestCreateModel:
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
         np.testing.assert_allclose(counts, [28234, 5454, 11171, 4585])
 
-    @pytest.mark.skip(reason="will be fixed later")
     @pytest.mark.saga
     def test_add_grass_strips(self, dummy_scenario):
         """Test creating composite landuse-, C-factor-, kTC-raster for case without
