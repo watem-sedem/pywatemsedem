@@ -1642,3 +1642,26 @@ class Output(WSMixin):
         input_value:bool
         """
         self._export_saga.value = input_value
+
+
+class Choices:
+    def __init__(self, options, parameters, extensions, extensionparameters, output):
+        """Initialise Choices container
+
+        Parameters
+        ----------
+        options: pywatemsedem.choices.Options
+            Instance of :class:`pywatemsedem options
+            <pywatemsedem.core.choices.WSOptions>` containing the model options.
+        parameters: pywatemsedem.core.choices.WSParameters
+            Instance of :class:`pywatemsedem parameters
+            <pywatemsedem.core.choices.WSParameters>` containing the model parameters.
+        extensions: pywatemsedem.core.choices.WSExtensions
+            Instance of :class:`pywatemsed
+
+        """
+        self.options = options
+        self.parameters = parameters
+        self.extensions = extensions
+        self.extensionparameters = extensionparameters
+        self.output = output
