@@ -20,7 +20,6 @@ from pywatemsedem.geo.utils import (
     create_spatial_index,
     define_extent_from_vct,
     execute_subprocess,
-    load_raster,
     read_rasterio_profile,
 )
 from pywatemsedem.geo.vectors import AbstractVector
@@ -111,7 +110,7 @@ class Catchment(Factory):
 
     The catchment class holds all static information for a catchment.
     The class considers all data of which the content is user-option-independent (i.e.
-    :class:`pywatemsedem.userchoices.UserChoices`.
+    :class:`pywatemsedem.choices.Choices`.
 
     Following properties can be set:
 
@@ -253,26 +252,26 @@ class Catchment(Factory):
         """
         self._dtm = self.raster_factory(raster_input, flag_mask=False, flag_clip=True)
 
-        def filter_within_parcels():
-            """Filter dtm within parcel boundaries"""
-            temp_landuse = create_filename(".rst")
-            temp_dtm_in = create_filename(".rst")
-            temp_dtm = create_filename(".sgrd")
-            self.dtm.write(temp_dtm_in)
-            self.parcels.write(temp_landuse)
+        # def filter_within_parcels():
+        #    """Filter dtm within parcel boundaries"""
+        #    temp_landuse = create_filename(".rst")
+        #    temp_dtm_in = create_filename(".rst")
+        #    temp_dtm = create_filename(".sgrd")
+        #    self.dtm.write(temp_dtm_in)
+        #    self.parcels.write(temp_landuse)
+        #
+        #    cmd_args = ["saga_cmd", "-f=s", "watem", "2"]
+        #    cmd_args += ["-DEM", str(temp_dtm_in)]
+        #    cmd_args += ["-PRC", str(temp_landuse)]
+        #    cmd_args += ["-DEM_FILTER", str(temp_dtm)]
+        #    msg = "failed to filter_within_parcels dtm"
+        #    execute_subprocess(cmd_args, msg)
+        #    self._dtm._arr, _ = load_raster(temp_dtm.with_suffix(".sdat"))
+        #    clean_up_tempfiles(temp_landuse, "tiff")
+        #    clean_up_tempfiles(temp_dtm, "saga")
+        #    clean_up_tempfiles(temp_dtm_in, "rst")
 
-            cmd_args = ["saga_cmd", "-f=s", "watem", "2"]
-            cmd_args += ["-DEM", str(temp_dtm_in)]
-            cmd_args += ["-PRC", str(temp_landuse)]
-            cmd_args += ["-DEM_FILTER", str(temp_dtm)]
-            msg = "failed to filter_within_parcels dtm"
-            execute_subprocess(cmd_args, msg)
-            self._dtm._arr, _ = load_raster(temp_dtm.with_suffix(".sdat"))
-            clean_up_tempfiles(temp_landuse, "tiff")
-            clean_up_tempfiles(temp_dtm, "saga")
-            clean_up_tempfiles(temp_dtm_in, "rst")
-
-        self._dtm.filter = filter_within_parcels
+        # self._dtm.filter = filter_within_parcels
 
     @property
     def pfactor(self):
