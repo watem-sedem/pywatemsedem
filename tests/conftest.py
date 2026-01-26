@@ -2,10 +2,10 @@
 
 # -*- coding: utf-8 -*-
 
-import tempfile
 from pathlib import Path
 
 import pandas as pd
+import pytest
 from dotenv import find_dotenv, load_dotenv
 
 from pywatemsedem.catchment import Catchment
@@ -167,90 +167,37 @@ class tools:
 #     txt_parcels = folder_cfactor_model / "parcels.csv"
 
 
-class CatchmentTestBase:
-    """Base test class that sets up a temporary directory and initializes Catchment."""
-
-    name = "langegracht"  # Default name, can be overridden
-
-    @classmethod
-    def setup_class(cls):
-        """Set up a temporary results folder and initialize Catchment."""
-        cls.temp_dir = tempfile.TemporaryDirectory()
-        cls.results_folder = Path(cls.temp_dir.name)
-        cls.setup_catchment()
-        cls.setup_scenario()  # Calls the scenario setup method
-
-    @classmethod
-    def setup_catchment(cls):
-        """Initialize Catchment instance, can be overridden if needed."""
-        cls.catchment = Catchment(
-            cls.name,
-            catchment_data.catchment,
-            catchment_data.dtm,
-            20,
-            31370,
-            -9999,
-            cls.results_folder,
-        )
-
-    @classmethod
-    def setup_scenario(cls):
-        """Customize the catchment instance with scenario-specific modifications."""
-        pass  # To be overridden in subclasses
-
-    @classmethod
-    def teardown_class(cls):
-        """Clean up the temporary directory after tests."""
-        cls.temp_dir.cleanup()
+@pytest.fixture
+def dummy_catchment(tmp_path):
+    """Create a Catchment instance for testing purposes."""
+    catchment = Catchment(
+        "langegracht",
+        catchment_data.catchment,
+        catchment_data.dtm,
+        20,
+        31370,
+        -9999,
+        tmp_path,
+    )
+    return catchment
 
 
-class ScenarioTestBase(CatchmentTestBase):
-    """Test class to test often used use cases in pywatemsedem model workflow.
+@pytest.fixture
+def dummy_scenario(dummy_catchment):
+    """Create a Scenario instance for testing purposes."""
 
-    This class focuses on specific use cases that are assumed to be used in the API:
+    # Add self.scenario-specific modifications
+    dummy_catchment.kfactor = catchment_data.k
+    dummy_catchment.landuse = catchment_data.basemap
+    dummy_catchment.cn = catchment_data.hsg
 
-    - *test_all*: Create model input with base landuse, river vector, infrastructure
-      vector, parcels vector and water vector.
-    - *test_ommit_water* Create model input with base landuse, river vector,
-      infrastructure vector, parcels vector with:
-        - include grass strips vector
-        - include technical tillage vector
-    - *test_ommit_river* Create model input with base landuse, infrastructure vector,
-       parcels vector and water vector
-    - *test_ommit_inf* Create model input with base landuse, river vector, parcels
-       vector and water vector
-    - *test_ommit_parcels*: Create model input with base landuse, river vector,
-       infrastructure vector and water vector.
-    - *test_ommit_all*: Create model input with base landuse?
+    # Add user choices
+    choices = UserChoices()
+    choices.set_ecm_options(userchoices_file)
+    choices.set_model_version("WS")
+    choices.set_model_options(userchoices_file)
+    choices.set_model_variables(userchoices_file)
+    choices.set_output(userchoices_file)
 
-    The means to test equality of the rasters is the unique values and their number of
-    occurence. Specically, the output C-factor, kTC and composite landuse rasters are
-    tested as these are raster to which WaTEM/SEDEM is most senstive to. For the
-    composite landuse raster, only number of agricultural pixels are tested, not the
-    occurence of individual parcels.
-    """
-
-    @classmethod
-    def setup_scenario(cls):
-        """Extend Catchment setup with additional self.scenario-specific attributes."""
-        # Ensure base catchment is set up
-        super().setup_scenario()
-
-        # Add self.scenario-specific modifications
-        cls.catchment.kfactor = catchment_data.k
-        cls.catchment.landuse = catchment_data.basemap
-        cls.catchment.cn = catchment_data.hsg
-        cls.catchment.vct_river = catchment_data.river
-        cls.catchment.vct_infrastructure_buildings = catchment_data.infrastructure
-        cls.catchment.vct_infrastructure_roads = catchment_data.roads
-        cls.catchment.vct_water = catchment_data.water
-
-        # Add user choices
-        choices = UserChoices()
-        choices.set_ecm_options(userchoices_file)
-        choices.set_model_version("WS")
-        choices.set_model_options(userchoices_file)
-        choices.set_model_variables(userchoices_file)
-        choices.set_output(userchoices_file)
-
-        cls.scenario = Scenario(cls.catchment, 2019, 1, choices)
+    scenario = Scenario(dummy_catchment, 2019, 1, choices)
+    return scenario
