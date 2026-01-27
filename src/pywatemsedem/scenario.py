@@ -293,7 +293,7 @@ class Scenario:
 
         Parameters
         ----------
-        catchm: pywatemsedem.core.catchment.Catchment
+        catchm: pywatemsedem.catchment.Catchment
             Instance of
             :class:`pywatemsedem catchment <pywatemsedem.catchment.Catchment>`
             containing the catchment characteristics.
@@ -301,7 +301,7 @@ class Scenario:
             Simulation year
         scenario_nr: int
             Identifier number of the scenario.
-        userchoices : pywatemsedem.core.userchoices.UserChoices
+        userchoices : pywatemsedem.choices.Choices
             Containing the pywatemsedem model settings.
         """
         # Init factories from catchm instance
@@ -599,7 +599,7 @@ class Scenario:
 
             - *width* (int): meter width of grass strip (shortest side!)
             - *scale_ktc* (int): either 0 (scale or 1), if not kTC is not scaled, then
-              the ktc_low (see :class:`pywatemsedem.userchoices.UserChoices`) is used,
+              the ktc_low (see :class:`pywatemsedem.choices.parameters`) is used,
               see :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`
 
         Notes
@@ -646,16 +646,7 @@ class Scenario:
     @valid_vct_grass_strips
     def grass_strips(self):
         """Grass strips raster getter"""
-        if self.choices.dict_ecm_options["UseGras"] == 0:
-
-            msg = (
-                "'UseGras' in 'dict_ecm_options' is equal to 0. Will not include grass"
-                " strips."
-            )
-            warnings.warn(msg)
-            return AbstractRaster()
-        else:
-            return self._grass_strips
+        return self._grass_strips
 
     @grass_strips.setter
     def grass_strips(self, raster_input):
@@ -717,7 +708,7 @@ class Scenario:
             1.0, len(self.vct_buffers.geodata) + 1, 1
         )
 
-        if self.choices.dict_ecm_options["Include buffers"] == 0:
+        if not self.choices.extensions.include_buffers.value:
             msg = (
                 "Include buffers' in 'dict_ecm_options' is equal to 0. Will not "
                 "include buffers."
@@ -800,7 +791,7 @@ class Scenario:
            buffer.
         """
         arr = None
-        if self.choices.dict_ecm_options["Include buffers"] == 0:
+        if not self.choices.extensions.include_buffers.value:
             msg = (
                 "Option 'Include buffers' in erosion control measure options is 0, "
                 "returning None"
@@ -827,7 +818,7 @@ class Scenario:
                         "including buffers in simulation."
                     )
                     logger.warning(msg)
-                    self.choices.dict_ecm_options["Include buffers"] = 0
+                    self.choices.extensions.include_buffers = False
                     arr = None
             if arr is not None:
                 arr = filter_outlets_in_arr_extension_id(
@@ -1345,7 +1336,7 @@ class Scenario:
         -------
         cfactor: numpy.ndarray
         """
-        if self.choices.version == "Only Routing":
+        if self.choices.options.only_routing.value:
             msg = "C-factor raster is not generated for 'Only Routing'-mode."
             warnings.warn(msg)
             cfactor = np.ndarray()
@@ -1426,7 +1417,7 @@ class Scenario:
         self.catchm.pfactor.write(
             self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
         )
-        if self.choices.dict_model_options["River Routing"] == 1:
+        if self.choices.extensions.river_routing.value:
             self.catchm.adjacent_edges.to_csv(
                 self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
                 sep="\t",
@@ -1437,7 +1428,7 @@ class Scenario:
                 sep="\t",
                 index=False,
             )
-            self.choices.dict_output["Output per river segment"] = 1
+            self.choices.extensions.output_per_river_segment = True
             self.catchm.routing.write(
                 self.sfolder.cnwsinput_folder / inputfilename.routing_file
             )
@@ -1452,13 +1443,13 @@ class Scenario:
             self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
             dtype=np.int32,
         )
-        if self.choices.version == "CN-WS":
+        if self.choices.extensions.curve_number.value:
             if self.cn is not None:
                 self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
             else:
                 msg = "Model version in 'CN-WS', define a CN raster to run CN."
                 raise IOError(msg)
-        if self.choices.dict_model_options["UserProvidedKTC"] == 1:
+        if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
             else:
@@ -1467,44 +1458,40 @@ class Scenario:
 
         self.cfactor.write(self.sfolder.cnwsinput_folder / inputfilename.cfactor_file)
 
-        if self.choices.dict_model_options["Manual outlet selection"] == 1:
+        if self.choices.extensions.manual_outlet_selection.value:
             self.outlets.write(
                 self.sfolder.cnwsinput_folder / inputfilename.outlet_file
             )
-        if self.choices.version != "Only Routing":
-            if self.choices.dict_model_options["Calibrate"] == 1:
-                for key in [
-                    "Write sediment export",
-                    "Write water erosion",
-                    "Output per river segment",
-                ]:
-                    self.choices.dict_output[key] = 0
-        if (self.choices.dict_ecm_options["Include buffers"] == 1) & (
-            self.buffers.is_empty()
-        ):
+        if not self.choices.options.only_routing.value:
+            if self.choices.extensions.calibrate.value:
+                self.choices.output.write_sediment_export = False
+                self.choices.output.write_water_export = False
+                self.choices.extensions.output_per_river_segment = False
+
+        if self.choices.extensions.include_buffers.value & (self.buffers.is_empty()):
             self.buffers.write(
                 self.sfolder.cnwsinput_folder / inputfilename.buffers_file
             )
 
-        if self.choices.dict_ecm_options["Include ditches"] == 1:
+        if self.choices.extensions.include_ditches.value:
             self.ditches.write(
                 self.sfolder.cnwsinput_folder / inputfilename.ditches_file
             )
 
-        if self.choices.dict_ecm_options["Include dams"] == 1:
+        if self.choices.extensions.include_dams.value:
             self.conductive_dams.write(
                 self.sfolder.cnwsinput_folder / inputfilename.conductivedams_file
             )
 
-        if self.choices.dict_model_options["FilterDTM"] == 1:
-            msg = "Filtering DTM within boundaries of parcels."
-            logger.info(msg)
-            self.catchm.dtm.filter()
-            self.catchm.dtm.write(
-                self.sfolder.cnwsinput_folder / inputfilename.dtm_file
-            )
+        # if self.choices.dict_model_options["FilterDTM"] == 1:
+        #    msg = "Filtering DTM within boundaries of parcels."
+        #    logger.info(msg)
+        #    self.catchm.dtm.filter()
+        #    self.catchm.dtm.write(
+        #        self.sfolder.cnwsinput_folder / inputfilename.dtm_file
+        #    )
 
-        if self.choices.dict_model_options["Include sewers"] == 1:
+        if self.choices.extensions.include_sewers.value:
             if not self.endpoints.is_empty():
                 self.endpoints.write(
                     self.sfolder.cnwsinput_folder / inputfilename.endpoints_file,
@@ -1519,13 +1506,12 @@ class Scenario:
 
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
-        logger.info("Aanmaken ini-file...")
+        logger.info("Creating ini-file...")
         self.ini = self.sfolder.cnwsinput_folder / "inifile.ini"
         ini = IniFile(
-            self.choices,
-            self.choices.version,
             self.sfolder.cnwsinput_folder,
             self.sfolder.cnwsoutput_folder,
+            self.choices,
         )
         ini.add_sections()
         ini.add_model_information()
