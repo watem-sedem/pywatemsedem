@@ -654,7 +654,7 @@ class Catchment(Factory):
         self.segments = river
 
         self._adjacent_edges, self._up_edges, flag = check_segment_edges(
-            self.adjacent_edges, self.up_edges, self.river.arr
+            self.adjacent_edges, self.up_edges, self.segments.arr
         )
 
         # set routing
