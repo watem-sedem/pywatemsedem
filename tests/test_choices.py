@@ -47,14 +47,14 @@ def test_userchoice_wrong_dtype():
 
 def test_read_default_value_from_ini():
     """Test reading default value of a user choice from an ini-file"""
-    user_choice = UserChoice("R factor", "parameters", float, True)
+    user_choice = UserChoice("R factor", "Parameters", float, True)
     user_choice.read_default_value_from_ini(default_ini_file)
     assert user_choice.default_value == 1250.0
 
 
 def test_read_value_from_ini():
     """Test reading value of a user choice from an ini-file"""
-    user_choice = UserChoice("R factor", "parameters", float, True)
+    user_choice = UserChoice("R factor", "Parameters", float, True)
     user_choice.read_value_from_ini(default_ini_file)
     assert user_choice.value == 1250.0
 
@@ -62,7 +62,7 @@ def test_read_value_from_ini():
 def test_apply_default_value():
     """Test assigning default value to value"""
     user_choice = UserChoice(
-        "R factor", "parameters", float, True, default_value=1250.0
+        "R factor", "Parameters", float, True, default_value=1250.0
     )
     user_choice.apply_default_value()
     assert user_choice.value == user_choice.default_value
@@ -87,7 +87,7 @@ def test_initiation_ws_options():
 
     assert not ws_opt.only_routing.default_value
     assert ws_opt.only_routing.dtype == bool
-    assert ws_opt.only_routing.key == "only routing"
+    assert ws_opt.only_routing.key == "Only routing"
 
     assert ws_opt.tc_model.default_value == "VanOost2000"
     assert ws_opt.tc_model.key == "TC model"
@@ -95,7 +95,7 @@ def test_initiation_ws_options():
     assert ws_opt.tc_model.allowed_values == ["VanOost2000", "Verstraeten2007"]
 
     assert not ws_opt.calculate_tillage_erosion.default_value
-    assert ws_opt.calculate_tillage_erosion.key == "calculate tillage erosion"
+    assert ws_opt.calculate_tillage_erosion.key == "Calculate Tillage Erosion"
     assert ws_opt.calculate_tillage_erosion.dtype == bool
 
 
@@ -170,51 +170,47 @@ def test_initialisation_ws_output():
     """Test if the WSOutput object is initialised ok"""
     ws_out = Output()
 
-    assert ws_out.write_aspect.key == "write aspect"
+    assert ws_out.write_aspect.key == "Write aspect"
     assert ws_out.write_aspect.dtype == bool
     assert not ws_out.write_aspect.mandatory
 
-    assert ws_out.write_rusle.key == "write rusle"
+    assert ws_out.write_rusle.key == "Write RUSLE"
     assert ws_out.write_rusle.dtype == bool
     assert not ws_out.write_rusle.mandatory
 
-    assert ws_out.write_rusle.key == "write rusle"
-    assert ws_out.write_rusle.dtype == bool
-    assert not ws_out.write_rusle.mandatory
-
-    assert ws_out.write_ls_factor.key == "write ls factor"
+    assert ws_out.write_ls_factor.key == "Write LS factor"
     assert ws_out.write_ls_factor.dtype == bool
     assert not ws_out.write_ls_factor.mandatory
 
-    assert ws_out.write_upstream_area.key == "write upstream area"
+    assert ws_out.write_upstream_area.key == "Write upstream area"
     assert ws_out.write_upstream_area.dtype == bool
     assert not ws_out.write_upstream_area.mandatory
 
-    assert ws_out.write_slope.key == "write slope"
+    assert ws_out.write_slope.key == "Write slope"
     assert ws_out.write_slope.dtype == bool
     assert not ws_out.write_slope.mandatory
 
-    assert ws_out.write_routing_table.key == "write routing table"
+    assert ws_out.write_routing_table.key == "Write routing table"
     assert ws_out.write_routing_table.dtype == bool
     assert not ws_out.write_routing_table.mandatory
 
-    assert ws_out.write_routing_column_row.key == "write routing column/row"
+    assert ws_out.write_routing_column_row.key == "Write routing column/row"
     assert ws_out.write_routing_column_row.dtype == bool
     assert not ws_out.write_routing_column_row.mandatory
 
-    assert ws_out.write_sediment_export.key == "write sediment export"
+    assert ws_out.write_sediment_export.key == "Write sediment export"
     assert ws_out.write_sediment_export.dtype == bool
     assert not ws_out.write_sediment_export.mandatory
 
-    assert ws_out.write_water_erosion.key == "write water erosion"
+    assert ws_out.write_water_erosion.key == "Write water erosion"
     assert ws_out.write_water_erosion.dtype == bool
     assert not ws_out.write_water_erosion.mandatory
 
-    assert ws_out.write_rainfall_excess.key == "write rainfall excess"
+    assert ws_out.write_rainfall_excess.key == "Write rainfall excess"
     assert ws_out.write_rainfall_excess.dtype == bool
     assert not ws_out.write_rainfall_excess.mandatory
 
-    assert ws_out.write_total_runoff.key == "write total runoff"
+    assert ws_out.write_total_runoff.key == "Write total runoff"
     assert ws_out.write_total_runoff.dtype == bool
     assert not ws_out.write_total_runoff.mandatory
 
