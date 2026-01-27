@@ -109,13 +109,19 @@ class WSMixin:
                     )
                 attribute.value = attribute.default_value
 
+    def read_values_from_ini(self, ini):
+        for key in self.__dict__:
+            attribute = getattr(self, key)
+            if isinstance(attribute, UserChoice):
+                attribute.read_value_from_ini(ini)
+
 
 class Options(WSMixin):
     def __init__(self):
         """Initialise WSOptions"""
         self._l_model = UserChoice(
             "L model",
-            "options",
+            "Options",
             str,
             False,
             "Desmet1996_Vanoost2003",
@@ -123,7 +129,7 @@ class Options(WSMixin):
         )
         self._s_model = UserChoice(
             "S model",
-            "options",
+            "Options",
             str,
             False,
             "Nearing1997",
@@ -131,21 +137,21 @@ class Options(WSMixin):
         )
         self._tc_model = UserChoice(
             "TC model",
-            "options",
+            "Options",
             str,
             False,
             "VanOost2000",
             allowed_values=["VanOost2000", "Verstraeten2007"],
         )
         self._only_routing = UserChoice(
-            "only routing",
-            "options",
+            "Only Routing",
+            "Options",
             bool,
             False,
             False,
         )
         self._calculate_tillage_erosion = UserChoice(
-            "calculate tillage erosion", "options", bool, False, False
+            "Calculate Tillage Erosion", "Options", bool, False, False
         )
 
     @property
@@ -260,30 +266,30 @@ class Options(WSMixin):
 class Parameters(WSMixin):
     def __init__(self):
         """Initialise WSParameters"""
-        self._r_factor = UserChoice("R factor", "parameters", float, True, None)
+        self._r_factor = UserChoice("R factor", "Parameters", float, True, None)
         self._parcel_connectivity_cropland = UserChoice(
-            "Parcel connectivity cropland", "parameters", int, True, None
+            "Parcel connectivity cropland", "Parameters", int, True, None
         )
         self._parcel_connectivity_grasstrips = UserChoice(
-            "Parcel connectivity grasstrips", "parameters", int, True, None
+            "Parcel connectivity grasstrips", "Parameters", int, True, None
         )
         self._parcel_connectivity_forest = UserChoice(
-            "Parcel connectivity forest", "parameters", int, True, None
+            "Parcel connectivity forest", "Parameters", int, True, None
         )
         self._parcel_trapping_eff_cropland = UserChoice(
-            "Parcel trapping efficiency cropland", "parameters", int, True, None
+            "Parcel trapping efficiency cropland", "Parameters", int, True, None
         )
         self._parcel_trapping_eff_pasture = UserChoice(
-            "Parcel trapping efficiency pasture", "parameters", int, True, None
+            "Parcel trapping efficiency pasture", "Parameters", int, True, None
         )
         self._parcel_trapping_eff_forest = UserChoice(
-            "Parcel trapping efficiency forest", "parameters", int, True, None
+            "Parcel trapping efficiency forest", "Parameters", int, True, None
         )
-        self._max_kernel = UserChoice("max kernel", "parameters", int, False, 50)
+        self._max_kernel = UserChoice("Max kernel", "Parameters", int, False, 50)
         self._max_kernel_river = UserChoice(
-            "max kernel river", "parameters", int, False, 100
+            "Max kernel river", "Parameters", int, False, 100
         )
-        self._bulk_density = UserChoice("bulk density", "parameters", int, True, None)
+        self._bulk_density = UserChoice("Bulk density", "Parameters", int, True, None)
 
     @property
     def r_factor(self):
@@ -510,56 +516,56 @@ class Extensions(WSMixin):
     def __init__(self):
         """Initialise WSExtensions"""
         self._curve_number = UserChoice(
-            "curve number", "extensions", bool, False, False
+            "Curve Number", "Extensions", bool, False, False
         )
         self._include_sewers = UserChoice(
-            "include sewers", "extensions", bool, False, False
+            "Include sewers", "Extensions", bool, False, False
         )
         self._create_ktc_map = UserChoice(
-            "create ktc map", "extensions", bool, False, False
+            "Create ktc map", "Extensions", bool, False, False
         )
         self._create_ktil_map = UserChoice(
-            "create ktil map", "extensions", bool, False, False
+            "Create ktil map", "Extensions", bool, False, False
         )
         self._estimate_clay_content = UserChoice(
-            "estimate clay content", "extensions", bool, False, False
+            "Estimate clay content", "Extensions", bool, False, False
         )
         self._include_tillage_direction = UserChoice(
-            "include tillage directions", "extensions", bool, False, False
+            "Include tillage directions", "Extensions", bool, False, False
         )
         self._include_buffers = UserChoice(
-            "include buffers", "extensions", bool, False, False
+            "Include buffers", "Extensions", bool, False, False
         )
         self._include_ditches = UserChoice(
-            "include ditches", "extensions", bool, False, False
+            "Include ditches", "Extensions", bool, False, False
         )
         self._include_dams = UserChoice(
-            "include dams", "extensions", bool, False, False
+            "Include dams", "Extensions", bool, False, False
         )
         self._output_per_river_segment = UserChoice(
-            "output per river segment", "extensions", bool, False, False
+            "Output per river segment", "Extensions", bool, False, False
         )
         self._adjusted_slope = UserChoice(
-            "adjusted slope", "extensions", bool, False, False
+            "Adjusted Slope", "Extensions", bool, False, False
         )
         self._buffer_reduce_area = UserChoice(
-            "buffer reduce area", "extensions", bool, False, False
+            "Buffer reduce Area", "Extensions", bool, False, False
         )
         self._force_routing = UserChoice(
-            "force routing", "extensions", bool, False, False
+            "Force Routing", "Extensions", bool, False, False
         )
         self._river_routing = UserChoice(
-            "river routing", "extensions", bool, False, False
+            "River Routing", "Extensions", bool, False, False
         )
         self._manual_outlet_selection = UserChoice(
-            "manual outlet selection", "extensions", bool, False, False
+            "Manual outlet selection", "Extensions", bool, False, False
         )
         self._convert_output = UserChoice(
-            "convert output", "extensions", bool, False, False
+            "Convert output", "Extensions", bool, False, False
         )
-        self._calibrate = UserChoice("calibrate", "extensions", bool, False, False)
+        self._calibrate = UserChoice("Calibrate", "Extensions", bool, False, False)
         self._cardinal_routing_river = UserChoice(
-            "cardinal routing river", "extensions", bool, False, False
+            "Cardinal Routing River", "Extensions", bool, False, False
         )
 
     @property
@@ -936,95 +942,247 @@ class ExtensionsParameters(WSMixin):
 
         self._extensions = extensions
         self._sewer_exit = UserChoice(
-            "sewer exit",
-            "parameters extensions",
+            "Sewer exit",
+            "Parameters extensions",
             int,
             self._extensions.include_sewers.value,
         )
         self._clay_content_parent_material = UserChoice(
-            "clay content parent material",
-            "parameters extensions",
+            "Clay content parent material",
+            "Parameters extensions",
             float,
             self._extensions.estimate_clay_content.value,
         )
         self._antecedent_rainfall = UserChoice(
-            "antecedent rainfall",
-            "parameters extensions",
+            "5-day antecedent rainfall",
+            "Parameters extensions",
             float,
             self._extensions.curve_number.value,
         )
         self._stream_velocity = UserChoice(
-            "stream velocity",
-            "parameters extensions",
+            "Stream velocity",
+            "Parameters extensions",
             float,
             self._extensions.curve_number.value,
         )
         self._alpha = UserChoice(
-            "alpha",
-            "parameters extensions",
+            "Alpha",
+            "Parameters extensions",
             float,
             self._extensions.curve_number.value,
         )
         self._beta = UserChoice(
-            "beta",
-            "parameters extensions",
+            "Beta",
+            "Parameters extensions",
             float,
             self._extensions.curve_number.value,
         )
         self._ls_correction = UserChoice(
-            "ls correction", "parameters extensions", float, False, 1.0
+            "LS correction", "Parameters extensions", float, False, 1.0
         )
         self._ktc_low = UserChoice(
             "ktc low",
-            "parameters extensions",
+            "Parameters extensions",
             float,
             self._extensions.create_ktc_map.value,
         )
         self._ktc_high = UserChoice(
             "ktc high",
-            "parameters extensions",
+            "Parameters extensions",
             float,
             self._extensions.create_ktc_map.value,
         )
         self._ktc_limit = UserChoice(
             "ktc limit",
-            "parameters extensions",
+            "Parameters extensions",
             float,
             (self._extensions.create_ktc_map.value or self._extensions.calibrate.value),
         )
         self._ktil_default = UserChoice(
             "ktil default",
-            "parameters extensions",
+            "Parameters extensions",
             float,
             self._extensions.create_ktil_map.value,
         )
         self._ktil_threshold = UserChoice(
             "ktil threshold",
-            "parameters extensions",
+            "Parameters extensions",
             float,
             self._extensions.create_ktil_map.value,
         )
         self._desired_timestep = UserChoice(
-            "desired timestep",
-            "parameters extensions",
+            "Desired timestep for model",
+            "Parameters extensions",
             int,
             self._extensions.curve_number.value,
         )
         self._final_timestep = UserChoice(
-            "final timestep",
-            "parameters extensions",
+            "Final timestep output",
+            "Parameters extensions",
             int,
             (
                 self._extensions.curve_number.value
                 and self._extensions.convert_output.value
             ),
         )
-        self._endtime_model = UserChoice(
-            "endtime model",
-            "parameters extensions",
-            int,
-            self._extensions.curve_number.value,
+        self._endtime_model = (
+            UserChoice(
+                "Endtime model",
+                "Parameters extensions",
+                int,
+                self._extensions.curve_number.value,
+            ),
         )
+        self._ktc_high_lower = (
+            UserChoice(
+                "KTcHigh_lower",
+                "Parameters extensions",
+                float,
+                self._extensions.calibrate.value,
+            ),
+        )
+        self._ktc_high_upper = (
+            UserChoice(
+                "KTcHigh_upper",
+                "Parameters extensions",
+                float,
+                self._extensions.calibrate.value,
+            ),
+        )
+        self._ktc_low_lower = (
+            UserChoice(
+                "KTcLow_lower",
+                "Parameters extensions",
+                float,
+                self._extensions.calibrate.value,
+            ),
+        )
+        self._ktc_low_upper = (
+            UserChoice(
+                "KTcLow_upper",
+                "Parameters extensions",
+                float,
+                self._extensions.calibrate.value,
+            ),
+        )
+        self._steps = (
+            UserChoice(
+                "steps",
+                "Parameters extensions",
+                float,
+                self._extensions.calibrate.value,
+            ),
+        )
+
+    @property
+    def ktc_high_lower(self):
+        """Getter ktc_low_lower parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_high_lower parameter
+        """
+        return self._ktc_high_lower
+
+    @ktc_high_lower.setter
+    def ktc_high_lower(self, input_value):
+        """Assign the ktc_high_lower parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_high_lower value
+        """
+        self._ktc_high_lower.value = input_value
+
+    @property
+    def ktc_high_upper(self):
+        """Getter ktc_high_upper parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_high_upper parameter
+        """
+        return self._ktc_high_upper
+
+    @ktc_high_upper.setter
+    def ktc_high_upper(self, input_value):
+        """Assign the ktc_high_upper parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_high_upper value
+        """
+        self._ktc_high_upper.value = input_value
+
+    @property
+    def ktc_low_lower(self):
+        """Getter ktc_low_lower parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_low_lower parameter
+        """
+        return self._ktc_low_lower
+
+    @ktc_low_lower.setter
+    def ktc_low_lower(self, input_value):
+        """Assign the ktc_low_lower parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_low_lower value
+        """
+        self._ktc_low_lower.value = input_value
+
+    @property
+    def ktc_low_upper(self):
+        """Getter ktc_low_upper parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the ktc_low_upper parameter
+        """
+        return self._ktc_low_upper
+
+    @ktc_low_upper.setter
+    def ktc_low_upper(self, input_value):
+        """Assign the ktc_low_upper parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The ktc_low_upper value
+        """
+        self._ktc_low_upper.value = input_value
+
+    @property
+    def steps(self):
+        """Getter steps parameter
+
+        Returns
+        -------
+        pywatemsedem.choices.UserChoice
+            UserChoice object of the steps parameter
+        """
+        return self._steps
+
+    @steps.setter
+    def steps(self, input_value):
+        """Assign the steps parameter
+
+        Parameters
+        ----------
+        input_value: int
+            The sewer_exit value
+        """
+        self._steps.value = input_value
 
     @property
     def sewer_exit(self):
@@ -1360,35 +1518,35 @@ class ExtensionsParameters(WSMixin):
 class Output(WSMixin):
     def __init__(self):
         """Initialise WSOutput"""
-        self._write_aspect = UserChoice("write aspect", "output", bool, False, False)
+        self._write_aspect = UserChoice("Write aspect", "Output", bool, False, False)
         self._write_ls_factor = UserChoice(
-            "write ls factor", "output", bool, False, False
+            "Write LS factor", "Output", bool, False, False
         )
         self._write_upstream_area = UserChoice(
-            "write upstream area", "output", bool, False, False
+            "Write upstream area", "Output", bool, False, False
         )
-        self._write_slope = UserChoice("write slope", "output", bool, False, False)
+        self._write_slope = UserChoice("Write slope", "Output", bool, False, False)
         self._write_routing_table = UserChoice(
-            "write routing table", "output", bool, False, False
+            "Write routing table", "Output", bool, False, False
         )
         self._write_routing_column_row = UserChoice(
-            "write routing column/row", "output", bool, False, False
+            "Write routing column/row", "Output", bool, False, False
         )
-        self._write_rusle = UserChoice("write rusle", "output", bool, False, False)
+        self._write_rusle = UserChoice("Write RUSLE", "Output", bool, False, False)
         self._write_sediment_export = UserChoice(
-            "write sediment export", "output", bool, False, False
+            "Write sediment export", "Output", bool, False, False
         )
         self._write_water_erosion = UserChoice(
-            "write water erosion", "output", bool, False, False
+            "Write water erosion", "Output", bool, False, False
         )
         self._write_rainfall_excess = UserChoice(
-            "write rainfall excess", "output", bool, False, False
+            "Write rainfall excess", "Output", bool, False, False
         )
         self._write_total_runoff = UserChoice(
-            "write total runoff", "output", bool, False, False
+            "Write total runoff", "Output", bool, False, False
         )
         self._export_saga = UserChoice(
-            "Export .sgrd grids", "output", bool, False, False
+            "Export .sgrd grids", "Output", bool, False, False
         )
 
     @property
