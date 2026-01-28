@@ -8,9 +8,9 @@ import pandas as pd
 import pytest
 from dotenv import find_dotenv, load_dotenv
 
+from pywatemsedem import choices
 from pywatemsedem.catchment import Catchment
 from pywatemsedem.scenario import Scenario
-from pywatemsedem.userchoices import UserChoices
 
 # Load environmental variables
 ## load dotenv
@@ -193,12 +193,19 @@ def dummy_scenario(dummy_catchment):
     dummy_catchment.cn = catchment_data.hsg
 
     # Add user choices
-    choices = UserChoices()
-    choices.set_ecm_options(userchoices_file)
-    choices.set_model_version("WS")
-    choices.set_model_options(userchoices_file)
-    choices.set_model_variables(userchoices_file)
-    choices.set_output(userchoices_file)
+    options = choices.Options()
+    options.read_values_from_ini(userchoices_file)
+    parameters = choices.Parameters()
+    parameters.read_values_from_ini(userchoices_file)
+    extensions = choices.Extensions()
+    extensions.read_values_from_ini(userchoices_file)
+    extensionparameters = choices.ExtensionsParameters(extensions)
+    extensionparameters.read_values_from_ini(userchoices_file)
+    output = choices.Output()
+    output.read_values_from_ini(userchoices_file)
+    user_choices = choices.Choices(
+        options, parameters, extensions, extensionparameters, output
+    )
 
-    scenario = Scenario(dummy_catchment, 2019, 1, choices)
+    scenario = Scenario(dummy_catchment, 2019, 1, user_choices)
     return scenario
