@@ -87,7 +87,7 @@ def test_initiation_ws_options():
 
     assert not ws_opt.only_routing.default_value
     assert ws_opt.only_routing.dtype == bool
-    assert ws_opt.only_routing.key == "Only routing"
+    assert ws_opt.only_routing.key == "Only Routing"
 
     assert ws_opt.tc_model.default_value == "VanOost2000"
     assert ws_opt.tc_model.key == "TC model"
