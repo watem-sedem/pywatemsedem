@@ -531,7 +531,7 @@ class Extensions(WSMixin):
             "Estimate clay content", "Extensions", bool, False, False
         )
         self._include_tillage_direction = UserChoice(
-            "Include tillage directions", "Extensions", bool, False, False
+            "Include tillage direction", "Extensions", bool, False, False
         )
         self._include_buffers = UserChoice(
             "Include buffers", "Extensions", bool, False, False
