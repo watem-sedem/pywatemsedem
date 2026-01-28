@@ -200,7 +200,10 @@ def dummy_scenario(dummy_catchment):
     extensions = choices.Extensions()
     extensions.read_values_from_ini(userchoices_file)
     extensionparameters = choices.ExtensionsParameters(extensions)
-    extensionparameters.read_values_from_ini(userchoices_file)
+    extensionparameters.apply_defaults()
+    extensionparameters.ktc_low.read_value_from_ini(userchoices_file)
+    extensionparameters.ktc_high.read_value_from_ini(userchoices_file)
+    extensionparameters.ktc_limit.read_value_from_ini(userchoices_file)
     output = choices.Output()
     output.read_values_from_ini(userchoices_file)
     user_choices = choices.Choices(
