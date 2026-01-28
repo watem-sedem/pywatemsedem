@@ -364,9 +364,7 @@ class Scenario:
         :py:class:`CNWS.UserChoices <pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
         'begin_maand' and, in case of CNWS, 'Endtime model'.
         """
-        if (self.choices.version == "WS") or self.choices.version == "Only Routing":
-            self.season = "spring"
-        else:
+        if self.choices.extensions.curve_number.value:
             if self.choices.dict_variables["begin_maand"] in [1, 2, 3]:
                 self.season = "winter"
             elif self.choices.dict_variables["begin_maand"] in [4, 5, 6]:
@@ -375,6 +373,8 @@ class Scenario:
                 self.season = "summer"
             elif self.choices.dict_variables["begin_maand"] in [10, 11, 12]:
                 self.season = "fall"
+        else:
+            self.season = "spring"
 
     @property
     def vct_parcels(self):
