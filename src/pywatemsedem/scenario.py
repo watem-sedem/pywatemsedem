@@ -188,7 +188,7 @@ def valid_vct_buffers(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.choices.dict_ecm_options["Include buffers"] == 1:
+        if self.choices.extensions.include_buffers.value:
             if self._vct_buffers.is_empty():
                 msg = (
                     "No (or empty) buffers defined, but option 'Include buffers' equal"
