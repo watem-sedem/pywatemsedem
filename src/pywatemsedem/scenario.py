@@ -643,7 +643,7 @@ class Scenario:
         self._grass_strips = self.raster_factory(arr)
 
     @property
-    @valid_vct_grass_strips
+    # @valid_vct_grass_strips
     def grass_strips(self):
         """Grass strips raster getter"""
         return self._grass_strips
