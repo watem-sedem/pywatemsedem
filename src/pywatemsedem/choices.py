@@ -1025,53 +1025,41 @@ class ExtensionsParameters(WSMixin):
                 and self._extensions.convert_output.value
             ),
         )
-        self._endtime_model = (
-            UserChoice(
-                "Endtime model",
-                "Parameters extensions",
-                int,
-                self._extensions.curve_number.value,
-            ),
+        self._endtime_model = UserChoice(
+            "Endtime model",
+            "Parameters extensions",
+            int,
+            self._extensions.curve_number.value,
         )
-        self._ktc_high_lower = (
-            UserChoice(
-                "KTcHigh_lower",
-                "Parameters extensions",
-                float,
-                self._extensions.calibrate.value,
-            ),
+        self._ktc_high_lower = UserChoice(
+            "KTcHigh_lower",
+            "Parameters extensions",
+            float,
+            self._extensions.calibrate.value,
         )
-        self._ktc_high_upper = (
-            UserChoice(
-                "KTcHigh_upper",
-                "Parameters extensions",
-                float,
-                self._extensions.calibrate.value,
-            ),
+        self._ktc_high_upper = UserChoice(
+            "KTcHigh_upper",
+            "Parameters extensions",
+            float,
+            self._extensions.calibrate.value,
         )
-        self._ktc_low_lower = (
-            UserChoice(
-                "KTcLow_lower",
-                "Parameters extensions",
-                float,
-                self._extensions.calibrate.value,
-            ),
+        self._ktc_low_lower = UserChoice(
+            "KTcLow_lower",
+            "Parameters extensions",
+            float,
+            self._extensions.calibrate.value,
         )
-        self._ktc_low_upper = (
-            UserChoice(
-                "KTcLow_upper",
-                "Parameters extensions",
-                float,
-                self._extensions.calibrate.value,
-            ),
+        self._ktc_low_upper = UserChoice(
+            "KTcLow_upper",
+            "Parameters extensions",
+            float,
+            self._extensions.calibrate.value,
         )
-        self._steps = (
-            UserChoice(
-                "steps",
-                "Parameters extensions",
-                float,
-                self._extensions.calibrate.value,
-            ),
+        self._steps = UserChoice(
+            "steps",
+            "Parameters extensions",
+            float,
+            self._extensions.calibrate.value,
         )
 
     @property
