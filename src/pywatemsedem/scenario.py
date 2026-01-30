@@ -48,21 +48,17 @@ def valid_vct_endpoints(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.choices.dict_model_options["Include sewers"] == 1:
+        if self.choices.extensions.include_sewers.value:
             if self._vct_endpoints.is_empty():
                 msg = (
                     "Please define a non-empty endpoints line vector (see "
                     "vct_endpoints-property) or set 'Include sewers' in "
-                    "'dict_model_options' to 0!!"
+                    "'extensions' to 0!!"
                 )
                 raise IOError(msg)
-
-            elif "SewerInletEff" not in self.choices.dict_variables:
-                msg = "Please define a 'SewerInletEff' in 'dict_variables'."
-                raise KeyError(msg)
             return func(self, *args, **kwargs)
         else:
-            msg = "Please define 'Include sewers' in 'dict_model_options' to 1."
+            msg = "Please define 'Include sewers' in 'extensions' to 1."
             raise IOError(msg)
 
     return wrapper
@@ -1010,7 +1006,7 @@ class Scenario:
 
             - *type_id* (int): describes the different classes of endpoints (e.g. 1:
               sewers, 2: ditches, ...)
-            - *efficiency* (float): sediment trap efficiency (%) .
+            - *efficiency* (float): sediment trap efficiency (%).
 
         Notes
         -----
@@ -1022,6 +1018,14 @@ class Scenario:
             vector_input, "LineString", allow_empty=True
         )
 
+        req_col = {"efficiency"}
+        missing_attribute_error_in_vct(
+            self._vct_endpoints.geodata, "Endpoints", req_col
+        )
+        attribute_continuous_value_error(
+            self._vct_endpoints.geodata, "Endpoints", "efficiency", 0, 1
+        )
+
         if "type_id" not in self._vct_endpoints.geodata.columns:
             msg = "No 'type_id' assigned, assuming one type of endpoint with id 1."
             warnings.warn(msg)
@@ -1031,19 +1035,23 @@ class Scenario:
                 msg = "Please define a 'type_id' for every record."
                 raise ValueError(msg)
 
-        if "efficiency" not in self._vct_endpoints.geodata.columns:
-            self._vct_endpoints.geodata["efficiency"] = np.nan
-        else:
-            attribute_continuous_value_error(
-                self._vct_endpoints.geodata, "Endpoints", "efficiency", 0, 1
-            )
-
         self._vct_endpoints.geodata["efficiency"] = self._vct_endpoints.geodata[
             "efficiency"
         ].astype(np.float64)
 
+        self.endpoints = self.vct_endpoints.rasterize(
+            self.catchm.rasterfile_mask,
+            31370,
+            nodata=self.rp.nodata,
+            col="efficiency",
+            gdal=False,
+        )
+
+        self.endpoints_id = self.vct_endpoints.rasterize(
+            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=False
+        )
+
     @property
-    @valid_vct_endpoints
     def endpoints_id(self):
         """Getter endpoints id raster
 
@@ -1055,15 +1063,21 @@ class Scenario:
             - *0*: no endpoint
             - *not equal to 0*: id.
         """
-        arr_id = self.vct_endpoints.rasterize(
-            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=False
-        )
-        arr_id[arr_id == self.rp.nodata] = 0
+        return self._endpoints_id
 
-        return self.raster_factory(arr_id, flag_mask=False, flag_clip=False)
+    @endpoints_id.setter
+    def endpoints_id(self, raster_input):
+        """Setter endpoints_id raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.ndarray
+        """
+        raster_id = self.raster_factory(raster_input, flag_mask=False, flag_clip=False)
+        raster_id.arr = np.where(raster_id.arr == self.rp.nodata, 0, raster_id.arr)
+        self._endpoints_id = raster_id
 
     @property
-    @valid_vct_endpoints
     def endpoints(self):
         """Getter endpoints efficiency raster
 
@@ -1071,43 +1085,29 @@ class Scenario:
         -------
         pywatemsedem.geo.rasters.AbstractRaster
             Float64 raster with values in [0,1] efficiency (in decimal).
-
-        Notes
-        -----
-        Id's equal to one are converted to 0 when
-        self.choices.dict_model_options["OnlyInfraSewers"] is equal to 1.
         """
-        cond = self._vct_endpoints.geodata["efficiency"].isnull()
-        if np.any(cond):
-            # in decimals
-            self._vct_endpoints.geodata.loc[cond, "efficiency"] = float(
-                self.choices.dict_variables["SewerInletEff"]
-            )
-            msg = (
-                "The efficiency is not defined for all sewer line strings, assigning"
-                f" 'SewerInletEff'-value defined in user choices 'variables' "
-                f"({self.choices.dict_variables['SewerInletEff'] * 100} %)."
-            )
-            warnings.warn(msg)
+        return self._endpoints
 
-        self.vct_endpoints.geodata["efficiency"] = self.vct_endpoints.geodata[
-            "efficiency"
-        ].astype(float)
-        arr = self.vct_endpoints.rasterize(
-            self.catchm.rasterfile_mask,
-            31370,
-            nodata=self.rp.nodata,
-            col="efficiency",
-            gdal=False,
-        )
+    @endpoints.setter
+    def endpoints(self, raster_input):
+        """Getter endpoints efficiency raster
 
-        arr[arr == self.rp.nodata] = 0
-        if self.choices.dict_model_options["OnlyInfraSewers"] == 1:
-            cond = (self.catchm.infrastructure.arr != -2) & (self.endpoints_id.arr == 1)
-            cond_mask = (cond) & (self.catchm.mask.arr != 0)
-            arr[cond_mask] = 0
-        arr[self.catchm.river.arr == -1] = 0
-        return self.raster_factory(arr, flag_mask=False, flag_clip=False)
+        Returns
+        -------
+        pywatemsedem.geo.rasters.AbstractRaster
+            Float64 raster with values in [0,1] efficiency (in decimal).
+        """
+        raster = self.raster_factory(raster_input, flag_mask=False, flag_clip=False)
+        raster.arr = np.where(raster.arr == self.rp.nodata, 0, raster.arr)
+        raster.arr = np.where(self.catchm.river.arr == -1, 0, raster.arr)
+        self._endpoints = raster
+
+    def remove_endpoints_not_under_infrastructure(self):
+        """Only keep endpoints that coincide with infrastructure pixels"""
+        cond = (self.catchm.infrastructure.arr != -2) & (self.endpoints_id.arr == 1)
+        # TO DO: Check wy endpoints_id must be 1?
+        cond_mask = (cond) & (self.catchm.mask.arr != 0)
+        self.endpoints = np.where(cond_mask, 0, self.endpoints.arr)
 
     @property
     def cn_table(self):
