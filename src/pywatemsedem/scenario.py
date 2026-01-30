@@ -636,7 +636,7 @@ class Scenario:
             nodata=-9999,
             gdal=False,
         )
-        self._grass_strips = self.raster_factory(arr)
+        self.grass_strips = arr
 
     @property
     # @valid_vct_grass_strips
