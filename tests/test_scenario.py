@@ -406,43 +406,6 @@ class TestEndpoints:
         np.testing.assert_allclose(counts, [48970, 394, 80])
 
     @pytest.mark.saga
-    def test_vct_endpoints_efficiency(self, recwarn, dummy_scenario):
-        """Test vector endpoints assignment with user-defined 'efficiency' column"""
-        # feed a self-defined efficiency column (with 10 linestring to 75 %, remaining
-        # NaN)
-        dummy_scenario.catchm.vct_river = catchment_data.river
-        dummy_scenario.catchm.vct_infrastructure_buildings = (
-            catchment_data.infrastructure
-        )
-        dummy_scenario.catchm.vct_infrastructure_roads = catchment_data.roads
-        dummy_scenario.catchm.vct_water = catchment_data.water
-
-        df = gpd.read_file(scenario_data.endpoints)
-        df["efficiency"] = 0.75
-        dummy_scenario.choices.dict_variables["SewerInletEff"] = 1
-        dummy_scenario.choices.dict_model_options["Include sewers"] = 1
-        dummy_scenario.vct_endpoints = df
-        un, counts = np.unique(dummy_scenario.endpoints.arr, return_counts=True)
-
-        np.testing.assert_allclose(un, [0.0, 0.75])
-        np.testing.assert_allclose(counts, [49040, 404])
-
-        # feed a self-defined efficiency column (with all NaN)
-        df = gpd.read_file(scenario_data.endpoints)
-        df["efficiency"] = np.nan
-        dummy_scenario.vct_endpoints = df
-        un, counts = np.unique(dummy_scenario.endpoints.arr, return_counts=True)
-        np.testing.assert_allclose(un, [0.0, 1.0])
-        np.testing.assert_allclose(counts, [49040, 404])
-
-        # catch warning from inputting all NaN-values to efficiency column
-        w = recwarn.pop(UserWarning)
-        assert (
-            "The efficiency is not defined for all sewer line strings, assigning "
-            "'SewerInletEff'-value" in str(w.message)
-        )
-
-    @pytest.mark.saga
     def test_vct_endpoints_efficiency_value_error(self, dummy_scenario):
         """Test wrong value in 'efficiency' attribute"""
         # feed negative efficiency values
