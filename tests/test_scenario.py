@@ -50,14 +50,13 @@ class TestCreateModel:
         dummy_scenario.catchm.vct_water = catchment_data.water
 
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
 
         # Composite land-use (test number of parcels pixels, and not unique id's)
@@ -91,14 +90,13 @@ class TestCreateModel:
 
         # test prepare model input on C-factor, ktc and landuse-raster
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = dummy_scenario.composite_landuse.arr
@@ -127,14 +125,13 @@ class TestCreateModel:
         dummy_scenario.catchm.vct_infrastructure_roads = catchment_data.roads
 
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
 
         # Composite land-use (test number of parcels pixels, and not unique id's)
@@ -167,18 +164,15 @@ class TestCreateModel:
         # dummy_scenario.catchm.vct_water = catchment_data.water
         dummy_scenario.vct_grass_strips = scenario_data.grass_strips
 
-        dummy_scenario.choices.dict_ecm_options["UseGras"] = 1
-
         # test prepare model input on C-factor, ktc and landuse-raster
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
 
         # Composite land-use (test number of parcels pixels, and not unique id's)
@@ -289,14 +283,13 @@ class TestCreateModel:
 
         # test prepare model input on C-factor, ktc and landuse-raster
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = dummy_scenario.composite_landuse.arr
@@ -325,14 +318,13 @@ class TestCreateModel:
 
         # test prepare model input on C-factor, ktc and landuse-raster
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = dummy_scenario.composite_landuse.arr
@@ -359,14 +351,13 @@ class TestCreateModel:
 
         # test prepare model input on C-factor, ktc and landuse-raster
         dummy_scenario.composite_landuse = dummy_scenario.create_composite_landuse()
-        dummy_scenario.cfactor = dummy_scenario.create_cfactor(
-            bool(dummy_scenario.choices.dict_ecm_options["UseTeelttechn"])
-        )
+        dummy_scenario.cfactor = dummy_scenario.create_cfactor()
+
         dummy_scenario.ktc = dummy_scenario.create_ktc(
-            dummy_scenario.choices.dict_variables["ktc low"],
-            dummy_scenario.choices.dict_variables["ktc high"],
-            dummy_scenario.choices.dict_variables["ktc limit"],
-            dummy_scenario.choices.dict_model_options["UserProvidedKTC"],
+            dummy_scenario.choices.extensionparameters.ktc_low.value,
+            dummy_scenario.choices.extensionparameters.ktc_high.value,
+            dummy_scenario.choices.extensionparameters.ktc_limit.value,
+            not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = dummy_scenario.composite_landuse.arr
@@ -400,56 +391,19 @@ class TestEndpoints:
         dummy_scenario.catchm.vct_water = catchment_data.water
 
         # test unique records and counts
-        dummy_scenario.choices.dict_model_options["Include sewers"] = 1
-        dummy_scenario.choices.dict_variables["SewerInletEff"] = 1
+        dummy_scenario.choices.extensions.include_sewers = True
         dummy_scenario.vct_endpoints = scenario_data.endpoints
+        dummy_scenario.remove_endpoints_not_under_infrastructure()
 
         # endpoints
         un, counts = np.unique(dummy_scenario.endpoints.arr, return_counts=True)
-        np.testing.assert_allclose(un, [0.0, 1])
+        np.testing.assert_allclose(un, [0.0, 0.75])
         np.testing.assert_allclose(counts, [49040, 404])
 
         # endpoints_ids
         un, counts = np.unique(dummy_scenario.endpoints_id.arr, return_counts=True)
         np.testing.assert_allclose(un, [0, 1.0, 2.0])
         np.testing.assert_allclose(counts, [48970, 394, 80])
-
-    @pytest.mark.saga
-    def test_vct_endpoints_efficiency(self, recwarn, dummy_scenario):
-        """Test vector endpoints assignment with user-defined 'efficiency' column"""
-        # feed a self-defined efficiency column (with 10 linestring to 75 %, remaining
-        # NaN)
-        dummy_scenario.catchm.vct_river = catchment_data.river
-        dummy_scenario.catchm.vct_infrastructure_buildings = (
-            catchment_data.infrastructure
-        )
-        dummy_scenario.catchm.vct_infrastructure_roads = catchment_data.roads
-        dummy_scenario.catchm.vct_water = catchment_data.water
-
-        df = gpd.read_file(scenario_data.endpoints)
-        df["efficiency"] = 0.75
-        dummy_scenario.choices.dict_variables["SewerInletEff"] = 1
-        dummy_scenario.choices.dict_model_options["Include sewers"] = 1
-        dummy_scenario.vct_endpoints = df
-        un, counts = np.unique(dummy_scenario.endpoints.arr, return_counts=True)
-
-        np.testing.assert_allclose(un, [0.0, 0.75])
-        np.testing.assert_allclose(counts, [49040, 404])
-
-        # feed a self-defined efficiency column (with all NaN)
-        df = gpd.read_file(scenario_data.endpoints)
-        df["efficiency"] = np.nan
-        dummy_scenario.vct_endpoints = df
-        un, counts = np.unique(dummy_scenario.endpoints.arr, return_counts=True)
-        np.testing.assert_allclose(un, [0.0, 1.0])
-        np.testing.assert_allclose(counts, [49040, 404])
-
-        # catch warning from inputting all NaN-values to efficiency column
-        w = recwarn.pop(UserWarning)
-        assert (
-            "The efficiency is not defined for all sewer line strings, assigning "
-            "'SewerInletEff'-value" in str(w.message)
-        )
 
     @pytest.mark.saga
     def test_vct_endpoints_efficiency_value_error(self, dummy_scenario):
@@ -568,11 +522,7 @@ class TestGrassStrips:
     @pytest.mark.saga
     def test_vct_grass_strips(self, recwarn, dummy_scenario):
         """Test vector assignment"""
-        dummy_scenario.choices.dict_ecm_options["UseGras"] = 0
         dummy_scenario.vct_grass_strips = scenario_data.grass_strips
-
-        # set use gras to 1
-        dummy_scenario.choices.dict_ecm_options["UseGras"] = 1
 
         # test output
         un, counts = np.unique(dummy_scenario.grass_strips.arr, return_counts=True)
@@ -702,11 +652,6 @@ class TestGrassStrips:
             ),
         )
 
-        # Test if option 'UseGras' is set off
-        dummy_scenario.choices.dict_ecm_options["UseGras"] = 0
-        dummy_scenario.vct_grass_strips = scenario_data.grass_strips
-        dummy_scenario.choices.dict_ecm_options["UseGras"] = 1
-
     @pytest.mark.saga
     def test_vct_grass_strips_width_value_error(self, tmp_path, dummy_scenario):
         """Test wrong value in 'width' attribute"""
@@ -741,7 +686,7 @@ class TestBuffers:
     @pytest.mark.saga
     def test_vct_buffers(self, recwarn, dummy_scenario):
         """Test vector assignment"""
-        dummy_scenario.choices.dict_ecm_options["Include buffers"] = 0
+        dummy_scenario.choices.extensions.include_buffers = False
         dummy_scenario.vct_buffers = scenario_data.buffers
         dummy_scenario.catchm.vct_river = catchment_data.river
         # catch warning
@@ -752,14 +697,14 @@ class TestBuffers:
         )
 
         # set include buffers on
-        dummy_scenario.choices.dict_ecm_options["Include buffers"] = 1
+        dummy_scenario.choices.extensions.include_buffers = True
         # test output
         un, counts = np.unique(dummy_scenario.buffers.arr, return_counts=True)
         np.testing.assert_allclose(un, [0, 1, 2, 16385, 16386])
         np.testing.assert_allclose(counts, [49437, 1, 1, 3, 2])
 
         # Test if option 'Include buffers' is set off
-        dummy_scenario.choices.dict_ecm_options["Include buffers"] = 0
+        dummy_scenario.choices.extensions.include_buffers = False
         dummy_scenario.vct_buffers = scenario_data.buffers
         w = recwarn.pop(UserWarning)  # make sure prev waring is popped
         assert dummy_scenario.buffers.is_empty()  # calling buffers raises warning
@@ -768,7 +713,7 @@ class TestBuffers:
             str(w.message) == "Option 'Include buffers' in erosion control measure"
             " options is 0, returning None"
         )
-        dummy_scenario.choices.dict_ecm_options["Include buffers"] = 1
+        dummy_scenario.choices.extensions.include_buffers = True
 
     def test_warning_buffers_overlap_rivers(self, dummy_scenario):
         """#TODO"""

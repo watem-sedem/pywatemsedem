@@ -36,12 +36,12 @@ def create_cfactor_degerick2015(
 
     Parameters
     ----------
-    rivers: numpy.ndarray
+    rivers: numpy.ndarray or pywatemsedem.geo.rasters.AbstractRaster
         River raster, all rivers must have a no-nodata or no-0-value.
-    infrastructure: numpy.ndarray
+    infrastructure: numpy.ndarray or pywatemsedem.geo.rasters.AbstractRaster
         Infrastructure raster, all infrastructure pixels must have a no-nodata or
         no-0 value.
-    composite_landuse: numpy.ndarray
+    composite_landuse: numpy.ndarray or pywatemsedem.geo.rasters.AbstractRaster
         WaTEM/SEDEM composite landuse. (see :ref:`here <watemsedem:prcmap>`).
     mask: pywatemsedem.geo.rasters.AbstractRaster
         Mask

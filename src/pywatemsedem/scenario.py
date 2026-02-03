@@ -48,21 +48,17 @@ def valid_vct_endpoints(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.choices.dict_model_options["Include sewers"] == 1:
+        if self.choices.extensions.include_sewers.value:
             if self._vct_endpoints.is_empty():
                 msg = (
                     "Please define a non-empty endpoints line vector (see "
                     "vct_endpoints-property) or set 'Include sewers' in "
-                    "'dict_model_options' to 0!!"
+                    "'extensions' to 0!!"
                 )
                 raise IOError(msg)
-
-            elif "SewerInletEff" not in self.choices.dict_variables:
-                msg = "Please define a 'SewerInletEff' in 'dict_variables'."
-                raise KeyError(msg)
             return func(self, *args, **kwargs)
         else:
-            msg = "Please define 'Include sewers' in 'dict_model_options' to 1."
+            msg = "Please define 'Include sewers' in 'extensions' to 1."
             raise IOError(msg)
 
     return wrapper
@@ -188,7 +184,7 @@ def valid_vct_buffers(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         """wrapper"""
-        if self.choices.dict_ecm_options["Include buffers"] == 1:
+        if self.choices.extensions.include_buffers.value:
             if self._vct_buffers.is_empty():
                 msg = (
                     "No (or empty) buffers defined, but option 'Include buffers' equal"
@@ -293,7 +289,7 @@ class Scenario:
 
         Parameters
         ----------
-        catchm: pywatemsedem.core.catchment.Catchment
+        catchm: pywatemsedem.catchment.Catchment
             Instance of
             :class:`pywatemsedem catchment <pywatemsedem.catchment.Catchment>`
             containing the catchment characteristics.
@@ -301,7 +297,7 @@ class Scenario:
             Simulation year
         scenario_nr: int
             Identifier number of the scenario.
-        userchoices : pywatemsedem.core.userchoices.UserChoices
+        userchoices : pywatemsedem.choices.Choices
             Containing the pywatemsedem model settings.
         """
         # Init factories from catchm instance
@@ -364,9 +360,7 @@ class Scenario:
         :py:class:`CNWS.UserChoices <pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
         'begin_maand' and, in case of CNWS, 'Endtime model'.
         """
-        if (self.choices.version == "WS") or self.choices.version == "Only Routing":
-            self.season = "spring"
-        else:
+        if self.choices.extensions.curve_number.value:
             if self.choices.dict_variables["begin_maand"] in [1, 2, 3]:
                 self.season = "winter"
             elif self.choices.dict_variables["begin_maand"] in [4, 5, 6]:
@@ -375,6 +369,8 @@ class Scenario:
                 self.season = "summer"
             elif self.choices.dict_variables["begin_maand"] in [10, 11, 12]:
                 self.season = "fall"
+        else:
+            self.season = "spring"
 
     @property
     def vct_parcels(self):
@@ -599,7 +595,7 @@ class Scenario:
 
             - *width* (int): meter width of grass strip (shortest side!)
             - *scale_ktc* (int): either 0 (scale or 1), if not kTC is not scaled, then
-              the ktc_low (see :class:`pywatemsedem.userchoices.UserChoices`) is used,
+              the ktc_low (see :class:`pywatemsedem.choices.parameters`) is used,
               see :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`
 
         Notes
@@ -640,22 +636,13 @@ class Scenario:
             nodata=-9999,
             gdal=False,
         )
-        self._grass_strips = self.raster_factory(arr)
+        self.grass_strips = arr
 
     @property
-    @valid_vct_grass_strips
+    # @valid_vct_grass_strips
     def grass_strips(self):
         """Grass strips raster getter"""
-        if self.choices.dict_ecm_options["UseGras"] == 0:
-
-            msg = (
-                "'UseGras' in 'dict_ecm_options' is equal to 0. Will not include grass"
-                " strips."
-            )
-            warnings.warn(msg)
-            return AbstractRaster()
-        else:
-            return self._grass_strips
+        return self._grass_strips
 
     @grass_strips.setter
     def grass_strips(self, raster_input):
@@ -717,7 +704,7 @@ class Scenario:
             1.0, len(self.vct_buffers.geodata) + 1, 1
         )
 
-        if self.choices.dict_ecm_options["Include buffers"] == 0:
+        if not self.choices.extensions.include_buffers.value:
             msg = (
                 "Include buffers' in 'dict_ecm_options' is equal to 0. Will not "
                 "include buffers."
@@ -800,7 +787,7 @@ class Scenario:
            buffer.
         """
         arr = None
-        if self.choices.dict_ecm_options["Include buffers"] == 0:
+        if not self.choices.extensions.include_buffers.value:
             msg = (
                 "Option 'Include buffers' in erosion control measure options is 0, "
                 "returning None"
@@ -827,7 +814,7 @@ class Scenario:
                         "including buffers in simulation."
                     )
                     logger.warning(msg)
-                    self.choices.dict_ecm_options["Include buffers"] = 0
+                    self.choices.extensions.include_buffers = False
                     arr = None
             if arr is not None:
                 arr = filter_outlets_in_arr_extension_id(
@@ -1019,7 +1006,7 @@ class Scenario:
 
             - *type_id* (int): describes the different classes of endpoints (e.g. 1:
               sewers, 2: ditches, ...)
-            - *efficiency* (float): sediment trap efficiency (%) .
+            - *efficiency* (float): sediment trap efficiency (%).
 
         Notes
         -----
@@ -1031,6 +1018,14 @@ class Scenario:
             vector_input, "LineString", allow_empty=True
         )
 
+        req_col = {"efficiency"}
+        missing_attribute_error_in_vct(
+            self._vct_endpoints.geodata, "Endpoints", req_col
+        )
+        attribute_continuous_value_error(
+            self._vct_endpoints.geodata, "Endpoints", "efficiency", 0, 1
+        )
+
         if "type_id" not in self._vct_endpoints.geodata.columns:
             msg = "No 'type_id' assigned, assuming one type of endpoint with id 1."
             warnings.warn(msg)
@@ -1040,19 +1035,23 @@ class Scenario:
                 msg = "Please define a 'type_id' for every record."
                 raise ValueError(msg)
 
-        if "efficiency" not in self._vct_endpoints.geodata.columns:
-            self._vct_endpoints.geodata["efficiency"] = np.nan
-        else:
-            attribute_continuous_value_error(
-                self._vct_endpoints.geodata, "Endpoints", "efficiency", 0, 1
-            )
-
         self._vct_endpoints.geodata["efficiency"] = self._vct_endpoints.geodata[
             "efficiency"
         ].astype(np.float64)
 
+        self.endpoints = self.vct_endpoints.rasterize(
+            self.catchm.rasterfile_mask,
+            31370,
+            nodata=self.rp.nodata,
+            col="efficiency",
+            gdal=False,
+        )
+
+        self.endpoints_id = self.vct_endpoints.rasterize(
+            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=False
+        )
+
     @property
-    @valid_vct_endpoints
     def endpoints_id(self):
         """Getter endpoints id raster
 
@@ -1064,15 +1063,21 @@ class Scenario:
             - *0*: no endpoint
             - *not equal to 0*: id.
         """
-        arr_id = self.vct_endpoints.rasterize(
-            self.catchm.rasterfile_mask, 31370, col="type_id", gdal=False
-        )
-        arr_id[arr_id == self.rp.nodata] = 0
+        return self._endpoints_id
 
-        return self.raster_factory(arr_id, flag_mask=False, flag_clip=False)
+    @endpoints_id.setter
+    def endpoints_id(self, raster_input):
+        """Setter endpoints_id raster
+
+        Parameters
+        ----------
+        raster_input: Pathlib.Path, str or numpy.ndarray
+        """
+        raster_id = self.raster_factory(raster_input, flag_mask=False, flag_clip=False)
+        raster_id.arr = np.where(raster_id.arr == self.rp.nodata, 0, raster_id.arr)
+        self._endpoints_id = raster_id
 
     @property
-    @valid_vct_endpoints
     def endpoints(self):
         """Getter endpoints efficiency raster
 
@@ -1080,43 +1085,29 @@ class Scenario:
         -------
         pywatemsedem.geo.rasters.AbstractRaster
             Float64 raster with values in [0,1] efficiency (in decimal).
-
-        Notes
-        -----
-        Id's equal to one are converted to 0 when
-        self.choices.dict_model_options["OnlyInfraSewers"] is equal to 1.
         """
-        cond = self._vct_endpoints.geodata["efficiency"].isnull()
-        if np.any(cond):
-            # in decimals
-            self._vct_endpoints.geodata.loc[cond, "efficiency"] = float(
-                self.choices.dict_variables["SewerInletEff"]
-            )
-            msg = (
-                "The efficiency is not defined for all sewer line strings, assigning"
-                f" 'SewerInletEff'-value defined in user choices 'variables' "
-                f"({self.choices.dict_variables['SewerInletEff'] * 100} %)."
-            )
-            warnings.warn(msg)
+        return self._endpoints
 
-        self.vct_endpoints.geodata["efficiency"] = self.vct_endpoints.geodata[
-            "efficiency"
-        ].astype(float)
-        arr = self.vct_endpoints.rasterize(
-            self.catchm.rasterfile_mask,
-            31370,
-            nodata=self.rp.nodata,
-            col="efficiency",
-            gdal=False,
-        )
+    @endpoints.setter
+    def endpoints(self, raster_input):
+        """Getter endpoints efficiency raster
 
-        arr[arr == self.rp.nodata] = 0
-        if self.choices.dict_model_options["OnlyInfraSewers"] == 1:
-            cond = (self.catchm.infrastructure.arr != -2) & (self.endpoints_id.arr == 1)
-            cond_mask = (cond) & (self.catchm.mask.arr != 0)
-            arr[cond_mask] = 0
-        arr[self.catchm.river.arr == -1] = 0
-        return self.raster_factory(arr, flag_mask=False, flag_clip=False)
+        Returns
+        -------
+        pywatemsedem.geo.rasters.AbstractRaster
+            Float64 raster with values in [0,1] efficiency (in decimal).
+        """
+        raster = self.raster_factory(raster_input, flag_mask=False, flag_clip=False)
+        raster.arr = np.where(raster.arr == self.rp.nodata, 0, raster.arr)
+        raster.arr = np.where(self.catchm.river.arr == -1, 0, raster.arr)
+        self._endpoints = raster
+
+    def remove_endpoints_not_under_infrastructure(self):
+        """Only keep endpoints that coincide with infrastructure pixels"""
+        cond = (self.catchm.infrastructure.arr != -2) & (self.endpoints_id.arr == 1)
+        # TO DO: Check wy endpoints_id must be 1?
+        cond_mask = (cond) & (self.catchm.mask.arr != 0)
+        self.endpoints = np.where(cond_mask, 0, self.endpoints.arr)
 
     @property
     def cn_table(self):
@@ -1345,7 +1336,7 @@ class Scenario:
         -------
         cfactor: numpy.ndarray
         """
-        if self.choices.version == "Only Routing":
+        if self.choices.options.only_routing.value:
             msg = "C-factor raster is not generated for 'Only Routing'-mode."
             warnings.warn(msg)
             cfactor = np.ndarray()
@@ -1426,7 +1417,7 @@ class Scenario:
         self.catchm.pfactor.write(
             self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
         )
-        if self.choices.dict_model_options["River Routing"] == 1:
+        if self.choices.extensions.river_routing.value:
             self.catchm.adjacent_edges.to_csv(
                 self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
                 sep="\t",
@@ -1437,7 +1428,7 @@ class Scenario:
                 sep="\t",
                 index=False,
             )
-            self.choices.dict_output["Output per river segment"] = 1
+            self.choices.extensions.output_per_river_segment = True
             self.catchm.routing.write(
                 self.sfolder.cnwsinput_folder / inputfilename.routing_file
             )
@@ -1452,13 +1443,13 @@ class Scenario:
             self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
             dtype=np.int32,
         )
-        if self.choices.version == "CN-WS":
+        if self.choices.extensions.curve_number.value:
             if self.cn is not None:
                 self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
             else:
                 msg = "Model version in 'CN-WS', define a CN raster to run CN."
                 raise IOError(msg)
-        if self.choices.dict_model_options["UserProvidedKTC"] == 1:
+        if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
             else:
@@ -1467,44 +1458,40 @@ class Scenario:
 
         self.cfactor.write(self.sfolder.cnwsinput_folder / inputfilename.cfactor_file)
 
-        if self.choices.dict_model_options["Manual outlet selection"] == 1:
+        if self.choices.extensions.manual_outlet_selection.value:
             self.outlets.write(
                 self.sfolder.cnwsinput_folder / inputfilename.outlet_file
             )
-        if self.choices.version != "Only Routing":
-            if self.choices.dict_model_options["Calibrate"] == 1:
-                for key in [
-                    "Write sediment export",
-                    "Write water erosion",
-                    "Output per river segment",
-                ]:
-                    self.choices.dict_output[key] = 0
-        if (self.choices.dict_ecm_options["Include buffers"] == 1) & (
-            self.buffers.is_empty()
-        ):
+        if not self.choices.options.only_routing.value:
+            if self.choices.extensions.calibrate.value:
+                self.choices.output.write_sediment_export = False
+                self.choices.output.write_water_export = False
+                self.choices.extensions.output_per_river_segment = False
+
+        if self.choices.extensions.include_buffers.value & (self.buffers.is_empty()):
             self.buffers.write(
                 self.sfolder.cnwsinput_folder / inputfilename.buffers_file
             )
 
-        if self.choices.dict_ecm_options["Include ditches"] == 1:
+        if self.choices.extensions.include_ditches.value:
             self.ditches.write(
                 self.sfolder.cnwsinput_folder / inputfilename.ditches_file
             )
 
-        if self.choices.dict_ecm_options["Include dams"] == 1:
+        if self.choices.extensions.include_dams.value:
             self.conductive_dams.write(
                 self.sfolder.cnwsinput_folder / inputfilename.conductivedams_file
             )
 
-        if self.choices.dict_model_options["FilterDTM"] == 1:
-            msg = "Filtering DTM within boundaries of parcels."
-            logger.info(msg)
-            self.catchm.dtm.filter()
-            self.catchm.dtm.write(
-                self.sfolder.cnwsinput_folder / inputfilename.dtm_file
-            )
+        # if self.choices.dict_model_options["FilterDTM"] == 1:
+        #    msg = "Filtering DTM within boundaries of parcels."
+        #    logger.info(msg)
+        #    self.catchm.dtm.filter()
+        #    self.catchm.dtm.write(
+        #        self.sfolder.cnwsinput_folder / inputfilename.dtm_file
+        #    )
 
-        if self.choices.dict_model_options["Include sewers"] == 1:
+        if self.choices.extensions.include_sewers.value:
             if not self.endpoints.is_empty():
                 self.endpoints.write(
                     self.sfolder.cnwsinput_folder / inputfilename.endpoints_file,
@@ -1519,13 +1506,12 @@ class Scenario:
 
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
-        logger.info("Aanmaken ini-file...")
+        logger.info("Creating ini-file...")
         self.ini = self.sfolder.cnwsinput_folder / "inifile.ini"
         ini = IniFile(
-            self.choices,
-            self.choices.version,
             self.sfolder.cnwsinput_folder,
             self.sfolder.cnwsoutput_folder,
+            self.choices,
         )
         ini.add_sections()
         ini.add_model_information()
