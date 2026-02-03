@@ -38,7 +38,7 @@ def raster_discrete_value_error(raster_array, tag, allowed_values, classes=None)
     if not set(np.unique(raster_array)).issubset(allowed_values):
         if classes is not None:
             allowed_values = [f"{x}: {y}" for x, y in zip(allowed_values, classes)]
-        str_values = "'" + "' ,'".join(allowed_values) + "'"
+        str_values = "'" + "' ,'".join(str(x) for x in allowed_values) + "'"
         msg = f"Input raster for '{tag}' can only contain values {str_values}"
         raise PywatemsedemRasterValueError(msg)
 
@@ -97,7 +97,7 @@ def attribute_discrete_value_error(
     if not set(np.unique(source[attribute])).issubset(allowed_values):
         if classes is not None:
             allowed_values = [f"{x}: {y}" for x, y in zip(allowed_values, classes)]
-        str_values = "'" + "' ,'".join(allowed_values) + "'"
+        str_values = "'" + "' ,'".join(str(x) for x in allowed_values) + "'"
         msg = (
             f"Column '{attribute}' in '{tag}' vector can only contain values "
             f"{str_values}"
