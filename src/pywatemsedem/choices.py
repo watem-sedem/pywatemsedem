@@ -2,9 +2,6 @@ import logging
 
 from pywatemsedem.io.ini import get_item_from_ini
 
-# Standard libraries
-
-
 logger = logging.getLogger(__name__)
 
 
