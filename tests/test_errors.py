@@ -37,6 +37,7 @@ def test_raster_discrete_value_error_not_allowed():
     ],
 )
 def test_attribute_continuous_value_error_allowed(df, lower, upper):
+    """Verify that no error is raised for allowed continuous values in vector."""
     attribute_continuous_value_error(
         df, tag="test", attribute="val", lower=lower, upper=upper
     )
@@ -51,6 +52,7 @@ def test_attribute_continuous_value_error_allowed(df, lower, upper):
     ],
 )
 def test_attribute_continuous_value_error_not_allowed(df, lower, upper):
+    """Verify that error is raised for not allowed continuous values in vector."""
     with pytest.raises(PywatemsedemVectorAttributeValueError):
         attribute_continuous_value_error(
             df, tag="test", attribute="val", lower=lower, upper=upper
@@ -66,6 +68,7 @@ def test_attribute_continuous_value_error_not_allowed(df, lower, upper):
     ],
 )
 def test_attribute_discrete_value_error_allowed(df, allowed):
+    """Verify that no error is raised for allowed discrete values in vector."""
     attribute_discrete_value_error(
         df, tag="test", attribute="cat", allowed_values=allowed
     )
@@ -80,6 +83,7 @@ def test_attribute_discrete_value_error_allowed(df, allowed):
     ],
 )
 def test_attribute_discrete_value_error_not_allowed(df, allowed):
+    """Verify that error is raised for not allowed discrete values in vector."""
     with pytest.raises(PywatemsedemVectorAttributeValueError):
         attribute_discrete_value_error(
             df, tag="test", attribute="cat", allowed_values=allowed
@@ -94,10 +98,8 @@ def test_attribute_discrete_value_error_not_allowed(df, allowed):
     ],
 )
 def test_missing_attribute_error_in_vct_allowed(df, req):
+    """Verify that no error is raised when all required attrs are present in vector."""
     missing_attribute_error_in_vct(df, tag="test", req_attributes=req)
-
-
-# Error: missing required attribute
 
 
 @pytest.mark.parametrize(
@@ -108,5 +110,6 @@ def test_missing_attribute_error_in_vct_allowed(df, req):
     ],
 )
 def test_missing_attribute_error_in_vct_not_allowed(df, req):
+    """Verify that error is raised when required attributes are missing in vector."""
     with pytest.raises(PywatemsedemVectorAttributeError):
         missing_attribute_error_in_vct(df, tag="test", req_attributes=req)
