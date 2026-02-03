@@ -18,8 +18,8 @@ class UserChoice:
         self.mandatory = mandatory
         self.allowed_values = allowed_values
 
-    def _repr_html_(self):
-        """notebook/ipython representation"""
+    def __repr__(self):
+        """String representation of the UserChoice"""
         print_ = [
             f"Key: {self.key}",
             f"Value: {self.value}",
@@ -29,7 +29,7 @@ class UserChoice:
             f"Allowed_values: {self.allowed_values}",
             f"Section: {self.section}",
         ]
-        print("\n".join(print_))
+        return "\n".join(print_)
 
     def validate_type(self, value):
         """Validate if the value has the correct dtype"""
