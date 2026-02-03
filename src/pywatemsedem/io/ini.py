@@ -20,13 +20,15 @@ class IniFile:
         WaTEM/SEDEM inputfolder
     outputfolder: pathlib.Path
         WaTEM/SEDEM outputfolder
+    choices: pywatemsedem.choices.Choices
+        choices object containing all user input
 
     Examples
     --------
     >>> choices = Choices(...)
     >>> forced_routing = ...
     >>> buffers = ...
-    >>> inifile = IniFile(choices,"WS","modelinput","modeloutput")
+    >>> inifile = IniFile("modelinput","modeloutput",choices)
     >>> inifile.add_model_information()
     >>> inifile.add_working_directories()
     >>> inifile.add_files()
