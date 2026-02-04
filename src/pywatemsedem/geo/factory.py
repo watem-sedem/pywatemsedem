@@ -263,7 +263,7 @@ class Factory:
 
     @valid_mask_factory
     def vector_factory(
-        self, vector_input, geometry_type, allow_empty=False, flag_clip=False
+        self, vector_input, geometry_type, allow_empty=False, flag_clip=True
     ):
         """Vector factory to load vectors in memory
 
@@ -277,7 +277,7 @@ class Factory:
         allow_empty: bool, default False
             Allow vector to be empty, see
             :class:`pywatemsedem.geo.vectors.AbstractVector`
-        flag_clip: bool, default False
+        flag_clip: bool, default True
             Clip vector to mask
 
         Returns
