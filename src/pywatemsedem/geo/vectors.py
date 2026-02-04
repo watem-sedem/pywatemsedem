@@ -263,16 +263,49 @@ class VectorMemory(AbstractVector):
     """
 
     def __init__(
-        self, geodata, geometry_type, req_geometry_type=None, allow_empty=False
+        self,
+        geodata,
+        geometry_type,
+        req_geometry_type=None,
+        clip_mask=None,
+        allow_empty=False,
     ):
-        """Initialize RasterMemory"""
+        """Initialize VectorMemory class
+
+        Parameters
+        ----------
+        geodata: geopandas.GeoDataFrame
+            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        geometry_type: str
+            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        req_geometry_type: str, default None
+            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        clip_mask: geopandas.GeoDataFrame, default None
+        allow_empty: bool, default False
+            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        """
+        if clip_mask is not None:
+            geodata = self.clip(geodata, clip_mask)
+
         super().initialize(
             geodata, geometry_type, req_geometry_type, allow_empty=allow_empty
         )
 
-    def clip(self):
-        """NotImplemented clip function"""
-        raise NotImplementedError
+    def clip(self, geodata, clip_mask):
+        """Clip input geodata with clip_mask
+
+        Parameters
+        ----------
+        geodata: geopandas.GeoDataFrame
+            geodataframe of input data
+        clip_mask: geopandas.GeoDataFrame
+            Mask vector
+
+        Returns
+        -------
+        geopandas.GeoDataFrame"""
+        gdf = gpd.clip(geodata, clip_mask, keep_geom_type=True)
+        return gdf
 
 
 class VectorFile(AbstractVector):
