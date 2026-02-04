@@ -314,17 +314,17 @@ class VectorFile(AbstractVector):
     def __init__(
         self, file_path, req_geometry_type=None, vct_clip=None, allow_empty=False
     ):
-        """Initialize RasterFile class
+        """Initialize VectorFile class
 
         Parameters
         ----------
         file_path: pathlib.Path
             File path to user input raster.
-        vct_clip: pathlib.Path
-            Mask vector
         req_geometry_type: str
             Required type of geometry, see implemented geometries in
             :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`
+        vct_clip: pathlib.Path
+            Mask vector
         allow_empty: bool, default False
             See :class:`pywatemsedem.geo.vectors.AbstractVector`
         """
@@ -351,9 +351,6 @@ class VectorFile(AbstractVector):
             File path to user input raster.
         vct_clip: pathlib.Path
             Mask vector
-        geometry_type: str
-            Required type of geometry, see implemented geometries in
-            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`
 
         Returns
         -------
