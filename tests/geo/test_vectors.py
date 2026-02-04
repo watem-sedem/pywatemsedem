@@ -50,3 +50,8 @@ def test_vector_memory():
     # correct input
     vector = VectorMemory(gdf, geometry_type, req_geometry_type)
     assert len(vector.geodata) == 19
+
+    # clip
+    gdf_mask = gpd.read_file(geodata.catchment)
+    vector = VectorMemory(gdf, geometry_type, req_geometry_type, clip_mask=gdf_mask)
+    assert len(vector.geodata) == 18
