@@ -125,10 +125,6 @@ class AbstractVector:
         """Setter"""
         self._geodata = input
 
-    def clip(self):
-        """NotImplemented clip function"""
-        raise NotImplementedError
-
     def write(self, outfile_path):
         """Write vector data to disk.
 
