@@ -324,10 +324,12 @@ class VectorFile(AbstractVector):
         allow_empty: bool, default False
             See :class:`pywatemsedem.geo.vectors.AbstractVector`
         """
+        self.file_path = file_path
+
         geometry_type = get_geometry_type(file_path)
 
         if vct_clip is not None:
-            geodata = self.clip(file_path, vct_clip)
+            geodata = self.clip(vct_clip)
         else:
             geodata = gpd.read_file(file_path)
 
@@ -338,13 +340,11 @@ class VectorFile(AbstractVector):
             allow_empty=allow_empty,
         )
 
-    def clip(self, file_path, vct_clip):
+    def clip(self, vct_clip):
         """Clip input file path with vct_clip
 
         Parameters
         ----------
-        file_path: pathlib.Path
-            File path to user input raster.
         vct_clip: pathlib.Path
             Mask vector
 
@@ -353,7 +353,7 @@ class VectorFile(AbstractVector):
         geopandas.GeoDataFrame
         """
         vct_temp = create_filename(".shp")
-        clip_vct(file_path, vct_temp, vct_clip)
+        clip_vct(self.file_path, vct_temp, vct_clip)
         geodata = gpd.read_file(vct_temp)
         clean_up_tempfiles(vct_temp, "shp")
 
