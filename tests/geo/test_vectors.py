@@ -6,7 +6,7 @@ from pywatemsedem.geo.utils import get_geometry_type
 from pywatemsedem.geo.vectors import VectorFile, VectorMemory
 
 
-def test_vector_file():
+def test_vectorfile():
     """Test functionalities of VectorFile class"""
 
     # clip
@@ -14,7 +14,7 @@ def test_vector_file():
     assert len(vector.geodata) == 18
 
 
-def test_vector_memory():
+def test_vectormemory():
     """Test functionalities of VectorMemory class"""
     # load
     gdf = gpd.read_file(geodata.vct_example)
