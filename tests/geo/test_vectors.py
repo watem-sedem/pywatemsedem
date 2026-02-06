@@ -40,7 +40,7 @@ def test_vectormemory_unknown_geometry_type(unknwon_type):
         VectorMemory(gdf, geometry_type, req_geometry_type)
 
 
-def test_vectormemory_wrong_geometry_type():
+def test_vectormemory_wrong_required_geometry_type():
     """Test loading a vector with a different geometry type than required"""
     # load
     gdf = gpd.read_file(geodata.vct_example)
