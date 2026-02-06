@@ -53,9 +53,10 @@ def test_rasterproperties():
         "transform": Affine(20.0, 0.0, 201620.0, 0.0, -20.0, 164060.0),
     }
 
-    with pytest.raises(IOError) as excinfo:
+    with pytest.raises(
+        IOError, match="Function input is not a rasterio profile instance!"
+    ):
         RasterProperties.from_rasterio(rasterio_profile_incompl)
-    assert "Function input is not a rasterio profile instance!" in str(excinfo.value)
 
     # test with incomplete gdal profile
     gdal_profile_incompl = {
@@ -65,25 +66,21 @@ def test_rasterproperties():
         "ncols": 294,
         "nrows": 509,
     }
-    with pytest.raises(IOError) as excinfo:
+    with pytest.raises(IOError, match="Function input is not a gdal profile instance!"):
         RasterProperties.from_gdal(gdal_profile_incompl)
-    assert "Function input is not a gdal profile instance!" in str(excinfo.value)
 
     # test unknown epsg
     epsg = -11000
-    with pytest.raises(CRSError) as excinfo:
+    with pytest.raises(CRSError, match="is an unknown "):
         RasterProperties(bounds, resolution, nodata, epsg)
-    assert "is an unknown " in str(excinfo.value)
 
     # test wrong format epsg
     epsg = "-11000"
-    with pytest.raises(TypeError) as excinfo:
+    with pytest.raises(TypeError, match="need to be an integer code."):
         RasterProperties(bounds, resolution, nodata, epsg)
-    assert "need to be an integer code." in str(excinfo.value)
 
     # test not supported driver
     epsg = 31370  # change epsg back to valid format!
 
-    with pytest.raises(IOError) as excinfo:
+    with pytest.raises(IOError, match="Raster property driver"):
         RasterProperties(bounds, resolution, nodata, epsg, driver="tsjaarbomb32")
-    assert "Raster property driver" in str(excinfo.value)

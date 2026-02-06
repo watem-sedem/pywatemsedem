@@ -54,9 +54,8 @@ class TestExecuteSubprocess:
             str(geodata.rst_mask),
         ]
         cmd_args += ["-POLYGONS", str(vct_out), "-CLASS_ALL", "1", "-SPLIT", "0"]
-        with pytest.raises(OSError) as excinfo:
+        with pytest.raises(OSError, match="Error: select a library"):
             execute_subprocess(cmd_args)
-        assert "Error: select a library" in str(excinfo.value)
 
 
 class TestAnyEqualVector:

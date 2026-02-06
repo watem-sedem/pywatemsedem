@@ -27,9 +27,8 @@ def test_read_filestructure(sep):
         Delimiter.
     """
     if sep == ";":
-        with pytest.raises(KeyError) as excinfo:
+        with pytest.raises(KeyError, match="DataFrame should contain "):
             read_filestructure(sep=sep)
-        assert "DataFrame should contain " in str(excinfo.value)
     else:
         df = read_filestructure(sep=sep)
         assert len(df) > 0
