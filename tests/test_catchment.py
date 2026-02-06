@@ -46,12 +46,14 @@ class TestCatchment:
         arr, profile = load_raster(catchment_data.k)
         arr[arr < 40] = -10
         write_arr_as_rst(arr, fname, arr.dtype, profile)
-        dummy_catchment.kfactor = fname
-        w = recwarn.pop(UserWarning)
-        assert (
-            str(w.message) == "Negative values detected in K-factor raster, "
-            "setting negative values to 0."
-        )
+        with pytest.warns(
+            UserWarning,
+            match=(
+                "Negative values detected in K-factor raster, "
+                "setting negative values to 0."
+            ),
+        ):
+            dummy_catchment.kfactor = fname
 
     def test_landuse(self, dummy_catchment):
         """Test assignment landuse raster"""
