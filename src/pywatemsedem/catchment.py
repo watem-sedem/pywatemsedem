@@ -306,19 +306,14 @@ class Catchment(Factory):
         """Assign K-factor raster
 
         The K-factor raster is a raster holding K-values for every pixel
-        (:math:`\\frac{ton.h}{MJ.mm}`). Negative no nodata values are set to zero.
+        (:math:`\\frac{kg.h}{MJ.mm}`). Negative no nodata values are set to zero.
 
         Parameters
         ----------
         raster_input: Pathlib.Path, str or numpy.array
-            File path/array K-factor raster (:math:`\\frac{ton.h}{MJ.mm}`) with K-values
+            File path/array K-factor raster (:math:`\\frac{kg.h}{MJ.mm}`) with K-values
             (see K-factor in RUSLE equation).
 
-        Notes
-        -----
-        1. The input requires as unit: :math:`\\frac{ton.h}{MJ.mm}`, whereas the output
-           unit is :math:`\\frac{kg.h}{MJ.mm}`.
-        2. The input data is rounded to kg (no decimals) by a conversion to int32.
         """
         self._kfactor = self.raster_factory(
             raster_input, flag_mask=True, flag_clip=True
@@ -332,6 +327,8 @@ class Catchment(Factory):
             )
             warnings.warn(msg, UserWarning)
             self._kfactor.arr[cond_neg] = 0.0
+
+        self._kfactor.arr[cond] = np.round(self._kfactor.arr[cond], decimals=0)
         self._kfactor.arr = self._kfactor.arr.astype(np.int32)
 
     @property
