@@ -262,7 +262,9 @@ class Factory:
         return raster
 
     @valid_mask_factory
-    def vector_factory(self, vector_input, geometry_type, allow_empty=False):
+    def vector_factory(
+        self, vector_input, geometry_type, allow_empty=False, flag_clip=True
+    ):
         """Vector factory to load vectors in memory
 
         Parameters
@@ -275,6 +277,8 @@ class Factory:
         allow_empty: bool, default False
             Allow vector to be empty, see
             :class:`pywatemsedem.geo.vectors.AbstractVector`
+        flag_clip: bool, default True
+            Clip vector to mask
 
         Returns
         -------
@@ -293,14 +297,30 @@ class Factory:
                     f"vector file (e.g. ESRI shape file)."
                 )
                 raise IOError(msg)
+
+            if flag_clip:
+                clip_mask = self.vct_mask.file_path
+            else:
+                clip_mask = None
+
             vector = VectorFile(
                 vector_input,
                 geometry_type,
-                self.vectorfile_mask,
+                vct_clip=clip_mask,
                 allow_empty=allow_empty,
             )
         elif isinstance(vector_input, gpd.GeoDataFrame):
-            vector = VectorMemory(vector_input, geometry_type, allow_empty=allow_empty)
+            if flag_clip:
+                clip_mask = self.vct_mask.geodata
+            else:
+                clip_mask = None
+
+            vector = VectorMemory(
+                vector_input,
+                geometry_type,
+                clip_mask=clip_mask,
+                allow_empty=allow_empty,
+            )
         else:
             msg = (
                 f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector"
