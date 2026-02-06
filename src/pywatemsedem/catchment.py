@@ -293,7 +293,7 @@ class Catchment(Factory):
         """Getter K-factor raster
 
         The K-factor raster is a raster holding K-values for every pixel
-        (:math:`\\frac{ton.h}{MJ.mm}`).
+        (:math:`\\frac{kg.h}{MJ.mm}`).
 
         Returns
         -------
