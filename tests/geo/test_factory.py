@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from conftest import geodata
 from geopandas import GeoDataFrame
@@ -74,9 +76,9 @@ class TestFactory:
         # feed raster to vector factory
         with pytest.raises(
             IOError,
-            match=(
-                rf"Input vector file '{geodata.rst_mask}' should be "
-                rf"a valid vector file (e.g. ESRI shape file)."
+            match=re.escape(
+                f"Input vector file '{geodata.rst_mask}' should be a valid "
+                f"vector file (e.g. ESRI shape file)."
             ),
         ):
             f.vector_factory(geodata.rst_mask, "Polygon")
@@ -91,7 +93,7 @@ class TestFactory:
         # feed vector file to raster factory
         with pytest.raises(
             IOError,
-            match=(
+            match=re.escape(
                 rf"Input raster file '{geodata.catchment}' should be "
                 rf"a valid raster file (e.g. IDRISI raster, geotiff, SAGA-GRID, ..)"
             ),
