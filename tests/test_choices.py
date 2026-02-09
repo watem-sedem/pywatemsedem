@@ -40,7 +40,7 @@ def test_userchoice_wrong_dtype():
         True,
     )
     with pytest.raises(
-        ValueError,
+        TypeError,
         match=(r"Value assigned to key 'Test2' should be dtype '<class 'float'>'."),
     ):
         user_choice.value = "This value should be a float"
