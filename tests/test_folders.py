@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,9 @@ def test_check_and_create_folder(tmp_path):
     """Test creation of pywatemsedem folders"""
     foldername = Path(tmp_path) / "test"
     # check if it exists
-    with pytest.raises(IOError, match=rf"Folder '{foldername}' does not exist."):
+    with pytest.raises(
+        IOError, match=re.escape(f"Folder '{foldername}' does not exist.")
+    ):
         check_and_create_folder(foldername, f"Folder '{foldername}'")
 
     # create it
