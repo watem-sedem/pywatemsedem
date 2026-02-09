@@ -23,11 +23,12 @@ def test_userchoice_not_allowed_value():
         None,
         ["This string is allowed", "A second allowed string"],
     )
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(
+        ValueError,
+        match=r"Value should be one of: \['This string is allowed', "
+        r"'A second allowed string'\].",
+    ):
         user_choice.value = "Not allowed string"
-    assert (
-        "Value should be one of: ['This string is allowed', 'A second allowed string']."
-    ) in str(excinfo.value)
 
 
 def test_userchoice_wrong_dtype():
@@ -38,11 +39,11 @@ def test_userchoice_wrong_dtype():
         float,
         True,
     )
-    with pytest.raises(TypeError) as excinfo:
+    with pytest.raises(
+        TypeError,
+        match=(r"Value assigned to key 'Test2' should be dtype '<class 'float'>'."),
+    ):
         user_choice.value = "This value should be a float"
-    assert ("Value assigned to key 'Test2' should be dtype '<class 'float'>'.") in str(
-        excinfo.value
-    )
 
 
 def test_read_default_value_from_ini():
@@ -223,9 +224,8 @@ def test_mandatory_value_not_given():
     """Test when no mandatory value is given, a ValueError is raised"""
     ws_params = Parameters()
 
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError, match=r"R factor is mandatory and cannot be None"):
         ws_params.check_mandatory_values()
-    assert ("R factor is mandatory and cannot be None") in str(excinfo.value)
 
 
 def test_apply_defaults():
