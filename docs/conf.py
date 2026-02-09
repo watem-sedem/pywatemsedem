@@ -136,6 +136,7 @@ exclude_patterns = [
     "venv",
     "getting-started/watemsedem_*.exe",
     "getting-started/langegracht",
+    "**.ipynb_checkpoints"
 ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
