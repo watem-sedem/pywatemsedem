@@ -20,7 +20,7 @@ Contents
    Calibrating WaTEM/SEDEM <getting-started/calibrate.ipynb>
    Processing rasters and vector <getting-started/geo.rst>
    User Choices <getting-started/userchoices.rst>
-   How to apply the user Choices <getting-started/choices.ipynb>
+   How to apply the user choices <getting-started/choices.ipynb>
    IO <getting-started/io.rst>
 
 .. toctree::
