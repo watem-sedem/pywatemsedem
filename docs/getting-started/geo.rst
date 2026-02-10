@@ -194,7 +194,7 @@ a Jupyter Notebook environment.
 .. note::
 
     In order to use the hv_plot functionality, one has to install hvplot
-    and geoviews. See :ref:`installation page <https://rasterio.readthedocs.io/en/stable/>`.
+    and geoviews. See `installation page <https://rasterio.readthedocs.io/en/stable/installation.html>`_.
 
 The :class:`pywatemsedem.geo.rasters.RasterMemory` class can be used in a
 similar way:
