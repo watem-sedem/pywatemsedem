@@ -31,7 +31,7 @@ this page, listed per model resolution.
     same, then a link to the documentation of WaTEM/SEDEM is presented (indicated
     with *see ..*).
 
-We refer to :ref:`the example notebook on how to use the user choices <getting-started/choices>`
+We refer to :doc:`the example notebook on how to use the user choices <choices>`
 
 Options
 -------
@@ -85,10 +85,6 @@ For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:manualoutlet
 Calibrate
 ^^^^^^^^^
 For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:calibrate>`
-
-Convert output
-^^^^^^^^^^^^^^
-For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:convertoutput>`
 
 Adjusted Slope
 ^^^^^^^^^^^^^^

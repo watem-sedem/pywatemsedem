@@ -79,6 +79,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "nbsphinx",
+    "IPython.sphinxext.ipython_console_highlighting"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -135,6 +136,7 @@ exclude_patterns = [
     "venv",
     "getting-started/watemsedem_*.exe",
     "getting-started/langegracht",
+    "**.ipynb_checkpoints"
 ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
@@ -174,8 +176,7 @@ html_theme = "sphinx_rtd_theme"
 # documentation.
 html_theme_options = {}
 
-# Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
