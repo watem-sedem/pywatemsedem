@@ -6,16 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+  <title>Installation &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -64,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -101,17 +104,17 @@
            <div itemprop="articleBody">
              
   <section id="installation">
-<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
+<span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <section id="install-from-source">
-<h2>Install from source<a class="headerlink" href="#install-from-source" title="Link to this heading">¶</a></h2>
+<h2>Install from source<a class="headerlink" href="#install-from-source" title="Link to this heading"></a></h2>
 <p>To keep track of the continuous development on the package beyond the major
 releases, <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> the repository somewhere and install the code from
 source.</p>
 <p>Make sure to setup a new environment in either conda or venv (using tox):</p>
 <section id="using-conda">
-<h3>Using conda<a class="headerlink" href="#using-conda" title="Link to this heading">¶</a></h3>
+<h3>Using conda<a class="headerlink" href="#using-conda" title="Link to this heading"></a></h3>
 <p>When using conda, you can setup the environment using the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>
-file included in this repository:</p>
+file included in this repository.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
 
 conda<span class="w"> </span>activate<span class="w"> </span>pywatemsedem
@@ -140,7 +143,7 @@ have the dependencies installed yourself.</p>
 </div>
 </section>
 <section id="using-venv">
-<h3>Using venv<a class="headerlink" href="#using-venv" title="Link to this heading">¶</a></h3>
+<h3>Using venv<a class="headerlink" href="#using-venv" title="Link to this heading"></a></h3>
 <p>Run the <code class="docutils literal notranslate"><span class="pre">dev</span></code> tox command, which will create a <code class="docutils literal notranslate"><span class="pre">venv</span></code> with a development
 install of the package and it will register the environment as a ipykernel
 (for usage inside jupyter notebook):</p>
@@ -160,7 +163,7 @@ in the <code class="docutils literal notranslate"><span class="pre">environment.
 </section>
 </section>
 <section id="dependencies">
-<span id="id3"></span><h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
+<span id="id3"></span><h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
 <p>The pywatemsedem package has two external dependencies (outside the python
 dependencies):</p>
 <ul class="simple">
@@ -169,27 +172,33 @@ dependencies):</p>
 </ul>
 <p>Ensure you:</p>
 <ul class="simple">
-<li><p>Pick up the latest exe of the WaTEM/SEDEM Pascal model from the
-<a class="reference external" href="https://watem-sedem.github.io/watem-sedem/releases">GitHub</a>.</p></li>
-<li><p>Pick up the latest exe of the SAGA-GIS with <strong>WaTEM</strong>:
-<a class="reference external" href="https://github.com/DOV-Vlaanderen/saga-watem/releases">https://github.com/DOV-Vlaanderen/saga-watem/releases</a>.</p></li>
+<li><p>Pick up the supported exe of the WaTEM/SEDEM Pascal model from the
+<a class="reference external" href="https://watem-sedem.github.io/watem-sedem/releases">GitHub</a>. and follow
+<a class="reference external" href="https://watem-sedem.github.io/watem-sedem/installation.html">the installation instructions of WaTEM/SEDEM</a></p></li>
+<li><p>Pick up the supported version of SAGA-WaTEM:
+<a class="reference external" href="https://github.com/DOV-Vlaanderen/saga-watem/releases">https://github.com/DOV-Vlaanderen/saga-watem/releases</a>., and follow
+<a class="reference external" href="https://dov-vlaanderen.github.io/saga-watem/installation.html">the installation instructions of SAGA-WaTEM</a></p></li>
 </ul>
 <p>Note that the required version of WaTEM/SEDEM and SAGA are mentioned in the
-release page. Define the saga and WaTEM/SEDEM version by adding a path to the
-executables in a <code class="docutils literal notranslate"><span class="pre">.env</span></code>-file in the locations main folder of this repo:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>WATEMSEDEM = $YOUR_PATH/watem-sedem/watem-sedem/watem-sedem #executable reference
-SAGA = $YOUR_PATH/2022.12.8/saga #folder reference
+release page and Changelog.</p>
+<p>Once you have downloaded both SAGA-WaTEM and WaTEM/SEDEM, pywatemsdem must
+know the locations of these binaries. This can be done in two ways:</p>
+<p>The first way is to add the locations of the binaries to the environment variable PATH of your system.
+This method has the advantage that you will be able to use these software packages
+in a terminal in every directory. However, you might need admin rights to do this.</p>
+<p>A second way, it to define the locations of the binaries of saga and WaTEM/SEDEM
+by adding a path to these executables in a <code class="docutils literal notranslate"><span class="pre">.env</span></code>-file in the locations main folder of this repo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>WATEMSEDEM = $YOUR_PATH/watem-sedem/watem_sedem #folder reference
+SAGA = $YOUR_PATH/saga-9.3.1_x64 #folder reference
 </pre></div>
 </div>
-<p>In your scripts/notebooks, add following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
+<p>In your scripts/notebooks, add following before importing pywatemsedem:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
 <span class="n">load_dotenv</span><span class="p">(</span><span class="n">find_dotenv</span><span class="p">())</span>
-<span class="c1"># setting SAGA GIS with WaTEM</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SAGA_TLB&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAGA&quot;</span><span class="p">)</span>
-<span class="c1"># setting WaTEM/SEDEM</span>
-<span class="n">watemsedem</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WATEMSEDEM&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>When importing pywatemsedem, it will add the directories of saga and watem-sedem
+to your PATH envrionment variable.</p>
 </section>
 </section>
 

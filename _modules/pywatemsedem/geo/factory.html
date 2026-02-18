@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.factory &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.geo.factory &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,39 +93,36 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.geo.factory</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">fiona</span>
-<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">rasterio</span>
-<span class="kn">from</span> <span class="nn">fiona.collection</span> <span class="kn">import</span> <span class="n">DriverError</span>
-<span class="kn">from</span> <span class="nn">rasterio</span> <span class="kn">import</span> <span class="n">RasterioIOError</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyogrio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterioIOError</span>
 
-<span class="kn">from</span> <span class="nn">..defaults</span> <span class="kn">import</span> <span class="n">PREFIX_TEMP</span>
-<span class="kn">from</span> <span class="nn">.rasterproperties</span> <span class="kn">import</span> <span class="n">RasterProperties</span>
-<span class="kn">from</span> <span class="nn">.rasters</span> <span class="kn">import</span> <span class="n">RasterFile</span><span class="p">,</span> <span class="n">RasterMemory</span><span class="p">,</span> <span class="n">TemporalRaster</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">clean_up_tempfiles</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.rasterproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterProperties</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.rasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterFile</span><span class="p">,</span> <span class="n">RasterMemory</span><span class="p">,</span> <span class="n">TemporalRaster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">define_extent_from_vct</span><span class="p">,</span>
     <span class="n">generate_vct_mask_from_raster_mask</span><span class="p">,</span>
     <span class="n">load_raster</span><span class="p">,</span>
     <span class="n">vct_to_rst_value</span><span class="p">,</span>
+    <span class="n">write_arr_as_rst</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.valid</span> <span class="kn">import</span> <span class="n">PywatemsedemInputError</span><span class="p">,</span> <span class="n">valid_exists</span>
-<span class="kn">from</span> <span class="nn">.vectors</span> <span class="kn">import</span> <span class="n">VectorFile</span><span class="p">,</span> <span class="n">VectorMemory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.valid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PywatemsedemInputError</span><span class="p">,</span> <span class="n">valid_exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorFile</span><span class="p">,</span> <span class="n">VectorMemory</span>
 
 
 <div class="viewcode-block" id="valid_mask_factory">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.factory.valid_mask_factory">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_mask_factory</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_mask_factory</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check valid mask inputted when using raster or vectofactory&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper fun&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -137,7 +137,7 @@
 
 <div class="viewcode-block" id="Factory">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory">[docs]</a>
-<span class="k">class</span> <span class="nc">Factory</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Factory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory class</span>
 
 <span class="sd">    Used to enable functions to generate vectors and rasters.</span>
@@ -149,7 +149,7 @@
 <span class="sd">    setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg_code</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">resmap</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg_code</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">resmap</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;See class docs</span>
 
 <span class="sd">        Parameters</span>
@@ -173,37 +173,37 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">resmap</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">resmap</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;factory&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">resmap</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">resmap</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask_vector</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;mask.shp&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;mask.rst&quot;</span>
-        <span class="c1"># standard rasterproperties are generated in mask pahe from vector or raster</span>
-        <span class="c1"># input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">resmap</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;factory&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vectorfile_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;mask.shp&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;mask.tif&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_rasterproperties</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;RasterProperties. See</span>
+<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span>
 
     <span class="nd">@rp</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">rp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rasterproperties</span><span class="p">):</span>
-        <span class="s2">&quot;RasterProperties. See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rasterproperties</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;RasterProperties. See</span>
+<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span> <span class="o">=</span> <span class="n">rasterproperties</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;AbstractRaster mask&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;AbstractRaster mask&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vct_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;AbstractVector mask, See :class:`pywatemsedem.geo.vectors.AbstractVector`&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span>
 
     <span class="nd">@mask</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set mask with an numpy array</span>
 
 <span class="sd">        Parameters</span>
@@ -215,13 +215,13 @@
 
 <div class="viewcode-block" id="Factory.create_mask">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.create_mask">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create mask based on a mask template (raster or vector)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----</span>
-<span class="sd">        file_path: pathlib.Path | str</span>
-<span class="sd">            File path to mask vector raster file</span>
+<span class="sd">        mask: pathlib.Path | str</span>
+<span class="sd">            File path to mask vector or raster file</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -229,7 +229,9 @@
 <span class="sd">        to False, one needs to self-define a RasterProperties instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">valid_exists</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_rasterproperties</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">create_mask_vector</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">create_mask_raster</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_rasterproperties</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Define a &#39;RasterProperties&#39;-instance for the &quot;</span>
@@ -241,40 +243,58 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="n">create_mask_vector</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="n">RasterioIOError</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">DriverError</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Input mask should be raster or vector polygon file.&quot;</span>
+                <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_info</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DataSourceError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Input mask &#39;</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">&#39; should be raster or vector polygon file.&quot;</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_rasterproperties</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">define_extent_from_vct</span><span class="p">(</span>
-                        <span class="n">mask</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_epsg_code</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="n">tf_rst</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
-                    <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX_TEMP</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
+                <span class="n">create_mask_raster</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">create_mask_raster</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_rasterproperties</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">define_extent_from_vct</span><span class="p">(</span>
+                    <span class="n">mask</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_epsg_code</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">vct_to_rst_value</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">gdal_profile</span><span class="p">)</span>
-                <span class="n">arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">tf_rst</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">tf_rst</span><span class="p">,</span> <span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mask</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectorfile_mask</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vectorfile_mask</span><span class="p">)</span>
+
+            <span class="n">vct_to_rst_value</span><span class="p">(</span>
+                <span class="n">mask</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">gdal_profile</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+                <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">arr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int16&quot;</span><span class="p">)</span>
+            <span class="c1"># correct no data value if necessary</span>
+            <span class="k">if</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">:</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">==</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span>
+            <span class="n">write_arr_as_rst</span><span class="p">(</span>
+                <span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">create_mask_vector</span><span class="p">:</span>
             <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_rasterproperties</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_epsg_code</span><span class="p">)</span>
-            <span class="n">vct_mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)</span>
-            <span class="n">generate_vct_mask_from_raster_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">vct_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">vct_mask</span><span class="p">)</span>
+            <span class="n">generate_vct_mask_from_raster_mask</span><span class="p">(</span>
+                <span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectorfile_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vectorfile_mask</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_mask</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">RasterMemory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vct_mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_vector</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="s2">&quot;idrisi&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">arr_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="o">.</span><span class="n">arr</span>
         <span class="p">)</span>
@@ -285,7 +305,7 @@
 <div class="viewcode-block" id="Factory.raster_factory">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.raster_factory">[docs]</a>
     <span class="nd">@valid_mask_factory</span>
-    <span class="k">def</span> <span class="nf">raster_factory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">raster_factory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Raster factory to load rasters in memory</span>
@@ -299,7 +319,7 @@
 <span class="sd">        flag_mask: bool, default True</span>
 <span class="sd">            Mask raster (True)</span>
 <span class="sd">        allow_nodata_array: default False</span>
-<span class="sd">            Allow the returned array to only contian nodata-values,</span>
+<span class="sd">            Allow the returned array to only contain nodata-values,</span>
 <span class="sd">            see :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
 
 <span class="sd">        Returns</span>
@@ -335,14 +355,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">raster</span> <span class="o">=</span> <span class="n">TemporalRaster</span><span class="p">(</span><span class="n">raster_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">raster_input</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">raster_input</span><span class="p">)</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
             <span class="n">calframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="p">[</span><span class="n">cal</span><span class="o">.</span><span class="n">function</span> <span class="k">for</span> <span class="n">cal</span> <span class="ow">in</span> <span class="n">calframe</span><span class="p">]</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Input raster should be a numpy array or raster file, current type&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; is &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">raster_input</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">raster_input</span><span class="si">}</span><span class="s2">&#39; should be a numpy array or raster file, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;current type is &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">raster_input</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -352,8 +370,10 @@
 <div class="viewcode-block" id="Factory.vector_factory">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.vector_factory">[docs]</a>
     <span class="nd">@valid_mask_factory</span>
-    <span class="k">def</span> <span class="nf">vector_factory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vector factory to load rasters in memory</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vector_factory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vector factory to load vectors in memory</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -363,32 +383,57 @@
 <span class="sd">            Mask vector (True), nodata value will be that one of</span>
 <span class="sd">            `pywatemsedem.geo.factory.Factory.rp`.</span>
 <span class="sd">        allow_empty: bool, default False</span>
-<span class="sd">            Allow vector to be empty, see :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">            Allow vector to be empty, see</span>
+<span class="sd">            :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">        flag_clip: bool, default True</span>
+<span class="sd">            Clip vector to mask</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        vector: pywatemsedem.geo.rasters.AbstractRaster</span>
-<span class="sd">            See :class:`pywatemsedem.geo.rasters.AbstractRaster`</span>
+<span class="sd">        vector: pywatemsedem.geo.rasters.AbstractVector</span>
+<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">vector_input</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">vector_input</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">vector_input</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">fiona</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DriverError</span><span class="p">:</span>
+                <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_info</span><span class="p">(</span><span class="n">vector_input</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DataSourceError</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Input vector file &#39;</span><span class="si">{</span><span class="n">vector_input</span><span class="si">}</span><span class="s2">&#39; should be a valid &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;vector file (e.g. ESRI shape file).&quot;</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">flag_clip</span><span class="p">:</span>
+                <span class="n">clip_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_mask</span><span class="o">.</span><span class="n">file_path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">clip_mask</span> <span class="o">=</span> <span class="kc">None</span>
+
             <span class="n">vector</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span>
-                <span class="n">vector_input</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_vector</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span>
+                <span class="n">vector_input</span><span class="p">,</span>
+                <span class="n">geometry_type</span><span class="p">,</span>
+                <span class="n">vct_clip</span><span class="o">=</span><span class="n">clip_mask</span><span class="p">,</span>
+                <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
-            <span class="n">vector</span> <span class="o">=</span> <span class="n">VectorMemory</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">flag_clip</span><span class="p">:</span>
+                <span class="n">clip_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_mask</span><span class="o">.</span><span class="n">geodata</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">clip_mask</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">vector</span> <span class="o">=</span> <span class="n">VectorMemory</span><span class="p">(</span>
+                <span class="n">vector_input</span><span class="p">,</span>
+                <span class="n">geometry_type</span><span class="p">,</span>
+                <span class="n">clip_mask</span><span class="o">=</span><span class="n">clip_mask</span><span class="p">,</span>
+                <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Input vector should be a geopandas GeoDataFrame or vector file.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">vector_input</span><span class="si">}</span><span class="s2">&#39; should be a geopandas GeoDataFrame or vector&quot;</span>
+                <span class="s2">&quot; file.&quot;</span>
+            <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">vector</span></div>

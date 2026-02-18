@@ -6,23 +6,25 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Choices &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+  <title>User Choices &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="IO-module" href="io.html" />
+    <link rel="next" title="How to apply the user choices" href="choices.html" />
     <link rel="prev" title="Geo-module" href="geo.html" /> 
 </head>
 
@@ -58,57 +60,53 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User Choices</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pywatemsedem">pywatemsedem</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#options">Options</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#userprovidedktc">UserProvidedKTC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#l-model">L model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#s-model">S model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calculate-tillage-erosion">Calculate Tillage Erosion</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#extensions">Extensions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-ktc">Create kTC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#include-sewers">Include sewers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#usetillage">UseTillage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#createktc">CreateKtc</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-ktil-map">Create ktil map</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#estimate-clay-content">Estimate clay content</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#manual-outlet-selection">Manual outlet selection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#calibrate">Calibrate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#convert-output">Convert output</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#l-model">L model</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#s-model">S model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#adjusted-slope">Adjusted Slope</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#buffer-reduce-area">Buffer reduce area</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#force-routing">Force Routing</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#filterdtm">FilterDTM</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#river-routing">River Routing</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#bankgrassstrips">BankGrassStrips</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#calculate-tillage-erosion">Calculate Tillage Erosion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#include-buffers">Include buffers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#include-dams">Include dams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#include-ditches">Include ditches</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#ecm-options">ECM options</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#include-buffers-watem-sedem">Include buffers (WaTEM/SEDEM)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#usegras-pywatemsedem">UseGras (pywatemsedem)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#include-dams-watem-sedem">Include dams (WaTEM/SEDEM)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#include-ditches-watem-sedem">Include ditches (WaTEM/SEDEM)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#useteelttechn-pywatemsedem">UseTeelttechn (pywatemsedem)</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#variables">Variables</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#bulk-density">Bulk density</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ktc-low">ktc low</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ktc-high">ktc high</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ktc-limit">ktc limit</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ktil-default">ktil default</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ktil-threshold">ktil threshold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#parcel-connectivity-cropland">Parcel connectivity cropland</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parcel-connectivity-forest">Parcel connectivity forest</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parcel-trapping-efficiency-cropland">Parcel trapping efficiency cropland</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parcel-trapping-efficiency-forest">Parcel trapping efficiency forest</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parcel-trapping-efficiency-pasture">Parcel trapping efficiency pasture</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#clay-content-parent-material">Clay content parent material</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#r-factor">R factor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#max-kernel">Max kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#max-kernel-river">Max kernel river</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bulk-density">Bulk density</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters-extensions">Parameters extensions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ktc-low">ktc low</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ktc-high">ktc high</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ktc-limit">ktc limit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ktil-default">ktil default</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ktil-threshold">ktil threshold</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clay-content-parent-material">Clay content parent material</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#alpha">Alpha</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#beta">Beta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stream-velocity">Stream velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#final-timestep-output">Final timestep output</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#begin-jaar">begin_jaar</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#begin-maand">begin_maand</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#max-kernel">Max kernel</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#max-kernel-river">Max kernel river</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#sewerinleteff">SewerInletEff</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sewer-exit">Sewer exit</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ls-correction">LS correction</a></li>
 </ul>
@@ -132,6 +130,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -169,24 +168,24 @@
            <div itemprop="articleBody">
              
   <section id="user-choices">
-<h1>User Choices<a class="headerlink" href="#user-choices" title="Link to this heading">¶</a></h1>
+<h1>User Choices<a class="headerlink" href="#user-choices" title="Link to this heading"></a></h1>
 <section id="pywatemsedem">
-<h2>pywatemsedem<a class="headerlink" href="#pywatemsedem" title="Link to this heading">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p>Options: holding general options coupled to the general data processing
-and model run.</p></li>
-<li><p>Erosion control measure options (ECM options): holding options related to
-erosion control measures.</p></li>
-<li><p>Variables: holding values for model variables and parameters.</p></li>
-<li><p>Output: holding options for the WaTEM/SEDEM model output.</p></li>
+<h2>pywatemsedem<a class="headerlink" href="#pywatemsedem" title="Link to this heading"></a></h2>
+<p>pywatemsedem uses the same structure for user input as WaTEM/SEDEM. This
+implies that user choices are grouped in the same way as in WaTEM/SEDEM. As such,
+user choices are grouped in the following sets:</p>
+<ul class="simple">
+<li><p>Options: configuration of basic model functionalities (e.g. which model equations to use)</p></li>
+<li><p>Parameters: basic model parameters (e.g. bulk density, kTC values)</p></li>
+<li><p>Output: which output to generate</p></li>
+<li><p>Extensions: enabling/disabling extra model functionalities</p></li>
+<li><p>Extension parameters: extra parameters needed when extensions are enabled</p></li>
 </ul>
-</div></blockquote>
 <p>Standard values for the first four sets are given in the last section of
 this page, listed per model resolution.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>It is important to note that a number of the pywatemsedem options hold
+<p>It is important to note that all the pywatemsedem user choices hold
 functionalities that are inherited from the WaTEM/SEDEM model (see
 <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#modelinput" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">model parameters in WaTEM/SEDEM documentation page</span></a>).
 As such many of these options hold the same key, but another
@@ -196,273 +195,244 @@ WaTEM/SEDEM model, then this is indicated in the text (indicated with
 same, then a link to the documentation of WaTEM/SEDEM is presented (indicated
 with <em>see ..</em>).</p>
 </div>
+<p>We refer to <a class="reference internal" href="choices.html"><span class="doc">the example notebook on how to use the user choices</span></a></p>
 <section id="options">
-<h3>Options<a class="headerlink" href="#options" title="Link to this heading">¶</a></h3>
-<section id="userprovidedktc">
-<h4>UserProvidedKTC<a class="headerlink" href="#userprovidedktc" title="Link to this heading">¶</a></h4>
-<p>This option indicates whether a User provided kTC value is used, and whether
-WaTEM/SEDEM needs to generate a kTC value by itself. Typically, this option is set to
-<cite>1</cite> when a <strong>WaTEM/SEDEM simulation for scenario analysis</strong> is done - in this case, a
-kTC map will be generated by the pywatemsedem engine - and is set to <cite>0</cite> when a
-<strong>WaTEM/SEDEM calibration</strong> is done - in this case, kTC maps are generated  by the
-WaTEM/SEDEM engine.</p>
-</section>
-<section id="include-sewers">
-<h4>Include sewers<a class="headerlink" href="#include-sewers" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#inlcudesewers" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="usetillage">
-<h4>UseTillage<a class="headerlink" href="#usetillage" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#calctileros" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="createktc">
-<h4>CreateKtc<a class="headerlink" href="#createktc" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#createktc" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="create-ktil-map">
-<h4>Create ktil map<a class="headerlink" href="#create-ktil-map" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#createktil" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="estimate-clay-content">
-<h4>Estimate clay content<a class="headerlink" href="#estimate-clay-content" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#estimclay" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="manual-outlet-selection">
-<h4>Manual outlet selection<a class="headerlink" href="#manual-outlet-selection" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#manualoutlet" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="calibrate">
-<h4>Calibrate<a class="headerlink" href="#calibrate" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#calibrate" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="convert-output">
-<h4>Convert output<a class="headerlink" href="#convert-output" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <span class="xref std std-ref">here</span></p>
-</section>
+<h3>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h3>
 <section id="l-model">
-<h4>L model<a class="headerlink" href="#l-model" title="Link to this heading">¶</a></h4>
+<h4>L model<a class="headerlink" href="#l-model" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#lmodel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="s-model">
-<h4>S model<a class="headerlink" href="#s-model" title="Link to this heading">¶</a></h4>
+<h4>S model<a class="headerlink" href="#s-model" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#smodel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
+<section id="calculate-tillage-erosion">
+<h4>Calculate Tillage Erosion<a class="headerlink" href="#calculate-tillage-erosion" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includetillagedirection" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+</section>
+<section id="extensions">
+<h3>Extensions<a class="headerlink" href="#extensions" title="Link to this heading"></a></h3>
+<section id="create-ktc">
+<h4>Create kTC<a class="headerlink" href="#create-ktc" title="Link to this heading"></a></h4>
+<p>This option indicates whether a User provided kTC map is used, and whether
+WaTEM/SEDEM needs to generate a kTC value by itself. Typically, this option is set to
+<cite>0</cite> when a <strong>WaTEM/SEDEM simulation for scenario analysis</strong> is done - in this case, a
+kTC map will be generated by the pywatemsedem engine - and is set to <cite>1</cite> when a
+<strong>WaTEM/SEDEM calibration</strong> is done - in this case, kTC maps are generated  by the
+WaTEM/SEDEM engine.</p>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#createktc" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="include-sewers">
+<h4>Include sewers<a class="headerlink" href="#include-sewers" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#inlcudesewers" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="usetillage">
+<h4>UseTillage<a class="headerlink" href="#usetillage" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#calctileros" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="create-ktil-map">
+<h4>Create ktil map<a class="headerlink" href="#create-ktil-map" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#createktil" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="estimate-clay-content">
+<h4>Estimate clay content<a class="headerlink" href="#estimate-clay-content" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#estimclay" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="manual-outlet-selection">
+<h4>Manual outlet selection<a class="headerlink" href="#manual-outlet-selection" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#manualoutlet" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="calibrate">
+<h4>Calibrate<a class="headerlink" href="#calibrate" title="Link to this heading"></a></h4>
+<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#calibrate" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
 <section id="adjusted-slope">
-<h4>Adjusted Slope<a class="headerlink" href="#adjusted-slope" title="Link to this heading">¶</a></h4>
+<h4>Adjusted Slope<a class="headerlink" href="#adjusted-slope" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#adjustslope" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="buffer-reduce-area">
-<h4>Buffer reduce area<a class="headerlink" href="#buffer-reduce-area" title="Link to this heading">¶</a></h4>
+<h4>Buffer reduce area<a class="headerlink" href="#buffer-reduce-area" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#bufferreduce" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="force-routing">
-<h4>Force Routing<a class="headerlink" href="#force-routing" title="Link to this heading">¶</a></h4>
+<h4>Force Routing<a class="headerlink" href="#force-routing" title="Link to this heading"></a></h4>
 <p>This options allows to use  user-defined routing. This functions is useful
 for situations where it is known from expert knowledge that the general
 flow pattern is incorrect.</p>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#forcerouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="filterdtm">
-<h4>FilterDTM<a class="headerlink" href="#filterdtm" title="Link to this heading">¶</a></h4>
-<p>Filter the digital elevation model with a 3x3 average filter which takes into
-account the parcel boundaries (i.e. only averaging within parcel boundaries).</p>
-</section>
 <section id="river-routing">
-<h4>River Routing<a class="headerlink" href="#river-routing" title="Link to this heading">¶</a></h4>
+<h4>River Routing<a class="headerlink" href="#river-routing" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#riverrouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="bankgrassstrips">
-<h4>BankGrassStrips<a class="headerlink" href="#bankgrassstrips" title="Link to this heading">¶</a></h4>
-<p>This option defines gras bank strips at the side of the river for every
-river-adjancent agricultural parcel (with the land cover equal to agriculture).</p>
-</section>
-<section id="calculate-tillage-erosion">
-<h4>Calculate Tillage Erosion<a class="headerlink" href="#calculate-tillage-erosion" title="Link to this heading">¶</a></h4>
-<p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includetillagedirection" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-</section>
-<section id="ecm-options">
-<h3>ECM options<a class="headerlink" href="#ecm-options" title="Link to this heading">¶</a></h3>
-<section id="include-buffers-watem-sedem">
-<h4>Include buffers (WaTEM/SEDEM)<a class="headerlink" href="#include-buffers-watem-sedem" title="Link to this heading">¶</a></h4>
+<section id="include-buffers">
+<h4>Include buffers<a class="headerlink" href="#include-buffers" title="Link to this heading"></a></h4>
 <p>Load and translate buffer shapefiles to WaTEM/SEDEM buffer rasters. Consider
 buffers for WaTEM/SEDEM model simulation. For functionality in WaTEM/SEDEM pascal, see
 <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includebuffers" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="usegras-pywatemsedem">
-<h4>UseGras (pywatemsedem)<a class="headerlink" href="#usegras-pywatemsedem" title="Link to this heading">¶</a></h4>
-<p>Load and translate grass strips shapefiles to WaTEM/SEDEM grass rasters. Grass strips
-are considered in WaTEM/SEDEM via the WaTEM/SEDEM parcel raster (see
-<a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#prcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>).</p>
-</section>
-<section id="include-dams-watem-sedem">
-<h4>Include dams (WaTEM/SEDEM)<a class="headerlink" href="#include-dams-watem-sedem" title="Link to this heading">¶</a></h4>
+<section id="include-dams">
+<h4>Include dams<a class="headerlink" href="#include-dams" title="Link to this heading"></a></h4>
 <p>Load and translate buffer shapefiles to WaTEM/SEDEM grass rasters. Consider grass
 for WaTEM/SEDEM model simulation. For functionality in WaTEM/SEDEM pascal, see
 <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includedams" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="include-ditches-watem-sedem">
-<h4>Include ditches (WaTEM/SEDEM)<a class="headerlink" href="#include-ditches-watem-sedem" title="Link to this heading">¶</a></h4>
+<section id="include-ditches">
+<h4>Include ditches<a class="headerlink" href="#include-ditches" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includeditches" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="useteelttechn-pywatemsedem">
-<h4>UseTeelttechn (pywatemsedem)<a class="headerlink" href="#useteelttechn-pywatemsedem" title="Link to this heading">¶</a></h4>
-<p>Make use of crop-technical measures. These are defined at the level of parcel
-polygons, and reduce the C-factor.</p>
 </section>
-</section>
-<section id="variables">
-<h3>Variables<a class="headerlink" href="#variables" title="Link to this heading">¶</a></h3>
-<section id="bulk-density">
-<h4>Bulk density<a class="headerlink" href="#bulk-density" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#bulkdensity" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>:</p>
-</section>
-<section id="ktc-low">
-<h4>ktc low<a class="headerlink" href="#ktc-low" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclow" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="ktc-high">
-<h4>ktc high<a class="headerlink" href="#ktc-high" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktchigh" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="ktc-limit">
-<h4>ktc limit<a class="headerlink" href="#ktc-limit" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclimit" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="ktil-default">
-<h4>ktil default<a class="headerlink" href="#ktil-default" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktildefault" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="ktil-threshold">
-<h4>ktil threshold<a class="headerlink" href="#ktil-threshold" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktilthres" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
 <section id="parcel-connectivity-cropland">
-<h4>Parcel connectivity cropland<a class="headerlink" href="#parcel-connectivity-cropland" title="Link to this heading">¶</a></h4>
+<h4>Parcel connectivity cropland<a class="headerlink" href="#parcel-connectivity-cropland" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parcelconncrop" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="parcel-connectivity-forest">
-<h4>Parcel connectivity forest<a class="headerlink" href="#parcel-connectivity-forest" title="Link to this heading">¶</a></h4>
+<h4>Parcel connectivity forest<a class="headerlink" href="#parcel-connectivity-forest" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parcelconnforest" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="parcel-trapping-efficiency-cropland">
-<h4>Parcel trapping efficiency cropland<a class="headerlink" href="#parcel-trapping-efficiency-cropland" title="Link to this heading">¶</a></h4>
+<h4>Parcel trapping efficiency cropland<a class="headerlink" href="#parcel-trapping-efficiency-cropland" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrapppingcrop" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="parcel-trapping-efficiency-forest">
-<h4>Parcel trapping efficiency forest<a class="headerlink" href="#parcel-trapping-efficiency-forest" title="Link to this heading">¶</a></h4>
+<h4>Parcel trapping efficiency forest<a class="headerlink" href="#parcel-trapping-efficiency-forest" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrappingforest" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="parcel-trapping-efficiency-pasture">
-<h4>Parcel trapping efficiency pasture<a class="headerlink" href="#parcel-trapping-efficiency-pasture" title="Link to this heading">¶</a></h4>
+<h4>Parcel trapping efficiency pasture<a class="headerlink" href="#parcel-trapping-efficiency-pasture" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrappingpasture" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="clay-content-parent-material">
-<h4>Clay content parent material<a class="headerlink" href="#clay-content-parent-material" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#claycontent" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
 <section id="r-factor">
-<h4>R factor<a class="headerlink" href="#r-factor" title="Link to this heading">¶</a></h4>
+<h4>R factor<a class="headerlink" href="#r-factor" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#rfactor-var" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="alpha">
-<h4>Alpha<a class="headerlink" href="#alpha" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#alpha" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="beta">
-<h4>Beta<a class="headerlink" href="#beta" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#beta" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="stream-velocity">
-<h4>Stream velocity<a class="headerlink" href="#stream-velocity" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#streamvelocity" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="final-timestep-output">
-<h4>Final timestep output<a class="headerlink" href="#final-timestep-output" title="Link to this heading">¶</a></h4>
-<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#timestep" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="begin-jaar">
-<h4>begin_jaar<a class="headerlink" href="#begin-jaar" title="Link to this heading">¶</a></h4>
-<p>(begin) Year of simulation (in development).</p>
-</section>
-<section id="begin-maand">
-<h4>begin_maand<a class="headerlink" href="#begin-maand" title="Link to this heading">¶</a></h4>
-<p>(begin) Month of simulation (in development).</p>
-</section>
 <section id="max-kernel">
-<h4>Max kernel<a class="headerlink" href="#max-kernel" title="Link to this heading">¶</a></h4>
+<h4>Max kernel<a class="headerlink" href="#max-kernel" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#maxkernel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="max-kernel-river">
-<h4>Max kernel river<a class="headerlink" href="#max-kernel-river" title="Link to this heading">¶</a></h4>
+<h4>Max kernel river<a class="headerlink" href="#max-kernel-river" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#maxkernelriver" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="sewerinleteff">
-<h4>SewerInletEff<a class="headerlink" href="#sewerinleteff" title="Link to this heading">¶</a></h4>
-<p>Used to define efficiency inlet, mapped to raster. For functionality of
-sewer raster in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#inlcudesewers" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+<section id="bulk-density">
+<h4>Bulk density<a class="headerlink" href="#bulk-density" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#bulkdensity" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>:</p>
+</section>
+</section>
+<section id="parameters-extensions">
+<h3>Parameters extensions<a class="headerlink" href="#parameters-extensions" title="Link to this heading"></a></h3>
+<section id="ktc-low">
+<h4>ktc low<a class="headerlink" href="#ktc-low" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclow" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="ktc-high">
+<h4>ktc high<a class="headerlink" href="#ktc-high" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktchigh" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="ktc-limit">
+<h4>ktc limit<a class="headerlink" href="#ktc-limit" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclimit" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="ktil-default">
+<h4>ktil default<a class="headerlink" href="#ktil-default" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktildefault" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="ktil-threshold">
+<h4>ktil threshold<a class="headerlink" href="#ktil-threshold" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktilthres" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="clay-content-parent-material">
+<h4>Clay content parent material<a class="headerlink" href="#clay-content-parent-material" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#claycontent" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="alpha">
+<h4>Alpha<a class="headerlink" href="#alpha" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#alpha" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="beta">
+<h4>Beta<a class="headerlink" href="#beta" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#beta" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="stream-velocity">
+<h4>Stream velocity<a class="headerlink" href="#stream-velocity" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#streamvelocity" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="final-timestep-output">
+<h4>Final timestep output<a class="headerlink" href="#final-timestep-output" title="Link to this heading"></a></h4>
+<p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#timestep" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
+</section>
+<section id="begin-jaar">
+<h4>begin_jaar<a class="headerlink" href="#begin-jaar" title="Link to this heading"></a></h4>
+<p>(begin) Year of simulation (in development).</p>
+</section>
+<section id="begin-maand">
+<h4>begin_maand<a class="headerlink" href="#begin-maand" title="Link to this heading"></a></h4>
+<p>(begin) Month of simulation (in development).</p>
 </section>
 <section id="sewer-exit">
-<h4>Sewer exit<a class="headerlink" href="#sewer-exit" title="Link to this heading">¶</a></h4>
+<h4>Sewer exit<a class="headerlink" href="#sewer-exit" title="Link to this heading"></a></h4>
 <p>Only CN. For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#sewerexit" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="ls-correction">
-<h4>LS correction<a class="headerlink" href="#ls-correction" title="Link to this heading">¶</a></h4>
+<h4>LS correction<a class="headerlink" href="#ls-correction" title="Link to this heading"></a></h4>
 <p>For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#lscorrection" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 </section>
 <section id="output">
-<h3>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h3>
+<h3>Output<a class="headerlink" href="#output" title="Link to this heading"></a></h3>
 <p>The output options below are all inherited by WaTEM/SEDEM. This implies that the
 keys and functionalities of these options in pywatemsedem and WaTEM/SEDEM are exactly the
 same. For an explanation of these functionalities, we refer to the
 <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/">WaTEM/SEDEM documentation page</a></p>
 <section id="write-aspect">
-<h4>Write aspect<a class="headerlink" href="#write-aspect" title="Link to this heading">¶</a></h4>
+<h4>Write aspect<a class="headerlink" href="#write-aspect" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeaspect" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-ls-factor">
-<h4>Write LS factor<a class="headerlink" href="#write-ls-factor" title="Link to this heading">¶</a></h4>
+<h4>Write LS factor<a class="headerlink" href="#write-ls-factor" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writels" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-rusle">
-<h4>Write RUSLE<a class="headerlink" href="#write-rusle" title="Link to this heading">¶</a></h4>
+<h4>Write RUSLE<a class="headerlink" href="#write-rusle" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerusle" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-sediment-export">
-<h4>Write sediment export<a class="headerlink" href="#write-sediment-export" title="Link to this heading">¶</a></h4>
+<h4>Write sediment export<a class="headerlink" href="#write-sediment-export" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writesedexport" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-slope">
-<h4>Write slope<a class="headerlink" href="#write-slope" title="Link to this heading">¶</a></h4>
+<h4>Write slope<a class="headerlink" href="#write-slope" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeslope" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-total-runoff">
-<h4>Write total runoff<a class="headerlink" href="#write-total-runoff" title="Link to this heading">¶</a></h4>
+<h4>Write total runoff<a class="headerlink" href="#write-total-runoff" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#writetotalrunoff" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-upstream-area">
-<h4>Write upstream area<a class="headerlink" href="#write-upstream-area" title="Link to this heading">¶</a></h4>
+<h4>Write upstream area<a class="headerlink" href="#write-upstream-area" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeuparea" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-water-erosion">
-<h4>Write water erosion<a class="headerlink" href="#write-water-erosion" title="Link to this heading">¶</a></h4>
+<h4>Write water erosion<a class="headerlink" href="#write-water-erosion" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerwatereros" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="output-per-river-segment">
-<h4>Output per river segment<a class="headerlink" href="#output-per-river-segment" title="Link to this heading">¶</a></h4>
+<h4>Output per river segment<a class="headerlink" href="#output-per-river-segment" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#outputsegment" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-rainfall-excess">
-<h4>Write rainfall excess<a class="headerlink" href="#write-rainfall-excess" title="Link to this heading">¶</a></h4>
+<h4>Write rainfall excess<a class="headerlink" href="#write-rainfall-excess" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#writerainfallexcess" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="write-routing-table">
-<h4>Write routing table<a class="headerlink" href="#write-routing-table" title="Link to this heading">¶</a></h4>
+<h4>Write routing table<a class="headerlink" href="#write-routing-table" title="Link to this heading"></a></h4>
 <p>see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
 <section id="maximize-grass-strips-maximize-grass-strips">
-<h4>Maximize grass strips (maximize_grass_strips)<a class="headerlink" href="#maximize-grass-strips-maximize-grass-strips" title="Link to this heading">¶</a></h4>
+<h4>Maximize grass strips (maximize_grass_strips)<a class="headerlink" href="#maximize-grass-strips-maximize-grass-strips" title="Link to this heading"></a></h4>
 <p>The option (boolean) enable the maximisation of for grass strips in the WaTEM/SEDEM
 parcels raster. In essence, with this option, the
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.grasstrips.expand_grass_strips_with_triggers()</span></code>-function is
@@ -487,7 +457,7 @@ of 20 m.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="geo.html" class="btn btn-neutral float-left" title="Geo-module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="io.html" class="btn btn-neutral float-right" title="IO-module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="choices.html" class="btn btn-neutral float-right" title="How to apply the user choices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

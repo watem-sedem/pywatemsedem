@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.buffers &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.buffers &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,16 +93,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.buffers</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="process_buffer_outlets">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.buffers.process_buffer_outlets">[docs]</a>
-<span class="k">def</span> <span class="nf">process_buffer_outlets</span><span class="p">(</span><span class="n">gdf_outlets</span><span class="p">,</span> <span class="n">gdf_buffer</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_buffer_outlets</span><span class="p">(</span><span class="n">gdf_outlets</span><span class="p">,</span> <span class="n">gdf_buffer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Map user-defined outlets to buffers.</span>
 
 <span class="sd">    This function maps outlets to buffer id&#39;s based on the overlap between the outlet</span>
@@ -142,7 +145,7 @@
 
 <div class="viewcode-block" id="filter_outlets_in_arr_extension_id">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.buffers.filter_outlets_in_arr_extension_id">[docs]</a>
-<span class="k">def</span> <span class="nf">filter_outlets_in_arr_extension_id</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_dtm</span><span class="p">,</span> <span class="n">arr_outlet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_outlets_in_arr_extension_id</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_dtm</span><span class="p">,</span> <span class="n">arr_outlet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Map buffer outlet on extension id raster</span>
 
 <span class="sd">    This function filters outlet id&#39;s to single outlet id, for every buffer. The</span>
@@ -191,7 +194,7 @@
 
 <div class="viewcode-block" id="process_buffers_in_river">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.buffers.process_buffers_in_river">[docs]</a>
-<span class="k">def</span> <span class="nf">process_buffers_in_river</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_river</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_buffers_in_river</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_river</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This functions filters buffers from the buffer raster that overlap with a</span>
 <span class="sd">    river</span>
 

@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.plots &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.io.plots &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,19 +93,19 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.io.plots</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mplcolors</span>
-<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mplcolors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">..geo.utils</span> <span class="kn">import</span> <span class="n">mask_array_with_val</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask_array_with_val</span>
 
 
 <div class="viewcode-block" id="plot_continuous_raster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.plot_continuous_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_continuous_raster</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_continuous_raster</span><span class="p">(</span>
     <span class="n">fig</span><span class="p">,</span>
     <span class="n">ax</span><span class="p">,</span>
     <span class="n">arr</span><span class="p">,</span>
@@ -162,7 +165,7 @@
 
 <div class="viewcode-block" id="plot_discrete_raster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.plot_discrete_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_discrete_raster</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_discrete_raster</span><span class="p">(</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;cividis&quot;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -220,7 +223,7 @@
 
 <div class="viewcode-block" id="plot_output_raster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.plot_output_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_output_raster</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_output_raster</span><span class="p">(</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard non-linear continuous raster plot for output raster</span>
@@ -272,7 +275,7 @@
 
 <div class="viewcode-block" id="log_scale_enabler">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.log_scale_enabler">[docs]</a>
-<span class="k">def</span> <span class="nf">log_scale_enabler</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cnorm</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_scale_enabler</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cnorm</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if log scale is supplied.</span>
 <span class="sd">    If minimum is lower or equal to zero,</span>
 <span class="sd">    changes lower bound to smallest value above zero.</span>
@@ -302,7 +305,7 @@
 
 <div class="viewcode-block" id="axes_creator">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.axes_creator">[docs]</a>
-<span class="k">def</span> <span class="nf">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates fig and ax object if none ar given</span>
 
 <span class="sd">    Parameters</span>
@@ -326,7 +329,7 @@
 
 <div class="viewcode-block" id="normalising_function">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.plots.normalising_function">[docs]</a>
-<span class="k">def</span> <span class="nf">normalising_function</span><span class="p">(</span><span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalising_function</span><span class="p">(</span><span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom normalisation function for maptlotlib plotting</span>
 
 <span class="sd">    Parameters</span>
@@ -359,7 +362,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom forward normalisation function</span>
 <span class="sd">    performs uniform interpolation between percentiles</span>
 
@@ -396,7 +399,7 @@
     <span class="k">return</span> <span class="n">y</span>
 
 
-<span class="k">def</span> <span class="nf">_inverse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_inverse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">mini</span><span class="p">,</span> <span class="n">Q25</span><span class="p">,</span> <span class="n">Q50</span><span class="p">,</span> <span class="n">Q75</span><span class="p">,</span> <span class="n">maxi</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom inverse normalisation function</span>
 <span class="sd">    performs uniform interpolation between percentiles</span>
 

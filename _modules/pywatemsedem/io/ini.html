@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.ini &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.io.ini &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,13 +93,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.io.ini</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">configparser</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.templates</span> <span class="kn">import</span> <span class="n">InputFileName</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.templates</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputFileName</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -105,58 +108,69 @@
 
 <div class="viewcode-block" id="IniFile">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile">[docs]</a>
-<span class="k">class</span> <span class="nc">IniFile</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IniFile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create WaTEM/SEDEM ini-file</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    choices: pywatemsedem.pywatemsedem.chocies.UserChoices</span>
-<span class="sd">        See :class:`pywatemsedem.pywatemsedem.userchoices.UserChoices`</span>
-<span class="sd">    version: str</span>
-<span class="sd">        Model version</span>
 <span class="sd">    inputfolder: pathlib.Path</span>
 <span class="sd">        WaTEM/SEDEM inputfolder</span>
 <span class="sd">    outputfolder: pathlib.Path</span>
 <span class="sd">        WaTEM/SEDEM outputfolder</span>
+<span class="sd">    choices: pywatemsedem.choices.Choices</span>
+<span class="sd">        choices object containing all user input</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; choices = Choices(...)</span>
 <span class="sd">    &gt;&gt;&gt; forced_routing = ...</span>
 <span class="sd">    &gt;&gt;&gt; buffers = ...</span>
-<span class="sd">    &gt;&gt;&gt; inifile = IniFile(choices,&quot;WS&quot;,&quot;modelinput&quot;,&quot;modeloutput&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; inifile = IniFile(&quot;modelinput&quot;,&quot;modeloutput&quot;,choices)</span>
 <span class="sd">    &gt;&gt;&gt; inifile.add_model_information()</span>
 <span class="sd">    &gt;&gt;&gt; inifile.add_working_directories()</span>
 <span class="sd">    &gt;&gt;&gt; inifile.add_files()</span>
-<span class="sd">    &gt;&gt;&gt; inifile.add_user_choices()</span>
-<span class="sd">    &gt;&gt;&gt; inifile.add_output_maps()</span>
-<span class="sd">    &gt;&gt;&gt; inifile.add_variables(buffers, forced_routing, river_underground)</span>
+<span class="sd">    &gt;&gt;&gt; inifile.add_parameters()</span>
+<span class="sd">    &gt;&gt;&gt; inifile.add_options()</span>
+<span class="sd">    &gt;&gt;&gt; inifile.add_output()</span>
+<span class="sd">    &gt;&gt;&gt; inifile.add_extensions(buffers, forced_routing, river_underground)</span>
 <span class="sd">    &gt;&gt;&gt; inifile.write(&quot;modelinput/ini_file.ini&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">inputfolder</span><span class="p">,</span> <span class="n">outputfolder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfolder</span><span class="p">,</span> <span class="n">outputfolder</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an ini-file for the scenario&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">=</span> <span class="n">inputfolder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cnwsoutput_folder</span> <span class="o">=</span> <span class="n">outputfolder</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
 
 <div class="viewcode-block" id="IniFile.write">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.write">[docs]</a>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write ini file to disk&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="IniFile.add_sections">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_sections">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Model information&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Working directories&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Files&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Parameters&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Extensions&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="IniFile.add_model_information">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_model_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_model_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_model_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section model information to config file&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Model information&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Model information&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Date&quot;</span><span class="p">,</span>
@@ -166,9 +180,8 @@
 
 <div class="viewcode-block" id="IniFile.add_working_directories">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_working_directories">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_working_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_working_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section working directory to config file&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Working directories&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Working directories&quot;</span><span class="p">,</span> <span class="s2">&quot;Input directory&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span><span class="p">)</span>
         <span class="p">)</span>
@@ -181,9 +194,8 @@
 
 <div class="viewcode-block" id="IniFile.add_files">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_files">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section files to config file&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Files&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
             <span class="s2">&quot;DTM filename&quot;</span><span class="p">,</span>
@@ -205,93 +217,58 @@
             <span class="s2">&quot;Parcel filename&quot;</span><span class="p">,</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">parcelmosaic_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">!=</span> <span class="s2">&quot;Only Routing&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">only_routing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;C factor map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cfactor_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;K factor filename&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">kfactor_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Ini-file for version &#39;Only Routing&#39; not implemented.&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="IniFile.add_user_choices">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_user_choices">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_user_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section user choices to config file&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;User Choices&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;Max kernel&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Max kernel&quot;</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Max kernel river&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Max kernel river&quot;</span><span class="p">]),</span>
-        <span class="p">)</span></div>
+<div class="viewcode-block" id="IniFile.add_parameters">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section parameters to config file&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Parameters&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="IniFile.add_output_maps">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_output_maps">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_output_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IniFile.add_output">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section outputs config file&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Output maps&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span> <span class="s2">&quot;Write aspect&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write aspect&quot;</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write LS factor&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write LS factor&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write rainfall excess&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write rainfall excess&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span> <span class="s2">&quot;Write RUSLE&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write RUSLE&quot;</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write sediment export&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write sediment export&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span> <span class="s2">&quot;Write slope&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write slope&quot;</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write total runoff&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write total runoff&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write upstream area&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write upstream area&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write water erosion&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write water erosion&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write routing table&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write routing table&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Output maps&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Write routing column/row&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Write routing table&quot;</span><span class="p">]),</span>
-        <span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="IniFile.add_variables">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_variables">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffers</span><span class="p">,</span> <span class="n">forced_routing</span><span class="p">,</span> <span class="n">river_underground</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section variables to config file</span>
+<div class="viewcode-block" id="IniFile.add_options">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_options">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds specified model options to the configuration.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">options</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="IniFile.add_extensions">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_extensions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffers</span><span class="p">,</span> <span class="n">forced_routing</span><span class="p">,</span> <span class="n">river_underground</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section parameters and parameters extensions to config file</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -309,7 +286,8 @@
 <span class="sd">            - *BUF_ID* (float): Buffer id</span>
 
 <span class="sd">        forced_routing: pandas.DataFrame</span>
-<span class="sd">            Forced routing table with columns, see :ref:`here &lt;watemsedem:forcedroutingdata&gt;`</span>
+<span class="sd">            Forced routing table with columns,</span>
+<span class="sd">            see :ref:`here &lt;watemsedem:forcedroutingdata&gt;`</span>
 
 <span class="sd">            - *NR* (int):</span>
 <span class="sd">            - *from col* (int): source pixel column</span>
@@ -327,153 +305,235 @@
 <span class="sd">            - *target col* (int): target pixel column</span>
 <span class="sd">            - *target row* (int): target pixel row</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Variables&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_river_segment_output_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_clay_content_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_manual_outlet_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_ditches_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_dams_extensions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_sewer_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_ditches_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_clay_content_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_cn_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_ktil_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_ktc_and_calibration_extensions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_river_routing_extension</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_include_buffer_extension</span><span class="p">(</span><span class="n">buffers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_force_routing_extension</span><span class="p">(</span><span class="n">forced_routing</span><span class="p">,</span> <span class="n">river_underground</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Parcel connectivity grasstrips&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Parcel connectivity grasstrips&quot;</span><span class="p">])),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Parcel connectivity cropland&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Parcel connectivity cropland&quot;</span><span class="p">])),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Parcel connectivity forest&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Parcel connectivity forest&quot;</span><span class="p">])),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Parcel trapping efficiency cropland&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span>
-                <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Parcel trapping efficiency cropland&quot;</span><span class="p">])</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Parcel trapping efficiency forest&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Parcel trapping efficiency forest&quot;</span><span class="p">])),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Parcel trapping efficiency pasture&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Parcel trapping efficiency pasture&quot;</span><span class="p">])),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
             <span class="s2">&quot;LS correction&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;LS correction&quot;</span><span class="p">]),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ls_correction</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_cfg_model_version</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Adjusted Slope&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">adjusted_slope</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Buffer reduce Area&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">buffer_reduce_area</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+        <span class="p">)</span></div>
 
-        <span class="c1"># output per rivier segment?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Output per river segment&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_output</span><span class="p">[</span><span class="s2">&quot;Output per river segment&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="c1"># if self.choices.dict_output[&quot;Output per river segment&quot;] == 1:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;River segment filename&quot;</span><span class="p">,</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">segments_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="p">)</span>
 
-        <span class="c1"># manual outlet</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Manual outlet selection&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Manual outlet selection&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Manual outlet selection&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<div class="viewcode-block" id="IniFile.add_river_segment_output_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_river_segment_output_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_river_segment_output_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add output per river segment extension to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">output_per_river_segment</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># output per rivier segment?</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;Output per river segment&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;River segment filename&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">segments_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IniFile.add_manual_outlet_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_manual_outlet_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_manual_outlet_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add manual outlet selection extension to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">manual_outlet_selection</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># manual outlet</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Manual outlet selection&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Outlet map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">outlet_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IniFile.add_clay_content_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_clay_content_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_clay_content_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add clay content estimation extension to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">estimate_clay_content</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># estimate clay content extenison</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Estimate clay content&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_cfg_only_routing</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Clay content parent material&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">clay_content_parent_material</span><span class="p">)),</span>
+            <span class="p">)</span></div>
 
-        <span class="c1"># Grachten gebruiken?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Include ditches&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include ditches&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include ditches&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IniFile.add_ditches_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_ditches_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ditches_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add ditches extension to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_ditches</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># Include ditches</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Include ditches&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Ditch map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ditches_files</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
-        <span class="c1"># Geleidende dammen gebruiken?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Include dams&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include dams&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include dams&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IniFile.add_dams_extensions">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_dams_extensions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_dams_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;add dams extension to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_dams</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># Include dams</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;Include dams&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Dam map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">conductivedams_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
-        <span class="c1"># Using sewers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Include sewers&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Include sewers&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Include sewers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IniFile.add_sewer_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_sewer_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_sewer_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add sewer extension to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_sewers</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="c1"># Include sewers</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Include sewers&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Sewer exit&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Sewer exit&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">sewer_exit</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Sewer map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">endpoints_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
-        <span class="c1"># Using buffers in model?</span>
+
+<div class="viewcode-block" id="IniFile.add_include_buffer_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_include_buffer_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_include_buffer_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffers</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add buffer extension and buffer parameters to config file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        buffers: pandas.DataFrame</span>
+<span class="sd">            Holding buffer properties, with columns,</span>
+
+<span class="sd">            - *buffercap* (float): Volume</span>
+<span class="sd">            - *hdam* (float): Height dam</span>
+<span class="sd">            - *hknijp^* (float): Height opening</span>
+<span class="sd">            - *dknijp* (float): Opening area</span>
+<span class="sd">            - *qcoef* (float): Discharge coefficient</span>
+<span class="sd">            - *boverl* (float): Width dam</span>
+<span class="sd">            - *eff* (float): Trapping efficiency</span>
+<span class="sd">            - *BUF_EXID* (float): Extension ID</span>
+<span class="sd">            - *BUF_ID* (float): Buffer id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Include buffers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Include buffers&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include buffers&quot;</span><span class="p">]),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_buffers</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_ecm_options</span><span class="p">[</span><span class="s2">&quot;Include buffers&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_buffers</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="n">buffers</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">buffers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">buffers</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Buffer map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">buffers_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span> <span class="s2">&quot;Number of buffers&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buffers</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;Number of buffers&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buffers</span><span class="p">))</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffers</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">buffers</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-                    <span class="n">sectie</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Buffer </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;buf_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="n">sectie</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Volume&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;buffercap&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Height dam&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;hdam&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Height opening&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;hknijp&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Opening area&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;dknijp&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Discharge coefficient&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;qcoef&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Width dam&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;boverl&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Trapping efficiency&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;eff&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;Extension ID&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;buf_exid&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Buffer </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;buf_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Volume&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;buffercap&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Height dam&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;hdam&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Height opening&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;hknijp&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Opening area&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;dknijp&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                        <span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Discharge coefficient&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;qcoef&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Width dam&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;boverl&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Trapping efficiency&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;eff&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;Extension ID&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;buf_exid&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="IniFile.add_force_routing_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_force_routing_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_force_routing_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forced_routing</span><span class="p">,</span> <span class="n">river_underground</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add force routing extension and force routing parameters to config file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        forced_routing: pandas.DataFrame</span>
+<span class="sd">            Forced routing table with columns,</span>
+<span class="sd">            see :ref:`here &lt;watemsedem:forcedroutingdata&gt;`</span>
+
+<span class="sd">            - *NR* (int):</span>
+<span class="sd">            - *from col* (int): source pixel column</span>
+<span class="sd">            - *from row* (int): source pixel row</span>
+<span class="sd">            - *target col* (int): target pixel column</span>
+<span class="sd">            - *target row* (int): target pixel row</span>
+
+<span class="sd">        river_underground: pandas.DataFrame</span>
+<span class="sd">            River underground routing table with columns, see</span>
+<span class="sd">            :ref:`here &lt;watemsedem:forcedroutingdata&gt;`</span>
+
+<span class="sd">            - *NR* (int):</span>
+<span class="sd">            - *from col* (int): source pixel column</span>
+<span class="sd">            - *from row* (int): source pixel row</span>
+<span class="sd">            - *target col* (int): target pixel column</span>
+<span class="sd">            - *target row* (int): target pixel row</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># force routing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Force Routing&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Force Routing&quot;</span><span class="p">]),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">force_routing</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Force Routing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">force_routing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="n">forced_routing</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">forced_routing</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">forced_routing</span>
             <span class="n">river_underground</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">river_underground</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">river_underground</span>
             <span class="n">n_fr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">forced_routing</span><span class="p">)</span>
@@ -481,38 +541,44 @@
             <span class="n">n</span> <span class="o">=</span> <span class="n">n_ru</span> <span class="o">+</span> <span class="n">n_fr</span>
             <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;Number of Forced Routing&quot;</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="n">n_fr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">nr</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">forced_routing</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()):</span>
-                    <span class="n">sectie</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Forced Routing </span><span class="si">{</span><span class="n">nr</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="n">sectie</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;from col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromcol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;from row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromrow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;target col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">tocol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;target row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">torow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Forced Routing </span><span class="si">{</span><span class="n">nr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;from col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromcol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;from row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromrow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;target col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">tocol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;target row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">torow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">n_ru</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">nr</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">river_underground</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()):</span>
-                    <span class="n">sectie</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Forced Routing </span><span class="si">{</span><span class="n">nr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="n">sectie</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;from col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromcol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;from row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromrow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;target col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">tocol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sectie</span><span class="p">,</span> <span class="s2">&quot;target row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">torow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Forced Routing </span><span class="si">{</span><span class="n">nr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;from col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromcol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;from row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">fromrow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;target col&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">tocol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;target row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">torow</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="s2">&quot;&#39;Force Routing&#39; in &#39;dict_model_options&#39; is equal to 1, but no &quot;</span>
                     <span class="s2">&quot;forced routing or underground or river vectors defined.&quot;</span>
                 <span class="p">)</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="c1"># river routing</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;River Routing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IniFile.add_river_routing_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_river_routing_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_river_routing_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add river routing extension to config file and</span>
+<span class="sd">        the needed files for this extension&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">river_routing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;river routing&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;River Routing&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">river_routing</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
@@ -528,213 +594,165 @@
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;river routing filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">routing_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Advanced settings</span>
-        <span class="k">if</span> <span class="s2">&quot;L model&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;L model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;L model&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;S model&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;S model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;S model&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;TC model&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;TC model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;TC model&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Adjusted Slope&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Adjusted Slope&quot;</span><span class="p">]),</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Buffer reduce Area&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Buffer reduce Area&quot;</span><span class="p">]),</span>
-        <span class="p">)</span></div>
+            <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="IniFile.set_cfg_model_version">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.set_cfg_model_version">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_cfg_model_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add model version to self.cfg.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;CN-WS&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;Only WS&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="IniFile.add_ktc_and_calibration_extensions">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_ktc_and_calibration_extensions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ktc_and_calibration_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add create ktc map and calibration extensions and</span>
+<span class="sd">        their extension parameters to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">calibrate</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Calibration&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;Variables&quot;</span><span class="p">,</span> <span class="s2">&quot;Alpha&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Alpha&quot;</span><span class="p">])</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Calibrate&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">calibrate</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span> <span class="s2">&quot;Beta&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Beta&quot;</span><span class="p">]))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;KTcHigh_lower&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="p">[</span><span class="s2">&quot;KTcHigh_lower&quot;</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;KTcHigh_upper&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcHigh_upper&quot;</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;KTcLow_lower&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcLow_lower&quot;</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;KTcLow_upper&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcLow_upper&quot;</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span> <span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ktc limit&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">ktc_limit</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktc_map</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">):</span>  <span class="c1"># pywatemsedem must provide ktc map to watem-sedem</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;Create ktc map&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ktc map filename&quot;</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ktc_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;Create ktc map&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span>
+            <span class="p">)</span>  <span class="c1"># watem-sedem will create ktc map</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ktc low&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ktc_low</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ktc high&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ktc_high</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ktc limit&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ktc_limit</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IniFile.add_ktil_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_ktil_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_ktil_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add create ktil map extension and its extension parameters to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">calculate_tillage_erosion</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create ktil map&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktil_map</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktil_map</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                    <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ktil default&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ktil_default</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                    <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ktil threshold&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ktil_threshold</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                    <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ktil map filename&quot;</span><span class="p">,</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ktil_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IniFile.add_cn_extension">
+<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_cn_extension">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_cn_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add CN-extension and its extension parameters/files to config file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">curve_number</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Extensions&quot;</span><span class="p">,</span> <span class="s2">&quot;Curve Number&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Alpha&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Beta&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Stream velocity&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Stream velocity&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">stream_velocity</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;CN map filename&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cn_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># WS-model</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;Only WS&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;Only Routing&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;Only Routing&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="IniFile.set_cfg_only_routing">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.set_cfg_only_routing">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_cfg_only_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add variables for only routing version of WaTEM/SEDEM.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">!=</span> <span class="s2">&quot;Only Routing&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;K factor filename&quot;</span><span class="p">,</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">kfactor_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;Rainfall filename&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Rainfall.txt&quot;</span><span class="p">,</span>  <span class="c1"># TODO: define in templates</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Bulk density&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Bulk density&quot;</span><span class="p">])),</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;5-day antecedent rainfall&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">antecedent_rainfall</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
-
-            <span class="c1"># R-factor of regenvalfile?</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;R factor&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;R factor&quot;</span><span class="p">]),</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Desired timestep for model&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">desired_timestep</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span> <span class="s2">&quot;Endtime model&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>  <span class="c1"># Aan te passen in model?</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;CN-WS&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Rainfall filename&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Rainfall.txt&quot;</span><span class="p">,</span>  <span class="c1"># TODO: define in templates</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;5-day antecedent rainfall&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;5-day antecedent rainfall&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Desired timestep for model&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Desired timestep for model&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Endtime model&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Endtime model&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Convert output&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                        <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;Convert output&quot;</span><span class="p">,</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Convert output&quot;</span><span class="p">]),</span>
-                    <span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                        <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;Final timestep output&quot;</span><span class="p">,</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Final timestep output&quot;</span><span class="p">]),</span>
-                    <span class="p">)</span>
-
-            <span class="c1"># KTC and calibration KTC</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Calibrate&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Calibration&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Calibrate&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Calibrate&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;KTcHigh_lower&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcHigh_lower&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;KTcHigh_upper&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcHigh_upper&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;KTcLow_lower&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcLow_lower&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;KTcLow_upper&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;KTcLow_upper&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span> <span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">])</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;ktc limit&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;UserProvidedKTC&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;Create ktc map&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;ktc map filename&quot;</span><span class="p">,</span>
-                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ktc_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="p">)</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;User Choices&quot;</span><span class="p">,</span> <span class="s2">&quot;Create ktc map&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span> <span class="s2">&quot;ktc low&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc low&quot;</span><span class="p">])</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;ktc high&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc high&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;ktc limit&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktc limit&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
-
-            <span class="c1"># KTIL</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Calculate Tillage Erosion&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Calculate Tillage Erosion&quot;</span><span class="p">]),</span>
+                <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Endtime model&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">endtime_model</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Calculate Tillage Erosion&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">convert_output</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Create ktil map&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Create ktil map&quot;</span><span class="p">]),</span>
+                    <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Convert output&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">convert_output</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Create ktil map&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                        <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;ktil default&quot;</span><span class="p">,</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktil default&quot;</span><span class="p">]),</span>
-                    <span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                        <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;ktil threshold&quot;</span><span class="p">,</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;ktil threshold&quot;</span><span class="p">]),</span>
-                    <span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                <span class="s2">&quot;User Choices&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Estimate clay content&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Estimate clay content&quot;</span><span class="p">]),</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_model_options</span><span class="p">[</span><span class="s2">&quot;Estimate clay content&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Clay content parent material&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span>
-                        <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">dict_variables</span><span class="p">[</span><span class="s2">&quot;Clay content parent material&quot;</span><span class="p">])</span>
-                    <span class="p">),</span>
+                    <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Final timestep output&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">final_timestep</span><span class="p">),</span>
                 <span class="p">)</span></div>
 </div>
 
@@ -742,7 +760,7 @@
 
 <div class="viewcode-block" id="open_ini">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.open_ini">[docs]</a>
-<span class="k">def</span> <span class="nf">open_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Open ini file.</span>
 
 <span class="sd">    Parameters</span>
@@ -761,7 +779,7 @@
 
 <div class="viewcode-block" id="modify_field">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.modify_field">[docs]</a>
-<span class="k">def</span> <span class="nf">modify_field</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">modify_field</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add one specific key in ini-file</span>
 
 <span class="sd">    Loads, writes value to key (in section) and closes file</span>
@@ -820,7 +838,7 @@
 
 <div class="viewcode-block" id="add_field">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.add_field">[docs]</a>
-<span class="k">def</span> <span class="nf">add_field</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_field</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add one specific key in ini-file</span>
 
 <span class="sd">    Loads, writes value to key (in section) and closes file</span>
@@ -884,7 +902,7 @@
 
 <div class="viewcode-block" id="get_item_from_ini">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.get_item_from_ini">[docs]</a>
-<span class="k">def</span> <span class="nf">get_item_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_item_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets an item from an option in a certain section of an ini-file</span>
 
 <span class="sd">    Parameters</span>
@@ -898,7 +916,7 @@
 <span class="sd">    dtype: dtype</span>
 <span class="sd">        Type of parameter to be read (str, int, float or bool).</span>
 <span class="sd">        If another string is given to this parameter, a</span>
-<span class="sd">       TypeError is raised.</span>
+<span class="sd">        TypeError is raised.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -907,18 +925,18 @@
 <span class="sd">        the ini-file or the value of the section-option None is returned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">ini</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">Cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ini</span><span class="p">)</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ini</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;not a correct Type&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">configparser</span><span class="o">.</span><span class="n">NoOptionError</span><span class="p">:</span>

@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.calibrate &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.calibrate &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,15 +93,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.calibrate</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span><span class="p">,</span> <span class="n">colors</span>
-<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">cm</span><span class="p">,</span> <span class="n">colors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn</span><span class="w"> </span><span class="kn">import</span> <span class="n">linear_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">r2_score</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -106,7 +109,7 @@
 <div class="viewcode-block" id="Calibration">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.Calibration">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Calibration</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Calibration</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data class for calibration parameters.</span>
 
 <span class="sd">    Data class used to store all commonly used variables for a calibration run.</span>
@@ -119,7 +122,7 @@
 <span class="sd">        Upper boundary for ktc low value</span>
 <span class="sd">    ktc_high_min: float</span>
 <span class="sd">        Lower boundary for ktc high value</span>
-<span class="sd">    ktch_high_max: float</span>
+<span class="sd">    ktc_high_max: float</span>
 <span class="sd">        Upper boundary for ktc high value</span>
 <span class="sd">    steps: int</span>
 <span class="sd">        Amount of steps between lower and upper ktc low/high values</span>
@@ -132,7 +135,7 @@
     <span class="n">ktc_high_max</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">check_input</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">define_parameter_grid_resolution</span><span class="p">()</span>
@@ -141,7 +144,7 @@
 
 <div class="viewcode-block" id="Calibration.check_input">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.Calibration.check_input">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a number of checks on input data of data class&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_min</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_max</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;ktc low min &gt; ktc low max&quot;</span>
@@ -166,7 +169,7 @@
 
 <div class="viewcode-block" id="Calibration.define_parameter_grid_resolution">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.Calibration.define_parameter_grid_resolution">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_parameter_grid_resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_parameter_grid_resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the resolution of the parameter grid (2D, x and y resolution).&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepresolution_high</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc_high_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc_high_min</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stepresolution_low</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_min</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span></div>
@@ -174,7 +177,7 @@
 
 <div class="viewcode-block" id="Calibration.define_parameter_grid">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.Calibration.define_parameter_grid">[docs]</a>
-    <span class="k">def</span> <span class="nf">define_parameter_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">define_parameter_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Defne parameter grid for ktc low and high&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arr_ktc_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_min</span><span class="p">,</span>
@@ -190,7 +193,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_make_template_df</span><span class="p">(</span><span class="n">arr_ktc_low</span><span class="p">,</span> <span class="n">arr_ktc_high</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_template_df</span><span class="p">(</span><span class="n">arr_ktc_low</span><span class="p">,</span> <span class="n">arr_ktc_high</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a pandas.DataFrame with all combinations of ktc_low and ktc_high</span>
 
 <span class="sd">    Parameters</span>
@@ -218,7 +221,7 @@
 
 <div class="viewcode-block" id="process_calibrationrun_output">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.process_calibrationrun_output">[docs]</a>
-<span class="k">def</span> <span class="nf">process_calibrationrun_output</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_calibrationrun_output</span><span class="p">(</span>
     <span class="n">txt_calibration</span><span class="p">,</span>
     <span class="n">observed_sy</span><span class="p">,</span>
     <span class="n">catchment_name</span><span class="p">,</span>
@@ -292,8 +295,8 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;No endpoints (sewerin-file) included in pywatemsedem model run, can not add&quot;</span>
-                <span class="s2">&quot; percentage to estimated sediment yield (P_sy).&quot;</span>
+                <span class="s2">&quot;No endpoints (sewerin-file) included in pywatemsedem model run, can &quot;</span>
+                <span class="s2">&quot;not add percentage to estimated sediment yield (P_sy).&quot;</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="c1"># convert kg to tons</span>
@@ -307,7 +310,7 @@
 
 <div class="viewcode-block" id="compute_model_errors_sy">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.compute_model_errors_sy">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_model_errors_sy</span><span class="p">(</span><span class="n">df_cal</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_model_errors_sy</span><span class="p">(</span><span class="n">df_cal</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute model errors based on simulations and observations.</span>
 
 <span class="sd">    - *Errors*: observation-prediction</span>
@@ -347,7 +350,7 @@
 
 <div class="viewcode-block" id="check_endpoint_throughput_coefficient">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.check_endpoint_throughput_coefficient">[docs]</a>
-<span class="k">def</span> <span class="nf">check_endpoint_throughput_coefficient</span><span class="p">(</span><span class="n">endpoint_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_endpoint_throughput_coefficient</span><span class="p">(</span><span class="n">endpoint_coefficient</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the endpoint (sewers and ditches) throughput coefficient used in</span>
 <span class="sd">    :func:`pywatemsedem.calibrate.process_calibrationrun_output`.</span>
 
@@ -372,7 +375,7 @@
 
 <div class="viewcode-block" id="merge_calibration_results">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.merge_calibration_results">[docs]</a>
-<span class="k">def</span> <span class="nf">merge_calibration_results</span><span class="p">(</span><span class="n">lst_df_calibration</span><span class="p">,</span> <span class="n">caldata</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_calibration_results</span><span class="p">(</span><span class="n">lst_df_calibration</span><span class="p">,</span> <span class="n">caldata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if dimension of calibration space are equal to the one defined in</span>
 <span class="sd">    the caldata instance (see :class:`pywatemsedem.calibrate.Calibration`)</span>
 
@@ -434,7 +437,7 @@
 
 <div class="viewcode-block" id="linear_regression_evaluation_calibration">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.linear_regression_evaluation_calibration">[docs]</a>
-<span class="k">def</span> <span class="nf">linear_regression_evaluation_calibration</span><span class="p">(</span><span class="n">arr_observed</span><span class="p">,</span> <span class="n">arr_predicted</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">linear_regression_evaluation_calibration</span><span class="p">(</span><span class="n">arr_observed</span><span class="p">,</span> <span class="n">arr_predicted</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute linear regression between observed and predicted values.</span>
 
 <span class="sd">    Parameters</span>
@@ -467,7 +470,7 @@
 
 <div class="viewcode-block" id="calculate_model_efficiency">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.calculate_model_efficiency">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_model_efficiency</span><span class="p">(</span><span class="n">df_calibration_data</span><span class="p">,</span> <span class="n">df_calibration_results</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_model_efficiency</span><span class="p">(</span><span class="n">df_calibration_data</span><span class="p">,</span> <span class="n">df_calibration_results</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the model efficiency (ME) for a calibration data set.</span>
 
 <span class="sd">    The model efficiency calculations are for now based on the Nash-Sutcliff efficiency</span>
@@ -531,11 +534,11 @@
 
 <div class="viewcode-block" id="compute_nash_sutcliffe">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.compute_nash_sutcliffe">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_nash_sutcliffe</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_nash_sutcliffe</span><span class="p">(</span>
     <span class="n">df_calibration_results</span><span class="p">,</span> <span class="n">denominator</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">squared_error</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Nash-Sutcliffe model efficiency for calibration results of WaTEM/SEDEM for a</span>
-<span class="sd">    variable</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute Nash-Sutcliffe model efficiency for calibration results of WaTEM/SEDEM</span>
+<span class="sd">    for a variable</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -578,7 +581,7 @@
     <span class="n">df_me</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NS </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">df_me</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">/</span> <span class="n">denominator</span><span class="p">)</span>
     <span class="n">df_me</span> <span class="o">=</span> <span class="n">df_me</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
     <span class="n">df_me</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NS </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-        <span class="n">df_me</span><span class="p">[</span><span class="s2">&quot;ktc_high&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">df_me</span><span class="p">[</span><span class="s2">&quot;ktc_low&quot;</span><span class="p">],</span> <span class="n">df_me</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NS </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="n">df_me</span><span class="p">[</span><span class="s2">&quot;ktc_high&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">df_me</span><span class="p">[</span><span class="s2">&quot;ktc_low&quot;</span><span class="p">],</span> <span class="n">df_me</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NS </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_me</span></div>
@@ -587,7 +590,7 @@
 
 <div class="viewcode-block" id="compute_denomitor_nash_sutcliffe">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_denomitor_nash_sutcliffe</span><span class="p">(</span><span class="n">df_calibration_data</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">squared_error</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_denomitor_nash_sutcliffe</span><span class="p">(</span><span class="n">df_calibration_data</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">squared_error</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the denomitor for the Nash-Sutcliffe model efficiency.</span>
 
 <span class="sd">    You can make use of squared or absolute errors to compute the denominator.</span>
@@ -634,7 +637,7 @@
 
 <div class="viewcode-block" id="plot_model_efficiency">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.plot_model_efficiency">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_model_efficiency</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_model_efficiency</span><span class="p">(</span>
     <span class="n">df_me</span><span class="p">,</span> <span class="n">caldata</span><span class="p">,</span> <span class="n">sy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">contours</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This function plots the calculated model efficiency as a function of</span>
@@ -709,7 +712,7 @@
 
 <div class="viewcode-block" id="calculate_regressions">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.calculate_regressions">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_regressions</span><span class="p">(</span><span class="n">df_calibration_results</span><span class="p">,</span> <span class="n">calibration</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_regressions</span><span class="p">(</span><span class="n">df_calibration_results</span><span class="p">,</span> <span class="n">calibration</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute regression for plots</span>
 
 <span class="sd">    Parameters</span>
@@ -775,7 +778,7 @@
 
 <div class="viewcode-block" id="calculate_ratio_ktc">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.calculate_ratio_ktc">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_ratio_ktc</span><span class="p">(</span><span class="n">df_ktc</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_ratio_ktc</span><span class="p">(</span><span class="n">df_ktc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the ratio between ktc low and ktc high</span>
 
 <span class="sd">    Parameters</span>
@@ -801,7 +804,7 @@
 
 <div class="viewcode-block" id="plot_regression">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.plot_regression">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_regression</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_regression</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span> <span class="n">ktc_low</span><span class="p">,</span> <span class="n">ktc_high</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;sy&quot;</span><span class="p">,</span> <span class="n">label_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate regression plot for calibration</span>
@@ -888,7 +891,7 @@
 
 <div class="viewcode-block" id="add_outlier_names_to_calibration_plot">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.add_outlier_names_to_calibration_plot">[docs]</a>
-<span class="k">def</span> <span class="nf">add_outlier_names_to_calibration_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">lq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">uq</span><span class="o">=</span><span class="mi">150</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_outlier_names_to_calibration_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">lq</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">uq</span><span class="o">=</span><span class="mi">150</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add `outlier id` or `catchment name` to outliers in evaluation plots.</span>
 
 <span class="sd">    Outlier names are plotted when the quotient of observed to predicted is lower or</span>

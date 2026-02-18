@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.catchment &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.catchment &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,43 +93,42 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.catchment</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">fiona</span>
-<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyogrio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.defaults</span> <span class="kn">import</span> <span class="n">SAGA_FLAGS</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasterproperties</span> <span class="kn">import</span> <span class="n">RasterProperties</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">AbstractRaster</span><span class="p">,</span> <span class="n">RasterMemory</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">SAGA_FLAGS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasterproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterProperties</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractRaster</span><span class="p">,</span> <span class="n">RasterMemory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">any_equal_element_in_vector</span><span class="p">,</span>
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
+    <span class="n">create_filename</span><span class="p">,</span>
     <span class="n">create_spatial_index</span><span class="p">,</span>
     <span class="n">define_extent_from_vct</span><span class="p">,</span>
     <span class="n">execute_subprocess</span><span class="p">,</span>
-    <span class="n">load_raster</span><span class="p">,</span>
     <span class="n">read_rasterio_profile</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.vectors</span> <span class="kn">import</span> <span class="n">AbstractVector</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.folders</span> <span class="kn">import</span> <span class="n">CatchmentFolder</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.modeloutput</span> <span class="kn">import</span> <span class="n">check_segment_edges</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.tools</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractVector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.folders</span><span class="w"> </span><span class="kn">import</span> <span class="n">CatchmentFolder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.modeloutput</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_segment_edges</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_landuse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.tools</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">format_forced_routing</span><span class="p">,</span>
     <span class="n">get_df_area_unique_values_array</span><span class="p">,</span>
     <span class="n">zip_folder</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">attribute_discrete_value_error</span><span class="p">,</span> <span class="n">raster_discrete_value_error</span>
-<span class="kn">from</span> <span class="nn">.valid</span> <span class="kn">import</span> <span class="n">valid_req_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">attribute_discrete_value_error</span><span class="p">,</span> <span class="n">raster_discrete_value_error</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.valid</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_req_property</span>
 
 <span class="c1"># from .valid import valid_req_property</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -134,11 +136,11 @@
 
 <div class="viewcode-block" id="valid_dtm">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_dtm">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_dtm</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_dtm</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a DTM.&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define non-empty DTM!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -151,11 +153,11 @@
 
 <div class="viewcode-block" id="valid_vct_river">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_river">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_vct_river</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_river</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a river vector.&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non-empty river vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -167,11 +169,11 @@
 
 <div class="viewcode-block" id="valid_vct_infra_line">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_infra_line">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_vct_infra_line</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_infra_line</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure vectors are defined&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define infrastructure line vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -183,11 +185,11 @@
 
 <div class="viewcode-block" id="valid_vct_infra_poly">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_infra_poly">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_vct_infra_poly</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_infra_poly</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure vectors are defined&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non-empty infrastructure polygon vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -199,11 +201,11 @@
 
 <div class="viewcode-block" id="valid_vct_parcels">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_parcels">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_vct_parcels</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_parcels</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure vectors are defined&quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non_empty parcels polygon vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -215,12 +217,12 @@
 
 <div class="viewcode-block" id="Catchment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.Catchment">[docs]</a>
-<span class="k">class</span> <span class="nc">Catchment</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Catchment</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a new Catchment instance</span>
 
 <span class="sd">    The catchment class holds all static information for a catchment.</span>
 <span class="sd">    The class considers all data of which the content is user-option-independent (i.e.</span>
-<span class="sd">    :class:`pywatemsedem.userchoices.UserChoices`.</span>
+<span class="sd">    :class:`pywatemsedem.choices.Choices`.</span>
 
 <span class="sd">    Following properties can be set:</span>
 
@@ -240,7 +242,7 @@
 <span class="sd">    pywatemsedem factory class, see :class:`pywatemsedem.geo.factory.Factory`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">,</span>
         <span class="n">vct_catchment</span><span class="p">,</span>
@@ -256,7 +258,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        name: str</span>
 <span class="sd">            Name of the catchment.</span>
-<span class="sd">        vct_catchment: str or pathlib.Path</span>
+<span class="sd">        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame</span>
 <span class="sd">            Vector file of catchment outline (mask). This should be a single polygon</span>
 <span class="sd">            vector.</span>
 <span class="sd">        resolution: int</span>
@@ -292,7 +294,7 @@
 
         <span class="c1"># get RasterProperties from catchment vector and bounds DTM</span>
         <span class="n">rp</span> <span class="o">=</span> <span class="n">read_rasterio_profile</span><span class="p">(</span><span class="n">rst_dtm</span><span class="p">)</span>
-        <span class="n">bounds</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">rp</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">rp</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">epsg_code</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">define_extent_from_vct</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vct_catchment</span><span class="p">,</span>
             <span class="n">resolution</span><span class="p">,</span>
@@ -311,6 +313,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_landuse</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_water</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure_buildings</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure_roads</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_river</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
         <span class="c1"># WaTEM/SEDEM inputs</span>
@@ -334,13 +338,13 @@
 
 <div class="viewcode-block" id="Catchment.zip">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.Catchment.zip">[docs]</a>
-    <span class="k">def</span> <span class="nf">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Zip catchment folder&quot;&quot;&quot;</span>
-        <span class="n">zip_folder</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span> <span class="o">/</span> <span class="s2">&quot;Data_Bekken&quot;</span><span class="p">))</span></div>
+        <span class="n">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="o">.</span><span class="n">catchment_folder</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter dtm raster</span>
 
 <span class="sd">        Returns</span>
@@ -351,7 +355,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span>
 
     <span class="nd">@dtm</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign digital elevation model raster</span>
 
 <span class="sd">        The DTM input should contain valid DTM raster values in meter a.s.l.</span>
@@ -363,29 +367,29 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">filter_within_parcels</span><span class="p">():</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Filter dtm within parcel boundaries&quot;&quot;&quot;</span>
-            <span class="n">temp_landuse</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="n">temp_dtm_in</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="n">temp_dtm</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.sgrd&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp_dtm_in</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp_landuse</span><span class="p">)</span>
+        <span class="c1"># def filter_within_parcels():</span>
+        <span class="c1">#    &quot;&quot;&quot;Filter dtm within parcel boundaries&quot;&quot;&quot;</span>
+        <span class="c1">#    temp_landuse = create_filename(&quot;.rst&quot;)</span>
+        <span class="c1">#    temp_dtm_in = create_filename(&quot;.rst&quot;)</span>
+        <span class="c1">#    temp_dtm = create_filename(&quot;.sgrd&quot;)</span>
+        <span class="c1">#    self.dtm.write(temp_dtm_in)</span>
+        <span class="c1">#    self.parcels.write(temp_landuse)</span>
+        <span class="c1">#</span>
+        <span class="c1">#    cmd_args = [&quot;saga_cmd&quot;, &quot;-f=s&quot;, &quot;watem&quot;, &quot;2&quot;]</span>
+        <span class="c1">#    cmd_args += [&quot;-DEM&quot;, str(temp_dtm_in)]</span>
+        <span class="c1">#    cmd_args += [&quot;-PRC&quot;, str(temp_landuse)]</span>
+        <span class="c1">#    cmd_args += [&quot;-DEM_FILTER&quot;, str(temp_dtm)]</span>
+        <span class="c1">#    msg = &quot;failed to filter_within_parcels dtm&quot;</span>
+        <span class="c1">#    execute_subprocess(cmd_args, msg)</span>
+        <span class="c1">#    self._dtm._arr, _ = load_raster(temp_dtm.with_suffix(&quot;.sdat&quot;))</span>
+        <span class="c1">#    clean_up_tempfiles(temp_landuse, &quot;tiff&quot;)</span>
+        <span class="c1">#    clean_up_tempfiles(temp_dtm, &quot;saga&quot;)</span>
+        <span class="c1">#    clean_up_tempfiles(temp_dtm_in, &quot;rst&quot;)</span>
 
-            <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="s2">&quot;-f=s&quot;</span><span class="p">,</span> <span class="s2">&quot;watem&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span>
-            <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-DEM&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp_dtm_in</span><span class="p">)]</span>
-            <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-PRC&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp_landuse</span><span class="p">)]</span>
-            <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-DEM_FILTER&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp_dtm</span><span class="p">)]</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;failed to filter_within_parcels dtm&quot;</span>
-            <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span><span class="o">.</span><span class="n">_arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">temp_dtm</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.sdat&quot;</span><span class="p">))</span>
-            <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp_landuse</span><span class="p">,</span> <span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
-            <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp_dtm</span><span class="p">,</span> <span class="s2">&quot;saga&quot;</span><span class="p">)</span>
-            <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp_dtm_in</span><span class="p">,</span> <span class="s2">&quot;rst&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="n">filter_within_parcels</span>
+        <span class="c1"># self._dtm.filter = filter_within_parcels</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;P-factor raster</span>
 
 <span class="sd">        The P-factor raster holds values between 0 and 1, and is the factor in the</span>
@@ -400,11 +404,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter K-factor raster</span>
 
 <span class="sd">        The K-factor raster is a raster holding K-values for every pixel</span>
-<span class="sd">        (:math:`\\frac{ton.h}{MJ.mm}`).</span>
+<span class="sd">        (:math:`\\frac{kg.h}{MJ.mm}`).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -413,23 +417,18 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span>
 
     <span class="nd">@kfactor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign K-factor raster</span>
 
 <span class="sd">        The K-factor raster is a raster holding K-values for every pixel</span>
-<span class="sd">        (:math:`\\frac{ton.h}{MJ.mm}`). Negative no nodata values are set to zero.</span>
+<span class="sd">        (:math:`\\frac{kg.h}{MJ.mm}`). Negative no nodata values are set to zero.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        raster_input: Pathlib.Path, str or numpy.array</span>
-<span class="sd">            File path/array K-factor raster (:math:`\\frac{ton.h}{MJ.mm}`) with K-values</span>
+<span class="sd">            File path/array K-factor raster (:math:`\\frac{kg.h}{MJ.mm}`) with K-values</span>
 <span class="sd">            (see K-factor in RUSLE equation).</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        1. The input requires as unit: :math:`\\frac{ton.h}{MJ.mm}`, whereas the output</span>
-<span class="sd">           unit is :math:`\\frac{kg.h}{MJ.mm}`.</span>
-<span class="sd">        2. The input data is rounded to kg (no decimals) by a conversion to int32.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
             <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span>
@@ -443,12 +442,12 @@
             <span class="p">)</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond_neg</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">cond</span><span class="p">],</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">hydrological_soil_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hydrological_soil_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;CN hydrological soil group raster</span>
 
 <span class="sd">        This raster (int) holds the four categories (see [2]_):</span>
@@ -470,7 +469,7 @@
 
     <span class="nd">@hydrological_soil_group</span><span class="o">.</span><span class="n">setter</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;dtm&quot;, mandatory=True)</span>
-    <span class="k">def</span> <span class="nf">hydrological_soil_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hydrological_soil_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign CN soil raster</span>
 
 <span class="sd">        This raster (int) holds the four categories (see [2]_):</span>
@@ -512,7 +511,7 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">landuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">landuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter background land-use raster</span>
 
 <span class="sd">        Returns</span>
@@ -531,12 +530,13 @@
 
     <span class="nd">@landuse</span><span class="o">.</span><span class="n">setter</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;dtm&quot;, mandatory=True)</span>
-    <span class="k">def</span> <span class="nf">landuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">landuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign background land-use raster</span>
 
 <span class="sd">        Raster should contain:</span>
 
 <span class="sd">            - *-9999*: nodata</span>
+<span class="sd">            - *-6*: grass strips</span>
 <span class="sd">            - *-5*: open water</span>
 <span class="sd">            - *-4*: grass</span>
 <span class="sd">            - *-3*: forest</span>
@@ -571,56 +571,16 @@
             <span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plotting fun&quot;&quot;&quot;</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
-
-            <span class="n">cmap</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="s2">&quot;#64cf1b&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#3b7db4&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#71b651&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#387b00&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#000000&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#00bfff&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;#a47158&quot;</span><span class="p">,</span>
-                <span class="p">]</span>
-            <span class="p">)</span>
-            <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">6.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
-            <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_landuse</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">nodata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
-                <span class="n">img</span><span class="p">,</span>
-                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
-                <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
-                <span class="n">boundaries</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
-                <span class="n">ticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="s2">&quot;Grass strips (-6)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Pools (-5)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Meadow (-4)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Forest (-3)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Infrastructure (-2)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;River (-1)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Outside boundaries (0)&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Agriculture (&gt;0)&quot;</span><span class="p">,</span>
-                <span class="p">]</span>
-            <span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">plot_landuse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_landuse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_landuse</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
 <div class="viewcode-block" id="Catchment.create_height_contours">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.Catchment.create_height_contours">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_height_contours</span><span class="p">(</span><span class="n">rst_input</span><span class="p">,</span> <span class="n">vct_output</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_height_contours</span><span class="p">(</span><span class="n">rst_input</span><span class="p">,</span> <span class="n">vct_output</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create height contours line vector based on a DTM raster</span>
 
 <span class="sd">        Parameters</span>
@@ -646,8 +606,8 @@
                 <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="k">if</span> <span class="s2">&quot;corrupted size vs. prev_size in fastbins&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                         <span class="k">try</span><span class="p">:</span>
-                            <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">vct_output</span><span class="p">)</span>
-                        <span class="k">except</span> <span class="n">fiona</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DriverError</span><span class="p">:</span>
+                            <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_info</span><span class="p">(</span><span class="n">vct_output</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DataSourceError</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">vct_output</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -656,7 +616,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">catchment_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">catchment_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Total area of the catchment</span>
 
 <span class="sd">        Returns</span>
@@ -667,7 +627,7 @@
 
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_river&quot;, mandatory=True)</span>
-    <span class="k">def</span> <span class="nf">river_segment_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">river_segment_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Total length of all river segments in the catchment</span>
 
 <span class="sd">        Returns</span>
@@ -678,7 +638,7 @@
 
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_river&quot;, mandatory=True)</span>
-    <span class="k">def</span> <span class="nf">river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter river raster</span>
 
 <span class="sd">        Returns</span>
@@ -690,18 +650,33 @@
 <span class="sd">            - *0*: no river</span>
 <span class="sd">            - *-9999*: nodata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">RasterMemory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_river</span>
+
+    <span class="nd">@river</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign river raster</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_raster: Pathlib.Path, str or numpy.array</span>
+<span class="sd">            File path/array river raster with values *-1*: river, *0*: no river,</span>
+<span class="sd">            *-9999*: nodata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_river</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
+            <span class="n">input_raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_river&quot;, mandatory=False)</span>
-    <span class="k">def</span> <span class="nf">adjacent_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adjacent_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter dataframe adjacent edges/segment property</span>
 
 <span class="sd">        This property is generated by assigning a river line vector to the catchment</span>
 <span class="sd">        class. Every row indicates a connection between two segments: segment *from*</span>
-<span class="sd">        (column 1) flows into segment to (column 2). See :ref:`here &lt;watemsedem:adjsegments&gt;`</span>
+<span class="sd">        (column 1) flows into segment to (column 2).</span>
+<span class="sd">        See :ref:`here &lt;watemsedem:adjsegments&gt;`</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -715,7 +690,7 @@
 
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_river&quot;, mandatory=False)</span>
-    <span class="k">def</span> <span class="nf">up_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">up_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter dataframe upstream edges/segment property</span>
 
 <span class="sd">        This property is generated by assigning a river line vector to the catchment</span>
@@ -736,21 +711,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up_edges</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vct_river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign river-line vector</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter vct_river</span>
 
-<span class="sd">        The river vector should be a line-vector file. No specific attributes should be</span>
-<span class="sd">        defined.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame</span>
-<span class="sd">            Line vector file.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pywatemsedem.geo.vectors.AbstractVector</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span>
 
     <span class="nd">@vct_river</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">vct_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign river-line vector</span>
 
 <span class="sd">        The river vector should be a line-vector file. No specific attributes should be</span>
@@ -766,7 +737,7 @@
         <span class="c1"># clip</span>
         <span class="n">vct_river_clipped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="o">.</span><span class="n">vct_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;river_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.shp&quot;</span>
         <span class="c1"># remove temporary files</span>
-        <span class="c1"># clean_up_tempfiles(vct_river_clipped, &quot;shp&quot;)</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">vct_river_clipped</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_factory</span><span class="p">(</span>
             <span class="n">vector_input</span><span class="p">,</span> <span class="s2">&quot;LineString&quot;</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -777,7 +748,7 @@
         <span class="n">vct_river_topo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="o">.</span><span class="n">vct_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;topology_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.shp&quot;</span>
         <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">vct_river_topo</span><span class="p">,</span> <span class="s2">&quot;shp&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjacent_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">topologize_river</span><span class="p">(</span>
-            <span class="n">vct_river_clipped</span><span class="p">,</span> <span class="n">vct_river_topo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span>
+            <span class="n">vct_river_clipped</span><span class="p">,</span> <span class="n">vct_river_topo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_factory</span><span class="p">(</span>
@@ -785,44 +756,42 @@
         <span class="p">)</span>
 
         <span class="n">river</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="s2">&quot;line_id&quot;</span><span class="p">,</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
+            <span class="s2">&quot;line_id&quot;</span><span class="p">,</span>
+            <span class="n">dtype_raster</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+            <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_river</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">river</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">river</span> <span class="o">=</span> <span class="n">river</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="n">river</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjacent_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up_edges</span><span class="p">,</span> <span class="n">flag</span> <span class="o">=</span> <span class="n">check_segment_edges</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">adjacent_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">up_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">arr</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adjacent_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">up_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">arr</span>
         <span class="p">)</span>
 
         <span class="c1"># set routing</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">routing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
                 <span class="n">convert_lines_to_direction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">routing</span><span class="p">[</span><span class="n">routing</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">routing</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">routing</span> <span class="o">=</span> <span class="n">routing</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;River input vector is empty, setting river routing to None&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tubed_river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign underground river-line vector</span>
-
-<span class="sd">        The river tubed vector should be a line-vector file. No specific</span>
-<span class="sd">        attributes should be defined.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        vector_input: Pathlib.Path, str or geopandas.GeoDataFrame</span>
-<span class="sd">            Line vector file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tubed_river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter tubed_river&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tubed_river</span>
 
     <span class="nd">@tubed_river</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">tubed_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tubed_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign underground river-line vector</span>
 
 <span class="sd">        The river tubed vector should be a line-vector file. No specific</span>
@@ -864,7 +833,7 @@
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter river routing raster</span>
 
 <span class="sd">        See :ref:`here &lt;watemsedem:riverroutingmap&gt;`</span>
@@ -887,9 +856,35 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span>
 
+    <span class="nd">@routing</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign river routing raster</span>
+
+<span class="sd">        See :ref:`here &lt;watemsedem:riverroutingmap&gt;`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster_input: Pathlib.Path, str or numpy.array</span>
+<span class="sd">            File path/array river routing raster with values from 0 to 8:</span>
+
+<span class="sd">            - *0*: do not route further</span>
+<span class="sd">            - *1*: route to upper pixel</span>
+<span class="sd">            - *2*: route to upper right pixel</span>
+<span class="sd">            - *3*: route to right pixel</span>
+<span class="sd">            - *4*: route to lower right pixel</span>
+<span class="sd">            - *5*: route to lower pixel</span>
+<span class="sd">            - *6*: route to lower left pixel</span>
+<span class="sd">            - *7*: route to left pixel</span>
+<span class="sd">            - *8*: route to upper left pixel</span>
+<span class="sd">            - *-9999*: nodata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
+            <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_river&quot;, mandatory=False)</span>
-    <span class="k">def</span> <span class="nf">segments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">segments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter river segments raster</span>
 
 <span class="sd">        See :ref:`here &lt;watemsedem:riversegmentfile&gt;`</span>
@@ -900,28 +895,39 @@
 <span class="sd">            Raster containing following values:</span>
 
 <span class="sd">            - *&gt;0*: segment_id</span>
-<span class="sd">            - *-9999*: nodata</span>
+<span class="sd">            - *0*: nodata</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The number of segments is limited to int16.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span>
+
+    <span class="nd">@segments</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign river segments raster</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster_input: Pathlib.Path, str or numpy.array</span>
+<span class="sd">            File path/array river segments raster with values *&gt;0*: segment_id,</span>
+<span class="sd">            *-9999*: nodata</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        The number of segments is limited to int16.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_river</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="o">.</span><span class="n">arr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span>
-
 <div class="viewcode-block" id="Catchment.topologize_river">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.Catchment.topologize_river">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">topologize_river</span><span class="p">(</span>
-        <span class="n">vct_input</span><span class="p">,</span>
-        <span class="n">vct_output</span><span class="p">,</span>
-        <span class="n">rst_mask</span><span class="p">,</span>
-        <span class="n">tolerance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">topologize_river</span><span class="p">(</span>
+        <span class="n">vct_input</span><span class="p">,</span> <span class="n">vct_output</span><span class="p">,</span> <span class="n">rst_mask</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare topology of the river segments with SAGA-GIS</span>
 
@@ -936,6 +942,7 @@
 <span class="sd">        tolerance: float</span>
 <span class="sd">            If not None, the ``TOLERANCE`` command line argument of the saga topology</span>
 <span class="sd">            command is given this value.</span>
+<span class="sd">        dir: pathlib.Path, default cwd</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -953,8 +960,8 @@
         <span class="k">if</span> <span class="n">tolerance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-TOLERANCE&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)]</span>
 
-        <span class="n">temp_adjacent_edges</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">temp_up_edges</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">temp_adjacent_edges</span> <span class="o">=</span> <span class="n">create_filename</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+        <span class="n">temp_up_edges</span> <span class="o">=</span> <span class="n">create_filename</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
 
         <span class="c1"># temp fix</span>
         <span class="k">try</span><span class="p">:</span>
@@ -962,8 +969,8 @@
         <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;corrupted size vs. prev_size in fastbins&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">vct_output</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">fiona</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DriverError</span><span class="p">:</span>
+                    <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_info</span><span class="p">(</span><span class="n">vct_output</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DataSourceError</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;topology&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
@@ -979,20 +986,20 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">temp_adjacent_edges</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">temp_up_edges</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">fiona</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">DriverError</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="n">adjacent_edges</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">temp_adjacent_edges</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">up_edges</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">temp_up_edges</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">temp_up_edges</span><span class="p">),</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span>
-        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">temp_adjacent_edges</span><span class="p">),</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp_up_edges</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp_adjacent_edges</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">adjacent_edges</span><span class="p">,</span> <span class="n">up_edges</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vct_water</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_water</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter water polygon vector</span>
 
 <span class="sd">        Returns</span>
@@ -1004,7 +1011,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span>
 
     <span class="nd">@vct_water</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">vct_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign water polygon vector</span>
 
 <span class="sd">        The water vector should be a polygon-vector file. No specific attributes should</span>
@@ -1023,9 +1030,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_factory</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="nb">float</span>
+        <span class="p">)</span>
+        <span class="n">water</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="n">dtype_raster</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+            <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">water</span> <span class="o">=</span> <span class="n">water</span>
+
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_water&quot;, mandatory=False)</span>
-    <span class="k">def</span> <span class="nf">water</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">water</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter water polygon vector</span>
 
 <span class="sd">        Returns</span>
@@ -1036,20 +1055,24 @@
 <span class="sd">            - *-5*: open water</span>
 <span class="sd">            - *-9999*: nodata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-                <span class="nb">float</span>
-            <span class="p">)</span>
-            <span class="n">water</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_water</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;integer&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">)</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">water</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">arr</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_water</span>
+
+    <span class="nd">@water</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign water raster</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster_input: Pathlib.Path, str or numpy.array</span>
+<span class="sd">            File path/array water raster with values *-5*: open water,</span>
+<span class="sd">            *-9999*: nodata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_water</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
+            <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vct_infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter infrastructure polygon vector</span>
 
 <span class="sd">        Returns</span>
@@ -1061,7 +1084,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span>
 
     <span class="nd">@vct_infrastructure_buildings</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">vct_infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign infrastructure polygon vector</span>
 
 <span class="sd">        The infrastructure buildings vector should be polygon vector. Buildings are</span>
@@ -1077,11 +1100,24 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">infra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
+            <span class="n">col</span><span class="o">=</span><span class="s2">&quot;paved&quot;</span><span class="p">,</span>
+            <span class="n">dtype_raster</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+            <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">infrastructure_buildings</span> <span class="o">=</span> <span class="n">infra</span>
+
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(</span>
     <span class="c1">#    req_property_name=&quot;vct_infrastructure_buildings&quot;, mandatory=False</span>
     <span class="c1"># )</span>
-    <span class="k">def</span> <span class="nf">infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter rasterized infrastructure polygon vector</span>
 
 <span class="sd">        Returns</span>
@@ -1092,19 +1128,25 @@
 <span class="sd">            - *-2*: paved</span>
 <span class="sd">            - *-9999*: nodata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span>
-            <span class="s2">&quot;paved&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure_buildings</span>
 
-        <span class="n">infra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;paved&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+    <span class="nd">@infrastructure_buildings</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infrastructure_buildings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign infrastructure buildings raster</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster_input: Pathlib.Path, str or numpy.array</span>
+<span class="sd">            File path/array infrastructure buildings raster with values *-2*: paved,</span>
+<span class="sd">            *-9999*: nodata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure_buildings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
+            <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">infra</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="c1"># @valid_req_property(req_property_name=&quot;vct_infrastructure_roads&quot;, mandatory=False)</span>
-    <span class="k">def</span> <span class="nf">infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter rasterized infrastructure polygon vector</span>
 
 <span class="sd">        Returns</span>
@@ -1116,22 +1158,28 @@
 <span class="sd">            - *-7*: paved</span>
 <span class="sd">            - *-9999*: nodata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span>
-            <span class="s2">&quot;paved&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure_roads</span>
 
-        <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask_raster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;paved&quot;</span><span class="p">,</span> <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span>
+    <span class="nd">@infrastructure_roads</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign infrastructure roads raster</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster_input: Pathlib.Path, str or numpy.array</span>
+<span class="sd">            File path/array infrastructure roads raster with values *-2*: paved,</span>
+<span class="sd">            *-7*: non-paved, *-9999*: nodata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure_roads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span>
+            <span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">vct_infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter infrastructure line vector&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span>
 
     <span class="nd">@vct_infrastructure_roads</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">vct_infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vct_infrastructure_roads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign infrastructure line vector</span>
 
 <span class="sd">        The infrastructure roads vector should be polygon vector. Paved and non-paved</span>
@@ -1151,7 +1199,7 @@
         <span class="k">if</span> <span class="s2">&quot;paved&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">geodata</span><span class="p">:</span>
             <span class="n">attribute_discrete_value_error</span><span class="p">(</span>
                 <span class="n">geodata</span><span class="p">,</span>
-                <span class="s2">&quot;Infrastucture roads&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Infrastructure roads&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;paved&quot;</span><span class="p">,</span>
                 <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">},</span>
                 <span class="p">{</span><span class="s2">&quot;nodata&quot;</span><span class="p">,</span> <span class="s2">&quot;paved&quot;</span><span class="p">,</span> <span class="s2">&quot; non-paved&quot;</span><span class="p">},</span>
@@ -1161,9 +1209,23 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">geodata</span> <span class="o">=</span> <span class="n">geodata</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;paved&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rasterfile_mask</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
+            <span class="n">col</span><span class="o">=</span><span class="s2">&quot;paved&quot;</span><span class="p">,</span>
+            <span class="n">dtype_raster</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+            <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">infrastructure_roads</span> <span class="o">=</span> <span class="n">arr</span>
+
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">infrastructure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get infrastucture raster</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infrastructure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get infrastructure raster</span>
 
 <span class="sd">        Get rasterized polygon and line vectors. The procedure adds the line data</span>
 <span class="sd">        (roads) to the  polygon data (buildings). As such buildings are considered as</span>
@@ -1206,7 +1268,7 @@
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plotting fun&quot;&quot;&quot;</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot infrastructure&quot;&quot;&quot;</span>
@@ -1222,7 +1284,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infrastructure</span>
 
-    <span class="k">def</span> <span class="nf">_calculate_soil_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_soil_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate statistics of K-factor map</span>
 
 <span class="sd">        Calculates the area (m²) and the relative amount of appearance of</span>
@@ -1244,7 +1306,7 @@
 
 <div class="viewcode-block" id="Catchment.create_folder_structure">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.Catchment.create_folder_structure">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a fixed folder structure for the model data</span>
 
 <span class="sd">        The folder layout will have the following directory structure:</span>

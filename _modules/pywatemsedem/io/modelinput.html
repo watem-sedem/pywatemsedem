@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.modelinput &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.io.modelinput &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,26 +93,26 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.io.modelinput</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># hvplot functionalities</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colors</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_raster_properties_raster_with_template</span><span class="p">,</span>
     <span class="n">mask_array_with_val</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.plots</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">axes_creator</span><span class="p">,</span>
     <span class="n">plot_continuous_raster</span><span class="p">,</span>
     <span class="n">plot_discrete_raster</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.valid</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.valid</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">valid_array_type</span><span class="p">,</span>
     <span class="n">valid_boundaries</span><span class="p">,</span>
     <span class="n">valid_nodata</span><span class="p">,</span>
@@ -123,10 +126,10 @@
 
 <div class="viewcode-block" id="valid_segments">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modelinput.valid_segments">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_segments</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_segments</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a river segments raster.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Please first define WaTEM/SEDEM river segments, see &quot;</span>
@@ -142,8 +145,8 @@
 <div class="viewcode-block" id="Modelinput">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Modelinput</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Modelinput</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;AbstractRaster class with model inputs as attributes. Modelinput class</span>
 <span class="sd">        serves the goal of automating the reading in, checking and visualisation</span>
 <span class="sd">        of the input data of the WaTEM/SEDEM model.</span>
@@ -181,7 +184,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_adjacentsegments</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter cfactor attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:cmap&gt;`</span>
@@ -189,7 +192,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span>
 
     <span class="nd">@cfactor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -208,7 +211,7 @@
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for _cfactor with cividis as colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -235,7 +238,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter buffers attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:buffermap&gt;`</span>
@@ -243,7 +246,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span>
 
     <span class="nd">@buffers</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -255,11 +258,11 @@
         <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;No buffer&quot;</span><span class="p">,</span> <span class="s2">&quot;Buffer&quot;</span><span class="p">]</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for buffers</span>
 
 <span class="sd">            Parameters</span>
@@ -288,7 +291,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter dtm attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:dtmmap&gt;`</span>
@@ -296,7 +299,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span>
 
     <span class="nd">@dtm</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dtm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -312,9 +315,9 @@
         <span class="n">valid_nodata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">nodata_value</span><span class="o">=-</span><span class="mi">99999</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtm</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mi">431</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">9000</span><span class="p">)</span>
         <span class="c1"># +- lowest and highest points on earth</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for DTM with cividis as colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -341,14 +344,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter kfactor attribute.</span>
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:kmap&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span>
 
     <span class="nd">@kfactor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -363,12 +366,12 @@
         <span class="n">valid_boundaries</span><span class="p">(</span>
             <span class="n">raster</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">raster</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>  <span class="c1"># No data value excluded from check</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster_input</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span> <span class="o">=</span> <span class="n">raster</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for K-factor with cividis as colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -395,7 +398,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_kfactor</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter kTC parameter attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:ktcmap&gt;`</span>
@@ -403,7 +406,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span>
 
     <span class="nd">@ktc</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ktc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -418,11 +421,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="mi">9999</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">20</span>
         <span class="p">)</span>  <span class="c1"># 0 to 20 if not nodata</span>
         <span class="n">valid_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span><span class="o">.</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">9999</span><span class="p">])</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;9999&quot;</span><span class="p">]</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for kTC parameter with cividis as colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -454,7 +457,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">outlet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">outlet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter outlet attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:outletmap&gt;`</span>
@@ -462,7 +465,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlet</span>
 
     <span class="nd">@outlet</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">outlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">outlet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -475,10 +478,10 @@
         <span class="n">valid_nodata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
         <span class="n">valid_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outlet</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">unique_values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter P-factor attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:pmap&gt;`</span>
@@ -486,7 +489,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pfactor</span>
 
     <span class="nd">@pfactor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pfactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -500,9 +503,9 @@
         <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">)</span>
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for P-factor</span>
 
 <span class="sd">             Parameters</span>
@@ -529,7 +532,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pfactor</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">compositelanduse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compositelanduse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter landuseparcels attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:prcmap&gt;`</span>
@@ -537,7 +540,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compositelanduse</span>
 
     <span class="nd">@compositelanduse</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">compositelanduse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compositelanduse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -550,7 +553,7 @@
         <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compositelanduse</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mi">32757</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">32757</span><span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
         <span class="c1"># custom plotting features</span>
         <span class="n">colormap</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span>
@@ -576,7 +579,7 @@
             <span class="s2">&quot;Agriculture (&gt;0)&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for Landuseparecles</span>
 
 <span class="sd">             Parameters</span>
@@ -604,7 +607,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_compositelanduse</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ptef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ptef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter ptef attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:parceltrapppingcrop&gt;`</span>
@@ -612,7 +615,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ptef</span>
 
     <span class="nd">@ptef</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">ptef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ptef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -626,9 +629,9 @@
         <span class="c1"># int16, maar waarom niet float32?</span>
         <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for PTEF</span>
 
 <span class="sd">            Parameters</span>
@@ -656,7 +659,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ptef</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">riversegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">riversegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter riversegments attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:riversegmentfile&gt;`</span>
@@ -664,7 +667,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span>
 
     <span class="nd">@riversegments</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">riversegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">riversegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -677,9 +680,9 @@
         <span class="n">valid_non_nan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptef</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for riversegments</span>
 
 <span class="sd">            Parameters</span>
@@ -718,7 +721,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_riversegments</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">riverrouting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">riverrouting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter riverrouting attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:routingmap&gt;`</span>
@@ -726,7 +729,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_riverrouting</span>
 
     <span class="nd">@riverrouting</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">riverrouting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">riverrouting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -742,7 +745,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">riverrouting</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">],</span>
             <span class="n">unique_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
         <span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">colormap_start</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab10&quot;</span><span class="p">)</span>
         <span class="n">colorlist</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
@@ -762,7 +765,7 @@
         <span class="p">]</span>
         <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for riverrouting</span>
 
 <span class="sd">            Parameters</span>
@@ -790,7 +793,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_riverrouting</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter sewers attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:sewermapfile&gt;`</span>
@@ -798,7 +801,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sewers</span>
 
     <span class="nd">@sewers</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -812,9 +815,9 @@
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewers</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">)</span>
-        <span class="n">valid_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for sewers</span>
 
 <span class="sd">            Parameters</span>
@@ -842,7 +845,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sewers</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">upstreamsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upstreamsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter upstreamsegments dataframe.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:upstrsegments&gt;`</span>
@@ -851,7 +854,7 @@
 
     <span class="nd">@upstreamsegments</span><span class="o">.</span><span class="n">setter</span>
     <span class="nd">@valid_segments</span>
-    <span class="k">def</span> <span class="nf">upstreamsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upstreamsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -866,7 +869,7 @@
         <span class="n">valid_array_type</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">adjacentsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adjacentsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter adjacentsegments dataframe.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:adjsegments&gt;`</span>
@@ -875,7 +878,7 @@
 
     <span class="nd">@adjacentsegments</span><span class="o">.</span><span class="n">setter</span>
     <span class="nd">@valid_segments</span>
-    <span class="k">def</span> <span class="nf">adjacentsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adjacentsegments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>

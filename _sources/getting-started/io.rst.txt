@@ -1,7 +1,7 @@
 
 IO-module
 =========
-.. warning:: This module is under development
+.. warning:: This module is under development!
 
 Introduction
 ------------
@@ -10,8 +10,7 @@ WaTEM/SEDEM files.
 
 Ini-file
 --------
-The ini-file (see :ref:`here <pywatemsedem:inifile>`) can be modified with a Python
-function available in the in ini-submodule:
+The ini-file can be modified with a Python function available in the in ini-submodule:
 
 .. code-block:: python
 

@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.testing &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.testing &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,16 +93,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.testing</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">load_raster</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.modeloutput</span> <span class="kn">import</span> <span class="n">load_total_sediment_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_raster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.modeloutput</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_total_sediment_file</span>
 
 
-<span class="k">def</span> <span class="nf">_compare_folder</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_folder</span><span class="p">(</span>
     <span class="n">folder_benchmark</span><span class="p">,</span>
     <span class="n">folder_output</span><span class="p">,</span>
     <span class="n">year</span><span class="o">=</span><span class="s2">&quot;2018&quot;</span><span class="p">,</span>
@@ -152,7 +155,7 @@
     <span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)))</span>
 
 
-<span class="k">def</span> <span class="nf">_compare_rst</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_rst</span><span class="p">(</span>
     <span class="n">folder_benchmark</span><span class="p">,</span>
     <span class="n">folder_output</span><span class="p">,</span>
     <span class="n">year</span><span class="o">=</span><span class="s2">&quot;2018&quot;</span><span class="p">,</span>
@@ -170,7 +173,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_compare_rst_folder</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_rst_folder</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare RST files in two folders&quot;&quot;&quot;</span>
 
     <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
@@ -208,7 +211,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_compare_table</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_table</span><span class="p">(</span>
     <span class="n">folder_benchmark</span><span class="p">,</span>
     <span class="n">folder_output</span><span class="p">,</span>
     <span class="n">year</span><span class="o">=</span><span class="s2">&quot;2018&quot;</span><span class="p">,</span>
@@ -247,7 +250,7 @@
 
 <div class="viewcode-block" id="serialize_process_raster">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.serialize_process_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">serialize_process_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">serialize_process_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Serializer function for rasters</span>
 
 <span class="sd">    Parameters</span>
@@ -269,7 +272,7 @@
 
 <div class="viewcode-block" id="process_arr_cnwsperceelskaart">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.process_arr_cnwsperceelskaart">[docs]</a>
-<span class="k">def</span> <span class="nf">process_arr_cnwsperceelskaart</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_arr_cnwsperceelskaart</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove unique parcels id&#39;s before comparing rasters</span>
 
 <span class="sd">    Parameters</span>
@@ -291,7 +294,7 @@
 
 <div class="viewcode-block" id="process_arr_default">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.process_arr_default">[docs]</a>
-<span class="k">def</span> <span class="nf">process_arr_default</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_arr_default</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy function for processing arr</span>
 
 <span class="sd">    Parameters</span>
@@ -310,7 +313,7 @@
 
 <div class="viewcode-block" id="equal_ini">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_ini">[docs]</a>
-<span class="k">def</span> <span class="nf">equal_ini</span><span class="p">(</span><span class="n">inifile_1</span><span class="p">,</span> <span class="n">inifile_2</span><span class="p">,</span> <span class="n">skip_lines</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">equal_ini</span><span class="p">(</span><span class="n">inifile_1</span><span class="p">,</span> <span class="n">inifile_2</span><span class="p">,</span> <span class="n">skip_lines</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if settings.ini files are the same.</span>
 
 <span class="sd">    Ignore difference in filepath and date</span>
@@ -343,7 +346,7 @@
 
 <div class="viewcode-block" id="equal_table">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_table">[docs]</a>
-<span class="k">def</span> <span class="nf">equal_table</span><span class="p">(</span><span class="n">txt_table_file_1</span><span class="p">,</span> <span class="n">txt_table_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">skiplines</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">equal_table</span><span class="p">(</span><span class="n">txt_table_file_1</span><span class="p">,</span> <span class="n">txt_table_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">skiplines</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if table data are the same</span>
 
 <span class="sd">    Parameters</span>
@@ -367,7 +370,7 @@
 
 <div class="viewcode-block" id="equal_total_sediment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_total_sediment">[docs]</a>
-<span class="k">def</span> <span class="nf">equal_total_sediment</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">equal_total_sediment</span><span class="p">(</span>
     <span class="n">txt_total_sediment_file_1</span><span class="p">,</span> <span class="n">txt_total_sediment_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if total sediment output data of two files are the same</span>
@@ -392,7 +395,7 @@
 
 <div class="viewcode-block" id="equal_rst">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_rst">[docs]</a>
-<span class="k">def</span> <span class="nf">equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if content of raster files are equal.</span>
 
 <span class="sd">    Parameters</span>
@@ -416,7 +419,7 @@
 
 <div class="viewcode-block" id="check_equal_rst">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.check_equal_rst">[docs]</a>
-<span class="k">def</span> <span class="nf">check_equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if content of raster files are equal.</span>
 
 <span class="sd">    Parameters</span>
@@ -440,12 +443,12 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_subdir_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_subdir_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">set</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()])</span>
 
 
-<span class="k">def</span> <span class="nf">_get_filenames</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_filenames</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
         <span class="p">[</span>
@@ -456,7 +459,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_compare_cnws_input_raster</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_cnws_input_raster</span><span class="p">(</span>
     <span class="n">rst</span><span class="p">,</span>
     <span class="n">rst_benchmark</span><span class="p">,</span>
     <span class="n">tag</span><span class="p">,</span>
@@ -502,7 +505,7 @@
 
 <div class="viewcode-block" id="compute_difference_table_cnws_buffers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.compute_difference_table_cnws_buffers">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_difference_table_cnws_buffers</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">buf_idext</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">14</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_difference_table_cnws_buffers</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">buf_idext</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">14</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute table whcih indicates difference between two WaTEM/SEDEM buffer raster</span>
 <span class="sd">    files.</span>
 
@@ -541,7 +544,7 @@
 
 <div class="viewcode-block" id="compute_difference_table_cnws_rasters">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.compute_difference_table_cnws_rasters">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_difference_table_cnws_rasters</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_difference_table_cnws_rasters</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute table whcih indicates difference between two WaTEM/SEDEM raster files.</span>
 
 <span class="sd">    Parameters</span>
@@ -566,7 +569,7 @@
 
 <div class="viewcode-block" id="compute_difference_table_cnws_prckrt_rasters">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.compute_difference_table_cnws_prckrt_rasters">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_difference_table_cnws_prckrt_rasters</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_difference_table_cnws_prckrt_rasters</span><span class="p">(</span>
     <span class="n">arr</span><span class="p">,</span>
     <span class="n">arr_benchmark</span><span class="p">,</span>
     <span class="n">dict_translation</span><span class="o">=</span><span class="p">{</span>

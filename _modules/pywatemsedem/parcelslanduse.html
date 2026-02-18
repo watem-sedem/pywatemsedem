@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.parcelslanduse &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.parcelslanduse &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,15 +93,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.parcelslanduse</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
 <div class="viewcode-block" id="ParcelsLanduse">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ParcelsLanduse</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParcelsLanduse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to generate parcels land-use raster.</span>
 
 <span class="sd">    This parcels land-use raster is used as raster input for WaTEM/SEDEM pywatemsedem.</span>
@@ -107,7 +110,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    landuse_core: numpy.ndarray</span>
 <span class="sd">        Core landuse raster</span>
-<span class="sd">    rivers: numpy.ndarray</span>
+<span class="sd">    river: numpy.ndarray</span>
 <span class="sd">        River raster (-1)</span>
 <span class="sd">    water: numpy.ndarray</span>
 <span class="sd">        Water raster (-3)</span>
@@ -135,7 +138,7 @@
 
 <div class="viewcode-block" id="ParcelsLanduse.create_parcels_landuse_raster">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.create_parcels_landuse_raster">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_parcels_landuse_raster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;Degerickx2015_adjusted&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_parcels_landuse_raster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s2">&quot;Degerickx2015_adjusted&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create parcels landuse raster with a defined scheme.</span>
 
 <span class="sd">        Parameters</span>
@@ -168,7 +171,7 @@
 
 <div class="viewcode-block" id="create_parcels_landuse_degerick2015">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.create_parcels_landuse_degerick2015">[docs]</a>
-<span class="k">def</span> <span class="nf">create_parcels_landuse_degerick2015</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_parcels_landuse_degerick2015</span><span class="p">(</span>
     <span class="n">landuse_core</span><span class="p">,</span>
     <span class="n">river</span><span class="p">,</span>
     <span class="n">water</span><span class="p">,</span>
@@ -183,11 +186,11 @@
 <span class="sd">    (version VPO).</span>
 
 <span class="sd">    This schemes map rasters from top to bottom : rivers, water, infrastructure,</span>
-<span class="sd">    grass strips, landuse from parcels data source, parcelsand finally pywatemsedem landuse.</span>
-<span class="sd">    Incemental mapping to the parcels landuse raster is done by mapping pixels from the</span>
-<span class="sd">    input raster to empty pixels in the landuse raster</span>
-<span class="sd">    (see also :func:`pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem landuse</span>
-<span class="sd">    raster is used to fill gaps.</span>
+<span class="sd">    grass strips, landuse from parcels data source, parcelsand finally pywatemsedem</span>
+<span class="sd">    landuse. Incemental mapping to the parcels landuse raster is done by mapping pixels</span>
+<span class="sd">    from the input raster to empty pixels in the landuse raster</span>
+<span class="sd">    (see also :func:`pywatemsedem.scenario.map_input_array_on_array`). The pywatemsedem</span>
+<span class="sd">    landuse raster is used to fill gaps.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -243,7 +246,7 @@
 
 <div class="viewcode-block" id="map_input_array_on_array">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.map_input_array_on_array">[docs]</a>
-<span class="k">def</span> <span class="nf">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_input</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;only_empty&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_input</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;only_empty&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Map an input array on an other array with a method</span>
 
 <span class="sd">    Parameters</span>
@@ -275,7 +278,7 @@
 
 <div class="viewcode-block" id="get_source_landuse">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.parcelslanduse.get_source_landuse">[docs]</a>
-<span class="k">def</span> <span class="nf">get_source_landuse</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_source_landuse</span><span class="p">(</span>
     <span class="n">landuse</span><span class="p">,</span>
     <span class="n">maxprc_id</span><span class="p">,</span>
     <span class="n">rasterio_profile</span><span class="p">,</span>

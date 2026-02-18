@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem.userchoices_cn &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pywatemsedem.userchoices_cn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pywatemsedem.userchoices_cn</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># Standard libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_courant_criterium</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="set_userchoices_curvenumber">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.userchoices_cn.set_userchoices_curvenumber">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_userchoices_curvenumber</span><span class="p">(</span>
+    <span class="n">type_cn_storage</span><span class="p">,</span>
+    <span class="n">txt_rainfall_filename</span><span class="p">,</span>
+    <span class="n">rainfall_depth_antecedent</span><span class="p">,</span>
+    <span class="n">begin_date</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">,</span>
+    <span class="n">time_step_event</span><span class="p">,</span>
+    <span class="n">days_antecedent</span><span class="p">,</span>
+    <span class="n">resolution</span><span class="p">,</span>
+    <span class="n">stream_velocity</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set userchoices for Curve-Number model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    type_cn_storage: str</span>
+<span class="sd">        &quot;filestorage&quot; or &quot;database&quot; storage.</span>
+<span class="sd">    txt_rainfall_filename: str</span>
+<span class="sd">        See :func:`pywatemsedem.CNWS.UserChoicesCurveNumber.check`</span>
+<span class="sd">    rainfall_depth_antecedent: int</span>
+<span class="sd">        Antecedent rainfall depth (mm).</span>
+<span class="sd">    begin_date: pandas.DateTime</span>
+<span class="sd">        See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`</span>
+<span class="sd">    end_date: pandas.DateTime</span>
+<span class="sd">        See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`</span>
+<span class="sd">    time_step_event: int</span>
+<span class="sd">        See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`</span>
+<span class="sd">    days_antecedent: int</span>
+<span class="sd">        See :func:`pywatemsedem.userchoices.UserChoicesCurveNumber.check`</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        Spatial resolution.</span>
+<span class="sd">    stream_velocity: float</span>
+<span class="sd">        Stream velocity (m/s)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">txt_rainfall_filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">type_cn_storage</span> <span class="o">=</span> <span class="s2">&quot;filestorage&quot;</span>
+
+    <span class="n">userchoices_curvenumber</span> <span class="o">=</span> <span class="n">UserChoicesCurveNumber</span><span class="p">(</span><span class="n">type_cn_storage</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+
+    <span class="p">(</span>
+        <span class="n">txt_rainfall_filename</span><span class="p">,</span>
+        <span class="n">rainfall_depth_antecedent</span><span class="p">,</span>
+        <span class="n">begin_date</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">,</span>
+        <span class="n">days_antecedent</span><span class="p">,</span>
+        <span class="n">time_step_event</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">userchoices_curvenumber</span><span class="o">.</span><span class="n">check</span><span class="p">(</span>
+        <span class="n">txt_rainfall_filename</span><span class="p">,</span>
+        <span class="n">rainfall_depth_antecedent</span><span class="p">,</span>
+        <span class="n">begin_date</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">,</span>
+        <span class="n">time_step_event</span><span class="p">,</span>
+        <span class="n">days_antecedent</span><span class="p">,</span>
+        <span class="n">stream_velocity</span><span class="o">=</span><span class="n">stream_velocity</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UserChoicesCurveNumber">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserChoicesCurveNumber</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;User choices for Curve-Number model.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_cn_storage</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise UserChoicesCurveNumber.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_cn_storage</span> <span class="o">=</span> <span class="n">type_cn_storage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+
+<div class="viewcode-block" id="UserChoicesCurveNumber.check">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">txt_rainfall_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rainfall_depth_antecedent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">begin_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">time_step_event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">days_antecedent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream_velocity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the settings for an event based on whether a filesystem or database</span>
+<span class="sd">        storage system is used. In a filebased system, a reference to a rainfall</span>
+<span class="sd">        data file has to be given, with an amount of antecedent rainfall. In the</span>
+<span class="sd">        other case the begin and end date have to be given, along with the days of</span>
+<span class="sd">        antecedent, and the time step of an event.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        txt_rainfall_filename: pathlib.Path or str, optional</span>
+<span class="sd">            File path to rainfall input data file. This file is a headerless text</span>
+<span class="sd">            file with two columns. The first column contains the time in minutes</span>
+<span class="sd">            (starting from 0), the second column contains the rainfall in mm.</span>
+<span class="sd">        rainfall_depth_antecedent: int or float</span>
+<span class="sd">            Cumulative amount of rainfall in days_antecedent.</span>
+<span class="sd">        begin_date: pandas.Timestamp, optional</span>
+<span class="sd">            Begin rainfall timerseries, in UTC, make use of pd.Timestamp, see Note 1.</span>
+<span class="sd">        end_date: pandas.Timestamp, optional</span>
+<span class="sd">            End rainfall timerseries, in UTC, make use of pd.Timestamp, see Note 1.</span>
+<span class="sd">        time_step_event: int</span>
+<span class="sd">            Time step event.</span>
+<span class="sd">        days_antecedent: int or float, optional</span>
+<span class="sd">            Number of days for antecedent</span>
+<span class="sd">        stream_velocity: float</span>
+<span class="sd">            Stream velocity (m/s)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        See `Parameters`.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        1. Use of begin_date_event and end_date_event is for example, with UTC as</span>
+<span class="sd">        timezone:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            begin_date = pandas..to_datetime(&quot;2018-01-01&quot;, utc=True)</span>
+<span class="sd">            end_date = pandas.to_datetime(&quot;2018-01-15&quot;, utc=True)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span> <span class="o">=</span> <span class="n">txt_rainfall_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_depth_antecedent</span> <span class="o">=</span> <span class="n">rainfall_depth_antecedent</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">begin_date</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">end_date</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Begin date and end date should be a pandas.Timestamp object in UTC, &quot;</span>
+                <span class="s2">&quot;use `begin_date = pd.to_datetime(&#39;YYYY-MM-DD&#39; utc=True)`.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">begin_date</span><span class="o">.</span><span class="n">tz</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;UTC&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">end_date</span><span class="o">.</span><span class="n">tz</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;UTC&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">begin_date</span> <span class="o">=</span> <span class="n">begin_date</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_date</span> <span class="o">=</span> <span class="n">end_date</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Use timezone-UTC to define begin and end date, &quot;</span>
+                <span class="s2">&quot;use `begin_date = pd.to_datetime(&#39;YYYY-MM-DD&#39; utc=True)`.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">days_antecedent</span> <span class="o">=</span> <span class="n">days_antecedent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_step_event</span> <span class="o">=</span> <span class="n">time_step_event</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_cn_storage</span> <span class="o">==</span> <span class="s2">&quot;filestorage&quot;</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_choices_cn_filestorage</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_cn_storage</span> <span class="o">==</span> <span class="s2">&quot;databasestorage&quot;</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_choices_cn_databasestorage</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">stream_velocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_step_event</span> <span class="o">=</span> <span class="n">check_courant_criterium</span><span class="p">(</span>
+                <span class="n">stream_velocity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_step_event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_depth_antecedent</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">begin_date</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">days_antecedent</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_step_event</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UserChoicesCurveNumber.check_choices_cn_filestorage">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check_choices_cn_filestorage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_choices_cn_filestorage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the settings for an event for a filesystem storage system is used.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">days_antecedent</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Rainfall filename is not of type `str` or `pathlib.Path`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rainfall_depth_antecedent</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rainfall_depth_antecedent</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Rainfall depth antecedent is not or type `int` or `float`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Rainfall filename </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UserChoicesCurveNumber.check_choices_cn_databasestorage">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check_choices_cn_databasestorage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_choices_cn_databasestorage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the settings for an event for a database storage system is used.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_depth_antecedent</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">begin_date</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Begin date is not of type `datetime.datetime`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;End date is not of type `datetime.datetime`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">begin_date</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;End date of the event should be later that begin date of the event.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">days_antecedent</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">days_antecedent</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Days antecedent is not of type `float` or `int`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step_event</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_step_event</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Time step event is not of type `float` or `int`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

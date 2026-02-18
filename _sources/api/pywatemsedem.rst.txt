@@ -18,157 +18,165 @@ pywatemsedem.buffers module
 
 .. automodule:: pywatemsedem.buffers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.calibrate module
 -----------------------------
 
 .. automodule:: pywatemsedem.calibrate
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.catchment module
 -----------------------------
 
 .. automodule:: pywatemsedem.catchment
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.cfactor module
 ---------------------------
 
 .. automodule:: pywatemsedem.cfactor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
+
+pywatemsedem.choices module
+---------------------------
+
+.. automodule:: pywatemsedem.choices
+   :members:
+   :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.cn module
 ----------------------
 
 .. automodule:: pywatemsedem.cn
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.compare\_scenario module
 -------------------------------------
 
 .. automodule:: pywatemsedem.compare_scenario
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.defaults module
 ----------------------------
 
 .. automodule:: pywatemsedem.defaults
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.errors module
 --------------------------
 
 .. automodule:: pywatemsedem.errors
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.grasstrips module
 ------------------------------
 
 .. automodule:: pywatemsedem.grasstrips
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.ktc module
 -----------------------
 
 .. automodule:: pywatemsedem.ktc
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.parcelslanduse module
 ----------------------------------
 
 .. automodule:: pywatemsedem.parcelslanduse
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.plots module
 -------------------------
 
 .. automodule:: pywatemsedem.plots
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.postprocess module
 -------------------------------
 
 .. automodule:: pywatemsedem.postprocess
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.scenario module
 ----------------------------
 
 .. automodule:: pywatemsedem.scenario
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.templates module
 -----------------------------
 
 .. automodule:: pywatemsedem.templates
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.testing module
 ---------------------------
 
 .. automodule:: pywatemsedem.testing
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.tools module
 -------------------------
 
 .. automodule:: pywatemsedem.tools
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
-pywatemsedem.userchoices module
--------------------------------
+pywatemsedem.userchoices\_cn module
+-----------------------------------
 
-.. automodule:: pywatemsedem.userchoices
+.. automodule:: pywatemsedem.userchoices_cn
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 pywatemsedem.valid module
 -------------------------
 
 .. automodule:: pywatemsedem.valid
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: pywatemsedem
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -6,16 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Geo-module &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+  <title>Geo-module &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -61,6 +63,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -98,9 +101,9 @@
            <div itemprop="articleBody">
              
   <section id="geo-module">
-<h1>Geo-module<a class="headerlink" href="#geo-module" title="Link to this heading">¶</a></h1>
+<h1>Geo-module<a class="headerlink" href="#geo-module" title="Link to this heading"></a></h1>
 <section id="introduction">
-<span id="rasterproperties"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<span id="rasterproperties"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
 <p>The pywatemsedem package makes use of a number of GDAL and SAGA command line
 operators to process raster data (for reasons of processing speed). In order
 to cope with this file-based system, but still make use of numpy arrays for
@@ -123,9 +126,9 @@ case Lambert72, i.e. EPSG:31370) of your model:</p>
 </a>
 <p>Defining the raster properties for this raster can be done by:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># imports</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">load_raster</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasterproperties</span> <span class="kn">import</span> <span class="n">RasterProperties</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_raster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasterproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterProperties</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="c1"># input file</span>
 <span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
@@ -164,12 +167,12 @@ system Lambert72 and a resolution of 20 m):</p>
 </div>
 </section>
 <section id="rasters">
-<h2>Rasters<a class="headerlink" href="#rasters" title="Link to this heading">¶</a></h2>
+<h2>Rasters<a class="headerlink" href="#rasters" title="Link to this heading"></a></h2>
 <p>We have now predefined our geospatial context, and we want to clip our input
 according to this definition using
 <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>-engine:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># imports</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">RasterFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterFile</span>
 
 <span class="c1"># clip</span>
 <span class="n">raster</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">rp</span><span class="o">=</span><span class="n">rp</span><span class="p">)</span>
@@ -201,7 +204,7 @@ espg: EPSG:31370).</p>
 </div>
 <p>Masking with a (1, 0)-array is also available. The ones indicate no masking,
 the zeros indicate masking.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="n">vct_to_rst_field</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">vct_to_rst_field</span>
 <span class="n">rst_mask</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;mask.tif&quot;</span>
 <span class="n">mask</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">rst_mask</span><span class="p">)</span>
 </pre></div>
@@ -249,11 +252,11 @@ a Jupyter Notebook environment.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In order to use the hv_plot functionality, one has to install hvplot
-and geoviews. See <span class="xref std std-ref">installation page</span>.</p>
+and geoviews. See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/installation.html">installation page</a>.</p>
 </div>
 <p>The <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory" title="pywatemsedem.geo.rasters.RasterMemory"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterMemory</span></code></a> class can be used in a
 similar way:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.rasters</span> <span class="kn">import</span> <span class="n">RasterMemory</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterMemory</span>
 <span class="n">arr</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="n">raster</span> <span class="o">=</span> <span class="n">RasterMemory</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">profile</span><span class="p">))</span>
 <span class="n">raster</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
@@ -263,10 +266,10 @@ similar way:</p>
 implemented in the current version.</p>
 </section>
 <section id="vectors">
-<h2>Vectors<a class="headerlink" href="#vectors" title="Link to this heading">¶</a></h2>
+<h2>Vectors<a class="headerlink" href="#vectors" title="Link to this heading"></a></h2>
 <p>Similar to <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>, one can  make use
 <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile" title="pywatemsedem.geo.vectors.VectorFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorFile</span></code></a> to define vector data:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.geo.vectors</span> <span class="kn">import</span> <span class="n">VectorFile</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorFile</span>
 
 <span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
 <span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;Wlas_langegracht.shp&quot;</span>

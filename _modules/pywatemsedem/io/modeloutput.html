@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -91,25 +94,25 @@
              
   <h1>Source code for pywatemsedem.io.modeloutput</h1><div class="highlight"><pre>
 <span></span><span class="c1"># seperate plotting funcion</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># hvplot functionalities</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
-<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">LineString</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineString</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.plots</span> <span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
 
-<span class="kn">from</span> <span class="nn">..geo.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
-<span class="kn">from</span> <span class="nn">..geo.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..geo.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_raster_properties_raster_with_template</span><span class="p">,</span>
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
+    <span class="n">create_filename</span><span class="p">,</span>
     <span class="n">create_spatial_index</span><span class="p">,</span>
     <span class="n">execute_saga</span><span class="p">,</span>
     <span class="n">load_raster</span><span class="p">,</span>
@@ -120,9 +123,9 @@
     <span class="n">rst_to_vct_points</span><span class="p">,</span>
     <span class="n">write_arr_as_rst</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..io.plots</span> <span class="kn">import</span> <span class="n">axes_creator</span>  <span class="c1"># hvplot_continuous_raster,</span>
-<span class="kn">from</span> <span class="nn">..io.plots</span> <span class="kn">import</span> <span class="n">log_scale_enabler</span><span class="p">,</span> <span class="n">plot_continuous_raster</span><span class="p">,</span> <span class="n">plot_output_raster</span>
-<span class="kn">from</span> <span class="nn">..io.valid</span> <span class="kn">import</span> <span class="n">valid_array_type</span><span class="p">,</span> <span class="n">valid_boundaries</span><span class="p">,</span> <span class="n">valid_non_nan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">axes_creator</span>  <span class="c1"># hvplot_continuous_raster,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_scale_enabler</span><span class="p">,</span> <span class="n">plot_continuous_raster</span><span class="p">,</span> <span class="n">plot_output_raster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..io.valid</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_array_type</span><span class="p">,</span> <span class="n">valid_boundaries</span><span class="p">,</span> <span class="n">valid_non_nan</span>
 
 <span class="n">IMPLEMENTED_RASTER_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 <span class="n">COLORMAP</span> <span class="o">=</span> <span class="s2">&quot;cividis&quot;</span>
@@ -134,8 +137,8 @@
 <div class="viewcode-block" id="Modeloutput">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Modeloutput</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Modeloutput</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;AbstractRaster class with model outputs as attributes. Modeloutput class</span>
 <span class="sd">        serves the goal of automating the reading in, checking and visualisation</span>
 <span class="sd">        of the output data of the CNWS model.</span>
@@ -170,7 +173,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rusle</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sediout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sediout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter SediOut attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:sedioutrst&gt;`</span>
@@ -178,7 +181,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sediout</span>
 
     <span class="nd">@sediout</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">sediout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sediout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -195,7 +198,7 @@
 
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;SediOut [kg/year]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
             <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">40000</span><span class="p">,</span> <span class="mi">80000</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for SediOut with nonlinear colorscale. Masked under 100 kg/year.</span>
@@ -235,14 +238,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sediout</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter routing attribute.</span>
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:routingtxt&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span>
 
     <span class="nd">@routing</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -279,7 +282,7 @@
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">routing</span><span class="p">[</span><span class="s2">&quot;part2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">routing</span><span class="p">[</span><span class="s2">&quot;distance2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">():</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Interactive plot for routing</span>
 
 <span class="sd">            Returns</span>
@@ -297,14 +300,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">routing_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter routing_missing attribute.</span>
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:missingroutingtxt&gt;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routing_missing</span>
 
     <span class="nd">@routing_missing</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">routing_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -348,7 +351,7 @@
             <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">routing_missing</span><span class="p">[</span><span class="s2">&quot;part2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">valid_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">routing_missing</span><span class="p">[</span><span class="s2">&quot;distance2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">():</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Interactive plot for routing_missing</span>
 
 <span class="sd">            Returns</span>
@@ -370,7 +373,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_routing_missing</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter LS (length-slope) attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:lsmap&gt;`</span>
@@ -378,7 +381,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ls</span>
 
     <span class="nd">@ls</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -393,7 +396,7 @@
 
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;LS [-]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for LS with non-linear colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -429,7 +432,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ls</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">slope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter slope attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:slopemap&gt;`</span>
@@ -437,7 +440,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slope</span>
 
     <span class="nd">@slope</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">slope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -452,7 +455,7 @@
 
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Slope [rad]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for Slope with non-linear colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -488,7 +491,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_slope</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">uparea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">uparea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter uparea attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:upareamap&gt;`</span>
@@ -496,7 +499,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uparea</span>
 
     <span class="nd">@uparea</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">uparea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">uparea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -511,7 +514,7 @@
 
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;uparea [m²]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for uparea with non-linear colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -552,7 +555,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_uparea</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter total sediment attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:totalsedimenttxt&gt;`.</span>
@@ -562,7 +565,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment</span>
 
     <span class="nd">@total_sediment</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -573,7 +576,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sewer_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sewer_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter sewer_in attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:sewerinrst&gt;`</span>
@@ -581,7 +584,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sewer_in</span>
 
     <span class="nd">@sewer_in</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">sewer_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sewer_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -597,7 +600,7 @@
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;sewer in [kg/year]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for sewer_in with non-linear colormap. Zeros are filtered out</span>
 
 <span class="sd">            Parameters</span>
@@ -636,7 +639,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sewer_in</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sedi_export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sedi_export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter SediExport attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:sediexportrst&gt;`</span>
@@ -644,7 +647,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_export</span>
 
     <span class="nd">@sedi_export</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">sedi_export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sedi_export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -660,7 +663,7 @@
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;SediExport [kg/year]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for SediExport with non-linear colormap. Zeros are filtered out</span>
 
 <span class="sd">            Parameters</span>
@@ -713,7 +716,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_export</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sedi_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sedi_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter SediIn attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:sediinrst&gt;`</span>
@@ -721,7 +724,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_in</span>
 
     <span class="nd">@sedi_in</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">sedi_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sedi_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -737,7 +740,7 @@
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;SediIn [kg/year]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span>
             <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">40000</span><span class="p">,</span> <span class="mi">80000</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for SediIn</span>
@@ -775,7 +778,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_in</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter capacity attribute.</span>
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:capacityrst&gt;`</span>
@@ -783,7 +786,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span>
 
     <span class="nd">@capacity</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -800,7 +803,7 @@
 
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Capacity [kg/year]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for Capacity with logarithmic colormap</span>
 
 <span class="sd">            Parameters</span>
@@ -846,7 +849,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rusle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rusle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter rusle attribute.</span>
 
 
@@ -855,7 +858,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rusle</span>
 
     <span class="nd">@rusle</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">rusle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rusle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -872,7 +875,7 @@
 
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;RUSLE [kg/(year.m²)]&quot;</span>
 
-        <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot for RUSLE</span>
 
 <span class="sd">            Parameters</span>
@@ -909,7 +912,7 @@
 
 <div class="viewcode-block" id="Modeloutput.make_routing_vector">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.make_routing_vector">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_routing_vector</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_routing_vector</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">landuse</span><span class="p">,</span> <span class="n">sediout</span><span class="p">,</span> <span class="n">percentile</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">routing_missing</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts pandas dataframe of routing or routing_missing to a geopandas</span>
@@ -1016,7 +1019,7 @@
 
 <div class="viewcode-block" id="get_prckrt_statistics">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.get_prckrt_statistics">[docs]</a>
-<span class="k">def</span> <span class="nf">get_prckrt_statistics</span><span class="p">(</span><span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;ha&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prckrt_statistics</span><span class="p">(</span><span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;ha&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the statistics of the WaTEM/SEDEM perceelskaart</span>
 
 <span class="sd">    Load the WaTEM/SEDEM perceelskaart and compute for every unique id the area</span>
@@ -1083,7 +1086,7 @@
 
 <div class="viewcode-block" id="make_routing_vct_saga">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.make_routing_vct_saga">[docs]</a>
-<span class="k">def</span> <span class="nf">make_routing_vct_saga</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_routing_vct_saga</span><span class="p">(</span>
     <span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tile_number</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a routing vct routing file (added with CNWS landuse) based on</span>
@@ -1153,7 +1156,7 @@
 
 <div class="viewcode-block" id="prepare_make_routing_vct_saga">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.prepare_make_routing_vct_saga">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_make_routing_vct_saga</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_make_routing_vct_saga</span><span class="p">(</span>
     <span class="n">txt_routing</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">seperator</span><span class="p">,</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">tile_number</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1236,7 +1239,7 @@
 
 <div class="viewcode-block" id="condition_routing_dataframe_on_extent">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.condition_routing_dataframe_on_extent">[docs]</a>
-<span class="k">def</span> <span class="nf">condition_routing_dataframe_on_extent</span><span class="p">(</span><span class="n">df_routing</span><span class="p">,</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">extent</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">condition_routing_dataframe_on_extent</span><span class="p">(</span><span class="n">df_routing</span><span class="p">,</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">extent</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Clip routing_dataframe on defined extent</span>
 
@@ -1278,7 +1281,7 @@
 
 <div class="viewcode-block" id="run_saga_make_routing_shp_cmd">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.run_saga_make_routing_shp_cmd">[docs]</a>
-<span class="k">def</span> <span class="nf">run_saga_make_routing_shp_cmd</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_saga_make_routing_shp_cmd</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run the saga make routing shape command. This command makes from a pywatemsedem</span>
 <span class="sd">    routing table and a pywatemsedem &#39;perceelskaart&#39; a routing shapfile</span>
@@ -1325,7 +1328,7 @@
 
 <div class="viewcode-block" id="define_subcatchments_saga">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.define_subcatchments_saga">[docs]</a>
-<span class="k">def</span> <span class="nf">define_subcatchments_saga</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_subcatchments_saga</span><span class="p">(</span>
     <span class="n">rst_in</span><span class="p">,</span>
     <span class="n">txt_routing</span><span class="p">,</span>
     <span class="n">resmap</span><span class="p">,</span>
@@ -1397,7 +1400,7 @@
 
 <div class="viewcode-block" id="identify_individual_priority_catchments">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.identify_individual_priority_catchments">[docs]</a>
-<span class="k">def</span> <span class="nf">identify_individual_priority_catchments</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identify_individual_priority_catchments</span><span class="p">(</span>
     <span class="n">arr_sediout</span><span class="p">,</span>
     <span class="n">rst_profile</span><span class="p">,</span>
     <span class="n">txt_routing_non_river</span><span class="p">,</span>
@@ -1481,7 +1484,7 @@
 
 <div class="viewcode-block" id="create_id_raster_for_highest_value_arr">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.create_id_raster_for_highest_value_arr">[docs]</a>
-<span class="k">def</span> <span class="nf">create_id_raster_for_highest_value_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">resmap</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_id_raster_for_highest_value_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">resmap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a raster with an id value assigned to the highest value in the raster&quot;</span>
 
 <span class="sd">    Parameters</span>
@@ -1514,7 +1517,7 @@
 
     <span class="c1"># write to disk</span>
     <span class="n">rst_id</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;id_</span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2">.rst&quot;</span>
-    <span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">arr_id</span><span class="p">,</span> <span class="n">rst_id</span><span class="p">,</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span>
+    <span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">arr_id</span><span class="p">,</span> <span class="n">rst_id</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">rst_id</span><span class="p">,</span> <span class="n">max_val</span></div>
 
@@ -1522,7 +1525,7 @@
 
 <div class="viewcode-block" id="remove_river_routing">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.remove_river_routing">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_river_routing</span><span class="p">(</span><span class="n">df_routing</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_river_routing</span><span class="p">(</span><span class="n">df_routing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove river routing from routing dataframe</span>
 
 <span class="sd">    Parameters</span>
@@ -1554,7 +1557,7 @@
 
 <div class="viewcode-block" id="compute_efficiency_buffers">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.compute_efficiency_buffers">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_efficiency_buffers</span><span class="p">(</span><span class="n">rst_buffer</span><span class="p">,</span> <span class="n">rst_sediin</span><span class="p">,</span> <span class="n">rst_sediout</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_efficiency_buffers</span><span class="p">(</span><span class="n">rst_buffer</span><span class="p">,</span> <span class="n">rst_sediin</span><span class="p">,</span> <span class="n">rst_sediout</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute efficiency per buffer</span>
 
 <span class="sd">    This function calculates the incoming and outgoing sediment per buffer.</span>
@@ -1603,7 +1606,7 @@
 
 <div class="viewcode-block" id="open_txt_routing_file">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.open_txt_routing_file">[docs]</a>
-<span class="k">def</span> <span class="nf">open_txt_routing_file</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">open_txt_routing_file</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Open routing file with exceptions and seperators as needed</span>
 
 <span class="sd">    Parameters</span>
@@ -1645,7 +1648,7 @@
 
 <div class="viewcode-block" id="create_erosion_raster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.create_erosion_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">create_erosion_raster</span><span class="p">(</span><span class="n">rst_watereros</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_erosion_raster</span><span class="p">(</span><span class="n">rst_watereros</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create erosion raster from watereros.</span>
 
 <span class="sd">    Extract negative values from Watereros raster and set positives to 0. Erosion</span>
@@ -1676,7 +1679,7 @@
 
 <div class="viewcode-block" id="create_deposition_raster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.create_deposition_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">create_deposition_raster</span><span class="p">(</span><span class="n">rst_watereros</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_deposition_raster</span><span class="p">(</span><span class="n">rst_watereros</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create deposition raster from watereros.</span>
 
 <span class="sd">    Extract positve values from Watereros raster and set negatives to 0</span>
@@ -1706,7 +1709,7 @@
 
 <div class="viewcode-block" id="map_rank_sediment_loads">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.map_rank_sediment_loads">[docs]</a>
-<span class="k">def</span> <span class="nf">map_rank_sediment_loads</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_rank_sediment_loads</span><span class="p">(</span>
     <span class="n">rst_sediexport</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">vct_out</span><span class="o">=</span><span class="s2">&quot;rank.shp&quot;</span><span class="p">,</span> <span class="n">rst_endpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;kg&quot;</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rank the sediment loads in sediexport (and sewerin) from high to low</span>
@@ -1739,7 +1742,7 @@
     <span class="k">if</span> <span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;kg&quot;</span><span class="p">,</span> <span class="s2">&quot;ton&quot;</span><span class="p">]:</span>
         <span class="sa">f</span><span class="s2">&quot;Unit &#39;</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&#39; should be either &#39;kg&#39; op &#39;ton&#39;.&quot;</span>
 
-    <span class="n">rst_out</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">rst_out</span> <span class="o">=</span> <span class="n">create_filename</span><span class="p">(</span><span class="s2">&quot;.rst&quot;</span><span class="p">)</span>
     <span class="n">df_sediexport</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">identify_rank_sediment_loads</span><span class="p">(</span>
         <span class="n">rst_sediexport</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">rst_endpoints</span>
     <span class="p">)</span>
@@ -1757,7 +1760,7 @@
 
 <div class="viewcode-block" id="identify_rank_sediment_loads">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.identify_rank_sediment_loads">[docs]</a>
-<span class="k">def</span> <span class="nf">identify_rank_sediment_loads</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identify_rank_sediment_loads</span><span class="p">(</span>
     <span class="n">rst_sediexport</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">rst_endpoints</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify the highest ``threshold`` percentage sediment loads.</span>
@@ -1821,7 +1824,7 @@
 
 <div class="viewcode-block" id="compute_cumulative_loads_in_sinks">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_cumulative_loads_in_sinks</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_cumulative_loads_in_sinks</span><span class="p">(</span>
     <span class="n">df_sediexport</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyse cumulative sediment load by sorting SediExport values</span>
@@ -1894,9 +1897,11 @@
 
     <span class="c1"># calculate percentage</span>
     <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span>
-        <span class="k">else</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">(</span>
+            <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_sediexport</span><span class="p">))</span>
     <span class="p">]</span>
 
@@ -1925,7 +1930,7 @@
 
 <div class="viewcode-block" id="verify_highest_load_with_threshold">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.verify_highest_load_with_threshold">[docs]</a>
-<span class="k">def</span> <span class="nf">verify_highest_load_with_threshold</span><span class="p">(</span><span class="n">df_sediexport</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">verify_highest_load_with_threshold</span><span class="p">(</span><span class="n">df_sediexport</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify whether that the highest load is not accountable for more than 50 percent</span>
 <span class="sd">    of all the load in a catchment. If this is true, adapt threshold.</span>
 
@@ -1959,7 +1964,7 @@
 
 <div class="viewcode-block" id="load_total_sediment_file">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.load_total_sediment_file">[docs]</a>
-<span class="k">def</span> <span class="nf">load_total_sediment_file</span><span class="p">(</span><span class="n">txt_total_sediment_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_total_sediment_file</span><span class="p">(</span><span class="n">txt_total_sediment_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the total sediment file of CNWS written in CNWS dict_output map</span>
 
 <span class="sd">    Parameters</span>
@@ -2011,7 +2016,7 @@
 
 <div class="viewcode-block" id="check_segment_edges">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.check_segment_edges">[docs]</a>
-<span class="k">def</span> <span class="nf">check_segment_edges</span><span class="p">(</span><span class="n">adj_edges</span><span class="p">,</span> <span class="n">up_edges</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_segment_edges</span><span class="p">(</span><span class="n">adj_edges</span><span class="p">,</span> <span class="n">up_edges</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check river segment their edges. All the segments present in adj_edges</span>
 <span class="sd">    and up_edges must be present in the array from the segments raster.</span>
 

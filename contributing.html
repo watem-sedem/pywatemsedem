@@ -6,16 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Development guidelines &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+  <title>Development guidelines &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -56,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -105,7 +108,7 @@
            <div itemprop="articleBody">
              
   <section id="development-guidelines">
-<span id="dev-guidelines"></span><h1>Development guidelines<a class="headerlink" href="#development-guidelines" title="Link to this heading">¶</a></h1>
+<span id="dev-guidelines"></span><h1>Development guidelines<a class="headerlink" href="#development-guidelines" title="Link to this heading"></a></h1>
 <p>Want to contribute code or functionalities to the <code class="docutils literal notranslate"><span class="pre">pywatemsedem</span></code> package? Great and welcome on board!</p>
 <p>We use a number of development tools to support us in improving the code quality. No magic bullet or free
 lunch, but just a set of tools as any craftman has tools to support him/her doing a better job.</p>
@@ -115,7 +118,7 @@ is already done).</p>
 <p>When starting on the development of the <code class="docutils literal notranslate"><span class="pre">pywatemsedem</span></code> package, makes sure to be familiar with the following tools. Do
 not hesitate to ask the other developers when having trouble using these tools.</p>
 <section id="pre-commit-hooks">
-<h2>Pre-commit hooks<a class="headerlink" href="#pre-commit-hooks" title="Link to this heading">¶</a></h2>
+<h2>Pre-commit hooks<a class="headerlink" href="#pre-commit-hooks" title="Link to this heading"></a></h2>
 <p>To ensure a more common code formatting and limit the git diff, make sure to install the pre-commit hooks. The
 required dependencies are included in the development requirements installed when running <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.[develop]</span></code>.</p>
 <div class="admonition warning">
@@ -133,7 +136,7 @@ you can use the command at any time:</p>
 </div>
 </section>
 <section id="unit-testing-with-pytest">
-<span id="unittest"></span><h2>Unit testing with pytest<a class="headerlink" href="#unit-testing-with-pytest" title="Link to this heading">¶</a></h2>
+<span id="unittest"></span><h2>Unit testing with pytest<a class="headerlink" href="#unit-testing-with-pytest" title="Link to this heading"></a></h2>
 <p>Run the test suite using the <code class="docutils literal notranslate"><span class="pre">pytest</span></code> package, from within the main package
 folder (<cite>pywatemsedem</cite>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span>
@@ -148,7 +151,7 @@ unit tests. Make sure you have defined SAGA and WaTEM/SEDEM, see
 <a class="reference internal" href="installation.html#dependencies"><span class="std std-ref">here</span></a>.</p>
 </section>
 <section id="documentation-with-sphinx">
-<h2>Documentation with sphinx<a class="headerlink" href="#documentation-with-sphinx" title="Link to this heading">¶</a></h2>
+<h2>Documentation with sphinx<a class="headerlink" href="#documentation-with-sphinx" title="Link to this heading"></a></h2>
 <p>Build the documentation locally with Sphinx (tox):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tox</span> <span class="o">-</span><span class="n">e</span> <span class="n">docs</span>
 </pre></div>
@@ -157,12 +160,12 @@ unit tests. Make sure you have defined SAGA and WaTEM/SEDEM, see
 left out of version control (and we rather keep it as such ;-)).</p>
 </section>
 <section id="github-actions">
-<h2>Github actions<a class="headerlink" href="#github-actions" title="Link to this heading">¶</a></h2>
+<h2>Github actions<a class="headerlink" href="#github-actions" title="Link to this heading"></a></h2>
 <p>Apart from these tools you can run locally, we use github actions to run these tests also on the cloud.
 You can see the results at <a class="reference external" href="https://github.com/watem-sedem/pywatemsedem/actions">https://github.com/watem-sedem/pywatemsedem/actions</a></p>
 </section>
 <section id="git-lfs">
-<h2>Git LFS<a class="headerlink" href="#git-lfs" title="Link to this heading">¶</a></h2>
+<h2>Git LFS<a class="headerlink" href="#git-lfs" title="Link to this heading"></a></h2>
 <p>Git LFS, or large file support, is used in this repository to store gis files in
 the repository. To use this functionality you need to install git lfs. See
 <a class="reference external" href="https://git-lfs.github.com/">https://git-lfs.github.com/</a> for instructions and more information.</p>
@@ -171,7 +174,7 @@ stored under LFS. For now, only files within the test folder are stored under
 LFS.</p>
 </section>
 <section id="naming-things">
-<h2>Naming things<a class="headerlink" href="#naming-things" title="Link to this heading">¶</a></h2>
+<h2>Naming things<a class="headerlink" href="#naming-things" title="Link to this heading"></a></h2>
 <p>To provide structure in the naming of methods, functions, classes,… we propose
 to conform the following guidelines.</p>
 <p>Class, function/methods names follow the standard naming conventions as defined
@@ -190,13 +193,13 @@ possible - with an active verb on the action they perform (<code class="docutils
 </ul>
 </section>
 <section id="utilities">
-<h2>Utilities<a class="headerlink" href="#utilities" title="Link to this heading">¶</a></h2>
+<h2>Utilities<a class="headerlink" href="#utilities" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Load raster: load rasters as numpy arrays. The <code class="docutils literal notranslate"><span class="pre">profile</span></code> raster metadata
 holds all metedata that geograpical defines the array. See
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.utils.load_raster()</span></code>:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.core.utils</span> <span class="kn">import</span> <span class="n">load_raster</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_raster</span>
 <span class="n">rst</span> <span class="o">=</span> <span class="s2">&quot;landuse.tif&quot;</span> <span class="c1"># can be any raster extension supported by GDAL</span>
 <span class="n">arr</span><span class="p">,</span><span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span>
 </pre></div>
@@ -205,7 +208,7 @@ holds all metedata that geograpical defines the array. See
 <li><p>Write raster: write numpy arrays to rasters. See
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.utils.write_arr_as_rst()</span></code>:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pywatemsedem.core.utils</span> <span class="kn">import</span> <span class="n">write_arr_as_rst</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_arr_as_rst</span>
 <span class="n">rst_out</span> <span class="o">=</span> <span class="s2">&quot;landuse_int64.tif&quot;</span>
 <span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="s2">&quot;int64&quot;</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
 </pre></div>
@@ -215,7 +218,7 @@ parameter, and can be used to save disk memory (i.e. use int64 instead of
 float64).</p>
 </section>
 <section id="guideline-for-unified-coding-style">
-<h2>Guideline for unified coding style<a class="headerlink" href="#guideline-for-unified-coding-style" title="Link to this heading">¶</a></h2>
+<h2>Guideline for unified coding style<a class="headerlink" href="#guideline-for-unified-coding-style" title="Link to this heading"></a></h2>
 <p>A number of guidelines are given in order to obtain a degree of unified style
 in the pywatemsedem code. Following guidelines are given:</p>
 <blockquote>
@@ -229,7 +232,7 @@ arrays as input and output numpy arrays that can be stored in a dataframe.</p></
 </div></blockquote>
 </section>
 <section id="describing-dataframes-in-docstrings">
-<h2>Describing DataFrames in docstrings<a class="headerlink" href="#describing-dataframes-in-docstrings" title="Link to this heading">¶</a></h2>
+<h2>Describing DataFrames in docstrings<a class="headerlink" href="#describing-dataframes-in-docstrings" title="Link to this heading"></a></h2>
 <p>As Numpy docstring does not provide default rules on describing a parameter or
 returned variable that represents a <code class="docutils literal notranslate"><span class="pre">Pandas.DataFrame</span></code> or a <code class="docutils literal notranslate"><span class="pre">dict</span></code>, we
 include these as follows (equivalent for parameters versus returns section):</p>
@@ -285,7 +288,7 @@ every variable in the documentation (and not <em>variable : type</em>).</p></li>
 </div>
 </section>
 <section id="postprocess-file-structure">
-<h2>Postprocess file structure<a class="headerlink" href="#postprocess-file-structure" title="Link to this heading">¶</a></h2>
+<h2>Postprocess file structure<a class="headerlink" href="#postprocess-file-structure" title="Link to this heading"></a></h2>
 <p>The postprocess filestructure file <cite>src/pywatemsedem/data/postprocess_files.csv</cite>
 holds an overview of all files that are used within postprocessing
 (either WaTEM/SEDEM input data, output data, intermediate processing files,
@@ -318,7 +321,7 @@ within postprocessing script.</p></li>
 </section>
 </section>
 <section id="package-release">
-<h1>Package release<a class="headerlink" href="#package-release" title="Link to this heading">¶</a></h1>
+<h1>Package release<a class="headerlink" href="#package-release" title="Link to this heading"></a></h1>
 <p>Before releasing, please check the pinned versions of the dependencies, and - if necessary-  adapt in the
 <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>-file. The CI will create sdist/wheels and publish these to gitea when git tags are
 added, making releasing straight forward. In order to publish a new release,

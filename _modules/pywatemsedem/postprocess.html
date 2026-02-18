@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.postprocess &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.postprocess &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,22 +93,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.postprocess</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pkg_resources</span>
-<span class="kn">import</span> <span class="nn">shapely</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
 
-<span class="kn">from</span> <span class="nn">pywatemsedem.defaults</span> <span class="kn">import</span> <span class="n">SAGA_FLAGS</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.factory</span> <span class="kn">import</span> <span class="n">Factory</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.geo.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">SAGA_FLAGS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
     <span class="n">compute_statistics_rasters_per_polygon_vector</span><span class="p">,</span>
+    <span class="n">create_filename</span><span class="p">,</span>
     <span class="n">create_spatial_index</span><span class="p">,</span>
     <span class="n">execute_saga</span><span class="p">,</span>
     <span class="n">get_mask_template</span><span class="p">,</span>
@@ -117,9 +119,9 @@
     <span class="n">set_no_data_rst</span><span class="p">,</span>
     <span class="n">write_arr_as_rst</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.grasstrips</span> <span class="kn">import</span> <span class="n">estimate_ste</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.folders</span> <span class="kn">import</span> <span class="n">CatchmentFolder</span><span class="p">,</span> <span class="n">ScenarioFolders</span>
-<span class="kn">from</span> <span class="nn">pywatemsedem.io.modeloutput</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.grasstrips</span><span class="w"> </span><span class="kn">import</span> <span class="n">estimate_ste</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.folders</span><span class="w"> </span><span class="kn">import</span> <span class="n">CatchmentFolder</span><span class="p">,</span> <span class="n">ScenarioFolders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.modeloutput</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">compute_efficiency_buffers</span><span class="p">,</span>
     <span class="n">create_deposition_raster</span><span class="p">,</span>
     <span class="n">create_erosion_raster</span><span class="p">,</span>
@@ -130,21 +132,21 @@
     <span class="n">open_txt_routing_file</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.plots</span> <span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
-<span class="kn">from</span> <span class="nn">.scenario</span> <span class="kn">import</span> <span class="n">CNWSException</span>
-<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">zip_folder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.scenario</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNWSException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">package_resource</span><span class="p">,</span> <span class="n">zip_folder</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="valid_ditches_sewers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_ditches_sewers">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_ditches_sewers</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_ditches_sewers</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if DTM raster is defined.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_ditches_in&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">write_sedimentload_sewers_and_ditches</span><span class="p">()</span>
@@ -156,10 +158,10 @@
 
 <div class="viewcode-block" id="valid_erosion_deposition">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_erosion_deposition">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_erosion_deposition</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_erosion_deposition</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if DTM raster is defined.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;wrapper&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_erosion&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_erosion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_erosion_raster</span><span class="p">(</span>
@@ -176,7 +178,7 @@
 
 <div class="viewcode-block" id="valid_routing_vector">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_routing_vector">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_routing_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_routing_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if routing vector is defined&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No routing vector created, please first run &#39;make_routing_vct&#39;.&quot;</span>
@@ -186,7 +188,7 @@
 
 <div class="viewcode-block" id="valid_routing_sediout_vector">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_routing_sediout_vector">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_routing_sediout_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_routing_sediout_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if routing vector is defined&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -199,7 +201,7 @@
 
 <div class="viewcode-block" id="valid_endpoints">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_endpoints">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if endpoints are in available&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_endpoints&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No endpoints in catchments.&quot;</span>
@@ -209,7 +211,7 @@
 
 <div class="viewcode-block" id="valid_rivers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_rivers">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_rivers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_rivers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if rivers are available&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_riverrouting&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No rivers in catchments.&quot;</span>
@@ -219,7 +221,7 @@
 
 <div class="viewcode-block" id="valid_sinks">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.valid_sinks">[docs]</a>
-<span class="k">def</span> <span class="nf">valid_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if any sinks present in catchment&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_endpoints&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_riverrouting&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -231,7 +233,7 @@
 
 <div class="viewcode-block" id="PostProcess">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess">[docs]</a>
-<span class="k">class</span> <span class="nc">PostProcess</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PostProcess</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialisation of the postprocess class.</span>
 
 <span class="sd">    This class is used to process output data layers of data processing</span>
@@ -241,26 +243,26 @@
 <span class="sd">    ----------</span>
 <span class="sd">    name: str</span>
 <span class="sd">        Name of catchment to which results of scenario run are written too</span>
-<span class="sd">    scenario_nr: int</span>
+<span class="sd">    resolution: int</span>
+<span class="sd">        model resolution</span>
+<span class="sd">    scenario_label: int</span>
 <span class="sd">        scenario number</span>
 <span class="sd">    year: int</span>
 <span class="sd">        simulation year</span>
-<span class="sd">    resolution: int</span>
-<span class="sd">        model resolution</span>
 <span class="sd">    epsg: int, default 31370</span>
 <span class="sd">        epsg-code</span>
 
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from pywatemsedem.postprocess import PostProcess()</span>
-<span class="sd">    &gt;&gt;&gt; pp = PostProcess(r&quot;molenbeek&quot;, 1, 2019, 20, 31370) # note that the folder</span>
-<span class="sd">    &gt;&gt;&gt; #modelbeek/scenario_1 and molenbeek/scenario_1/2019 must exist</span>
+<span class="sd">    &gt;&gt;&gt; from pywatemsedem.postprocess import PostProcess</span>
+<span class="sd">    &gt;&gt;&gt; pp = PostProcess(r&quot;molenbeek&quot;, 20, 1, 2019, 31370) # note that the folder</span>
+<span class="sd">    &gt;&gt;&gt; #molenbeek/scenario_1 and molenbeek/scenario_1/2019 must exist</span>
 <span class="sd">    &gt;&gt;&gt; pp.make_routing_vct() #make a vector file of the text routig file.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">scenario_label</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">epsg</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">scenario_label</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="mi">31370</span><span class="p">):</span>
 
         <span class="c1"># general</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsg</span> <span class="o">=</span> <span class="n">epsg</span>
@@ -324,12 +326,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_subcatchment_priority</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter Sinks attribute.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span>
 
     <span class="nd">@sinks</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter</span>
 
 <span class="sd">        Parameters</span>
@@ -340,7 +342,7 @@
 
 <div class="viewcode-block" id="PostProcess.assign_filenames">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.assign_filenames">[docs]</a>
-    <span class="k">def</span> <span class="nf">assign_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmap_results</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmap_results</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Use filestructure defined in the package to appoint names of files</span>
 
 <span class="sd">        Parameters</span>
@@ -371,7 +373,7 @@
 
 <div class="viewcode-block" id="PostProcess.process_and_check_filename">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.process_and_check_filename">[docs]</a>
-    <span class="k">def</span> <span class="nf">process_and_check_filename</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_and_check_filename</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">fmap_results</span><span class="p">,</span>
         <span class="n">subfolder</span><span class="p">,</span>
@@ -434,7 +436,7 @@
 
 <div class="viewcode-block" id="PostProcess.check_condition_files">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.check_condition_files">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_condition_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">exists</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_condition_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">exists</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set conditions coupled to the presence of a file</span>
 
 <span class="sd">        Parameters</span>
@@ -498,14 +500,14 @@
 
 <div class="viewcode-block" id="PostProcess.zip_folder">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.zip_folder">[docs]</a>
-    <span class="k">def</span> <span class="nf">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Zip output folder of scenario_x&quot;&quot;&quot;</span>
         <span class="n">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">scenario_folder</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.compute_statistics_rasters_per_polygon_vector">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.compute_statistics_rasters_per_polygon_vector">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_statistics_rasters_per_polygon_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics_rasters_per_polygon_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute statistics for raster for an input polygon vector</span>
 
 
@@ -554,7 +556,7 @@
 
 <div class="viewcode-block" id="PostProcess.identify_subcatchments_to_buffers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.identify_subcatchments_to_buffers">[docs]</a>
-    <span class="k">def</span> <span class="nf">identify_subcatchments_to_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_subcatchments_to_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the seperate subcatchments to the buffer outlets</span>
 
 <span class="sd">        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_buffers`</span>
@@ -585,7 +587,7 @@
 
 <div class="viewcode-block" id="PostProcess.identify_priority_areas">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.identify_priority_areas">[docs]</a>
-    <span class="k">def</span> <span class="nf">identify_priority_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">flag_merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_priority_areas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">flag_merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify priority areas</span>
 
 <span class="sd">        Parameters</span>
@@ -622,7 +624,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set modeloutput routing</span>
 
 <span class="sd">        Parameters</span>
@@ -647,7 +649,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">routing_non_river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">routing_non_river</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter routing (no river routing) long format</span>
 
 <span class="sd">        River routing is removed from the routing table</span>
@@ -677,7 +679,7 @@
 
 <div class="viewcode-block" id="PostProcess.identify_priority_catchments_based_on_highest_loads">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.identify_priority_catchments_based_on_highest_loads">[docs]</a>
-    <span class="k">def</span> <span class="nf">identify_priority_catchments_based_on_highest_loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_priority_catchments_based_on_highest_loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify the priority catchments.</span>
 
 <span class="sd">        Identify the pixels with the highest loads in the sediout raster,</span>
@@ -691,7 +693,7 @@
 <span class="sd">            Maximum number of catchment to identify</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">arr_sediout</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_sediout&quot;</span><span class="p">])</span>
-        <span class="n">temp_routing_wide</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">temp_routing_wide</span> <span class="o">=</span> <span class="n">create_filename</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">routing_non_river_wide</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp_routing_wide</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">identify_individual_priority_catchments</span><span class="p">(</span>
             <span class="n">arr_sediout</span><span class="p">,</span>
@@ -701,12 +703,12 @@
             <span class="n">resmap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span><span class="p">,</span>
             <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">temp_routing_wide</span><span class="p">),</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span></div>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp_routing_wide</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.merge_overlapping_catchments">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.merge_overlapping_catchments">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_overlapping_catchments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf_subcatchmpriority</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_overlapping_catchments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf_subcatchmpriority</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge overlapping catchments and reassign priorities for</span>
 <span class="sd">        overlapping catchments.</span>
 
@@ -789,7 +791,7 @@
 
 <div class="viewcode-block" id="PostProcess.convert_rst_sediexport_to_vct">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.convert_rst_sediexport_to_vct">[docs]</a>
-    <span class="k">def</span> <span class="nf">convert_rst_sediexport_to_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_rst_sediexport_to_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the sediexport raster to a vector file.&quot;&quot;&quot;</span>
         <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_sediexport&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;.shp&quot;</span>
         <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="n">vct_out</span>
@@ -800,7 +802,7 @@
 
 <div class="viewcode-block" id="PostProcess.convert_rst_sewerin_to_vct">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.convert_rst_sewerin_to_vct">[docs]</a>
-    <span class="k">def</span> <span class="nf">convert_rst_sewerin_to_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_rst_sewerin_to_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the sewerin raster to a vector file.&quot;&quot;&quot;</span>
         <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_sewerin&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;.shp&quot;</span>
         <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="n">vct_out</span>
@@ -811,7 +813,7 @@
 
 <div class="viewcode-block" id="PostProcess.merge_vct_sinks">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.merge_vct_sinks">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_vct_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_vct_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge vct_sewerin and vct_sediexport to one sinks shapefile.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_sewerin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_sediexport</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">gdf_sewerin</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_sewerin</span><span class="p">)</span>
@@ -833,7 +835,7 @@
 
 <div class="viewcode-block" id="PostProcess.compute_source_sinks">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.compute_source_sinks">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_source_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_source_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Source-sink algorithm to identify sources of erosion</span>
 <span class="sd">        (parcels or subcatchments) that lead to sediment sinks in the river</span>
 <span class="sd">        (or sewer).</span>
@@ -847,7 +849,7 @@
         <span class="n">df_sediexport</span><span class="p">,</span> <span class="n">percentage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identify_sinks</span><span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
         <span class="n">dict_rst_subcatchmsinks</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">dict_vct_subcatchmsinks</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">temp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">create_filename</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">routing_non_river</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">dict_rst_subcatchmsinks</span><span class="p">[</span><span class="n">percentage</span><span class="p">],</span>
@@ -870,12 +872,12 @@
         <span class="p">)</span>
         <span class="c1"># check lijn hieronder</span>
         <span class="n">df_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">dict_vct_subcatchmsinks</span><span class="p">[</span><span class="n">percentage</span><span class="p">])</span>
-        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">temp</span><span class="p">),</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span></div>
+        <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.identify_sinks">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.identify_sinks">[docs]</a>
-    <span class="k">def</span> <span class="nf">identify_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percentage</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percentage</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify X % highest sinks of sediment.</span>
 
 <span class="sd">        Analyse cumulative sediment load by sorting SediExport</span>
@@ -928,7 +930,7 @@
 
 <div class="viewcode-block" id="PostProcess.analyse_cumulative_sediexport">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.analyse_cumulative_sediexport">[docs]</a>
-    <span class="k">def</span> <span class="nf">analyse_cumulative_sediexport</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyse_cumulative_sediexport</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">df_sediexport</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">percentage</span><span class="p">,</span> <span class="n">delta_perc</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Analyse cumulative sediment load by sorting SediExport values</span>
@@ -1014,9 +1016,12 @@
 
         <span class="c1"># calculate percentage</span>
         <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span>
-            <span class="k">else</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">(</span>
+                <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span>
+                <span class="k">else</span> <span class="n">df_sediexport</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_sediexport</span><span class="p">))</span>
         <span class="p">]</span>
 
@@ -1044,7 +1049,7 @@
 
 <div class="viewcode-block" id="PostProcess.identify_export_parcel">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.identify_export_parcel">[docs]</a>
-    <span class="k">def</span> <span class="nf">identify_export_parcel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_export_parcel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify total sediment leaving a parcel.</span>
 
 <span class="sd">        Returns</span>
@@ -1068,7 +1073,7 @@
 
 <div class="viewcode-block" id="PostProcess.aggregate_sedout_parcel">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel">[docs]</a>
-    <span class="k">def</span> <span class="nf">aggregate_sedout_parcel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf_routing</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">aggregate_sedout_parcel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf_routing</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Aggregate sediment leaving on the scale of single parcels.</span>
 
 <span class="sd">        Parameters</span>
@@ -1112,7 +1117,7 @@
 
 <div class="viewcode-block" id="PostProcess.couple_sediout_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.couple_sediout_routing">[docs]</a>
-    <span class="k">def</span> <span class="nf">couple_sediout_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">couple_sediout_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Couple sediout of raster map values to routing file.</span>
 
 <span class="sd">        See :func:`pywatemsedem.postprocess.couple_sediout_routing`</span>
@@ -1138,7 +1143,7 @@
 
 <div class="viewcode-block" id="PostProcess.intersect_sedioutparcels_with_subcatchments">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.intersect_sedioutparcels_with_subcatchments">[docs]</a>
-    <span class="k">def</span> <span class="nf">intersect_sedioutparcels_with_subcatchments</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intersect_sedioutparcels_with_subcatchments</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">rst_subcatchment_sinks</span><span class="p">,</span> <span class="n">df_sediout_parcel</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the intersection between the subcatchments of the sinks and the</span>
@@ -1197,7 +1202,7 @@
 
 <div class="viewcode-block" id="PostProcess.select_routing_to_outsidecatchment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.select_routing_to_outsidecatchment">[docs]</a>
-    <span class="k">def</span> <span class="nf">select_routing_to_outsidecatchment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_routing_to_outsidecatchment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Exports all routing vectors to the outside of the catchment&quot;&quot;&quot;</span>
         <span class="n">valid_routing_sediout_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -1216,7 +1221,7 @@
 
 <div class="viewcode-block" id="PostProcess.get_total_sediment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.get_total_sediment">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make nice output table</span>
 
 <span class="sd">        Returns</span>
@@ -1231,7 +1236,7 @@
 
 <div class="viewcode-block" id="PostProcess.read_total_sediment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.read_total_sediment">[docs]</a>
-    <span class="k">def</span> <span class="nf">read_total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the total sediment file</span>
 
 <span class="sd">        See :func:`pywatemsedem.utils.load_total_sediment_file`</span>
@@ -1247,7 +1252,7 @@
 
 <div class="viewcode-block" id="PostProcess.assign_values_df_summary">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.assign_values_df_summary">[docs]</a>
-    <span class="k">def</span> <span class="nf">assign_values_df_summary</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_values_df_summary</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">df_summary</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">bekken</span><span class="p">,</span> <span class="n">bekken_id</span><span class="p">,</span> <span class="n">summary_values</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;ton&quot;</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign values of summary to the summary dataframe</span>
@@ -1303,12 +1308,12 @@
 
 <div class="viewcode-block" id="PostProcess.process_buffers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.process_buffers">[docs]</a>
-    <span class="k">def</span> <span class="nf">process_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Overwrite function&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_buffers</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_process_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_priority</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vct_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_priority</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vct_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the ingoing, outgoing and depositing sediment in buffers.</span>
 
 <span class="sd">        This function computes the efficiency (deposition = ingoing -</span>
@@ -1361,7 +1366,7 @@
 
 <div class="viewcode-block" id="PostProcess.compute_netto_erosion_parcels">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.compute_netto_erosion_parcels">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_netto_erosion_parcels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_netto_erosion_parcels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the netto erosion per parcel.</span>
 
 <span class="sd">        For an explanation of the definition of netto erosion,</span>
@@ -1385,7 +1390,7 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_process_grass_strips</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_priority</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_grass_strips</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_priority</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute graass strips efficiency and compute priority</span>
 
 <span class="sd">        Parameters</span>
@@ -1442,7 +1447,7 @@
 
 <div class="viewcode-block" id="PostProcess.merge_sediout_and_cumulative">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.merge_sediout_and_cumulative">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_sediout_and_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segments_to_retain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_sediout_and_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segments_to_retain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge SediOut.rst (sediment output on every land pixel) and</span>
 <span class="sd">        Cumulative.rst (sediment output in every</span>
 <span class="sd">        river pixel).</span>
@@ -1490,7 +1495,7 @@
 
 <div class="viewcode-block" id="PostProcess.convert_output_rsts_to_ton">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.convert_output_rsts_to_ton">[docs]</a>
-    <span class="k">def</span> <span class="nf">convert_output_rsts_to_ton</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_output_rsts_to_ton</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the units for rasters sediout, sediin, sediexport and</span>
 <span class="sd">        watereros from kg to ton.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1509,7 +1514,7 @@
 
 <div class="viewcode-block" id="PostProcess.add_sediment_to_subcatchments">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.add_sediment_to_subcatchments">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_sediment_to_subcatchments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct_subcatchments</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_sediment_to_subcatchments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct_subcatchments</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds the sediment input of every river segment to the corresponding</span>
 <span class="sd">        subcatchment.</span>
 
@@ -1557,7 +1562,7 @@
 
 <div class="viewcode-block" id="PostProcess.add_segment_results_to_vct">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.add_segment_results_to_vct">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_segment_results_to_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_segment_results_to_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds the sedimentinput to every riversegment and calculates the</span>
 <span class="sd">        sedlen-argument.</span>
 
@@ -1604,7 +1609,7 @@
 
 <div class="viewcode-block" id="PostProcess.compute_sewer_in_per_catchment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.compute_sewer_in_per_catchment">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_sewer_in_per_catchment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct_subcatchments</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_sewer_in_per_catchment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct_subcatchments</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute sewer in per subcatchment</span>
 
 <span class="sd">        Parameters</span>
@@ -1640,7 +1645,7 @@
 
 <div class="viewcode-block" id="PostProcess.make_routing_vct">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.make_routing_vct">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_routing_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tile_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_routing_vct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tile_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a routing vector file based on routingfile</span>
 
 <span class="sd">        Parameters</span>
@@ -1668,7 +1673,7 @@
 
 <div class="viewcode-block" id="PostProcess.make_missing_routing_vct_saga">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.make_missing_routing_vct_saga">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_missing_routing_vct_saga</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_missing_routing_vct_saga</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a routing vector file based on routingfile with missing&quot;&quot;&quot;</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">txt_routing_missing</span>
         <span class="k">if</span> <span class="n">txt</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -1677,7 +1682,7 @@
 
 <div class="viewcode-block" id="PostProcess.identify_sinks_in_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.identify_sinks_in_routing">[docs]</a>
-    <span class="k">def</span> <span class="nf">identify_sinks_in_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_sinks_in_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify sinks based on whether more than one routing vector goes to</span>
 <span class="sd">        a pixel.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1755,7 +1760,7 @@
 
 <div class="viewcode-block" id="PostProcess.set_prckrt_nodata">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.set_prckrt_nodata">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_prckrt_nodata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_prckrt_nodata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set nodata to &#39;WaTEM/SEDEM perceelskaart&#39;&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">rst_prckrt_nodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_prckrt&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_nodata.tif&quot;</span>
@@ -1772,7 +1777,7 @@
 
 <div class="viewcode-block" id="PostProcess.calculate_areas_prckrt">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.calculate_areas_prckrt">[docs]</a>
-    <span class="k">def</span> <span class="nf">calculate_areas_prckrt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_areas_prckrt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the areas and relative areas of all landuse classes in</span>
 <span class="sd">        the parcelmap</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1805,7 +1810,7 @@
 
 <div class="viewcode-block" id="PostProcess.make_facts">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.make_facts">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_facts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_facts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a textfile with a number of stats about the simulation&quot;&quot;&quot;</span>
         <span class="n">factsfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;facts_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">catchment_name</span><span class="si">}</span><span class="s2">_s</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span><span class="si">}</span><span class="s2">.csv&quot;</span>
@@ -1845,7 +1850,7 @@
 
 <div class="viewcode-block" id="PostProcess.split_sewerin">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.split_sewerin">[docs]</a>
-    <span class="k">def</span> <span class="nf">split_sewerin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_sewerin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Split the sewerin raster with the sewer_id raster.</span>
 
 <span class="sd">        See :func:`pywatemsedem.postprocess.split_endpoints_in_raster`</span>
@@ -1871,7 +1876,7 @@
 
 <div class="viewcode-block" id="PostProcess.write_erosion_deposition_raster">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.write_erosion_deposition_raster">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_erosion_deposition_raster</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_erosion_deposition_raster</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write erosion and deposition ratser based on watereros&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_erosion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_erosion_raster</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_watereros&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;rst_deposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_deposition_raster</span><span class="p">(</span>
@@ -1883,7 +1888,7 @@
 
 <div class="viewcode-block" id="check_if_file_exists">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.check_if_file_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">check_if_file_exists</span><span class="p">(</span><span class="n">full_filename</span><span class="p">,</span> <span class="n">mandatory</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_if_file_exists</span><span class="p">(</span><span class="n">full_filename</span><span class="p">,</span> <span class="n">mandatory</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the specified file exist on disk</span>
 
@@ -1915,7 +1920,7 @@
 
 <div class="viewcode-block" id="split_endpoints_in_raster">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.split_endpoints_in_raster">[docs]</a>
-<span class="k">def</span> <span class="nf">split_endpoints_in_raster</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_endpoints_in_raster</span><span class="p">(</span>
     <span class="n">rst_endpoints_id</span><span class="p">,</span> <span class="n">rst_endpoints_in</span><span class="p">,</span> <span class="n">rst_id1</span><span class="p">,</span> <span class="n">rst_id2</span><span class="p">,</span> <span class="n">ton</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split the endpoints raster (sewer_in WaTEM/SEDEM definition) file for each</span>
@@ -1946,8 +1951,8 @@
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    Note that sewers in WaTEM/SEDEM are endpoints in pywatemsedem, such to make a distinction</span>
-<span class="sd">    between sewers and ditches in pywatemsedem.</span>
+<span class="sd">    Note that sewers in WaTEM/SEDEM are endpoints in pywatemsedem, such to make a</span>
+<span class="sd">    distinction between sewers and ditches in pywatemsedem.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># load sewer id&#39;s and sewer in (kg per pixel)</span>
@@ -1978,7 +1983,7 @@
 
 <div class="viewcode-block" id="compute_efficiency_grass_strips">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.compute_efficiency_grass_strips">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_efficiency_grass_strips</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_efficiency_grass_strips</span><span class="p">(</span>
     <span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_grass_strips</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">rst_sediout</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute statistics for grass strips:</span>
@@ -2065,7 +2070,7 @@
 
 <div class="viewcode-block" id="aggregate_sediin_and_sediout_grass_strips">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.aggregate_sediin_and_sediout_grass_strips">[docs]</a>
-<span class="k">def</span> <span class="nf">aggregate_sediin_and_sediout_grass_strips</span><span class="p">(</span><span class="n">df_routing_grass</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_sediin_and_sediout_grass_strips</span><span class="p">(</span><span class="n">df_routing_grass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the load in and out of a grass strips, so efficiencies can be</span>
 <span class="sd">    computed.</span>
@@ -2140,7 +2145,7 @@
 
 <div class="viewcode-block" id="merge_grass_strip_id_and_sediout_to_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing">[docs]</a>
-<span class="k">def</span> <span class="nf">merge_grass_strip_id_and_sediout_to_routing</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_grass_strip_id_and_sediout_to_routing</span><span class="p">(</span>
     <span class="n">df_grass_strips</span><span class="p">,</span>
     <span class="n">df_sediout</span><span class="p">,</span>
     <span class="n">df_routing</span><span class="p">,</span>
@@ -2181,9 +2186,9 @@
         <span class="n">df_grass_strips</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;gras_id_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_grass_strips</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">target_id</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
-        <span class="n">df_grass_strips</span><span class="p">[</span>
-            <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;target</span><span class="si">{</span><span class="n">target_id</span><span class="si">}</span><span class="s2">row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;target</span><span class="si">{</span><span class="n">target_id</span><span class="si">}</span><span class="s2">col&quot;</span><span class="p">]</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="n">df_grass_strips</span><span class="p">[[</span><span class="s2">&quot;row&quot;</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">]]</span>
+        <span class="n">df_grass_strips</span><span class="p">[[</span><span class="sa">f</span><span class="s2">&quot;target</span><span class="si">{</span><span class="n">target_id</span><span class="si">}</span><span class="s2">row&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;target</span><span class="si">{</span><span class="n">target_id</span><span class="si">}</span><span class="s2">col&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df_grass_strips</span><span class="p">[[</span><span class="s2">&quot;row&quot;</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">]]</span>
+        <span class="p">)</span>
 
     <span class="c1"># define sedout and index cols to join on</span>
     <span class="n">df_sediout</span><span class="p">[</span><span class="s2">&quot;sediout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sediout</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span>
@@ -2219,7 +2224,7 @@
 
 <div class="viewcode-block" id="reformat_routing_grass">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.reformat_routing_grass">[docs]</a>
-<span class="k">def</span> <span class="nf">reformat_routing_grass</span><span class="p">(</span><span class="n">df_routing_grass</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reformat_routing_grass</span><span class="p">(</span><span class="n">df_routing_grass</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reformat the routing_gras DataFrame</span>
 
 <span class="sd">    Reformat the routing_gras dataframe so targets 1 and 2 are reported in</span>
@@ -2257,7 +2262,7 @@
 
 <div class="viewcode-block" id="select_and_rename_cols_grass_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.select_and_rename_cols_grass_routing">[docs]</a>
-<span class="k">def</span> <span class="nf">select_and_rename_cols_grass_routing</span><span class="p">(</span><span class="n">df_routing_grass</span><span class="p">,</span> <span class="n">target_id</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_and_rename_cols_grass_routing</span><span class="p">(</span><span class="n">df_routing_grass</span><span class="p">,</span> <span class="n">target_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Select and rename columns of grass strip routing geodataframe.</span>
 
 <span class="sd">    Parameters</span>
@@ -2291,7 +2296,7 @@
 
 <div class="viewcode-block" id="filter_grass_strips_with_prckrt">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.filter_grass_strips_with_prckrt">[docs]</a>
-<span class="k">def</span> <span class="nf">filter_grass_strips_with_prckrt</span><span class="p">(</span><span class="n">df_grass_strips</span><span class="p">,</span> <span class="n">df_prckrt</span><span class="p">,</span> <span class="n">profile_grass_strips</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_grass_strips_with_prckrt</span><span class="p">(</span><span class="n">df_grass_strips</span><span class="p">,</span> <span class="n">df_prckrt</span><span class="p">,</span> <span class="n">profile_grass_strips</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use the CNWS &#39;perceelskaart&#39; to filter grass strips (lay-over infr. and</span>
 <span class="sd">    river cells over gras_buffer_id)</span>
@@ -2325,7 +2330,7 @@
 
 <div class="viewcode-block" id="merge_grass_id_to_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.merge_grass_id_to_routing">[docs]</a>
-<span class="k">def</span> <span class="nf">merge_grass_id_to_routing</span><span class="p">(</span><span class="n">df_routing</span><span class="p">,</span> <span class="n">df_grass_strips</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_grass_id_to_routing</span><span class="p">(</span><span class="n">df_routing</span><span class="p">,</span> <span class="n">df_grass_strips</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge the gras_id with the source, target1 and target2 pixels</span>
 
@@ -2358,7 +2363,7 @@
 
 <div class="viewcode-block" id="get_stats_ktc">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.get_stats_ktc">[docs]</a>
-<span class="k">def</span> <span class="nf">get_stats_ktc</span><span class="p">(</span><span class="n">rst_ktc</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_stats_ktc</span><span class="p">(</span><span class="n">rst_ktc</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get statistics ktc-raster for specific land-uses</span>
 
 <span class="sd">    The mean and  standard deviation of the ktc raster is computed,</span>
@@ -2401,7 +2406,7 @@
 
 <div class="viewcode-block" id="get_stats_cfactor">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.get_stats_cfactor">[docs]</a>
-<span class="k">def</span> <span class="nf">get_stats_cfactor</span><span class="p">(</span><span class="n">rst_cfactor</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_stats_cfactor</span><span class="p">(</span><span class="n">rst_cfactor</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get statistics ktc-raster for specific land-uses</span>
 
 <span class="sd">    The mean and standard deviation of the cfactor raster is computed,</span>
@@ -2444,7 +2449,7 @@
 
 <div class="viewcode-block" id="compute_netto_erosion_parcels">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.compute_netto_erosion_parcels">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_netto_erosion_parcels</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_netto_erosion_parcels</span><span class="p">(</span>
     <span class="n">rst_prckrt</span><span class="p">,</span>
     <span class="n">rst_watereros</span><span class="p">,</span>
     <span class="n">rst_parcels_ids</span><span class="p">,</span>
@@ -2539,7 +2544,7 @@
 
 <div class="viewcode-block" id="compute_netto_ero_prckrt">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.compute_netto_ero_prckrt">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_netto_ero_prckrt</span><span class="p">(</span><span class="n">arr_prckrt</span><span class="p">,</span> <span class="n">arr_watereros</span><span class="p">,</span> <span class="n">arr_parcels_ids</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_netto_ero_prckrt</span><span class="p">(</span><span class="n">arr_prckrt</span><span class="p">,</span> <span class="n">arr_watereros</span><span class="p">,</span> <span class="n">arr_parcels_ids</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the netto erosion for every parcel.</span>
 
 <span class="sd">    Compute the netto erosion for all parcels defined in the parcel raster.</span>
@@ -2626,7 +2631,7 @@
 
 <div class="viewcode-block" id="compute_netto_ero_parcel">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.compute_netto_ero_parcel">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_netto_ero_parcel</span><span class="p">(</span><span class="n">arr_netto_erosion_parcel</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_netto_ero_parcel</span><span class="p">(</span><span class="n">arr_netto_erosion_parcel</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute netto erosion for one parcel.</span>
 
 <span class="sd">    Compute the netto erosion for one parcel (only zero or non negative</span>
@@ -2689,7 +2694,7 @@
 
 <div class="viewcode-block" id="transform_dict_netto_erosion_to_df">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.transform_dict_netto_erosion_to_df">[docs]</a>
-<span class="k">def</span> <span class="nf">transform_dict_netto_erosion_to_df</span><span class="p">(</span><span class="n">dict_netto_ero</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">transform_dict_netto_erosion_to_df</span><span class="p">(</span><span class="n">dict_netto_ero</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform dictionary of netto erosion to a pandas dataframe format</span>
 
@@ -2731,7 +2736,7 @@
 
 <div class="viewcode-block" id="identify_subcatchments_to_buffers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.identify_subcatchments_to_buffers">[docs]</a>
-<span class="k">def</span> <span class="nf">identify_subcatchments_to_buffers</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identify_subcatchments_to_buffers</span><span class="p">(</span>
     <span class="n">rst_buffers</span><span class="p">,</span>
     <span class="n">vct_buffers</span><span class="p">,</span>
     <span class="n">txt_routing_nonriver</span><span class="p">,</span>
@@ -2776,7 +2781,7 @@
 
 <div class="viewcode-block" id="compute_cdf_sediment_load">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.compute_cdf_sediment_load">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_cdf_sediment_load</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_cdf_sediment_load</span><span class="p">(</span>
     <span class="n">df</span><span class="p">,</span>
     <span class="n">column_value</span><span class="p">,</span>
     <span class="n">resmap</span><span class="p">,</span>
@@ -2839,7 +2844,7 @@
 
 <div class="viewcode-block" id="couple_sediout_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.couple_sediout_routing">[docs]</a>
-<span class="k">def</span> <span class="nf">couple_sediout_routing</span><span class="p">(</span><span class="n">vct_routing</span><span class="p">,</span> <span class="n">rst_sediout</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">cols_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">couple_sediout_routing</span><span class="p">(</span><span class="n">vct_routing</span><span class="p">,</span> <span class="n">rst_sediout</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">cols_out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Couple the sediout raster values to the vector routing file</span>
 
 <span class="sd">    Parameters</span>
@@ -2902,7 +2907,7 @@
 
 <div class="viewcode-block" id="select_routing_out_of_parcel">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.select_routing_out_of_parcel">[docs]</a>
-<span class="k">def</span> <span class="nf">select_routing_out_of_parcel</span><span class="p">(</span><span class="n">gdf_routing</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_routing_out_of_parcel</span><span class="p">(</span><span class="n">gdf_routing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Select routing vectors defined over borders parcel</span>
 
 <span class="sd">    Only select the routing vector which cross the parcel border.</span>
@@ -2932,7 +2937,7 @@
 
 <div class="viewcode-block" id="convert_arr_from_kg_to_ton">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.convert_arr_from_kg_to_ton">[docs]</a>
-<span class="k">def</span> <span class="nf">convert_arr_from_kg_to_ton</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_arr_from_kg_to_ton</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set values of all pixels of a raster divided by 1000 (kg -&gt; ton)</span>
 
 <span class="sd">    Parameters</span>
@@ -2953,7 +2958,7 @@
 
 <div class="viewcode-block" id="convert_rst_sinks_to_vct">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.convert_rst_sinks_to_vct">[docs]</a>
-<span class="k">def</span> <span class="nf">convert_rst_sinks_to_vct</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="s2">&quot;EPSG:31370&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_rst_sinks_to_vct</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="s2">&quot;EPSG:31370&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a sinks raster to a vector file.</span>
 
 <span class="sd">    A sinks raster is defined as a raster holding captured sediment loads</span>
@@ -3001,7 +3006,7 @@
 
 <div class="viewcode-block" id="compute_statistics_sediout_outside_domain">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.compute_statistics_sediout_outside_domain">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_statistics_sediout_outside_domain</span><span class="p">(</span><span class="n">arr_sediout</span><span class="p">,</span> <span class="n">arr_id</span><span class="p">,</span> <span class="n">df_routing</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics_sediout_outside_domain</span><span class="p">(</span><span class="n">arr_sediout</span><span class="p">,</span> <span class="n">arr_id</span><span class="p">,</span> <span class="n">df_routing</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute amount of sediout routing outside domain.</span>
 
 <span class="sd">    Parameters</span>
@@ -3055,7 +3060,7 @@
 
 <div class="viewcode-block" id="process_filename">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.process_filename">[docs]</a>
-<span class="k">def</span> <span class="nf">process_filename</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_filename</span><span class="p">(</span>
     <span class="n">fmap_results</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">extension</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">arguments_input</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -3120,13 +3125,13 @@
 
 <div class="viewcode-block" id="read_filestructure">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.read_filestructure">[docs]</a>
-<span class="k">def</span> <span class="nf">read_filestructure</span><span class="p">(</span><span class="n">txt_filestructure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the pywatemsedem filestructure flanders file containing an overview of the files</span>
-<span class="sd">    used for pywatemsedem flanders.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_filestructure</span><span class="p">(</span><span class="n">txt_filestructure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the pywatemsedem filestructure flanders file containing an overview of the</span>
+<span class="sd">    files used for pywatemsedem flanders.</span>
 
-<span class="sd">    The filestructure contains information on files written on disk by pywatemsedem. This</span>
-<span class="sd">    file is used by the :class:`pywatemsedem.core.postprocess.PostProcess` object and</span>
-<span class="sd">    :class:`pywatemsedem.core.merge_scenarios.SpatialMergeScenarios`.</span>
+<span class="sd">    The filestructure contains information on files written on disk by pywatemsedem.</span>
+<span class="sd">    This file is used by the :class:`pywatemsedem.core.postprocess.PostProcess` object</span>
+<span class="sd">    and :class:`pywatemsedem.core.merge_scenarios.SpatialMergeScenarios`.</span>
 
 <span class="sd">    The filestructure pywatemsedem file can be used for to regenerate the filenames</span>
 <span class="sd">    in a ``scenario_x`` folder without having to have the pywatemsedem objects loaded in</span>
@@ -3135,8 +3140,8 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    txt_filestructure : str or pathlib.Path, default None</span>
-<span class="sd">        File path of table holding all data files/folder path references used in pywatemsedem</span>
-<span class="sd">        flanders.</span>
+<span class="sd">        File path of table holding all data files/folder path references used in</span>
+<span class="sd">        pywatemsedem flanders.</span>
 <span class="sd">    sep : str, default &quot;,&quot;</span>
 <span class="sd">        Delimiter of the text file.</span>
 
@@ -3165,11 +3170,11 @@
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    1. When no text data set file is defined, than the default defined in this</span>
-<span class="sd">       package is used.</span>
+<span class="sd">    1. When no text data set file is defined, than the default defined in this package</span>
+<span class="sd">       is used.</span>
 <span class="sd">    2. Although the filestructure applies to pywatemsedem flanders, it is defined in the</span>
-<span class="sd">       pywatemsedem postprocess.py core function, as the postprocess.py script contains many</span>
-<span class="sd">       functionalities only coupled to flanders.</span>
+<span class="sd">       pywatemsedem postprocess.py core function, as the postprocess.py script contains</span>
+<span class="sd">       many functionalities only coupled to flanders.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -3188,12 +3193,11 @@
 <span class="sd">    This way, automated filename reconstruction can be guided by the use of this table.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">txt_filestructure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ds</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_stream</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s2">&quot;data/postprocess_files.csv&quot;</span><span class="p">)</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">package_resource</span><span class="p">([</span><span class="s2">&quot;data&quot;</span><span class="p">],</span> <span class="s2">&quot;postprocess_files.csv&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ds</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">txt_filestructure</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
-    <span class="n">df_filestructure_flanders</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">txt_filestructure</span>
 
-    <span class="n">ds</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">df_filestructure_flanders</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span>
 
     <span class="n">cols</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;tag_variable&quot;</span><span class="p">,</span>
@@ -3229,7 +3233,7 @@
 
 <div class="viewcode-block" id="get_tuple_datastructure">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.get_tuple_datastructure">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tuple_datastructure</span><span class="p">(</span><span class="n">df_datastructure_files</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tuple_datastructure</span><span class="p">(</span><span class="n">df_datastructure_files</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get one record of filestruture</span>
 
 <span class="sd">    Parameters</span>
@@ -3264,7 +3268,7 @@
 
 <div class="viewcode-block" id="get_filename">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.get_filename">[docs]</a>
-<span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="n">df_datastructure_files</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">scenario</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_filename</span><span class="p">(</span><span class="n">df_datastructure_files</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">simulations</span><span class="p">,</span> <span class="n">scenario</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get filename from datastructure with year, simulation and scenario</span>
 

@@ -5,16 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.folders &mdash; pywatemsedem 0.0.1a9 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+  <title>pywatemsedem.io.folders &mdash; pywatemsedem 0.0.1a9.post1.dev270+g59b27f9a8 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=fbdb9ebb" />
 
   
-      <script src="../../../_static/documentation_options.js?v=e683a1a8"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=11aa8fab"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -53,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/calibrate.html">Calibrating WaTEM/SEDEM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/geo.html">Processing rasters and vector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/choices.html">How to apply the user choices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/io.html">IO</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
@@ -90,18 +93,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.io.folders</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 
 <div class="viewcode-block" id="CatchmentFolder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">CatchmentFolder</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CatchmentFolder</span><span class="p">:</span>
     <span class="n">home_folder</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catchment_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">/</span> <span class="s2">&quot;Data_Bekken&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment_folder</span> <span class="o">/</span> <span class="s2">&quot;Shps&quot;</span>
@@ -109,7 +112,7 @@
 
 <div class="viewcode-block" id="CatchmentFolder.create_all">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.create_all">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_home_folder</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_catchment_folder</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_vct_folder</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -118,28 +121,28 @@
 
 <div class="viewcode-block" id="CatchmentFolder.check_home_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.check_home_folder">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_home_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_home_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create home folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_home_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CatchmentFolder.check_catchment_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.check_catchment_folder">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_catchment_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_catchment_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;Data_bekken&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_catchment_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CatchmentFolder.check_vct_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.check_vct_folder">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_vct_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_vct_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create home folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_vct_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchment_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CatchmentFolder.check_rst_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.check_rst_folder">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_rst_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_rst_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;Data_bekken&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_rst_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catchment_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 </div>
@@ -149,7 +152,7 @@
 <div class="viewcode-block" id="ScenarioFolders">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ScenarioFolders</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScenarioFolders</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for keeping track of Scenario folder names</span>
 
 <span class="sd">    Parameters</span>
@@ -164,7 +167,7 @@
     <span class="n">scenario_label</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">year</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign folder names to self&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfolder</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;scenario_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -176,7 +179,7 @@
 
 <div class="viewcode-block" id="ScenarioFolders.create_all">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.create_all">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfolder</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_scenario</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_cnwsinput</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -187,7 +190,7 @@
 
 <div class="viewcode-block" id="ScenarioFolders.check_scenario">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.check_scenario">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;scenario_x&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_scenario_folder</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfolder</span><span class="o">.</span><span class="n">home_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
@@ -196,28 +199,28 @@
 
 <div class="viewcode-block" id="ScenarioFolders.check_cnwsinput">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.check_cnwsinput">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_cnwsinput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_cnwsinput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;scenario_x/modelinput&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_cnwsinput_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ScenarioFolders.check_cnwsoutput">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.check_cnwsoutput">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_cnwsoutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_cnwsoutput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;scenario_x/modeloutput&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_cnwsoutput_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ScenarioFolders.check_postprocessing">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.check_postprocessing">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_postprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_postprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;scenario_x/postprocess&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_postprocessing_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ScenarioFolders.check_years">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.check_years">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_years</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_years</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create &#39;scenario_x/year&#39; folder&quot;&quot;&quot;</span>
         <span class="n">check_and_create_years_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span></div>
 </div>
@@ -226,7 +229,7 @@
 
 <div class="viewcode-block" id="check_and_create_home_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_home_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_home_folder</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_home_folder</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home folder</span>
 
 <span class="sd">    Parameters</span>
@@ -244,7 +247,7 @@
 
 <div class="viewcode-block" id="check_and_create_catchment_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_catchment_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_catchment_folder</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_catchment_folder</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/catchment folder</span>
 
 <span class="sd">    Parameters</span>
@@ -264,7 +267,7 @@
 
 <div class="viewcode-block" id="check_and_create_rst_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_rst_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_rst_folder</span><span class="p">(</span><span class="n">catchment_folder</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_rst_folder</span><span class="p">(</span><span class="n">catchment_folder</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/catchment/vct folder</span>
 
 <span class="sd">    Parameters</span>
@@ -286,7 +289,7 @@
 
 <div class="viewcode-block" id="check_and_create_vct_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_vct_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_vct_folder</span><span class="p">(</span><span class="n">catchment_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_vct_folder</span><span class="p">(</span><span class="n">catchment_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/catchment/vct folder</span>
 
 <span class="sd">    Parameters</span>
@@ -306,7 +309,7 @@
 
 <div class="viewcode-block" id="check_and_create_vctyears_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_vctyears_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_vctyears_folder</span><span class="p">(</span><span class="n">vct_folder</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_vctyears_folder</span><span class="p">(</span><span class="n">vct_folder</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/catchment/shps/year folder</span>
 
 <span class="sd">    Parameters</span>
@@ -326,7 +329,7 @@
 
 <div class="viewcode-block" id="check_and_create_scenario_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_scenario_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_scenario_folder</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="n">scenario_label</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_scenario_folder</span><span class="p">(</span><span class="n">home_folder</span><span class="p">,</span> <span class="n">scenario_label</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/scenario_x folder</span>
 
 <span class="sd">    Parameters</span>
@@ -350,7 +353,7 @@
 
 <div class="viewcode-block" id="check_and_create_cnwsinput_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_cnwsinput_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_cnwsinput_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_cnwsinput_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/scenario_x/modelinput folder</span>
 
 <span class="sd">    Parameters</span>
@@ -370,7 +373,7 @@
 
 <div class="viewcode-block" id="check_and_create_cnwsoutput_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_cnwsoutput_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_cnwsoutput_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_cnwsoutput_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/scenario_x/modeloutput folder</span>
 
 <span class="sd">    Parameters</span>
@@ -389,7 +392,7 @@
 
 <div class="viewcode-block" id="check_and_create_postprocessing_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_postprocessing_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_postprocessing_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_postprocessing_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/scenario_x/postprocessing folder</span>
 
 <span class="sd">    Parameters</span>
@@ -408,7 +411,7 @@
 
 <div class="viewcode-block" id="check_and_create_years_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_years_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_years_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_years_folder</span><span class="p">(</span><span class="n">scenario_folder</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create home/scenario_x/year folder</span>
 
 <span class="sd">    Parameters</span>
@@ -431,7 +434,7 @@
 
 <div class="viewcode-block" id="check_and_create_folder">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">check_and_create_folder</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_create_folder</span><span class="p">(</span>
     <span class="n">folder</span><span class="p">,</span> <span class="n">msg_subject</span><span class="o">=</span><span class="s2">&quot;Folder&quot;</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error_if_empty</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check and create pywatemsedem folder</span>
@@ -459,7 +462,7 @@
 
 <div class="viewcode-block" id="throw_error_if_folder_empty">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.throw_error_if_folder_empty">[docs]</a>
-<span class="k">def</span> <span class="nf">throw_error_if_folder_empty</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">error_if_empty</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">throw_error_if_folder_empty</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">error_if_empty</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if pywatemsedem folder is empty</span>
 
 <span class="sd">    Parameters</span>
