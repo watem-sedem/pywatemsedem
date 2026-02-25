@@ -5,7 +5,6 @@ import shutil
 # Standard libraries
 import subprocess
 import warnings
-from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
@@ -337,12 +336,13 @@ class Scenario:
         # assign scenario number and user choices
         self.scenario_nr = scenario_nr
         self.year = year
-        self.choices = deepcopy(userchoices)
+        self.choices = userchoices
+        # self.choices = deepcopy(userchoices)
         self.rst_outlet = AbstractRaster()
         self.ini = None
 
         # initialisation functionalities
-        self.temporal_resolution()
+        # self.temporal_resolution()
 
         # Create folder structure
         self.scenario_folder_init = (
