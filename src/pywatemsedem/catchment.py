@@ -634,7 +634,7 @@ class Catchment(Factory):
         )
 
         self._vct_river = self.vector_factory(
-            vct_river_topo, "LineString", allow_empty=True
+            vct_river_topo, "LineString", allow_empty=True, flag_clip=False
         )
 
         river = self._vct_river.rasterize(
