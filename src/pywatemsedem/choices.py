@@ -85,6 +85,14 @@ class UserChoice:
 
 
 class WSMixin:
+    def __repr__(self):
+        """String representation of the Choices class"""
+        print_ = []
+        for key in self.__dict__:
+            attribute = getattr(self, key)
+            print_.append(f"{attribute.key}: {attribute.value}")
+        return "\n".join(print_)
+
     def check_mandatory_values(self):
         """Check if the value of an attribute is not None when it is mandatory"""
         for key in self.__dict__:
