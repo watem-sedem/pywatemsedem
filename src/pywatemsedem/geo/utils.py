@@ -1332,7 +1332,6 @@ def lines_to_raster(vct_line, rst_out, rst_template, field, dtype):
     if grid_type:
         cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
-    print(cmd_args)
     try:
         execute_subprocess(cmd_args)
     except OSError as e:
