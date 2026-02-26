@@ -88,6 +88,14 @@ class AbstractVector:
                 )
                 raise TypeError(msg)
 
+    def check_crs(self, req_epsg):
+        """Check if crs is the required crs"""
+        if self._geodata.crs.to_epsg() != req_epsg:
+            if self._geodata.crs is None:
+                self._geodata.set_crs(epsg=f"EPSG:{req_epsg}")
+            else:
+                self._geodata.to_crs(epsg=f"EPSG:{req_epsg}")
+
     def check_if_empty(self):
         """Check if input is empty"""
         if self._geodata.empty:
