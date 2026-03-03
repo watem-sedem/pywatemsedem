@@ -1468,7 +1468,9 @@ class Scenario:
                 self.choices.output.write_water_export = False
                 self.choices.extensions.output_per_river_segment = False
 
-        if self.choices.extensions.include_buffers.value & (self.buffers.is_empty()):
+        if self.choices.extensions.include_buffers.value & (
+            not self.buffers.is_empty()
+        ):
             self.buffers.write(
                 self.sfolder.cnwsinput_folder / inputfilename.buffers_file
             )
