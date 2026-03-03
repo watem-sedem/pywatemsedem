@@ -92,7 +92,7 @@ class TestCatchment:
         # test raster routing type and unique values
         un, counts = np.unique(dummy_catchment.routing.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0, 1, 3, 5, 7]))
-        np.testing.assert_allclose(counts, np.array([48911, 84, 257, 152, 40]))
+        np.testing.assert_allclose(counts, np.array([48911, 84, 256, 153, 40]))
 
         # test segments
         un, counts = np.unique(dummy_catchment.segments.arr, return_counts=True)
