@@ -94,23 +94,3 @@ def test_vectormemory_clip():
     gdf_mask = gpd.read_file(geodata.catchment)
     vector = VectorMemory(gdf, geometry_type, req_geometry_type, clip_mask=gdf_mask)
     assert len(vector.geodata) == 18
-
-
-def test_vectormemory_wrong_epsg():
-    """Test loading a vector with a different epsg than required"""
-    # load
-    gdf = gpd.read_file(geodata.vct_example)
-    req_epsg = 4326
-
-    vector = VectorMemory(gdf, "LineString", "LineString", epsg=req_epsg)
-    assert vector.geodata.crs.to_epsg() == req_epsg
-
-
-def test_vectormemory_correct_epsg():
-    """Test loading a vector with a required epsg"""
-    # load
-    gdf = gpd.read_file(geodata.vct_example)
-    req_epsg = 31370
-
-    vector = VectorMemory(gdf, "LineString", "LineString", epsg=req_epsg)
-    assert vector.geodata.crs.to_epsg() == req_epsg

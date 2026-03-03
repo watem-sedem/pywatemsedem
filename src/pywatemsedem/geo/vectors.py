@@ -28,12 +28,7 @@ class AbstractVector:
         self._geometry_type = None
 
     def initialize(
-        self,
-        geodata,
-        geometry_type,
-        req_geometry_type=None,
-        allow_empty=False,
-        req_epsg=None,
+        self, geodata, geometry_type, req_geometry_type=None, allow_empty=False
     ):
         """Abstract vector class
 
@@ -52,7 +47,6 @@ class AbstractVector:
         self._geodata = geodata
         self._geometry_type = geometry_type
         self.check_type(geometry_type, req_geometry_type)
-        self.check_crs(req_epsg)
         if not allow_empty:
             try:
                 self.check_if_empty()
@@ -96,12 +90,11 @@ class AbstractVector:
 
     def check_crs(self, req_epsg):
         """Check if crs is the required crs"""
-        if req_epsg is not None:
-            if self._geodata.crs.to_epsg() != req_epsg:
-                if self._geodata.crs is None:
-                    self._geodata = self._geodata.set_crs(epsg=f"EPSG:{req_epsg}")
-                else:
-                    self._geodata = self._geodata.to_crs(epsg=req_epsg)
+        if self._geodata.crs.to_epsg() != req_epsg:
+            if self._geodata.crs is None:
+                self._geodata.set_crs(epsg=f"EPSG:{req_epsg}")
+            else:
+                self._geodata.to_crs(epsg=f"EPSG:{req_epsg}")
 
     def check_if_empty(self):
         """Check if input is empty"""
@@ -280,7 +273,6 @@ class VectorMemory(AbstractVector):
         req_geometry_type=None,
         clip_mask=None,
         allow_empty=False,
-        epsg=None,
     ):
         """Initialize VectorMemory class
 
@@ -300,11 +292,7 @@ class VectorMemory(AbstractVector):
             geodata = self.clip(geodata, clip_mask)
 
         super().initialize(
-            geodata,
-            geometry_type,
-            req_geometry_type,
-            allow_empty=allow_empty,
-            req_epsg=epsg,
+            geodata, geometry_type, req_geometry_type, allow_empty=allow_empty
         )
 
     def clip(self, geodata, clip_mask):
@@ -328,12 +316,7 @@ class VectorFile(AbstractVector):
     """clipped Vector based on input vector file"""
 
     def __init__(
-        self,
-        file_path,
-        req_geometry_type=None,
-        vct_clip=None,
-        allow_empty=False,
-        epsg=None,
+        self, file_path, req_geometry_type=None, vct_clip=None, allow_empty=False
     ):
         """Initialize VectorFile class
 
@@ -363,7 +346,6 @@ class VectorFile(AbstractVector):
             geometry_type,
             req_geometry_type=req_geometry_type,
             allow_empty=allow_empty,
-            req_epsg=epsg,
         )
 
     def clip(self, vct_clip):
