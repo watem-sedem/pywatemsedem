@@ -853,6 +853,10 @@ def create_grass_strips_from_line_string(
     grass_strips["width"] = width
     grass_strips["source"] = "bankgrassstrip"
     grass_strips["scale_ktc"] = 1
+
+    if "NR" in grass_strips.columns:
+        grass_strips = grass_strips.drop(columns="NR")
+
     grass_strips.rename(columns={"buffer": "geometry"}, inplace=True)
     grass_strips = gpd.GeoDataFrame(grass_strips, geometry="geometry")
 
