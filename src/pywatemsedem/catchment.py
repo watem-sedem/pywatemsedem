@@ -637,6 +637,10 @@ class Catchment(Factory):
             vct_river_topo, "LineString", allow_empty=True, flag_clip=False
         )
 
+        self._vct_river.geodata = self._vct_river.geodata[
+            ["line_id", "startpt_id", "endpt_id", "geometry"]
+        ]
+
         river = self._vct_river.rasterize(
             self.rasterfile_mask,
             self.rp.epsg,
