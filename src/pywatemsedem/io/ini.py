@@ -128,21 +128,29 @@ class IniFile:
         for key in self.choices.parameters.__dict__:
             attribute = getattr(self.choices.parameters, key)
             if attribute.value is not None:
-                self.cfg.set("Parameters", key, str(attribute.value))
+                self.cfg.set("Parameters", attribute.key, str(attribute.value))
 
     def add_output(self):
         """Add section outputs config file"""
         for key in self.choices.output.__dict__:
             attribute = getattr(self.choices.output, key)
             if attribute.value is not None:
-                self.cfg.set("Output", key, str(attribute.value))
+                if attribute.dtype == bool:
+                    value = str(int(attribute.value))
+                else:
+                    value = str(attribute.value)
+                self.cfg.set("Output", attribute.key, value)
 
     def add_options(self):
         """Adds specified model options to the configuration."""
         for key in self.choices.options.__dict__:
             attribute = getattr(self.choices.options, key)
             if attribute.value is not None:
-                self.cfg.set("Options", key, str(attribute.value))
+                if attribute.dtype == bool:
+                    value = str(int(attribute.value))
+                else:
+                    value = str(attribute.value)
+                self.cfg.set("Options", attribute.key, value)
 
     def add_extensions(self, buffers, forced_routing, river_underground):
         """Add section parameters and parameters extensions to config file
@@ -200,18 +208,18 @@ class IniFile:
         self.cfg.set(
             "Parameters Extensions",
             "LS correction",
-            str(self.choices.extensionparameters.ls_correction.value),
+            str(int(self.choices.extensionparameters.ls_correction.value)),
         )
 
         self.cfg.set(
             "Extensions",
             "Adjusted Slope",
-            str(self.choices.extensions.adjusted_slope.value),
+            str(int(self.choices.extensions.adjusted_slope.value)),
         )
         self.cfg.set(
             "Extensions",
             "Buffer reduce Area",
-            str(self.choices.extensions.buffer_reduce_area.value),
+            str(int(self.choices.extensions.buffer_reduce_area.value)),
         )
 
     def add_river_segment_output_extension(self):
@@ -325,12 +333,12 @@ class IniFile:
             - *BUF_ID* (float): Buffer id
         """
         # Include buffers
-        self.cfg.set(
-            "Extensions",
-            "Include buffers",
-            str(self.choices.extensions.include_buffers.value),
-        )
         if self.choices.extensions.include_buffers.value:
+            self.cfg.set(
+                "Extensions",
+                "Include buffers",
+                "1",
+            )
             buffers = [] if buffers is None else buffers
             self.cfg.set(
                 "Files",
@@ -381,12 +389,13 @@ class IniFile:
             - *target row* (int): target pixel row
         """
         # force routing
-        self.cfg.set(
-            "Extensions",
-            "Force Routing",
-            str(self.choices.extensions.force_routing.value),
-        )
         if self.choices.extensions.force_routing.value:
+            self.cfg.set(
+                "Extensions",
+                "Force Routing",
+                "1",
+            )
+
             forced_routing = [] if forced_routing is None else forced_routing
             river_underground = [] if river_underground is None else river_underground
             n_fr = len(forced_routing)
@@ -428,7 +437,7 @@ class IniFile:
             self.cfg.set(
                 "Extensions",
                 "river routing",
-                str(self.choices.extensions.river_routing.value),
+                "1",
             )
             self.cfg.set(
                 "Files",
@@ -454,7 +463,7 @@ class IniFile:
             self.cfg.set(
                 "Extensions",
                 "Calibrate",
-                str(self.choices.extensions.calibrate.value),
+                "1",
             )
             self.cfg.set(
                 "Calibration",
@@ -520,7 +529,7 @@ class IniFile:
             self.cfg.set(
                 "Extensions",
                 "Create ktil map",
-                str(self.choices.extensions.create_ktil_map.value),
+                str(int(self.choices.extensions.create_ktil_map.value)),
             )
             if self.choices.extensions.create_ktil_map.value:
                 self.cfg.set(
@@ -588,7 +597,7 @@ class IniFile:
                 self.cfg.set(
                     "Extensions",
                     "Convert output",
-                    str(self.choices.extensions.convert_output.value),
+                    "1",
                 )
                 self.cfg.set(
                     "Parameters Extensions",
