@@ -1415,7 +1415,7 @@ class Scenario:
             self.sfolder.cnwsinput_folder / inputfilename.dtm_file, nodata=-99999
         )
         self.catchm.pfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
+            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file, dtype=np.float32
         )
         if self.choices.extensions.river_routing.value:
             self.catchm.adjacent_edges.to_csv(
