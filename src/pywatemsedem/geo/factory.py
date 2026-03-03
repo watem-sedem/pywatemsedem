@@ -308,6 +308,7 @@ class Factory:
                 geometry_type,
                 vct_clip=clip_mask,
                 allow_empty=allow_empty,
+                epsg=self.rp.epsg,
             )
         elif isinstance(vector_input, gpd.GeoDataFrame):
             if flag_clip:
@@ -320,6 +321,7 @@ class Factory:
                 geometry_type,
                 clip_mask=clip_mask,
                 allow_empty=allow_empty,
+                epsg=self.rp.epsg,
             )
         else:
             msg = (
