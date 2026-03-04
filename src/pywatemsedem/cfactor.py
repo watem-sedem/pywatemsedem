@@ -103,8 +103,9 @@ def create_cfactor_degerick2015(
 
         vct_grass_strips._geodata["C_factor"] = scale_cfactor_with_grass_strips_width(
             vct_grass_strips._geodata["width"],
-            scale_cfactor_linear(upper_cfactor=upper_cfactor),
+            scale_cfactor_linear,
             resolution=res,
+            upper_cfactor=upper_cfactor,
         )
         # write calculated C-factor to shapefile -> needed for efficiency plots
         # vct_grass = grass.write()
