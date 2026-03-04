@@ -95,8 +95,16 @@ def create_cfactor_degerick2015(
     # TODO: optimize workflow
     if not vct_grass_strips.is_empty():
         res = composite_landuse.rp.resolution
+
+        if use_source_oriented_measures:
+            upper_cfactor = cfactor_aggriculture * (1 - 0.8)
+        else:
+            upper_cfactor = cfactor_aggriculture
+
         vct_grass_strips._geodata["C_factor"] = scale_cfactor_with_grass_strips_width(
-            vct_grass_strips._geodata["width"], scale_cfactor_linear, resolution=res
+            vct_grass_strips._geodata["width"],
+            scale_cfactor_linear(upper_cfactor=upper_cfactor),
+            resolution=res,
         )
         # write calculated C-factor to shapefile -> needed for efficiency plots
         # vct_grass = grass.write()
