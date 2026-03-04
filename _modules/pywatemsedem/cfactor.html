@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.cfactor &mdash; pywatemsedem 0.0.1a10 documentation</title>
+  <title>pywatemsedem.cfactor &mdash; pywatemsedem 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=33496e84"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -192,8 +192,17 @@
     <span class="c1"># TODO: optimize workflow</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">composite_landuse</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span>
+
+        <span class="k">if</span> <span class="n">use_source_oriented_measures</span><span class="p">:</span>
+            <span class="n">upper_cfactor</span> <span class="o">=</span> <span class="n">cfactor_aggriculture</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper_cfactor</span> <span class="o">=</span> <span class="n">cfactor_aggriculture</span>
+
         <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">&quot;C_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale_cfactor_with_grass_strips_width</span><span class="p">(</span>
-            <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span> <span class="n">scale_cfactor_linear</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="n">res</span>
+            <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span>
+            <span class="n">scale_cfactor_linear</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="n">res</span><span class="p">,</span>
+            <span class="n">upper_cfactor</span><span class="o">=</span><span class="n">upper_cfactor</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># write calculated C-factor to shapefile -&gt; needed for efficiency plots</span>
         <span class="c1"># vct_grass = grass.write()</span>

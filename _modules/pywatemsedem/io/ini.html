@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.ini &mdash; pywatemsedem 0.0.1a10 documentation</title>
+  <title>pywatemsedem.io.ini &mdash; pywatemsedem 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=33496e84"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -242,7 +242,7 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Parameters&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Parameters&quot;</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="IniFile.add_output">
@@ -252,7 +252,11 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IniFile.add_options">
@@ -262,7 +266,11 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">options</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">attribute</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IniFile.add_extensions">
@@ -323,18 +331,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
             <span class="s2">&quot;LS correction&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ls_correction</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensionparameters</span><span class="o">.</span><span class="n">ls_correction</span><span class="o">.</span><span class="n">value</span><span class="p">)),</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Adjusted Slope&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">adjusted_slope</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">adjusted_slope</span><span class="o">.</span><span class="n">value</span><span class="p">)),</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Buffer reduce Area&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">buffer_reduce_area</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">buffer_reduce_area</span><span class="o">.</span><span class="n">value</span><span class="p">)),</span>
         <span class="p">)</span></div>
 
 
@@ -469,12 +477,12 @@
 <span class="sd">            - *BUF_ID* (float): Buffer id</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Include buffers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Include buffers&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_buffers</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
-        <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_buffers</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Include buffers&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="n">buffers</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">buffers</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">buffers</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
@@ -528,12 +536,13 @@
 <span class="sd">            - *target row* (int): target pixel row</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># force routing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-            <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Force Routing&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">force_routing</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
-        <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">force_routing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Force Routing&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
             <span class="n">forced_routing</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">forced_routing</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">forced_routing</span>
             <span class="n">river_underground</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">river_underground</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">river_underground</span>
             <span class="n">n_fr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">forced_routing</span><span class="p">)</span>
@@ -578,7 +587,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;river routing&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">river_routing</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
@@ -607,7 +616,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Calibrate&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">calibrate</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Calibration&quot;</span><span class="p">,</span>
@@ -676,7 +685,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Create ktil map&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktil_map</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktil_map</span><span class="o">.</span><span class="n">value</span><span class="p">)),</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktil_map</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
@@ -747,7 +756,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                     <span class="s2">&quot;Extensions&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;Convert output&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">convert_output</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                    <span class="s2">&quot;1&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                     <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.scenario &mdash; pywatemsedem 0.0.1a10 documentation</title>
+  <title>pywatemsedem.scenario &mdash; pywatemsedem 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=33496e84"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -100,7 +100,6 @@
 <span class="c1"># Standard libraries</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -479,12 +478,13 @@
         <span class="c1"># assign scenario number and user choices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="n">scenario_nr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">year</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">userchoices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">userchoices</span>
+        <span class="c1"># self.choices = deepcopy(userchoices)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rst_outlet</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ini</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># initialisation functionalities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">temporal_resolution</span><span class="p">()</span>
+        <span class="c1"># self.temporal_resolution()</span>
 
         <span class="c1"># Create folder structure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder_init</span> <span class="o">=</span> <span class="p">(</span>
@@ -1574,7 +1574,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">dtm_file</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=-</span><span class="mi">99999</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">pfactor</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">pfactor_file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">pfactor_file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">river_routing</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">adjacent_edges</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
@@ -1627,7 +1627,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">write_water_export</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">output_per_river_segment</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_buffers</span><span class="o">.</span><span class="n">value</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">include_buffers</span><span class="o">.</span><span class="n">value</span> <span class="o">&amp;</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+        <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">buffers_file</span>
             <span class="p">)</span>

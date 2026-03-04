@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.factory &mdash; pywatemsedem 0.0.1a10 documentation</title>
+  <title>pywatemsedem.geo.factory &mdash; pywatemsedem 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=33496e84"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -416,6 +416,7 @@
                 <span class="n">geometry_type</span><span class="p">,</span>
                 <span class="n">vct_clip</span><span class="o">=</span><span class="n">clip_mask</span><span class="p">,</span>
                 <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">,</span>
+                <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">flag_clip</span><span class="p">:</span>
@@ -428,11 +429,12 @@
                 <span class="n">geometry_type</span><span class="p">,</span>
                 <span class="n">clip_mask</span><span class="o">=</span><span class="n">clip_mask</span><span class="p">,</span>
                 <span class="n">allow_empty</span><span class="o">=</span><span class="n">allow_empty</span><span class="p">,</span>
+                <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">vector_input</span><span class="si">}</span><span class="s2">&#39; should be a geopandas GeoDataFrame or vector&quot;</span>
-                <span class="s2">&quot; file.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; file, not &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">vector_input</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem package &mdash; pywatemsedem 0.0.1a10 documentation</title>
+  <title>pywatemsedem package &mdash; pywatemsedem 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=33496e84"></script>
+      <script src="../_static/documentation_options.js?v=8d563738"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -479,6 +479,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.geo.html#module-pywatemsedem.geo.vectors">pywatemsedem.geo.vectors module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector"><code class="docutils literal notranslate"><span class="pre">AbstractVector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_crs"><code class="docutils literal notranslate"><span class="pre">AbstractVector.check_crs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_if_empty"><code class="docutils literal notranslate"><span class="pre">AbstractVector.check_if_empty()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_type"><code class="docutils literal notranslate"><span class="pre">AbstractVector.check_type()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.geodata"><code class="docutils literal notranslate"><span class="pre">AbstractVector.geodata</span></code></a></li>
@@ -677,7 +678,7 @@ multiple entries for every buffer extension id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Holding id’s (column: ‘buf_id’ (int)), all id’s should be present in arr and
+<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Holding id’s (column: ‘buf_id’ (int)), all id’s should be present in arr and
 vice versa.</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Array with buffer outlet (&lt;16 385) and extension id’s (16 385&gt;=). This array
 can hold multiple entries for buffer outlet. All outlet id’s should be present
@@ -727,7 +728,7 @@ river</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas representation of arr, in buf_exid.</p></li>
+<li><p><strong>gdf</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas representation of arr, in buf_exid.</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Array with buffer outlet (&lt;16 385) and extension id’s (16 385&gt;=). This array
 can hold multiple entries for buffer outlet. All outlet id’s should be present
 in gdf.</p></li>
@@ -1714,9 +1715,9 @@ Lower than 1 when upstream edge flows into two edges.</p></li>
 no-0 value.</p></li>
 <li><p><strong>composite_landuse</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster" title="pywatemsedem.geo.rasters.AbstractRaster"><em>pywatemsedem.geo.rasters.AbstractRaster</em></a>) – WaTEM/SEDEM composite landuse. (see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#prcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>).</p></li>
 <li><p><strong>mask</strong> (<a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster" title="pywatemsedem.geo.rasters.AbstractRaster"><em>pywatemsedem.geo.rasters.AbstractRaster</em></a>) – Mask</p></li>
-<li><p><strong>vct_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Dataframe holding C-factor values, columns:
+<li><p><strong>vct_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Dataframe holding C-factor values, columns:
 - <em>C_factor</em> (float)</p></li>
-<li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Dataframe holding C-factor values, columns:
+<li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Dataframe holding C-factor values, columns:
 - <em>C_factor</em> (float)</p></li>
 <li><p><strong>cfactor_aggriculture</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> , </em><em>default 0.37</em>) – Default C-factor value for left-over pixels</p></li>
 <li><p><strong>use_source_oriented_measures</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True / False. In case True, vct_parcels should contain the column ‘C_reduct’.</p></li>
@@ -2805,7 +2806,7 @@ water (-5).</p></li>
 <li><p><strong>hsg</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Raster that holds values from 1 to 4 according to hydrological soil group
 (A, B, C and D), see <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and <a class="footnote-reference brackets" href="#id5" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, for more info, see documentation in function
 :attr: pywatemsedem.catchment.Catchment.hydrological_soil_group`.</p></li>
-<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – <p>Parcels polygon data with columns:</p>
+<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – <p>Parcels polygon data with columns:</p>
 <ul>
 <li><p><em>NR</em> (int): unique id, should be the same as in parcels_ids (i.e. parcels_ids
 is a rasterized version of the parcels dataframe).</p></li>
@@ -3009,7 +3010,7 @@ values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Internal naming.</p></li>
 <li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Lower boundary, if None: no boundary.</p></li>
 <li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default None</em>) – Upper boundary, if None: no boundary.</p></li>
@@ -3027,7 +3028,7 @@ values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Internal naming.</p></li>
 <li><p><strong>attribute</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Column name</p></li>
 <li><p><strong>allowed_values</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><em>set</em></a><em> of </em><em>int and/or float</em>) – Allowed values</p></li>
@@ -3045,7 +3046,7 @@ values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Input vector.</p></li>
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Internal naming.</p></li>
 <li><p><strong>req_attributes</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><em>set</em></a>) – Required attributes in input source.</p></li>
 </ul>
@@ -3191,8 +3192,8 @@ required, clip by polygons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>line_string</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas dataframe with LineString</p></li>
-<li><p><strong>polygons</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Geopandas dataframe with Polygon</p></li>
+<li><p><strong>line_string</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Geopandas dataframe with LineString</p></li>
+<li><p><strong>polygons</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a><em>, </em><em>default None</em>) – Geopandas dataframe with Polygon</p></li>
 <li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default 20</em>) – Width (m) of the bank grass strip stored in the attribute table.</p></li>
 <li><p><strong>width_polygon</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em><em>, </em><em>default 20</em>) – width (m) of the bank grass strip polygon</p></li>
 <li><p><strong>dir</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Name of temporary directory</p></li>
@@ -3208,7 +3209,7 @@ required, clip by polygons.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -3618,7 +3619,7 @@ on the C-factor and ktc_limit (i.e. C_factor &lt; ktc_high -&gt; ktc_low, C_fact
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Grass strips geodataframe, ‘width’ and ‘scale_ktc’ should be present as
+<li><p><strong>gdf_grass_strips</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Grass strips geodataframe, ‘width’ and ‘scale_ktc’ should be present as
 columns.</p></li>
 <li><p><strong>ktc_low</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Transport coefficient for land covers with low erosion potential</p></li>
 <li><p><strong>ktc_high</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Transport coefficient for land covers with high erosion potential</p></li>
@@ -3631,7 +3632,7 @@ For definition STE_linear,
 <a class="reference internal" href="#pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width" title="pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width()</span></code></a>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -4086,7 +4087,7 @@ inspection</p>
 <dd class="field-even"><p>Geopandas dataframe of vct with statistics per polygon.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4120,7 +4121,7 @@ watereros from kg to ton.</p>
 <dd class="field-odd"><p><strong>gdf_routing_sediout</strong> – See <a class="reference internal" href="#pywatemsedem.postprocess.couple_sediout_routing" title="pywatemsedem.postprocess.couple_sediout_routing"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.couple_sediout_routing()</span></code></a></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4149,7 +4150,7 @@ watereros from kg to ton.</p>
 <a class="reference internal" href="#pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel" title="pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel()</span></code></a></p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -4287,7 +4288,7 @@ overlapping catchments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_subcatchmpriority</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Catchment shapes with number of catchment.</p></li>
+<li><p><strong>gdf_subcatchmpriority</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Catchment shapes with number of catchment.</p></li>
 <li><p><strong>merge</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Merge the separate priority areas to one shapefile.</p></li>
 </ul>
 </dd>
@@ -4848,7 +4849,7 @@ pixel</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -5226,7 +5227,7 @@ selected and renamed after target1 or target2</p>
 <p>Only select the routing vector which cross the parcel border.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gdf_routing</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Loaded routing vector file (with or without sediout coupled to it).
+<dd class="field-odd"><p><strong>gdf_routing</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Loaded routing vector file (with or without sediout coupled to it).
 See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.make_routing_vct()</span></code></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -5234,7 +5235,7 @@ See <code class="xref py py-func docutils literal notranslate"><span class="pre"
 See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.make_routing_vct()</span></code></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -5789,8 +5790,8 @@ applied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Parcels polygon vector</p></li>
-<li><p><strong>gdf_tillage_technical</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Tillage technical polygon vector</p></li>
+<li><p><strong>gdf_parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Parcels polygon vector</p></li>
+<li><p><strong>gdf_tillage_technical</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Tillage technical polygon vector</p></li>
 <li><p><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Minimal required overlap between polygons to select the implementation of a
 tillage technical measure to be applied for the parcel, default 0.75.</p></li>
 </ul>
@@ -5833,7 +5834,7 @@ area_intersect(grasstri, parcel)/area(parcel).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
+<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
 <li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of parcel shapefiles</p></li>
 </ul>
 </dd>
@@ -5845,7 +5846,7 @@ area_intersect(grasstri, parcel)/area(parcel).</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -5862,7 +5863,7 @@ area_intersect(grass strips, parcel)/area(parcel).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev74.dev+gcdc7d5184)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
+<li><p><strong>parcels</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Can have any column, should have geometries</p></li>
 <li><p><strong>vct_grass_strips</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of parcel shapefile</p></li>
 </ul>
 </dd>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 0.0.1a10 documentation</title>
+  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=33496e84"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1543,7 +1543,6 @@
     <span class="k">if</span> <span class="n">grid_type</span><span class="p">:</span>
         <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-GRID_TYPE&quot;</span><span class="p">,</span> <span class="n">grid_type</span><span class="p">,</span> <span class="s2">&quot;-TARGET_DEFINITION&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-TARGET_TEMPLATE&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_template</span><span class="p">),</span> <span class="s2">&quot;-GRID&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
