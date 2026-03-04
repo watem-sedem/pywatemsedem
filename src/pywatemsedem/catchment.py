@@ -634,8 +634,12 @@ class Catchment(Factory):
         )
 
         self._vct_river = self.vector_factory(
-            vct_river_topo, "LineString", allow_empty=True
+            vct_river_topo, "LineString", allow_empty=True, flag_clip=False
         )
+
+        self._vct_river.geodata = self._vct_river.geodata[
+            ["line_id", "startpt_id", "endpt_id", "geometry"]
+        ]
 
         river = self._vct_river.rasterize(
             self.rasterfile_mask,
@@ -1154,7 +1158,7 @@ class Catchment(Factory):
             arr_plot = self._infrastructure.arr.copy().astype(np.float32)
             if nodata is not None:
                 arr_plot = np.where(arr_plot != nodata, 1, arr_plot)
-                arr_plot = np.where(arr_plot == nodata, 0, arr)
+                arr_plot = np.where(arr_plot == nodata, 0, arr_plot)
 
             im = ax.imshow(arr_plot, *args, **kwargs)
             fig.colorbar(im, ax=ax, shrink=0.5)

@@ -5,7 +5,6 @@ import shutil
 # Standard libraries
 import subprocess
 import warnings
-from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
@@ -337,12 +336,13 @@ class Scenario:
         # assign scenario number and user choices
         self.scenario_nr = scenario_nr
         self.year = year
-        self.choices = deepcopy(userchoices)
+        self.choices = userchoices
+        # self.choices = deepcopy(userchoices)
         self.rst_outlet = AbstractRaster()
         self.ini = None
 
         # initialisation functionalities
-        self.temporal_resolution()
+        # self.temporal_resolution()
 
         # Create folder structure
         self.scenario_folder_init = (
@@ -1415,7 +1415,7 @@ class Scenario:
             self.sfolder.cnwsinput_folder / inputfilename.dtm_file, nodata=-99999
         )
         self.catchm.pfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file
+            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file, dtype=np.float32
         )
         if self.choices.extensions.river_routing.value:
             self.catchm.adjacent_edges.to_csv(
@@ -1468,7 +1468,9 @@ class Scenario:
                 self.choices.output.write_water_export = False
                 self.choices.extensions.output_per_river_segment = False
 
-        if self.choices.extensions.include_buffers.value & (self.buffers.is_empty()):
+        if self.choices.extensions.include_buffers.value & (
+            not self.buffers.is_empty()
+        ):
             self.buffers.write(
                 self.sfolder.cnwsinput_folder / inputfilename.buffers_file
             )

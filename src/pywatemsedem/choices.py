@@ -34,14 +34,17 @@ class UserChoice:
     def validate_type(self, value):
         """Validate if the value has the correct dtype"""
         if not isinstance(value, self.dtype):
-            msg = f"Value assigned to key '{self.key}' should be dtype '{self.dtype}'."
+            msg = (
+                f"Value ('{value}') assigned to key '{self.key}' should be dtype "
+                f"'{self.dtype}'."
+            )
             raise TypeError(msg)
 
     def validate_value(self, value):
         """Validate if the value is within the allowed values"""
         if self.allowed_values is not None:
             if value not in self.allowed_values:
-                msg = f"Value should be one of: {self.allowed_values}."
+                msg = f"Value ('{value}') should be one of: {self.allowed_values}."
                 raise ValueError(msg)
 
     @property

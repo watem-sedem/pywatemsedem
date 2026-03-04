@@ -326,7 +326,7 @@ class Factory:
         else:
             msg = (
                 f"Input '{vector_input}' should be a geopandas GeoDataFrame or vector"
-                " file."
+                f" file, not '{type(vector_input)}'. "
             )
             raise IOError(msg)
 

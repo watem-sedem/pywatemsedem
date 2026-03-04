@@ -1,5 +1,7 @@
 """Test functions for utils scripts"""
 
+import re
+
 import pytest
 from conftest import default_ini_file
 
@@ -25,8 +27,10 @@ def test_userchoice_not_allowed_value():
     )
     with pytest.raises(
         ValueError,
-        match=r"Value should be one of: \['This string is allowed', "
-        r"'A second allowed string'\].",
+        match=re.escape(
+            "Value ('Not allowed string') should be one of: ['This string "
+            "is allowed', 'A second allowed string']."
+        ),
     ):
         user_choice.value = "Not allowed string"
 
@@ -41,7 +45,10 @@ def test_userchoice_wrong_dtype():
     )
     with pytest.raises(
         TypeError,
-        match=(r"Value assigned to key 'Test2' should be dtype '<class 'float'>'."),
+        match=re.escape(
+            "Value ('This value should be a float') assigned to key "
+            "'Test2' should be dtype '<class 'float'>'."
+        ),
     ):
         user_choice.value = "This value should be a float"
 
