@@ -59,7 +59,7 @@ def plot_time_series_for_in_river_points(
         'Sedigram': plot with sediment concentration vs time
         'Sediment': plot with total sediment mass vs time
     folder: pathlib Path, optional
-        path to folder where CNWS results are saved
+        path to folder where WaTEM/SEDEM results are saved
     resmap: pathlib Path, optional
         path to folder to save pngs
     convert_output: bool, optional

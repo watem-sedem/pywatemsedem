@@ -42,8 +42,8 @@ class IniFile:
     def __init__(self, inputfolder, outputfolder, choices):
         """Creates an ini-file for the scenario"""
 
-        self.cnwsinput_folder = inputfolder
-        self.cnwsoutput_folder = outputfolder
+        self.wsinput_folder = inputfolder
+        self.wsoutput_folder = outputfolder
         self.cfg = configparser.ConfigParser()
         self.choices = choices
 
@@ -74,13 +74,11 @@ class IniFile:
 
     def add_working_directories(self):
         """Add section working directory to config file"""
-        self.cfg.set(
-            "Working directories", "Input directory", str(self.cnwsinput_folder)
-        )
+        self.cfg.set("Working directories", "Input directory", str(self.wsinput_folder))
         self.cfg.set(
             "Working directories",
             "Output directory",
-            str(self.cnwsoutput_folder),
+            str(self.wsoutput_folder),
         )
 
     def add_files(self):
@@ -88,35 +86,35 @@ class IniFile:
         self.cfg.set(
             "Files",
             "DTM filename",
-            (self.cnwsinput_folder / inputfilename.dtm_file).name,
+            (self.wsinput_folder / inputfilename.dtm_file).name,
         )
         self.cfg.set(
             "Files",
             "P factor map filename",
-            (self.cnwsinput_folder / inputfilename.pfactor_file).name,
+            (self.wsinput_folder / inputfilename.pfactor_file).name,
         )
         self.cfg.set(
             "Files",
             "shapefile catchment",
-            (self.cnwsinput_folder / inputfilename.mask_file).name,
+            (self.wsinput_folder / inputfilename.mask_file).name,
         )
 
         self.cfg.set(
             "Files",
             "Parcel filename",
-            (self.cnwsinput_folder / inputfilename.parcelmosaic_file).name,
+            (self.wsinput_folder / inputfilename.parcelmosaic_file).name,
         )
         if not self.choices.options.only_routing.value:
             self.cfg.set(
                 "Files",
                 "C factor map filename",
-                (self.cnwsinput_folder / inputfilename.cfactor_file).name,
+                (self.wsinput_folder / inputfilename.cfactor_file).name,
             )
 
             self.cfg.set(
                 "Files",
                 "K factor filename",
-                (self.cnwsinput_folder / inputfilename.kfactor_file).name,
+                (self.wsinput_folder / inputfilename.kfactor_file).name,
             )
 
         else:
@@ -231,7 +229,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "River segment filename",
-                (self.cnwsinput_folder / inputfilename.segments_file).name,
+                (self.wsinput_folder / inputfilename.segments_file).name,
             )
 
     def add_manual_outlet_extension(self):
@@ -247,7 +245,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Outlet map filename",
-                (self.cnwsinput_folder / inputfilename.outlet_file).name,
+                (self.wsinput_folder / inputfilename.outlet_file).name,
             )
 
     def add_clay_content_extension(self):
@@ -279,7 +277,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Ditch map filename",
-                (self.cnwsinput_folder / inputfilename.ditches_files).name,
+                (self.wsinput_folder / inputfilename.ditches_files).name,
             )
 
     def add_dams_extensions(self):
@@ -291,7 +289,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Dam map filename",
-                (self.cnwsinput_folder / inputfilename.conductivedams_file).name,
+                (self.wsinput_folder / inputfilename.conductivedams_file).name,
             )
 
     def add_sewer_extension(self):
@@ -311,7 +309,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Sewer map filename",
-                (self.cnwsinput_folder / inputfilename.endpoints_file).name,
+                (self.wsinput_folder / inputfilename.endpoints_file).name,
             )
 
     def add_include_buffer_extension(self, buffers):
@@ -343,7 +341,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Buffer map filename",
-                (self.cnwsinput_folder / inputfilename.buffers_file).name,
+                (self.wsinput_folder / inputfilename.buffers_file).name,
             )
             self.cfg.set(
                 "Parameters Extensions", "Number of buffers", str(len(buffers))
@@ -442,17 +440,17 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "adjectant segments",
-                (self.cnwsinput_folder / inputfilename.adjacentedges_file).name,
+                (self.wsinput_folder / inputfilename.adjacentedges_file).name,
             )
             self.cfg.set(
                 "Files",
                 "upstream segments",
-                (self.cnwsinput_folder / inputfilename.upedges_file).name,
+                (self.wsinput_folder / inputfilename.upedges_file).name,
             )
             self.cfg.set(
                 "Files",
                 "river routing filename",
-                (self.cnwsinput_folder / inputfilename.routing_file).name,
+                (self.wsinput_folder / inputfilename.routing_file).name,
             )
 
     def add_ktc_and_calibration_extensions(self):
@@ -495,18 +493,18 @@ class IniFile:
             )
         elif (
             not self.choices.extensions.create_ktc_map.value
-        ):  # pywatemsedem must provide ktc map to watem-sedem
+        ):  # pywatemsedem must provide ktc map to WaTEM/SEDEM
             self.cfg.set("Extensions", "Create ktc map", "0")
             self.cfg.set(
                 "Files",
                 "ktc map filename",
-                (self.cnwsinput_folder / inputfilename.ktc_file).name,
+                (self.wsinput_folder / inputfilename.ktc_file).name,
             )
 
         else:
             self.cfg.set(
                 "Extensions", "Create ktc map", "1"
-            )  # watem-sedem will create ktc map
+            )  # WaTEM/SEDEM will create ktc map
             self.cfg.set(
                 "Parameters Extensions",
                 "ktc low",
@@ -546,7 +544,7 @@ class IniFile:
                 self.cfg.set(
                     "Files",
                     "ktil map filename",
-                    (self.cnwsinput_folder / inputfilename.ktil_file).name,
+                    (self.wsinput_folder / inputfilename.ktil_file).name,
                 )
 
     def add_cn_extension(self):
@@ -571,7 +569,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "CN map filename",
-                (self.cnwsinput_folder / inputfilename.cn_file).name,
+                (self.wsinput_folder / inputfilename.cn_file).name,
             )
             self.cfg.set(
                 "Files",
