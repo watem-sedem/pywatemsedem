@@ -112,28 +112,6 @@ def read_rst_params(rst_in):
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def read_dtype_raster(rst_in):
-    """Read dtype of raster
-
-    Parameters
-    ----------
-    rst_in: pathlib.Path
-        File path to the input raster
-
-    Returns
-    -------
-    dtype: numpy.dtype
-
-    Note
-    -----
-    Only works for single band rasters
-    """
-    with rasterio.open(rst_in) as src:
-        dtype = src.dtypes[0]
-    return np.dtype(dtype)
-
-
-@valid_input(dict={"rst_in": valid_raster})
 def read_rasterio_profile(rst_in):
     """Read all spatial dimensions of a raster
 
@@ -245,34 +223,6 @@ def grid_difference(rst_in1, rst_in2, rst_out):
     cmd_args += ["-A", str(rst_in1), "-B", str(rst_in2), "-C", str(rst_out)]
 
     execute_saga(cmd_args)
-
-
-@valid_input(dict={"rst_in": valid_raster})
-def create_hillshade(rst_in, rst_hillshade):
-    """Create a hillshade raster of the DTM
-
-    Parameters
-    ----------
-    rst_in: str
-        File path of input raster
-    rst_hillshade: str
-        File path of output raster
-    """
-    if isinstance(rst_hillshade, str):
-        rst_hillshade = Path(rst_hillshade).parent / (Path(rst_hillshade).stem + ".tif")
-    elif isinstance(rst_hillshade, Path):
-        rst_hillshade = rst_hillshade.parent / (rst_hillshade.stem + ".tif")
-    else:
-        msg = (
-            f"'hillshade' is of type {type(rst_hillshade)}, "
-            f"cannot be converted to Pathlib Path"
-        )
-        raise TypeError(msg)
-
-    cmd_args = ["gdaldem", "hillshade", "-q"]
-    cmd_args += ["-co", "COMPRESS=DEFLATE"]
-    cmd_args += [str(rst_in), str(rst_hillshade)]
-    execute_subprocess(cmd_args)
 
 
 @valid_input(dict={"vct": valid_vector})
@@ -1484,7 +1434,7 @@ def set_dtype_arr_rst(arr, profile, dtype=None):
     return arr, profile
 
 
-def get_rstparams(CNWS_modelinputfolder, epsg=None, catchmentname="", template=None):
+def get_rstparams(CNWS_modelinputfolder, epsg=None, template=None):
     """Get rstparams and rasterprofile from template raster (default:pkaart)
 
     Parameters
@@ -1494,8 +1444,6 @@ def get_rstparams(CNWS_modelinputfolder, epsg=None, catchmentname="", template=N
     epsg: str, default None
         the epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
-    catchmentname: str, default ""
-        catchment name
     template: str or pathlib.Path, default None
         File path to a template file that can be used as template for
         geodata and bin mask. Default the "P" raster is used.
@@ -1529,15 +1477,13 @@ def get_rstparams(CNWS_modelinputfolder, epsg=None, catchmentname="", template=N
     return rstparams, profile
 
 
-def get_mask_template(CNWS_modelinputfolder, catchmentname, rst_template=None):
+def get_mask_template(CNWS_modelinputfolder, rst_template=None):
     """Get a binary raster from template raster (P-factor)
 
     Parameters
     ----------
     CNWS_modelinputfolder: str or pathlib.Path
         File path to the CNWS_modelinputfolder
-    catchmentname: str
-        Catchment name
     rst_template: str or pathlib.Path, default None
         Path to a template file that can be used as template for geodata and bin mask
 
