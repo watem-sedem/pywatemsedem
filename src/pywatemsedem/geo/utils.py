@@ -40,46 +40,6 @@ logger = logging.getLogger(__name__)
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def check_rst_dimensions(rst_in, minmax, ncols, nrows, transform=None):
-    """This function checks if the input raster has the desired dimensions.
-
-    Parameters
-    ----------
-    rst_in: pathlib.Path or str
-        File path to input raster
-    minmax: list
-        Containing xmin, ymin, xmax, ymax
-    ncols: int
-        Number of columns in the raster
-    nrows: int
-        Number of rows in the raster
-    transform:  rasterio.transform, default None
-        Transformation as defined in Rasterio.
-
-    Returns
-    -------
-    bool
-        Raster has the required dimensions (True/False)
-    """
-    coordinates, transf, cols, rows = read_rst_params(rst_in)
-
-    if cols != ncols:
-        return False
-
-    elif rows != nrows:
-        return False
-
-    elif minmax != coordinates:
-        return False
-
-    elif transform is not None:
-        if transf != transform:
-            return False
-    else:
-        return True
-
-
-@valid_input(dict={"rst_in": valid_raster})
 def read_rst_params(rst_in):
     """Read all spatial dimensions of a raster
 
