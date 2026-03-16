@@ -1,6 +1,5 @@
 # Standard libraries
 import logging
-import os
 import random
 import string
 import subprocess
@@ -16,7 +15,6 @@ import pandas as pd
 import pyogrio
 import rasterio
 from rasterio.features import shapes
-from rasterio.merge import merge
 
 from pywatemsedem.geo.rasterproperties import RasterProperties
 
@@ -36,7 +34,6 @@ from .valid import (
     valid_raster,
     valid_rasterlist,
     valid_vector,
-    valid_vectorlist,
 )
 
 logger = logging.getLogger(__name__)
@@ -314,25 +311,6 @@ def get_geometry_type(vct):
     return geom
 
 
-@valid_input(dict={"vct_in": valid_vector})
-def copy_vct(vct_in, folder_out):
-    """Copies a shapefile to another location
-
-    Parameters
-    ----------
-    vct_in: str or pathlib.Path
-        File path of the shapefile to be copied.
-    folder_out: str or pathlib.Path
-        File path of the destination shapefile.
-
-    Note
-    -----
-    Uses and relies on ogr2ogr CLI
-    """
-    cmd_args = ["ogr2ogr", str(folder_out), str(vct_in)]
-    execute_subprocess(cmd_args)
-
-
 @valid_input(dict={"tiff_in": valid_raster})
 def tiff_to_geopandas_df(tiff_in):
     """Transform a tiff file to a geopandas dataframe
@@ -361,62 +339,6 @@ def tiff_to_geopandas_df(tiff_in):
     gdf = gpd.GeoDataFrame.from_features(geoms, crs=crs)
 
     return gdf
-
-
-@valid_input(dict={"rst_in": valid_raster})
-def idrisi_to_tiff(rst_in, tiff_out, dtype, epsg="EPSG:31370"):
-    """Convert an Idrisi RST to GeoTiff
-
-    Parameters
-    ----------
-    rst_in: str
-        File path of the input rst.
-    tiff_out: str
-        File path of the output tiff file.
-    dtype: str
-        Data type of the destination rst, either 'integer' or 'float'.
-
-    Note
-    -----
-    Uses and relies on gdal_translate CLI
-    """
-
-    if dtype == "integer":
-        cmd_args = [
-            "gdal_translate",
-            "-q",
-            "-ot",
-            "Int16",
-            "-of",
-            "GTiff",
-            "-co",
-            "COMPRESS=DEFLATE",
-            "-a_srs",
-            str(epsg),
-            str(rst_in),
-            str(tiff_out),
-        ]
-        execute_subprocess(cmd_args)
-    elif dtype == "float":
-        cmd_args = [
-            "gdal_translate",
-            "-q",
-            "-ot",
-            "Float32",
-            "-of",
-            "GTiff",
-            "-co",
-            "COMPRESS=DEFLATE",
-            "-a_srs",
-            str(epsg),
-            str(rst_in),
-            str(tiff_out),
-        ]
-        execute_subprocess(cmd_args)
-    else:
-        msg = 'Saving rst as tif. Type must be "integer" or "float"'
-        logger.error(msg)
-        raise TypeError(msg)
 
 
 def valid_gdal_type(func):
@@ -485,77 +407,6 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
         str(rst_out),
     ]
     execute_subprocess(cmd_args)
-
-
-def get_feature_count(vct):
-    """Count the amount of features in a shapefile
-
-    Parameters
-    ----------
-    vct: str
-        File path of the shapefile.
-
-    Returns
-    -------
-    nr_features: int
-        Number of features in the shapefile
-    """
-    nr_features = pyogrio.read_info(vct)["features"]
-    return nr_features
-
-
-@valid_input(dict={"lst_vct": valid_vectorlist})
-def merge_lst_vct(lst_vct, vct_out, epsg):
-    """Merge a list of shapefiles to one shapefile
-
-    Parameters
-    ----------
-    lst_vct: list
-        List with file paths (str) of all shapefiles to be merged.
-    vct_out: pathlib.Path
-        File path of merged vct
-    epsg: str
-        The epsg code defining the coordinate system of the raster,
-        format = "EPSG:XXXXX"
-
-    Note
-    ----
-    Uses and relies on ogr2ogr CLI
-    """
-    for i, vct in enumerate(lst_vct):
-        if i == 0:
-            copy_vct(vct, vct_out)
-        else:
-            cmd_args = ["ogr2ogr", "-update", "-a_srs", str(epsg)]
-            cmd_args += ["-append", str(vct_out)]
-            cmd_args.append(str(vct))
-            cmd_args += ["-nln", vct_out.stem]
-
-            execute_subprocess(cmd_args)
-
-
-@valid_input(dict={"lst_vct": valid_vectorlist})
-def merge_lst_vct_saga(lst_vct, vct_out):
-    """Merge a list of shapefiles to one shapefile
-
-    Parameters
-    ----------
-    lst_vct: list
-        List with file paths (str) of all shapefiles to be merged.
-    vct_out: str
-        File path + name of the destination shapefile.
-
-    Note
-    ----
-    Uses and relies on ogr2ogr CLI
-    """
-
-    cmd_args = (
-        ["saga_cmd", SAGA_FLAGS, "shapes_tools", "2"]
-        + [f"-INPUT={';'.join(lst_vct)}"]
-        + [f"-MERGED={vct_out}"]
-    )
-    execute_saga(cmd_args)
 
 
 @valid_input(dict={"rst_in": valid_raster})
@@ -1435,90 +1286,6 @@ def grid_statistics(
     execute_saga(cmd_args)
 
 
-@valid_input(dict={"rst_in": valid_raster, "rst_mask": valid_raster})
-def mask_raster(rst_in, rst_mask, un_id, folder="masked"):
-    """Mask a raster by setting no data with no data positions of mask
-
-    The input raster is masked by the nodata value in the mask raster.
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path raster to be masked
-    rst_mask: str  or pathlib.Path
-        File path mask raster, see note for format
-    un_id: int
-        unique id of the raster
-    folder: str, default 'masked'
-        Folder in which to safe masked raster
-
-    Returns
-    -------
-    rst_masker: str
-        File path of masked raster
-
-    Note
-    ----
-    1. This mask raster should be a (**no** `nodata`, `nodata`)-raster in which the
-       nodata  values indicate masking, and non-nodata values indicates not masking.
-    2. Masking of the input raster is facilitated by setting to-mask-values in the
-       input raster to `nodata`.
-
-    """
-    if folder not in os.listdir():
-        os.mkdir(folder)
-    arr_mask, profile_mask = load_raster(rst_mask, list_format=True)
-    arr_in, profile_in = load_raster(rst_in, list_format=True)
-    rst_masked = Path(rst_in)
-    rst_masked = Path("temp") / f"{rst_masked.stem}-{un_id}{rst_masked.suffix}"
-
-    arr_in[arr_mask == profile_mask["nodata"]] = profile_in["nodata"]
-    write_arr_as_rst(arr_in, rst_masked, arr_in.dtype, profile_in)
-
-    return rst_masked
-
-
-@valid_input(dict={"lst_rst": valid_rasterlist})
-def merge_rasters(lst_rst, rst_out, lst_rst_masks=None):
-    """Merge several rasters to one raster with option to mask input rasters
-
-    Parameters
-    ----------
-    lst_rst: list of str or list of pathlib.Path
-        List of file paths of rasters which have to be merged together
-    rst_out: str or pathlib.Path
-        File path of merged raster
-    lst_rst_masks: list
-        List of file paths of mask files to be used to mask lst_rst_in, see
-        :func:`pywatemsedem.geo.utils.mask_raster`.
-    """
-    if lst_rst_masks is not None:
-        lst_rst_temp = []
-        for i, rst_in in enumerate(lst_rst):
-            lst_rst_temp.append(mask_raster(rst_in, lst_rst_masks[i], i, "temp"))
-        lst_rst = lst_rst_temp
-
-    lst_src = []
-    for rst in lst_rst:
-        src = rasterio.open(rst)
-        lst_src.append(src)
-
-    if len(lst_src) > 0:
-        mosaic, out_trans = merge(lst_src)
-        out_meta = src.meta.copy()
-        out_meta.update(
-            {
-                "driver": "GTiff",
-                "height": mosaic.shape[1],
-                "width": mosaic.shape[2],
-                "transform": out_trans,
-                "compress": "DEFLATE",
-            }
-        )
-        with rasterio.open(rst_out, "w", **out_meta) as dest:
-            dest.write(mosaic)
-
-
 def rasterprofile_to_rstparams(profile):
     """Transform rasterprofile to rstparams
 
@@ -1715,25 +1482,6 @@ def set_dtype_arr_rst(arr, profile, dtype=None):
         profile["dtype"] = dtype
 
     return arr, profile
-
-
-@valid_input(dict={"rst": valid_raster})
-def calculate_sum_rst(rst):
-    """Calculate sum of a raster values
-
-    Parameters
-    ----------
-    rst: pathlib.Path
-        File path of the raster file
-
-    Returns
-    -------
-    float:
-        sum of the values in the raster
-    """
-    arr, profile = load_raster(rst)
-
-    return np.sum(arr[arr != profile["nodata"]])
 
 
 def get_rstparams(CNWS_modelinputfolder, epsg=None, catchmentname="", template=None):
