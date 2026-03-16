@@ -314,27 +314,6 @@ def get_geometry_type(vct):
     return geom
 
 
-def copy_rst(rst_in, rst_out):
-    """Copy a raster and converts it to an idrisi-raster
-
-    Parameters
-    ----------
-    rst_in: pathlib.Path or str
-        File path of input raster
-    rst_out: pathlib.Path
-        File path of output raster (extension must be .rst!)
-
-    Note
-    -----
-    Uses and relies on gdal_translate CLI
-    """
-    if rst_out.exists():
-        delete_rst(rst_out)
-
-    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rst_out)]
-    execute_subprocess(cmd_args)
-
-
 @valid_input(dict={"vct_in": valid_vector})
 def copy_vct(vct_in, folder_out):
     """Copies a shapefile to another location
@@ -352,25 +331,6 @@ def copy_vct(vct_in, folder_out):
     """
     cmd_args = ["ogr2ogr", str(folder_out), str(vct_in)]
     execute_subprocess(cmd_args)
-
-
-@valid_input(dict={"tiff_in": valid_raster})
-def tiff_to_esri_shp(tiff_in, vct_out, epsg):
-    """
-    Transform a tiff file to an esri shape (raster to shape)
-
-    Parameters
-    ----------
-    tiff_in: str or pathlib.Path
-        name input tiff
-    vct_out: str or pathlib.Path
-        name input shapefile
-    epsg: str, default None
-        the epsg code defining the coordinate system of the raster,
-        format = "EPSG:XXXXX"
-    """
-    gpd_db = tiff_to_geopandas_df(tiff_in, epsg)
-    gpd_db.to_file(Path(vct_out))
 
 
 @valid_input(dict={"tiff_in": valid_raster})
@@ -976,42 +936,6 @@ def vct_to_rst_value(
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def reclass_rst(rst_in, rst_out, df_reclass):
-    """Reclass of a raster based on pandas dataframe
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path of the input raster
-    rst_out: pathlib.Path
-        File path of the destination rst (.sdat)
-    df_reclass: pandas.DataFrame
-        DataFrame containing the mapping with the columns:
-
-        - *RST_VAL*: current values
-        - *NEWVAL*: new value
-
-    Note
-    -----
-    Uses and relies on saga_cmd CLI
-    """
-    df_reclass["MAX"] = df_reclass["RST_VAL"] + 1
-    txt_reclass = rst_out.parent / (rst_out.stem + "_reclasstable.csv")
-    df_reclass[["RST_VAL", "MAX", "NEWVAL"]].to_csv(txt_reclass, index=False)
-    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_tools", "15", "-INPUT", str(rst_in)]
-    cmd_args += ["-RESULT", str(rst_out), "-METHOD", "3", "-RETAB_2", str(txt_reclass)]
-    cmd_args += [
-        "-F_MIN=RST_VAL",
-        "-F_MAX=MAX",
-        "-F_CODE=NEWVAL",
-        "-TOPERATOR=0",
-        "-RESULT_NODATA_CHOICE=0",
-    ]
-
-    execute_saga(cmd_args)
-
-
-@valid_input(dict={"rst_in": valid_raster})
 def raster_to_polygon(rst_in, vct_out):
     """Polygonize a raster
 
@@ -1031,32 +955,6 @@ def raster_to_polygon(rst_in, vct_out):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "6", "-GRID", str(rst_in)]
     cmd_args += ["-POLYGONS", str(vct_out), "-CLASS_ALL", "1", "-SPLIT", "0"]
     execute_saga(cmd_args)
-
-
-@valid_input(dict={"vct_lines": valid_linesvector, "vct_points": valid_pointvector})
-def lines_to_points(vct_lines, vct_points, distance):
-    """Converts a shapefile with lines to a shapefile with points.
-
-    Parameters
-    ----------
-    vct_lines: str or pathlib.Path
-        File path to the input shapefile with lines.
-    vct_points: str or pathlib.Path
-        File path to the output shapefile with points.
-    distance: float
-        Distance between two points
-
-    Note
-    -----
-    Uses and relies on saga_cmd CLI
-    """
-    cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_points", "5"]
-    cmd_args += ["-LINES", str(vct_lines), "-POINTS", str(vct_points)]
-    cmd_args += ["-ADD", "1", "-METHOD_INSERT", "0", "-DIST", distance]
-    cmd_args += ["-ADD_POINT_ORDER", "1"]
-
-    execute_saga(cmd_args)
-    return
 
 
 @valid_input(dict={"vct_line": valid_linesvector, "rst_template": valid_raster})
@@ -1102,26 +1000,6 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     arr = np.where(arr == 256, 0, arr).astype("int16")
     write_arr_as_rst(arr, rst_out, np.int16, profile)
     return
-
-
-@valid_input(dict={"vct": valid_vector})
-def check_single_polygon(vct):
-    """Check if the catchment polygon is a single polygon (not empty or
-    multipolygon).
-
-    Parameters
-    -----------
-    vct: str or pathlib.Path
-        File path of the shapefile
-    """
-    nr_polygons = pyogrio.read_info(vct)["features"]
-
-    if nr_polygons != 1:
-        msg = (
-            f"Catchment polygon should be a single polygon, current "
-            f"catchment polygon holds '{nr_polygons}' polygons."
-        )
-        IOError(msg)
 
 
 @valid_input(dict={"vct_in": valid_vector})
@@ -1496,49 +1374,6 @@ def saga_intersection(vct_a, vct_b, vct_intersect):
     execute_saga(cmd_args)
 
 
-@valid_input(dict={"vct": valid_vector})
-def write_area_ha_to_vct(vct):
-    """Add a field 'AREA_HA' to a shapefile
-
-    This function calculates the area of every feature in a shapefile in hectare
-
-    Parameters
-    ----------
-    vct: str or pathlib.Path
-        File path to the input shapefile
-
-    """
-    gdf = gpd.read_file(vct)
-    gdf["AREA_HA"] = gdf.area / 100.0**2
-    gdf.to_file(vct)
-
-
-@valid_input(dict={"vct_lines": valid_linesvector, "vct_polygons": valid_polygonvector})
-def add_length_lines_to_polygons(vct_lines, vct_polygons, vct_out, name_field):
-    """Calculate the total length of line segments within a polygon
-
-    Parameters
-    ----------
-    vct_lines: str or pathlib.Path
-        File path of the input line shapefile
-    vct_polygons: str or pathlib.Path
-        File path of the input polygon shapefile
-    vct_out: str or pathlib.Path
-        File path of the output polygon shapefile
-    name_field: str
-        Attribute name containing the lenght of the lines within a polygon
-
-    """
-    gdf_lines = gpd.read_file(vct_lines)
-    gdf_poly = gpd.read_file(vct_polygons)
-    gdf_lines = gdf_lines[["geometry"]]
-    gdf_lines[name_field] = gdf_lines.length
-    sjoin = gpd.sjoin(gdf_lines, gdf_poly[["geometry"]], how="inner", op="within")
-    sjoin = sjoin.groupby(["index_right"]).sum()
-    gdf_poly = pd.merge(gdf_poly, sjoin, how="left", left_index=True, right_index=True)
-    gdf_poly.to_file(vct_out)
-
-
 @valid_input(dict={"lst_rst": valid_rasterlist, "vct_in": valid_polygonvector})
 def grid_statistics(
     lst_rst,
@@ -1682,28 +1517,6 @@ def merge_rasters(lst_rst, rst_out, lst_rst_masks=None):
         )
         with rasterio.open(rst_out, "w", **out_meta) as dest:
             dest.write(mosaic)
-
-
-def load_discharge_file(filename):
-    """Function to read the discharge file as a dictionary
-
-    Parameters
-    ----------
-    filename: str or pathlib.Path
-        discharge file
-
-    Returns
-    -------
-    discharge: dict
-        contains discharge information
-    """
-    with open(filename) as f:
-        lines = f.readlines()
-    discharge = {}
-    for line in lines[0:5]:
-        discharge[line.split(":")[0]] = float(line.split(": ")[1].split(" (")[0])
-
-    return discharge
 
 
 def rasterprofile_to_rstparams(profile):
@@ -2157,45 +1970,6 @@ def execute_subprocess(cmd_args):
         )
 
     return True
-
-
-@valid_input(dict={"vct_in": valid_vector})
-def clip_vct_with_bounds(vct_in, vct_out, bounds, overwrite=False):
-    """Clip a shapefile using a bounding box
-
-
-    Parameters
-    ----------
-    vct_in: pathlib.Path
-        File path of shapefile to be clipped.
-    vct_out: pathlib.Path
-        File path of the destination shapefile
-    bounds: list
-        list with xmin, ymin, xmax, ymax
-    overwrite: bool, default False
-        if True, overwrite existing file
-
-    Note
-    -----
-    Uses and relies on ogr2ogr CLI
-    """
-    cond = True
-    if not overwrite:
-        if vct_out.exists():
-            cond = False
-    if cond:
-        logger.info("Clipping %s..." % vct_in.name)
-        cmd_args = [
-            "ogr2ogr",
-            "-spat",
-            str(bounds[0]),
-            str(bounds[1]),
-            str(bounds[2]),
-            str(bounds[3]),
-        ]
-        cmd_args += ["-skipfailures"]
-        cmd_args += [str(vct_out), str(vct_in)]
-        execute_subprocess(cmd_args)
 
 
 @valid_input(dict={"valid_catchment": valid_polygonvector})
