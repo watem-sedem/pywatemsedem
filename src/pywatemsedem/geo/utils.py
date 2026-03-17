@@ -1,6 +1,5 @@
 # Standard libraries
 import logging
-import os
 import random
 import string
 import subprocess
@@ -16,7 +15,6 @@ import pandas as pd
 import pyogrio
 import rasterio
 from rasterio.features import shapes
-from rasterio.merge import merge
 
 from pywatemsedem.geo.rasterproperties import RasterProperties
 
@@ -36,50 +34,9 @@ from .valid import (
     valid_raster,
     valid_rasterlist,
     valid_vector,
-    valid_vectorlist,
 )
 
 logger = logging.getLogger(__name__)
-
-
-@valid_input(dict={"rst_in": valid_raster})
-def check_rst_dimensions(rst_in, minmax, ncols, nrows, transform=None):
-    """This function checks if the input raster has the desired dimensions.
-
-    Parameters
-    ----------
-    rst_in: pathlib.Path or str
-        File path to input raster
-    minmax: list
-        Containing xmin, ymin, xmax, ymax
-    ncols: int
-        Number of columns in the raster
-    nrows: int
-        Number of rows in the raster
-    transform:  rasterio.transform, default None
-        Transformation as defined in Rasterio.
-
-    Returns
-    -------
-    bool
-        Raster has the required dimensions (True/False)
-    """
-    coordinates, transf, cols, rows = read_rst_params(rst_in)
-
-    if cols != ncols:
-        return False
-
-    elif rows != nrows:
-        return False
-
-    elif minmax != coordinates:
-        return False
-
-    elif transform is not None:
-        if transf != transform:
-            return False
-    else:
-        return True
 
 
 @valid_input(dict={"rst_in": valid_raster})
@@ -112,28 +69,6 @@ def read_rst_params(rst_in):
         transf = src.transform
         minmax = [xmin, ymin, xmax, ymax]
     return minmax, transf, cols, rows
-
-
-@valid_input(dict={"rst_in": valid_raster})
-def read_dtype_raster(rst_in):
-    """Read dtype of raster
-
-    Parameters
-    ----------
-    rst_in: pathlib.Path
-        File path to the input raster
-
-    Returns
-    -------
-    dtype: numpy.dtype
-
-    Note
-    -----
-    Only works for single band rasters
-    """
-    with rasterio.open(rst_in) as src:
-        dtype = src.dtypes[0]
-    return np.dtype(dtype)
 
 
 @valid_input(dict={"rst_in": valid_raster})
@@ -250,34 +185,6 @@ def grid_difference(rst_in1, rst_in2, rst_out):
     execute_saga(cmd_args)
 
 
-@valid_input(dict={"rst_in": valid_raster})
-def create_hillshade(rst_in, rst_hillshade):
-    """Create a hillshade raster of the DTM
-
-    Parameters
-    ----------
-    rst_in: str
-        File path of input raster
-    rst_hillshade: str
-        File path of output raster
-    """
-    if isinstance(rst_hillshade, str):
-        rst_hillshade = Path(rst_hillshade).parent / (Path(rst_hillshade).stem + ".tif")
-    elif isinstance(rst_hillshade, Path):
-        rst_hillshade = rst_hillshade.parent / (rst_hillshade.stem + ".tif")
-    else:
-        msg = (
-            f"'hillshade' is of type {type(rst_hillshade)}, "
-            f"cannot be converted to Pathlib Path"
-        )
-        raise TypeError(msg)
-
-    cmd_args = ["gdaldem", "hillshade", "-q"]
-    cmd_args += ["-co", "COMPRESS=DEFLATE"]
-    cmd_args += [str(rst_in), str(rst_hillshade)]
-    execute_subprocess(cmd_args)
-
-
 @valid_input(dict={"vct": valid_vector})
 def get_fields_vct(vct):
     """Get a list of all fields in a shapefile
@@ -314,65 +221,6 @@ def get_geometry_type(vct):
     return geom
 
 
-def copy_rst(rst_in, rst_out):
-    """Copy a raster and converts it to an idrisi-raster
-
-    Parameters
-    ----------
-    rst_in: pathlib.Path or str
-        File path of input raster
-    rst_out: pathlib.Path
-        File path of output raster (extension must be .rst!)
-
-    Note
-    -----
-    Uses and relies on gdal_translate CLI
-    """
-    if rst_out.exists():
-        delete_rst(rst_out)
-
-    cmd_args = ["gdal_translate", "-q", "-of", "RST", str(rst_in), str(rst_out)]
-    execute_subprocess(cmd_args)
-
-
-@valid_input(dict={"vct_in": valid_vector})
-def copy_vct(vct_in, folder_out):
-    """Copies a shapefile to another location
-
-    Parameters
-    ----------
-    vct_in: str or pathlib.Path
-        File path of the shapefile to be copied.
-    folder_out: str or pathlib.Path
-        File path of the destination shapefile.
-
-    Note
-    -----
-    Uses and relies on ogr2ogr CLI
-    """
-    cmd_args = ["ogr2ogr", str(folder_out), str(vct_in)]
-    execute_subprocess(cmd_args)
-
-
-@valid_input(dict={"tiff_in": valid_raster})
-def tiff_to_esri_shp(tiff_in, vct_out, epsg):
-    """
-    Transform a tiff file to an esri shape (raster to shape)
-
-    Parameters
-    ----------
-    tiff_in: str or pathlib.Path
-        name input tiff
-    vct_out: str or pathlib.Path
-        name input shapefile
-    epsg: str, default None
-        the epsg code defining the coordinate system of the raster,
-        format = "EPSG:XXXXX"
-    """
-    gpd_db = tiff_to_geopandas_df(tiff_in, epsg)
-    gpd_db.to_file(Path(vct_out))
-
-
 @valid_input(dict={"tiff_in": valid_raster})
 def tiff_to_geopandas_df(tiff_in):
     """Transform a tiff file to a geopandas dataframe
@@ -401,62 +249,6 @@ def tiff_to_geopandas_df(tiff_in):
     gdf = gpd.GeoDataFrame.from_features(geoms, crs=crs)
 
     return gdf
-
-
-@valid_input(dict={"rst_in": valid_raster})
-def idrisi_to_tiff(rst_in, tiff_out, dtype, epsg="EPSG:31370"):
-    """Convert an Idrisi RST to GeoTiff
-
-    Parameters
-    ----------
-    rst_in: str
-        File path of the input rst.
-    tiff_out: str
-        File path of the output tiff file.
-    dtype: str
-        Data type of the destination rst, either 'integer' or 'float'.
-
-    Note
-    -----
-    Uses and relies on gdal_translate CLI
-    """
-
-    if dtype == "integer":
-        cmd_args = [
-            "gdal_translate",
-            "-q",
-            "-ot",
-            "Int16",
-            "-of",
-            "GTiff",
-            "-co",
-            "COMPRESS=DEFLATE",
-            "-a_srs",
-            str(epsg),
-            str(rst_in),
-            str(tiff_out),
-        ]
-        execute_subprocess(cmd_args)
-    elif dtype == "float":
-        cmd_args = [
-            "gdal_translate",
-            "-q",
-            "-ot",
-            "Float32",
-            "-of",
-            "GTiff",
-            "-co",
-            "COMPRESS=DEFLATE",
-            "-a_srs",
-            str(epsg),
-            str(rst_in),
-            str(tiff_out),
-        ]
-        execute_subprocess(cmd_args)
-    else:
-        msg = 'Saving rst as tif. Type must be "integer" or "float"'
-        logger.error(msg)
-        raise TypeError(msg)
 
 
 def valid_gdal_type(func):
@@ -525,77 +317,6 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
         str(rst_out),
     ]
     execute_subprocess(cmd_args)
-
-
-def get_feature_count(vct):
-    """Count the amount of features in a shapefile
-
-    Parameters
-    ----------
-    vct: str
-        File path of the shapefile.
-
-    Returns
-    -------
-    nr_features: int
-        Number of features in the shapefile
-    """
-    nr_features = pyogrio.read_info(vct)["features"]
-    return nr_features
-
-
-@valid_input(dict={"lst_vct": valid_vectorlist})
-def merge_lst_vct(lst_vct, vct_out, epsg):
-    """Merge a list of shapefiles to one shapefile
-
-    Parameters
-    ----------
-    lst_vct: list
-        List with file paths (str) of all shapefiles to be merged.
-    vct_out: pathlib.Path
-        File path of merged vct
-    epsg: str
-        The epsg code defining the coordinate system of the raster,
-        format = "EPSG:XXXXX"
-
-    Note
-    ----
-    Uses and relies on ogr2ogr CLI
-    """
-    for i, vct in enumerate(lst_vct):
-        if i == 0:
-            copy_vct(vct, vct_out)
-        else:
-            cmd_args = ["ogr2ogr", "-update", "-a_srs", str(epsg)]
-            cmd_args += ["-append", str(vct_out)]
-            cmd_args.append(str(vct))
-            cmd_args += ["-nln", vct_out.stem]
-
-            execute_subprocess(cmd_args)
-
-
-@valid_input(dict={"lst_vct": valid_vectorlist})
-def merge_lst_vct_saga(lst_vct, vct_out):
-    """Merge a list of shapefiles to one shapefile
-
-    Parameters
-    ----------
-    lst_vct: list
-        List with file paths (str) of all shapefiles to be merged.
-    vct_out: str
-        File path + name of the destination shapefile.
-
-    Note
-    ----
-    Uses and relies on ogr2ogr CLI
-    """
-
-    cmd_args = (
-        ["saga_cmd", SAGA_FLAGS, "shapes_tools", "2"]
-        + [f"-INPUT={';'.join(lst_vct)}"]
-        + [f"-MERGED={vct_out}"]
-    )
-    execute_saga(cmd_args)
 
 
 @valid_input(dict={"rst_in": valid_raster})
@@ -976,42 +697,6 @@ def vct_to_rst_value(
 
 
 @valid_input(dict={"rst_in": valid_raster})
-def reclass_rst(rst_in, rst_out, df_reclass):
-    """Reclass of a raster based on pandas dataframe
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path of the input raster
-    rst_out: pathlib.Path
-        File path of the destination rst (.sdat)
-    df_reclass: pandas.DataFrame
-        DataFrame containing the mapping with the columns:
-
-        - *RST_VAL*: current values
-        - *NEWVAL*: new value
-
-    Note
-    -----
-    Uses and relies on saga_cmd CLI
-    """
-    df_reclass["MAX"] = df_reclass["RST_VAL"] + 1
-    txt_reclass = rst_out.parent / (rst_out.stem + "_reclasstable.csv")
-    df_reclass[["RST_VAL", "MAX", "NEWVAL"]].to_csv(txt_reclass, index=False)
-    cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_tools", "15", "-INPUT", str(rst_in)]
-    cmd_args += ["-RESULT", str(rst_out), "-METHOD", "3", "-RETAB_2", str(txt_reclass)]
-    cmd_args += [
-        "-F_MIN=RST_VAL",
-        "-F_MAX=MAX",
-        "-F_CODE=NEWVAL",
-        "-TOPERATOR=0",
-        "-RESULT_NODATA_CHOICE=0",
-    ]
-
-    execute_saga(cmd_args)
-
-
-@valid_input(dict={"rst_in": valid_raster})
 def raster_to_polygon(rst_in, vct_out):
     """Polygonize a raster
 
@@ -1031,32 +716,6 @@ def raster_to_polygon(rst_in, vct_out):
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "6", "-GRID", str(rst_in)]
     cmd_args += ["-POLYGONS", str(vct_out), "-CLASS_ALL", "1", "-SPLIT", "0"]
     execute_saga(cmd_args)
-
-
-@valid_input(dict={"vct_lines": valid_linesvector, "vct_points": valid_pointvector})
-def lines_to_points(vct_lines, vct_points, distance):
-    """Converts a shapefile with lines to a shapefile with points.
-
-    Parameters
-    ----------
-    vct_lines: str or pathlib.Path
-        File path to the input shapefile with lines.
-    vct_points: str or pathlib.Path
-        File path to the output shapefile with points.
-    distance: float
-        Distance between two points
-
-    Note
-    -----
-    Uses and relies on saga_cmd CLI
-    """
-    cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_points", "5"]
-    cmd_args += ["-LINES", str(vct_lines), "-POINTS", str(vct_points)]
-    cmd_args += ["-ADD", "1", "-METHOD_INSERT", "0", "-DIST", distance]
-    cmd_args += ["-ADD_POINT_ORDER", "1"]
-
-    execute_saga(cmd_args)
-    return
 
 
 @valid_input(dict={"vct_line": valid_linesvector, "rst_template": valid_raster})
@@ -1103,26 +762,6 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     arr = np.where(arr == 256, 0, arr).astype("int16")
     write_arr_as_rst(arr, rst_out, np.int16, profile)
     return
-
-
-@valid_input(dict={"vct": valid_vector})
-def check_single_polygon(vct):
-    """Check if the catchment polygon is a single polygon (not empty or
-    multipolygon).
-
-    Parameters
-    -----------
-    vct: str or pathlib.Path
-        File path of the shapefile
-    """
-    nr_polygons = pyogrio.read_info(vct)["features"]
-
-    if nr_polygons != 1:
-        msg = (
-            f"Catchment polygon should be a single polygon, current "
-            f"catchment polygon holds '{nr_polygons}' polygons."
-        )
-        IOError(msg)
 
 
 @valid_input(dict={"vct_in": valid_vector})
@@ -1497,49 +1136,6 @@ def saga_intersection(vct_a, vct_b, vct_intersect):
     execute_saga(cmd_args)
 
 
-@valid_input(dict={"vct": valid_vector})
-def write_area_ha_to_vct(vct):
-    """Add a field 'AREA_HA' to a shapefile
-
-    This function calculates the area of every feature in a shapefile in hectare
-
-    Parameters
-    ----------
-    vct: str or pathlib.Path
-        File path to the input shapefile
-
-    """
-    gdf = gpd.read_file(vct)
-    gdf["AREA_HA"] = gdf.area / 100.0**2
-    gdf.to_file(vct)
-
-
-@valid_input(dict={"vct_lines": valid_linesvector, "vct_polygons": valid_polygonvector})
-def add_length_lines_to_polygons(vct_lines, vct_polygons, vct_out, name_field):
-    """Calculate the total length of line segments within a polygon
-
-    Parameters
-    ----------
-    vct_lines: str or pathlib.Path
-        File path of the input line shapefile
-    vct_polygons: str or pathlib.Path
-        File path of the input polygon shapefile
-    vct_out: str or pathlib.Path
-        File path of the output polygon shapefile
-    name_field: str
-        Attribute name containing the lenght of the lines within a polygon
-
-    """
-    gdf_lines = gpd.read_file(vct_lines)
-    gdf_poly = gpd.read_file(vct_polygons)
-    gdf_lines = gdf_lines[["geometry"]]
-    gdf_lines[name_field] = gdf_lines.length
-    sjoin = gpd.sjoin(gdf_lines, gdf_poly[["geometry"]], how="inner", op="within")
-    sjoin = sjoin.groupby(["index_right"]).sum()
-    gdf_poly = pd.merge(gdf_poly, sjoin, how="left", left_index=True, right_index=True)
-    gdf_poly.to_file(vct_out)
-
-
 @valid_input(dict={"lst_rst": valid_rasterlist, "vct_in": valid_polygonvector})
 def grid_statistics(
     lst_rst,
@@ -1599,112 +1195,6 @@ def grid_statistics(
 
     cmd_args += ["-VAR", "0", "-STDDEV", "0"]
     execute_saga(cmd_args)
-
-
-@valid_input(dict={"rst_in": valid_raster, "rst_mask": valid_raster})
-def mask_raster(rst_in, rst_mask, un_id, folder="masked"):
-    """Mask a raster by setting no data with no data positions of mask
-
-    The input raster is masked by the nodata value in the mask raster.
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path raster to be masked
-    rst_mask: str  or pathlib.Path
-        File path mask raster, see note for format
-    un_id: int
-        unique id of the raster
-    folder: str, default 'masked'
-        Folder in which to safe masked raster
-
-    Returns
-    -------
-    rst_masker: str
-        File path of masked raster
-
-    Note
-    ----
-    1. This mask raster should be a (**no** `nodata`, `nodata`)-raster in which the
-       nodata  values indicate masking, and non-nodata values indicates not masking.
-    2. Masking of the input raster is facilitated by setting to-mask-values in the
-       input raster to `nodata`.
-
-    """
-    if folder not in os.listdir():
-        os.mkdir(folder)
-    arr_mask, profile_mask = load_raster(rst_mask, list_format=True)
-    arr_in, profile_in = load_raster(rst_in, list_format=True)
-    rst_masked = Path(rst_in)
-    rst_masked = Path("temp") / f"{rst_masked.stem}-{un_id}{rst_masked.suffix}"
-
-    arr_in[arr_mask == profile_mask["nodata"]] = profile_in["nodata"]
-    write_arr_as_rst(arr_in, rst_masked, arr_in.dtype, profile_in)
-
-    return rst_masked
-
-
-@valid_input(dict={"lst_rst": valid_rasterlist})
-def merge_rasters(lst_rst, rst_out, lst_rst_masks=None):
-    """Merge several rasters to one raster with option to mask input rasters
-
-    Parameters
-    ----------
-    lst_rst: list of str or list of pathlib.Path
-        List of file paths of rasters which have to be merged together
-    rst_out: str or pathlib.Path
-        File path of merged raster
-    lst_rst_masks: list
-        List of file paths of mask files to be used to mask lst_rst_in, see
-        :func:`pywatemsedem.geo.utils.mask_raster`.
-    """
-    if lst_rst_masks is not None:
-        lst_rst_temp = []
-        for i, rst_in in enumerate(lst_rst):
-            lst_rst_temp.append(mask_raster(rst_in, lst_rst_masks[i], i, "temp"))
-        lst_rst = lst_rst_temp
-
-    lst_src = []
-    for rst in lst_rst:
-        src = rasterio.open(rst)
-        lst_src.append(src)
-
-    if len(lst_src) > 0:
-        mosaic, out_trans = merge(lst_src)
-        out_meta = src.meta.copy()
-        out_meta.update(
-            {
-                "driver": "GTiff",
-                "height": mosaic.shape[1],
-                "width": mosaic.shape[2],
-                "transform": out_trans,
-                "compress": "DEFLATE",
-            }
-        )
-        with rasterio.open(rst_out, "w", **out_meta) as dest:
-            dest.write(mosaic)
-
-
-def load_discharge_file(filename):
-    """Function to read the discharge file as a dictionary
-
-    Parameters
-    ----------
-    filename: str or pathlib.Path
-        discharge file
-
-    Returns
-    -------
-    discharge: dict
-        contains discharge information
-    """
-    with open(filename) as f:
-        lines = f.readlines()
-    discharge = {}
-    for line in lines[0:5]:
-        discharge[line.split(":")[0]] = float(line.split(": ")[1].split(" (")[0])
-
-    return discharge
 
 
 def rasterprofile_to_rstparams(profile):
@@ -1905,26 +1395,7 @@ def set_dtype_arr_rst(arr, profile, dtype=None):
     return arr, profile
 
 
-@valid_input(dict={"rst": valid_raster})
-def calculate_sum_rst(rst):
-    """Calculate sum of a raster values
-
-    Parameters
-    ----------
-    rst: pathlib.Path
-        File path of the raster file
-
-    Returns
-    -------
-    float:
-        sum of the values in the raster
-    """
-    arr, profile = load_raster(rst)
-
-    return np.sum(arr[arr != profile["nodata"]])
-
-
-def get_rstparams(modelinputfolder, epsg=None, catchmentname="", template=None):
+def get_rstparams(modelinputfolder, epsg=None, template=None):
     """Get rstparams and rasterprofile from template raster (default:pkaart)
 
     Parameters
@@ -1934,8 +1405,6 @@ def get_rstparams(modelinputfolder, epsg=None, catchmentname="", template=None):
     epsg: str, default None
         the epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
-    catchmentname: str, default ""
-        catchment name
     template: str or pathlib.Path, default None
         File path to a template file that can be used as template for
         geodata and bin mask. Default the "P" raster is used.
@@ -2158,45 +1627,6 @@ def execute_subprocess(cmd_args):
         )
 
     return True
-
-
-@valid_input(dict={"vct_in": valid_vector})
-def clip_vct_with_bounds(vct_in, vct_out, bounds, overwrite=False):
-    """Clip a shapefile using a bounding box
-
-
-    Parameters
-    ----------
-    vct_in: pathlib.Path
-        File path of shapefile to be clipped.
-    vct_out: pathlib.Path
-        File path of the destination shapefile
-    bounds: list
-        list with xmin, ymin, xmax, ymax
-    overwrite: bool, default False
-        if True, overwrite existing file
-
-    Note
-    -----
-    Uses and relies on ogr2ogr CLI
-    """
-    cond = True
-    if not overwrite:
-        if vct_out.exists():
-            cond = False
-    if cond:
-        logger.info("Clipping %s..." % vct_in.name)
-        cmd_args = [
-            "ogr2ogr",
-            "-spat",
-            str(bounds[0]),
-            str(bounds[1]),
-            str(bounds[2]),
-            str(bounds[3]),
-        ]
-        cmd_args += ["-skipfailures"]
-        cmd_args += [str(vct_out), str(vct_in)]
-        execute_subprocess(cmd_args)
 
 
 @valid_input(dict={"valid_catchment": valid_polygonvector})

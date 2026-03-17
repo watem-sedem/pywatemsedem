@@ -149,7 +149,6 @@ class PostProcess(Factory):
         # general
         self.epsg = epsg
         self.catchment_name = Path(name).stem
-        self.subcatchments_name = None
         self.scenario = f"scenario_{scenario_label}"
         self.scenario_label = scenario_label
         self.year = year
@@ -168,7 +167,6 @@ class PostProcess(Factory):
         # get raster properties based on DTM .tif file in Data_Bekken
         self.rstparams, self.rasterprop = get_rstparams(
             self.sfolder.wsinput_folder,
-            catchmentname=self.catchment_name,
             epsg=self.epsg,
         )
         # intialize functionalities factory
@@ -198,14 +196,10 @@ class PostProcess(Factory):
         self.txt_routing_nonriver = None
         self.vct_sediexport = None
         self.vct_sewerin = None
-        self.rst_endpoints_sewer = None
-        self.rst_endpoints_ditch = None
         self.rst_sinks = None
         self.vct_routing_sediout = None
         self.rst_subcatchment_sinks = None
         self.vct_subcatchment_sinks = None
-        self.vct_subcatchment_priority = None
-        self.vct_subcatchment_priority = None
 
     @property
     def sinks(self):
