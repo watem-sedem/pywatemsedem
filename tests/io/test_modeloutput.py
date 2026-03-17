@@ -13,10 +13,6 @@ from pywatemsedem.io.modeloutput import (
 )
 
 
-@pytest.mark.skip(
-    reason="test gives saga-issues in conda pipeline, ommited, raised as"
-    " issue in saga"
-)
 def test_modelouput():
     """Testing the modeloutput class"""
     folder = Path(r"tests/io/data")
