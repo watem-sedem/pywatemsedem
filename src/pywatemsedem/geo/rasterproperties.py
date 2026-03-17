@@ -1,8 +1,6 @@
-import warnings
 from typing import List
 
 import numpy as np
-import pyogrio
 from pyproj import CRS
 from pyproj.exceptions import CRSError
 from rasterio import Affine
@@ -326,78 +324,3 @@ class RasterProperties:
         numpy.ndarray
         """
         return np.linspace(self.bounds[1], self.bounds[3], self.nrows)
-
-
-def get_bounds_from_vct(vct_catchment, resolution, n_pixels_buffer=5):
-    """Get bounds from vector catchment.
-
-    Parameters
-    ----------
-    vct_catchment: pathlib.Path
-        Vector file of catchment.
-    resolution: int
-        Spatial resolution, see
-        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-    n_pixels_buffer: int, default 5
-        Number of pixels that have to be taken into account to expand boundaries
-
-    Returns
-    -------
-    bounds: list
-        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-    """
-    _, bounds = pyogrio.read_bounds(vct_catchment)
-
-    bounds = [
-        round(bounds[0]) - n_pixels_buffer * resolution,
-        round(bounds[1]) - n_pixels_buffer * resolution,
-        round(bounds[2]) + n_pixels_buffer * resolution,
-        round(bounds[3]) + n_pixels_buffer * resolution,
-    ]
-
-    return bounds
-
-
-def synchronize_bounds(target, source, resolution):
-    """Synchronize target geographical bounds of a raster with source bounds given a
-     raster resolution.
-
-    Bounds are defined as a list of  xmin, ymin, xmax and ymax-values of a raster. The
-    boundaries leading to the smallest geographical model are selected as new
-    boundaries.
-
-    Parameters
-    ----------
-    target: list
-        To check target boundaries, see
-        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
-    source: pathlib.Path
-        Source boundaries to which target boundaries have to be checked, see
-        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
-    resolution: int
-        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-
-    Returns
-    -------
-    bounds: list
-        Updated bounds
-    """
-    check = False
-    for i in range(4):
-        if i < 2:  # xmin en ymin
-            rest = (target[i] - source[i]) % resolution
-            if rest != 0:
-                check = True
-                target[i] = target[i] - rest
-
-        else:  # xmax en ymax
-            rest = (target[i] - source[i - 2]) % resolution
-            if rest != 0:
-                check = True
-                target[i] = target[i] - rest + resolution
-    if check:
-        msg = (
-            f"Synchronizing x/y-axis model boundaries with input raster `{source.stem}`"
-        )
-        warnings.warn(msg)
-    return target

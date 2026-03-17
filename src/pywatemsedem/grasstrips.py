@@ -810,7 +810,7 @@ def extract_grass_strips_from_parcels(vct_parcels, year, resmap=Path.cwd(), tag=
 
 
 def create_grass_strips_from_line_string(
-    line_string, polygons=None, width=20, width_polygon=20, dir=Path(".")
+    line_string, polygons=None, width=20, width_polygon=20
 ):
     """Add bank grass strips
 
@@ -827,8 +827,6 @@ def create_grass_strips_from_line_string(
         Width (m) of the bank grass strip stored in the attribute table.
     width_polygon: int, optional, default 20
         width (m) of the bank grass strip polygon
-    dir: pathlib.Path
-        Name of temporary directory
 
     Returns
     -------

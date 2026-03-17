@@ -810,9 +810,7 @@ class Catchment(Factory):
         self._segments.arr = self._segments.arr.astype(np.int16)
 
     @staticmethod
-    def topologize_river(
-        vct_input, vct_output, rst_mask, tolerance=None, dir=Path(".")
-    ):
+    def topologize_river(vct_input, vct_output, rst_mask, tolerance=None):
         """Prepare topology of the river segments with SAGA-GIS
 
         Parameters
@@ -826,7 +824,6 @@ class Catchment(Factory):
         tolerance: float
             If not None, the ``TOLERANCE`` command line argument of the saga topology
             command is given this value.
-        dir: pathlib.Path, default cwd
 
         Returns
         -------
