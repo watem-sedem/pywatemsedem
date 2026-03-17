@@ -894,7 +894,7 @@ def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
         grid_type = "9"  # "4 byte floating point number"
 
     if grid_type:
-        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+        cmd_args += ["-GRID_TYPE", grid_type]
     cmd_args += ["-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
     execute_saga(cmd_args)
