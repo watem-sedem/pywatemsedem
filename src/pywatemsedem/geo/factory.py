@@ -8,17 +8,17 @@ import pyogrio
 import rasterio
 from rasterio import RasterioIOError
 
-from .rasterproperties import RasterProperties
-from .rasters import RasterFile, RasterMemory, TemporalRaster
-from .utils import (
+from pywatemsedem.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.rasters import RasterFile, RasterMemory, TemporalRaster
+from pywatemsedem.geo.utils import (
     define_extent_from_vct,
     generate_vct_mask_from_raster_mask,
     load_raster,
     vct_to_rst_value,
     write_arr_as_rst,
 )
-from .valid import PywatemsedemInputError, valid_exists
-from .vectors import VectorFile, VectorMemory
+from pywatemsedem.geo.valid import PywatemsedemInputError, valid_exists
+from pywatemsedem.geo.vectors import VectorFile, VectorMemory
 
 
 def valid_mask_factory(func):

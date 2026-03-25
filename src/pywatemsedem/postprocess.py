@@ -37,9 +37,8 @@ from pywatemsedem.io.modeloutput import (
     open_txt_routing_file,
 )
 from pywatemsedem.io.plots import plot_cumulative_sedimentload
-
-from .scenario import CNWSException
-from .tools import package_resource, zip_folder
+from pywatemsedem.scenario import CNWSException
+from pywatemsedem.tools import package_resource, zip_folder
 
 logger = logging.getLogger(__name__)
 

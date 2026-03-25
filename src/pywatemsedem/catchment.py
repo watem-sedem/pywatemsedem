@@ -10,6 +10,10 @@ import pyogrio
 from matplotlib import pyplot as plt
 
 from pywatemsedem.defaults import SAGA_FLAGS
+from pywatemsedem.errors import (
+    attribute_discrete_value_error,
+    raster_discrete_value_error,
+)
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.rasters import AbstractRaster, RasterMemory
@@ -31,9 +35,7 @@ from pywatemsedem.tools import (
     get_df_area_unique_values_array,
     zip_folder,
 )
-
-from .errors import attribute_discrete_value_error, raster_discrete_value_error
-from .valid import valid_req_property
+from pywatemsedem.valid import valid_req_property
 
 # from .valid import valid_req_property
 logger = logging.getLogger(__name__)

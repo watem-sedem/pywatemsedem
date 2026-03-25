@@ -16,9 +16,7 @@ import pyogrio
 import rasterio
 from rasterio.features import shapes
 
-from pywatemsedem.geo.rasterproperties import RasterProperties
-
-from ..defaults import (
+from pywatemsedem.defaults import (
     SAGA_FLAGS,
     SUFFIXES_RST,
     SUFFIXES_SAGA,
@@ -26,7 +24,8 @@ from ..defaults import (
     SUFFIXES_TIF,
     SUFFIXES_TXT,
 )
-from .valid import (
+from pywatemsedem.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.valid import (
     valid_input,
     valid_linesvector,
     valid_pointvector,

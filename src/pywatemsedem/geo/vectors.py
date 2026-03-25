@@ -3,8 +3,8 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 
-from .rasterproperties import RasterProperties
-from .utils import (
+from pywatemsedem.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
     clip_vct,
     create_filename,

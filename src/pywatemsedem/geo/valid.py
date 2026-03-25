@@ -7,7 +7,7 @@ import pyogrio
 import rasterio
 from rasterio.errors import RasterioIOError
 
-from .rasterproperties import RasterProperties
+from pywatemsedem.geo.rasterproperties import RasterProperties
 
 
 class PywatemsedemInputError(Exception):
