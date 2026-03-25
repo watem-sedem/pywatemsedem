@@ -18,9 +18,9 @@ from pywatemsedem.geo.utils import nearly_identical, saga_intersection
 from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import ScenarioFolders
 from pywatemsedem.io.ini import IniFile
+from pywatemsedem.io.plots import plot_landuse
 from pywatemsedem.ktc import create_ktc
 from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
-from pywatemsedem.plots import plot_landuse
 
 from .buffers import (
     filter_outlets_in_arr_extension_id,

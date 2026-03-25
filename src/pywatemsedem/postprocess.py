@@ -36,8 +36,8 @@ from pywatemsedem.io.modeloutput import (
     make_routing_vct_saga,
     open_txt_routing_file,
 )
+from pywatemsedem.io.plots import plot_cumulative_sedimentload
 
-from .plots import plot_cumulative_sedimentload
 from .scenario import CNWSException
 from .tools import package_resource, zip_folder
 
