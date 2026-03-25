@@ -9,13 +9,12 @@ import numpy as np
 from scipy import signal
 
 from pywatemsedem.geo.utils import (
+    clean_up_tempfiles,
     create_filename,
     estimate_width_of_polygon,
     saga_intersection,
     vct_to_rst_field,
 )
-
-from .geo.utils import clean_up_tempfiles
 
 # Add new kte scaling functions here
 logger = logging.getLogger(__name__)

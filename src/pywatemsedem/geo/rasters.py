@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
 
-from ..defaults import ALLOWED_RASTER_FORMATS
-from .rasterproperties import RasterProperties
-from .utils import (
+from pywatemsedem.defaults import ALLOWED_RASTER_FORMATS
+from pywatemsedem.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
     clip_rst,
     create_filename,
