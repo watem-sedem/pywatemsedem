@@ -46,6 +46,101 @@ def valid_segments(func):
     return wrapper
 
 
+# def make_modelinput_from_ini(ini):
+#     """Read model ini file and make Modelinput object."""
+#     input_folder = get_item_from_ini(ini, "Working directories",
+#     "input directory", str)
+#     input_folder = Path(input_folder)
+#
+#     f_template = input_folder / get_item_from_ini(
+#         ini, "Files", "P factor map filename", str
+#     )
+#
+#     profile, _, _ = get_rstparams(input_folder, template=f_template)
+#
+#     modelinput = Modelinput()
+#
+#     files = get_options_from_ini(ini, "Files")
+#     if "DTM filename" in files:
+#         modelinput.dtm = input_folder / get_item_from_ini(
+#             ini, "Files", "DTM filename", str
+#         )
+#     if "Parcel filename" in files:
+#         modelinput.compositelanduse = input_folder / get_item_from_ini(
+#             ini, "Files", "Parcel filename", str
+#         )
+#     if "P factor map filename" in files:
+#         modelinput.pfactor = input_folder / get_item_from_ini(
+#             ini, "Files", "P factor map filename", str
+#         )
+#     if "C factor map filename" in files:
+#         modelinput.cfactor = input_folder / get_item_from_ini(
+#             ini, "Files", "C factor map filename", str
+#         )
+#     if "K factor filename" in files:
+#         modelinput.kfactor = input_folder / get_item_from_ini(
+#             ini, "Files", "K factor filename", str
+#         )
+#     if "ktc map filename" in files:
+#         modelinput.ktc = input_folder / get_item_from_ini(
+#             ini, "Files", "ktc map filename", str
+#         )
+#     else:
+#         modelinput.ktc = input_folder / "ktc.rst"
+#     if "Outlet map filename" in files:
+#         modelinput.outlet = input_folder / get_item_from_ini(
+#             ini, "Files", "Outlet map filename", str
+#         )
+#     else:
+#         modelinput.outlet = input_folder / "outlet.rst"
+#     if "ktl map filename" in files:
+#         modelinput.ktil = input_folder / get_item_from_ini(
+#             ini, "Files", "ktl map filename", str
+#         )
+#     if "Sewer map filename" in files:
+#         modelinput.sewers = input_folder / get_item_from_ini(
+#             ini, "Files", "Sewer map filename", str
+#         )
+#     if "Buffer map filename" in files:
+#         modelinput.buffers = input_folder / get_item_from_ini(
+#             ini, "Files", "Buffer map filename", str
+#         )
+#     if "Ditch map filename" in files:
+#         modelinput.ditch = input_folder / get_item_from_ini(
+#             ini, "Files", "Ditch map filename", str
+#         )
+#     if "Dam map filename" in files:
+#         modelinput.dam = input_folder / get_item_from_ini(
+#             ini, "Files", "Dam map filename", str
+#         )
+#     if "River segment filename" in files:
+#         modelinput.riversegments = input_folder / get_item_from_ini(
+#             ini, "Files", "River segment filename", str
+#         )
+#     if "river routing filename" in files:
+#         modelinput.riverrouting = input_folder / get_item_from_ini(
+#             ini, "Files", "River routing filename", str
+#         )
+#     if "adjectant segments" in files:
+#         modelinput.adjacentsegments = input_folder / get_item_from_ini(
+#             ini, "Files", "adjectant segments", str
+#         )
+#     if "upstream segments" in files:
+#         modelinput.upstreamsegments = input_folder / get_item_from_ini(
+#             ini, "Files", "upstream segments", str
+#         )
+#     if "CN map filename" in files:
+#         modelinput.cn = input_folder / get_item_from_ini(
+#             ini, "Files", "CN map filename", str
+#         )
+#     if "Rainfall filename" in files:
+#         modelinput.rainfall = input_folder / get_item_from_ini(
+#             ini, "Files", "Rainfall filename", str
+#         )
+#     modelinput.ptef = input_folder / "PTEFmap.rst"
+#     return modelinput
+
+
 @dataclass
 class Modelinput(Factory):
     def __init__(self, template, resolution, epsg, nodata):
