@@ -5,7 +5,6 @@ import matplotlib.colors as mplcolors
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from ..geo.utils import mask_array_with_val
 
@@ -361,88 +360,6 @@ def plot_cumulative_sedimentload(df, fname):
     ax[1].legend()
     plt.savefig(fname, bbox_inches="tight")
     plt.close()
-
-
-def plot_time_series_for_in_river_points(
-    variable, folder, resmap="", convert_output=True, output_per_segment=False
-):
-    """
-    Plot timeseries. All timeseries are stored in the postprocesfolder as a png-file.
-
-    Parameters
-    ----------
-    variable: string
-        'Q': plot with discharge and rainfall vs time
-        'Sedigram': plot with sediment concentration vs time
-        'Sediment': plot with total sediment mass vs time
-    folder: pathlib Path, optional
-        path to folder where CNWS results are saved
-    resmap: pathlib Path, optional
-        path to folder to save pngs
-    convert_output: bool, optional
-        True if units in minutes
-    output_per_segment: bool, optional
-        True if plot has to be per segment
-    """
-    if variable == "Q":
-        base_name = "Discharge"  # TO DO: ook neerslag!
-        base_title = "Debiet in "
-        ylable = "Debiet [m^3/s]"
-    elif variable == "Sedigram":
-        base_name = "Sediment concentration"
-        base_title = "Sedigram "
-        ylable = "Sediment concentratie [g/l]"
-    elif variable == "Sediment":
-        base_name = "Sediment"
-        base_title = "Sediment aanvoer in "
-        ylable = "Sedimentvracht [kg]"
-    else:
-        msg = "No valable type defined for plotting timeseries"
-        logger.warning(msg)
-        return
-
-    if convert_output:
-        indexcol = "Time (min)"
-    else:
-        indexcol = "Time (sec)"
-
-    txt_out = folder / f"{base_name}.txt"
-    if txt_out.exists():
-        df_out = pd.read_csv(txt_out, sep="\t", header=1)
-        df_out.index = df_out[indexcol]
-        df_out = df_out.drop(indexcol, 1)
-    else:
-        msg = f"{base_name}.txt not found in modelresults!"
-        raise logging.error(msg)
-
-    if output_per_segment:
-        txt_segm = folder / f"{base_name}_VHA.txt"
-        if txt_segm.exists():
-            df_segm = pd.read_csv(txt_segm, sep="\t", header=1)
-            df_segm.index = df_segm[indexcol]
-            df_segm = df_segm.drop(indexcol, 1)
-        else:
-            msg = f"{base_name}_VHA.txt not found in modelresults!"
-            raise logging.error(msg)
-        df = pd.concat([df_out, df_segm], axis=1, join="inner")
-    else:
-        df = df_out.copy()
-
-    for col in df.columns:
-        if col.startswith("Unnamed"):
-            df = df.drop(col, 1)
-
-    for i, col in enumerate(df.columns):
-        plt.figure(i)
-        plt.ylabel(ylable)
-        if col.startswith("VHA "):
-            title = base_title + f"segment {col[12:]}"
-        else:
-            title = base_title + f"outlet {col[7:]}"
-        plt.title(title)
-        df[col].plot()
-        plt.savefig(resmap / title + ".png")
-        plt.close(i)
 
 
 def plot_landuse(arr, nodata, *args, **kwargs):
