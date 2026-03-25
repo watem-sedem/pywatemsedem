@@ -798,7 +798,8 @@ def get_sections_from_ini(ini):
 
     Returns
     -------
-    list with all sections present in the ini-file
+    list
+        list with all sections present in the ini-file
     """
     cfg = configparser.ConfigParser()
     if ini.exists():
@@ -821,7 +822,8 @@ def get_options_from_ini(ini, section):
 
     Returns
     -------
-    list with all options present in the section of the ini-file
+    list
+        list with all options present in the section of the ini-file
     """
     cfg = configparser.ConfigParser()
     if ini.exists():
