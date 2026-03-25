@@ -1,5 +1,6 @@
 import logging
 import os
+from io.plots import plot_cumulative_sedimentload
 from pathlib import Path
 
 import geopandas as gpd
@@ -37,7 +38,6 @@ from pywatemsedem.io.modeloutput import (
     open_txt_routing_file,
 )
 
-from .plots import plot_cumulative_sedimentload
 from .scenario import CNWSException
 from .tools import package_resource, zip_folder
 

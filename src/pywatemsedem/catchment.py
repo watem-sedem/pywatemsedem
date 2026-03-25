@@ -25,7 +25,7 @@ from pywatemsedem.geo.utils import (
 from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import CatchmentFolder
 from pywatemsedem.io.modeloutput import check_segment_edges
-from pywatemsedem.plots import plot_landuse
+from pywatemsedem.io.plots import plot_landuse
 from pywatemsedem.tools import (
     format_forced_routing,
     get_df_area_unique_values_array,
