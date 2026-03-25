@@ -17,6 +17,7 @@ from pywatemsedem.io.plots import (
     axes_creator,
     plot_continuous_raster,
     plot_discrete_raster,
+    plot_landuse,
 )
 from pywatemsedem.io.valid import (
     valid_array_type,
@@ -463,54 +464,9 @@ class Modelinput(Factory):
         valid_boundaries(self.compositelanduse.arr, lower=-32757, upper=32757)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
-        # custom plotting features
-        colormap = colors.ListedColormap(
-            [
-                "#64cf1b",
-                "#3b7db4",
-                "#71b651",
-                "#387b00",
-                "#000000",
-                "#00bfff",
-                "#ffffff",
-                "#a47158",
-            ]
-        )
-        labels = [
-            "Grass strips (-6)",
-            "Pools (-5)",
-            "Meadow (-4)",
-            "Forest (-3)",
-            "Infrastructure (-2)",
-            "River (-1)",
-            "Outside boundaries (0)",
-            "Agriculture (>0)",
-        ]
-
-        def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for Landuseparecles
-
-             Parameters
-            ----------
-            fig: matplotlib.figure.Figure, default = None
-                if not given, defaults to generating new figure
-            ax: matplotlib.pyplot.axis, default = None
-                if not given, defaults to generating new axis
-
-            Returns
-            -------
-            fig: matplotlib.figure.Figure
-
-            ax: matplotlib.axes.Axes
-            """
-            fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.compositelanduse.arr, self.mask.arr, 0)
-            arr[arr > 0] = 1
-            fig, ax = plot_discrete_raster(
-                fig, ax, arr, self.rp.bounds, labels, colormap, *args, **kwargs
-            )
-            ax.set_title("Land use parcels")
-            return fig, ax
+        def plot(nodata=None, *args, **kwargs):
+            """Plotting fun"""
+            plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
 
