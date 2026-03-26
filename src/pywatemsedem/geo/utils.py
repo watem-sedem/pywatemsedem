@@ -419,15 +419,7 @@ def clip_vct(vct_in, vct_out, vct_clip, overwrite=False, lst_ignore_field=None):
             cond = False
     if cond:
         logger.info(f"Clipping {vct_in.name}...")
-        ext = get_extent_vct(vct_clip)
-        cmd_args = [
-            "ogr2ogr",
-            "-spat",
-            str(ext[0]),
-            str(ext[1]),
-            str(ext[2]),
-            str(ext[3]),
-        ]
+        cmd_args = ["ogr2ogr"]
         cmd_args += ["-skipfailures"]
         cmd_args += ["-clipsrc", str(vct_clip)]
         if lst_ignore_field is not None:
