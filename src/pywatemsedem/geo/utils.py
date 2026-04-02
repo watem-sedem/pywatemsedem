@@ -16,9 +16,7 @@ import pyogrio
 import rasterio
 from rasterio.features import shapes
 
-from pywatemsedem.geo.rasterproperties import RasterProperties
-
-from ..defaults import (
+from pywatemsedem.defaults import (
     SAGA_FLAGS,
     SUFFIXES_RST,
     SUFFIXES_SAGA,
@@ -26,7 +24,8 @@ from ..defaults import (
     SUFFIXES_TIF,
     SUFFIXES_TXT,
 )
-from .valid import (
+from pywatemsedem.geo.rasterproperties import RasterProperties
+from pywatemsedem.geo.valid import (
     valid_input,
     valid_linesvector,
     valid_pointvector,
@@ -895,7 +894,7 @@ def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
         grid_type = "9"  # "4 byte floating point number"
 
     if grid_type:
-        cmd_args += ["-GRID_TYPE", grid_type, "-TARGET_DEFINITION", "1"]
+        cmd_args += ["-GRID_TYPE", grid_type]
     cmd_args += ["-TARGET_DEFINITION", "1"]
     cmd_args += ["-TARGET_TEMPLATE", str(rst_template), "-GRID", str(rst_out)]
     execute_saga(cmd_args)

@@ -36,10 +36,9 @@ from pywatemsedem.io.modeloutput import (
     make_routing_vct_saga,
     open_txt_routing_file,
 )
-
-from .plots import plot_cumulative_sedimentload
-from .scenario import WSException
-from .tools import package_resource, zip_folder
+from pywatemsedem.io.plots import plot_cumulative_sedimentload
+from pywatemsedem.scenario import WSException
+from pywatemsedem.tools import package_resource, zip_folder
 
 logger = logging.getLogger(__name__)
 

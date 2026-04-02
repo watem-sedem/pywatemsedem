@@ -784,3 +784,48 @@ def get_item_from_ini(ini, section, option, dtype):
             return a
     else:
         raise FileNotFoundError(f"{ini} does not exist")
+
+
+def get_sections_from_ini(ini):
+    """Gets all sections from an ini-file
+
+    Parameters
+    ----------
+    ini: pathlib.Path
+        File path of the ini-file
+
+    Returns
+    -------
+    list
+        list with all sections present in the ini-file
+    """
+    cfg = configparser.ConfigParser()
+    if ini.exists():
+        cfg.read(ini)
+        return cfg.sections()
+    else:
+        raise FileNotFoundError(f"{ini} does not exist")
+
+
+def get_options_from_ini(ini, section):
+    """Gets all options from a certain section of an ini-file
+
+    Parameters
+    ----------
+    ini: pathlib.Path
+        File path of the ini-file
+
+    section: str
+        Name of the desired section
+
+    Returns
+    -------
+    list
+        list with all options present in the section of the ini-file
+    """
+    cfg = configparser.ConfigParser()
+    if ini.exists():
+        cfg.read(ini)
+        return cfg.options(section)
+    else:
+        raise FileNotFoundError(f"{ini} does not exist")

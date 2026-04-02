@@ -1,6 +1,6 @@
 import logging
 
-from pywatemsedem.io.ini import get_item_from_ini
+from pywatemsedem.io.ini import get_item_from_ini, get_options_from_ini
 
 logger = logging.getLogger(__name__)
 
@@ -73,11 +73,23 @@ class UserChoice:
             self._value = input_value
 
     def read_value_from_ini(self, default_ini):
-        """Read value from an ini-file"""
+        """Read value from an ini-file
+
+        Parameters
+        ----------
+        default_ini: pathlib.Path
+            File path of the ini-file
+        """
         self.value = get_item_from_ini(default_ini, self.section, self.key, self.dtype)
 
     def read_default_value_from_ini(self, default_ini):
-        """Read default value from an ini-file"""
+        """Read default value from an ini-file
+
+        Parameters
+        ----------
+        ini: pathlib.Path
+            File path of the ini-file
+        """
         self.default_value = get_item_from_ini(
             default_ini, self.section, self.key, self.dtype
         )
@@ -118,10 +130,19 @@ class WSMixin:
                 attribute.value = attribute.default_value
 
     def read_values_from_ini(self, ini):
+        """Read the values present in an ini-file
+
+        Parameters
+        ----------
+        ini: pathlib.Path
+            File path of the ini-file
+        """
         for key in self.__dict__:
             attribute = getattr(self, key)
             if isinstance(attribute, UserChoice):
-                attribute.read_value_from_ini(ini)
+                available_options = get_options_from_ini(ini, attribute.section)
+                if attribute.key.lower() in available_options:
+                    attribute.read_value_from_ini(ini)
 
 
 class Options(WSMixin):
