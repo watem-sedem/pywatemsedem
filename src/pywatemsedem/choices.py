@@ -964,8 +964,9 @@ class ExtensionsParameters(WSMixin):
 
         Parameters
         ----------
-        extensions: pycnws.core.choices.WSExtensions
-            Instance of :class:`pycnws catchment <pycnws.core.choices.WSExtensions>`
+        extensions: pywatemsedem.choices.WSExtensions
+            Instance of :class:`pywatemsedem choices
+            <pywatemsedem.choices.WSExtensions>`
             containing the settings on the used model extensions.
         """
 

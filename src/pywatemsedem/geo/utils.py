@@ -722,7 +722,8 @@ def lines_to_direction(vct_line, rst_out, rst_template):
     """Converts line features to a direction raster
 
     This function converts the direction of line features to a raster. See the
-    :ref:`docs of cnws for more information <watemsedem:routingmap>` about this raster
+    :ref:`docs of WaTEM/SEDEM for more information <watemsedem:routingmap>` about this
+    raster
 
     Parameters
     ----------
@@ -1393,13 +1394,13 @@ def set_dtype_arr_rst(arr, profile, dtype=None):
     return arr, profile
 
 
-def get_rstparams(CNWS_modelinputfolder, epsg=None, template=None):
+def get_rstparams(modelinputfolder, epsg=None, template=None):
     """Get rstparams and rasterprofile from template raster (default:pkaart)
 
     Parameters
     ----------
-    CNWS_modelinputfolder: str or pathlib.Path
-        the path to the CNWS_modelinputfolder
+    modelinputfolder: str or pathlib.Path
+        the path to the modelinputfolder of WaTEM/SEDEM
     epsg: str, default None
         the epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
@@ -1419,7 +1420,7 @@ def get_rstparams(CNWS_modelinputfolder, epsg=None, template=None):
     """
     # this template is used to generate binair mask
     if template is None:
-        template = Path(CNWS_modelinputfolder) / "pfactor.rst"
+        template = Path(modelinputfolder) / "pfactor.rst"
     # open and assign profile to rstparams
     try:
         src = rasterio.open(template)
@@ -1436,13 +1437,15 @@ def get_rstparams(CNWS_modelinputfolder, epsg=None, template=None):
     return rstparams, profile
 
 
-def get_mask_template(CNWS_modelinputfolder, rst_template=None):
+def get_mask_template(modelinputfolder, catchmentname, rst_template=None):
     """Get a binary raster from template raster (P-factor)
 
     Parameters
     ----------
-    CNWS_modelinputfolder: str or pathlib.Path
-        File path to the CNWS_modelinputfolder
+    modelinputfolder: str or pathlib.Path
+        File path to the modelinputfolder of WaTEM/SEDEM
+    catchmentname: str
+        Catchment name
     rst_template: str or pathlib.Path, default None
         Path to a template file that can be used as template for geodata and bin mask
 
@@ -1453,7 +1456,7 @@ def get_mask_template(CNWS_modelinputfolder, rst_template=None):
     """
 
     if rst_template is None:
-        rst_template = Path(CNWS_modelinputfolder) / "pfactor.rst"
+        rst_template = Path(modelinputfolder) / "pfactor.rst"
     try:
         src = rasterio.open(rst_template)
     except IOError:

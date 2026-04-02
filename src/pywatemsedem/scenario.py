@@ -271,7 +271,7 @@ def valid_ini(func):
     return wrapper
 
 
-class CNWSException(Exception):
+class WSException(Exception):
     """Exception from WaTEM/SEDEM pre- and postprocessing scripts"""
 
 
@@ -584,8 +584,8 @@ class Scenario:
         Grass strips are appointed the value -6 in the WaTEM/SEDEM parcels landuse
         raster. In addition, C-factors and kTC-values are assigned to grass strips
         pixels according to their width, see also
-        :func:`pywatemsedem.cfactor.create_cfactor_cnws` and
-        :func:`pywatemsedem.ktc.create_ktc_cnws`
+        :func:`pywatemsedem.cfactor.create_cfactor_degerick2015` and
+        :func:`pywatemsedem.ktc.create_ktc`
 
         Parameters
         ----------
@@ -1408,59 +1408,57 @@ class Scenario:
     def prepare_input_files(self):
         """Prepare all files (write to disk)"""
         self.catchm.kfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.kfactor_file
+            self.sfolder.wsinput_folder / inputfilename.kfactor_file
         )
         self.catchm.dtm.write(
-            self.sfolder.cnwsinput_folder / inputfilename.dtm_file, nodata=-99999
+            self.sfolder.wsinput_folder / inputfilename.dtm_file, nodata=-99999
         )
         self.catchm.pfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file, dtype=np.float32
+            self.sfolder.wsinput_folder / inputfilename.pfactor_file, dtype=np.float32
         )
         if self.choices.extensions.river_routing.value:
             self.catchm.adjacent_edges.to_csv(
-                self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
+                self.sfolder.wsinput_folder / inputfilename.adjacentedges_file,
                 sep="\t",
                 index=False,
             )
             self.catchm.up_edges.to_csv(
-                self.sfolder.cnwsinput_folder / inputfilename.upedges_file,
+                self.sfolder.wsinput_folder / inputfilename.upedges_file,
                 sep="\t",
                 index=False,
             )
             self.choices.extensions.output_per_river_segment = True
             self.catchm.routing.write(
-                self.sfolder.cnwsinput_folder / inputfilename.routing_file
+                self.sfolder.wsinput_folder / inputfilename.routing_file
             )
             # if self.choices.dict_output["Output per river segment"] == 1:
             self.catchm.segments.write(
-                self.sfolder.cnwsinput_folder / inputfilename.segments_file
+                self.sfolder.wsinput_folder / inputfilename.segments_file
             )
 
-        self.catchm.mask.write(self.sfolder.cnwsinput_folder / inputfilename.mask_file)
+        self.catchm.mask.write(self.sfolder.wsinput_folder / inputfilename.mask_file)
 
         self.composite_landuse.write(
-            self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
+            self.sfolder.wsinput_folder / inputfilename.parcelmosaic_file,
             dtype=np.int32,
         )
         if self.choices.extensions.curve_number.value:
             if self.cn is not None:
-                self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
+                self.cn.write(self.sfolder.wsinput_folder / inputfilename.cn_file)
             else:
                 msg = "Model version in 'CN-WS', define a CN raster to run CN."
                 raise IOError(msg)
         if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
-                self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
+                self.ktc.write(self.sfolder.wsinput_folder / inputfilename.ktc_file)
             else:
                 msg = "UserProvidedKTC is 1 (True), provide ktc-raster."
                 raise IOError(msg)
 
-        self.cfactor.write(self.sfolder.cnwsinput_folder / inputfilename.cfactor_file)
+        self.cfactor.write(self.sfolder.wsinput_folder / inputfilename.cfactor_file)
 
         if self.choices.extensions.manual_outlet_selection.value:
-            self.outlets.write(
-                self.sfolder.cnwsinput_folder / inputfilename.outlet_file
-            )
+            self.outlets.write(self.sfolder.wsinput_folder / inputfilename.outlet_file)
         if not self.choices.options.only_routing.value:
             if self.choices.extensions.calibrate.value:
                 self.choices.output.write_sediment_export = False
@@ -1470,18 +1468,14 @@ class Scenario:
         if self.choices.extensions.include_buffers.value & (
             not self.buffers.is_empty()
         ):
-            self.buffers.write(
-                self.sfolder.cnwsinput_folder / inputfilename.buffers_file
-            )
+            self.buffers.write(self.sfolder.wsinput_folder / inputfilename.buffers_file)
 
         if self.choices.extensions.include_ditches.value:
-            self.ditches.write(
-                self.sfolder.cnwsinput_folder / inputfilename.ditches_file
-            )
+            self.ditches.write(self.sfolder.wsinput_folder / inputfilename.ditches_file)
 
         if self.choices.extensions.include_dams.value:
             self.conductive_dams.write(
-                self.sfolder.cnwsinput_folder / inputfilename.conductivedams_file
+                self.sfolder.wsinput_folder / inputfilename.conductivedams_file
             )
 
         # if self.choices.dict_model_options["FilterDTM"] == 1:
@@ -1489,18 +1483,18 @@ class Scenario:
         #    logger.info(msg)
         #    self.catchm.dtm.filter()
         #    self.catchm.dtm.write(
-        #        self.sfolder.cnwsinput_folder / inputfilename.dtm_file
+        #        self.sfolder.wsinput_folder / inputfilename.dtm_file
         #    )
 
         if self.choices.extensions.include_sewers.value:
             if not self.endpoints.is_empty():
                 self.endpoints.write(
-                    self.sfolder.cnwsinput_folder / inputfilename.endpoints_file,
+                    self.sfolder.wsinput_folder / inputfilename.endpoints_file,
                     format="idrisi",
                     dtype=np.float64,
                 )
                 self.endpoints_id.write(
-                    self.sfolder.cnwsinput_folder / inputfilename.endpoints_id_file,
+                    self.sfolder.wsinput_folder / inputfilename.endpoints_id_file,
                     format="idrisi",
                     dtype=np.float64,
                 )
@@ -1508,10 +1502,10 @@ class Scenario:
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
         logger.info("Creating ini-file...")
-        self.ini = self.sfolder.cnwsinput_folder / "inifile.ini"
+        self.ini = self.sfolder.wsinput_folder / "inifile.ini"
         ini = IniFile(
-            self.sfolder.cnwsinput_folder,
-            self.sfolder.cnwsoutput_folder,
+            self.sfolder.wsinput_folder,
+            self.sfolder.wsoutput_folder,
             self.choices,
         )
         ini.add_sections()

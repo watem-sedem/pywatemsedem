@@ -167,12 +167,12 @@ def serialize_process_raster(rst):
         Return function that processes numpy array of pywatemsedem raster.
     """
     if "perceelskaart" in Path(rst).stem:
-        return process_arr_cnwsperceelskaart
+        return process_arr_wsperceelskaart
     else:
         return process_arr_default
 
 
-def process_arr_cnwsperceelskaart(arr):
+def process_arr_wsperceelskaart(arr):
     """Remove unique parcels id's before comparing rasters
 
     Parameters
@@ -340,7 +340,7 @@ def _get_filenames(path):
     )
 
 
-def _compare_cnws_input_raster(
+def _compare_ws_input_raster(
     rst,
     rst_benchmark,
     tag,
@@ -368,11 +368,11 @@ def _compare_cnws_input_raster(
     if not condition:
 
         if tag.lower() in ["perceelskaart"]:
-            out = compute_difference_table_cnws_prckrt_rasters(arr, arr_benchmark)
+            out = compute_difference_table_ws_prckrt_rasters(arr, arr_benchmark)
         elif tag.lower() in ["c-factor", "ktc"]:
-            out = compute_difference_table_cnws_rasters(arr, arr_benchmark, tag)
+            out = compute_difference_table_ws_rasters(arr, arr_benchmark, tag)
         elif tag.lower() in ["buffers"]:
-            out = compute_difference_table_cnws_buffers(arr, arr_benchmark)
+            out = compute_difference_table_ws_buffers(arr, arr_benchmark)
         else:
             msg = f"``tag`` {tag} not known."
             raise IOError(msg)
@@ -384,7 +384,7 @@ def _compare_cnws_input_raster(
         raise AssertionError(msg)
 
 
-def compute_difference_table_cnws_buffers(arr, arr_benchmark, buf_idext=2**14):
+def compute_difference_table_ws_buffers(arr, arr_benchmark, buf_idext=2**14):
     """Compute table whcih indicates difference between two WaTEM/SEDEM buffer raster
     files.
 
@@ -420,7 +420,7 @@ def compute_difference_table_cnws_buffers(arr, arr_benchmark, buf_idext=2**14):
     ).to_string()
 
 
-def compute_difference_table_cnws_rasters(arr, arr_benchmark, tag):
+def compute_difference_table_ws_rasters(arr, arr_benchmark, tag):
     """Compute table whcih indicates difference between two WaTEM/SEDEM raster files.
 
     Parameters
@@ -442,7 +442,7 @@ def compute_difference_table_cnws_rasters(arr, arr_benchmark, tag):
     )
 
 
-def compute_difference_table_cnws_prckrt_rasters(
+def compute_difference_table_ws_prckrt_rasters(
     arr,
     arr_benchmark,
     dict_translation={

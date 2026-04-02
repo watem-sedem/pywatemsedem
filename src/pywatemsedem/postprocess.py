@@ -37,7 +37,7 @@ from pywatemsedem.io.modeloutput import (
     open_txt_routing_file,
 )
 from pywatemsedem.io.plots import plot_cumulative_sedimentload
-from pywatemsedem.scenario import CNWSException
+from pywatemsedem.scenario import WSException
 from pywatemsedem.tools import package_resource, zip_folder
 
 logger = logging.getLogger(__name__)
@@ -159,13 +159,13 @@ class PostProcess(Factory):
         self.cfolder.check_catchment_folder()
         self.sfolder.check_scenario()
         self.sfolder.check_years()
-        self.sfolder.check_cnwsinput()
-        self.sfolder.check_cnwsoutput(error_if_empty=True)
+        self.sfolder.check_wsinput()
+        self.sfolder.check_wsoutput(error_if_empty=True)
         self.sfolder.check_postprocessing(create=True)
 
         # get raster properties based on DTM .tif file in Data_Bekken
         self.rstparams, self.rasterprop = get_rstparams(
-            self.sfolder.cnwsinput_folder,
+            self.sfolder.wsinput_folder,
             epsg=self.epsg,
         )
         # intialize functionalities factory
@@ -173,11 +173,11 @@ class PostProcess(Factory):
             resolution, self.epsg, -9999, name, bounds=self.rasterprop["minmax"]
         )
 
-        self.mask = self.sfolder.cnwsinput_folder / "mask.rst"
+        self.mask = self.sfolder.wsinput_folder / "mask.rst"
 
         self.resolution = resolution
         self.arr_bindomain = get_mask_template(
-            self.sfolder.cnwsinput_folder, self.catchment_name
+            self.sfolder.wsinput_folder, self.catchment_name
         )
 
         # regenerate user choices based on generated files
@@ -1542,11 +1542,11 @@ class PostProcess(Factory):
         except KeyError:
             msg = "'set_no_data_rst' failed for WaTEM/SEDEM perceelskaart."
             logger.error(msg)
-            raise CNWSException(msg)
+            raise WSException(msg)
         except TypeError:
             msg = "check if scenario is defined correctly"
             logger.warning(msg)
-            raise CNWSException(msg)
+            raise WSException(msg)
 
     def calculate_areas_prckrt(self):
         """Calculates the areas and relative areas of all landuse classes in
@@ -1752,7 +1752,7 @@ def compute_efficiency_grass_strips(
     rst_grass_strips: str or ppathlib.Path
         raster grass strips with id's filename
     rst_prckrt: str or pathlib.Path
-        raster CNWS perceelskaart
+        raster WaTEM/SEDEM perceelskaart
     rst_sediout: str or pathlib.Path
         File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
 
@@ -2035,7 +2035,7 @@ def select_and_rename_cols_grass_routing(df_routing_grass, target_id):
 
 def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_strips):
     """
-    Use the CNWS 'perceelskaart' to filter grass strips (lay-over infr. and
+    Use the WaTEM/SEDEM 'perceelskaart' to filter grass strips (lay-over infr. and
     river cells over gras_buffer_id)
 
     Parameters
@@ -2195,10 +2195,10 @@ def compute_netto_erosion_parcels(
     Parameters
     ----------
     rst_prckrt: string or pathlib.Path
-        File path of the CNWS modelinput perceelskaart, note that the
+        File path of the WaTEM/SEDEM modelinput perceelskaart, note that the
         parcels_ids are limited by int16 (for WaTEM/SEDEM Pascal)
     rst_watereros: string or pathlib.Path
-        File path of the CNWS modelouput watereros map
+        File path of the WaTEM/SEDEM modelouput watereros map
     rst_parcels_ids: string or pathlib.Path
         File path of the rasterfile holding the parcels_ids, not limited by
         int16

@@ -47,7 +47,7 @@ class Modeloutput(Factory):
     def __init__(self, template, resolution, epsg, nodata):
         """AbstractRaster class with model outputs as attributes. Modeloutput class
         serves the goal of automating the reading in, checking and visualisation
-        of the output data of the CNWS model.
+        of the output data of the WaTEM/SEDEM model.
 
         Parameters
         ----------
@@ -466,7 +466,7 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:totalsedimenttxt>`.
         For explanation on colmun variables of dataframe: see
-        :func:`pywatemsedem.pywatemsedem.cnwsoutput.load_total_sediment_file`.
+        :func:`pywatemsedem.io.modeloutput.load_total_sediment_file`.
         """
         return self._total_sediment
 
@@ -986,7 +986,7 @@ def get_prckrt_statistics(rst_prckrt, unit="ha", resolution=20):
 def make_routing_vct_saga(
     txt_routing, rst_prckrt, vct_out, rstparams, extent=None, tile_number=None
 ):
-    """Generate a routing vct routing file (added with CNWS landuse) based on
+    """Generate a routing vct routing file (added with WaTEM/SEDEM landuse) based on
     the routing table
     extent and tilenumber are defined to make a routing file only for a
     certain extent
@@ -996,7 +996,7 @@ def make_routing_vct_saga(
     txt_routing: str or pathlib.Path | str
         File path of the WaTEM/SEDEM routing tabl
     rst_prckrt: str
-        name of CNWS input 'perceelskaart'
+        name of WaTEM/SEDEM input 'perceelskaart'
     vct_out:
         name of the shape outputfile
     rstparams: dict
@@ -1442,9 +1442,9 @@ def compute_efficiency_buffers(rst_buffer, rst_sediin, rst_sediout):
     rst_buffer: str or pathlib.Path | str
         File path of buffer raster with buffer id's
     rst_sediin: str or ppathlib.Path | str
-        File path of CNWS SediIn raster, incoming sediment per pixel
+        File path of WaTEM/SEDEM SediIn raster, incoming sediment per pixel
     rst_sediout: str or pathlib.Path | str
-        File path of CNWS SediOut raster, outgoing sediment per pixel
+        File path of WaTEM/SEDEM SediOut raster, outgoing sediment per pixel
 
     Returns
     -------
@@ -1814,7 +1814,8 @@ def verify_highest_load_with_threshold(df_sediexport, threshold):
 
 
 def load_total_sediment_file(txt_total_sediment_file):
-    """Load the total sediment file of CNWS written in CNWS dict_output map
+    """Load the total sediment file of WaTEM/SEDEM written in WaTEM/SEDEM
+    dict_output map
 
     Parameters
     ----------
