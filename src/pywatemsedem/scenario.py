@@ -1536,7 +1536,7 @@ class Scenario:
 
         # Check if watem_sedem executable can be found
         if (
-            shutil.which("watem_sedem") is None
+            shutil.which(ws_binary) is None
         ):  # watem_sedem cannot be found in the PATH variable
             # Check if there is an environment variable "WATEMSEDEM"
             if (
@@ -1546,7 +1546,7 @@ class Scenario:
                 os.environ["PATH"] = (
                     os.environ.get("WATEMSEDEM") + os.pathsep + os.environ["PATH"]
                 )  # Add watem sedem location to PATH
-                if shutil.which("watem_sedem") is None:
+                if shutil.which(ws_binary) is None:
                     msg = (
                         "WATEM-SEDEM is not properly installed, pywatemsedem cannot"
                         " access watem_sedem via PATH or WATEMSEDEM"
