@@ -381,8 +381,8 @@ class Scenario:
     def vct_parcels(self, vector_input):
         """Assign parcels polygon vector
 
-        The parcels vector should be polygon vector. Should contain a definition of
-        land-use (column "LANDUSE"):
+        The parcels vector should be polygon vector. Should contain a
+        definition of land-use (column "LANDUSE"):
 
             - *-5*: open water
             - *-4*: grass land
@@ -396,7 +396,7 @@ class Scenario:
             - *[0,1]*: C-factor for crop.
             - *NULL*: no C-factor defined.
 
-        Should contain a defiction of the C-reduction (column 'C_reduction'), used
+        Should contain a defiction of the C-reduction (column 'C_reduct'), used
         in case of source-oriented measures.
 
         Can contain a 'NR' column which is the identification ID of the individual
@@ -412,14 +412,14 @@ class Scenario:
             - *C_crop* (float): C-factor for crop, valid for considered time period
               ([0,1], NULL-values allowed).
             - *NR* (int, optional): id.
-            - *C_reduction* (float): C-reduction values,  C-factor is reduced with this
+            - *C_reduct* (float): C-reduction values,  C-factor is reduced with this
               percentage when source-oriented measures are used.
 
         Notes
         -----
         The C-value for crops are defined as the C-factor that is valid as value for
-        the coupled crop given a time period (e.g. average C-factor for potato for one
-        year, or average C-factor for potato for the month April).
+        the coupled crop given a time period (e.g. average C-factor for potato 
+        for one year, or average C-factor for potato for the month April).
         """
         self._vct_parcels = self.vector_factory(
             vector_input, "Polygon", allow_empty=True
@@ -443,6 +443,9 @@ class Scenario:
             [-9999, -2, -3, -4, -5],
             classes=["agriculture", "infrastructure", "forest", "grass land", "water"],
         )
+        if pd.api.types.is_integer_dtype(
+            self._vct_parcels.geodata["C_reduct"]):
+            self._vct_parcels.geodata["C_reduct"] = self._vct_parcels.geodata["C_reduct"].astype(float)
 
         if "NR" not in self._vct_parcels.geodata.columns:
             self._vct_parcels.geodata["NR"] = range(
