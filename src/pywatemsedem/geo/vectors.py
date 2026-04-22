@@ -7,7 +7,6 @@ import pyogrio
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
-    clip_vct,
     create_filename,
     get_geometry_type,
     lines_to_direction,
@@ -386,9 +385,9 @@ class VectorFile(AbstractVector):
         -------
         geopandas.GeoDataFrame
         """
-        vct_temp = create_filename(".shp")
-        clip_vct(self.file_path, vct_temp, vct_clip)
-        geodata = gpd.read_file(vct_temp)
-        clean_up_tempfiles(vct_temp, "shp")
-
+        gdf_mask = gpd.read_file(vct_clip)
+        gdf_mask = gdf_mask.dissolve()
+        mask = gdf_mask.geometry[0]
+        geodata = gpd.read_file(self.file_path, mask=mask)
+        geodata = gpd.clip(geodata, mask, keep_geom_type=True)
         return geodata
