@@ -2,13 +2,12 @@ from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
+import pyogrio
 
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
-    clip_vct,
     create_filename,
-    create_spatial_index,
     get_geometry_type,
     lines_to_direction,
     lines_to_raster,
@@ -151,11 +150,19 @@ class AbstractVector:
         if outfile_path is not None:
             outfile_path = Path(outfile_path)
         if outfile_path.suffix == ".shp":
-            self._geodata.to_file(outfile_path)
-            create_spatial_index(outfile_path)
+            pyogrio.write_dataframe(
+                self._geodata,
+                outfile_path,
+                driver="ESRI Shapefile",
+                SPATIAL_INDEX="YES",
+            )
         elif outfile_path.suffix == "":
-            self._geodata.to_file(outfile_path, driver="ESRI Shapefile")  # esri
-            create_spatial_index(outfile_path)
+            pyogrio.write_dataframe(
+                self._geodata,
+                outfile_path,
+                driver="ESRI Shapefile",
+                SPATIAL_INDEX="YES",
+            )
         else:
             msg = f"Extension of  {outfile_path} not support in pywatemsedem"
             raise TypeError(msg)
@@ -378,9 +385,9 @@ class VectorFile(AbstractVector):
         -------
         geopandas.GeoDataFrame
         """
-        vct_temp = create_filename(".shp")
-        clip_vct(self.file_path, vct_temp, vct_clip)
-        geodata = gpd.read_file(vct_temp)
-        clean_up_tempfiles(vct_temp, "shp")
-
+        gdf_mask = gpd.read_file(vct_clip)
+        gdf_mask = gdf_mask.dissolve()
+        mask = gdf_mask.geometry[0]
+        geodata = gpd.read_file(self.file_path, bbox=mask)
+        geodata = gpd.clip(geodata, mask, keep_geom_type=True)
         return geodata
