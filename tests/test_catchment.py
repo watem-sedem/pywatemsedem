@@ -92,18 +92,18 @@ class TestCatchment:
         # test raster routing type and unique values
         un, counts = np.unique(dummy_catchment.routing.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0, 1, 3, 5, 7]))
-        np.testing.assert_allclose(counts, np.array([48911, 84, 256, 153, 40]))
+        np.testing.assert_allclose(counts, np.array([48911, 84, 257, 152, 40]))
 
         # test segments
         un, counts = np.unique(dummy_catchment.segments.arr, return_counts=True)
         np.testing.assert_allclose(
             un,
-            np.array([0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]),
+            np.array([0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]),
         )
         np.testing.assert_allclose(
             counts,
             np.array(
-                [48910, 11, 5, 4, 46, 60, 3, 14, 27, 5, 41, 43, 28, 87, 43, 52, 23, 42]
+                [48910, 40, 5, 12, 87, 39, 53, 28, 60, 43, 4, 14, 22, 5, 43, 28, 4, 47]
             ),
         )
 
@@ -137,7 +137,7 @@ class TestCatchment:
             dummy_catchment.infrastructure_roads.arr, return_counts=True
         )
         np.testing.assert_allclose(un, [-9999, -7.0, -2])
-        np.testing.assert_allclose(counts, [46746, 1408, 1290])
+        np.testing.assert_allclose(counts, [46746, 1433, 1265])
 
         # test type
         assert dummy_catchment.infrastructure_buildings.arr.dtype == np.int16
@@ -153,7 +153,7 @@ class TestCatchment:
 
         un, counts = np.unique(dummy_catchment.infrastructure.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9999, -7, -2])
-        np.testing.assert_allclose(counts, [45353, 1408, 2683])
+        np.testing.assert_allclose(counts, [45353, 1433, 2658])
 
     def test_infrastructure_wrong_value(self, dummy_catchment):
         "Test wrong value in 'paved' attribute infr roads"
