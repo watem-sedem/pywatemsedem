@@ -388,6 +388,6 @@ class VectorFile(AbstractVector):
         gdf_mask = gpd.read_file(vct_clip)
         gdf_mask = gdf_mask.dissolve()
         mask = gdf_mask.geometry[0]
-        geodata = gpd.read_file(self.file_path, mask=mask)
+        geodata = gpd.read_file(self.file_path, bbox=mask)
         geodata = gpd.clip(geodata, mask, keep_geom_type=True)
         return geodata
