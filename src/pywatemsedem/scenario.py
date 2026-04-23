@@ -311,7 +311,7 @@ class Scenario:
         self._vct_buffers = AbstractVector()  # vector
         self._vct_bufferoutlets = AbstractVector()  # vector
         self._vct_ditches = AbstractVector()
-        self._vct_condictive_dams = AbstractVector()
+        self._vct_conductive_dams = AbstractVector()
         self._vct_source_measures = AbstractVector()
         self._vct_endpoints = AbstractVector()
         self._endpoints = AbstractRaster()
@@ -843,7 +843,7 @@ class Scenario:
     @property
     def vct_conductive_dams(self):
         """Getter conductive dams vector"""
-        return self._vct_condictive_dams
+        return self._vct_conductive_dams
 
     @vct_conductive_dams.setter
     def vct_conductive_dams(self, vector_input):
@@ -854,7 +854,7 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
-        self._vct_condictive_dams = self.vector_factory(vector_input, "LineString")
+        self._vct_conductive_dams = self.vector_factory(vector_input, "LineString")
 
     @property
     def conductive_dams(self):
