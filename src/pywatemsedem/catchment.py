@@ -176,7 +176,7 @@ class Catchment(Factory):
         # to a file
         if type(vct_catchment) is gpd.GeoDataFrame:
             self.vct_catchment = self.folder.vct_folder / "catchment.shp"
-            vct_catchment.to_file(self.vct_catchment)
+            vct_catchment.to_file(self.vct_catchment, spatial_index="YES")
         else:
             self.vct_catchment = vct_catchment
         # input your own raster properties and do not self-generate them.

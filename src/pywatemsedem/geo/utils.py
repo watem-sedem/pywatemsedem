@@ -512,7 +512,7 @@ def compute_statistics_rasters_per_polygon_vector(
         if normalize:
             gdf[col + "_ha"] = gdf[col] * 100**2 / (gdf.area)
 
-    gdf.to_file(vct_out)
+    gdf.to_file(vct_out, spatial_index="YES")
 
     return gdf
 
@@ -1767,7 +1767,7 @@ def generate_vct_mask_from_raster_mask(rst_catchment, vct_catchment, resolution)
     raster_to_polygon(rst_catchment, vct_catchment)
     gdf_catchment = gpd.read_file(vct_catchment)
     gdf_catchment = process_mask_shape_from_raster_file(gdf_catchment)
-    gdf_catchment.to_file(Path(vct_catchment))
+    gdf_catchment.to_file(Path(vct_catchment), spatial_index="YES")
 
 
 def process_mask_shape_from_raster_file(gdf_catchment, catchment_value=1):
