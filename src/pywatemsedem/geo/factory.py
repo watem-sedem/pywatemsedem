@@ -163,7 +163,9 @@ class Factory:
 
             self._vct_mask = VectorFile(mask)
             if mask != self.vectorfile_mask:
-                self._vct_mask._geodata.to_file(self.vectorfile_mask)
+                self._vct_mask._geodata.to_file(
+                    self.vectorfile_mask, spatial_index="YES"
+                )
 
             vct_to_rst_value(
                 mask,

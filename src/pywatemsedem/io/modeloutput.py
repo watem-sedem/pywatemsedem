@@ -1273,8 +1273,7 @@ def define_subcatchments_saga(
     gdf_subcatchments["VALUE"] = gdf_subcatchments["VALUE"].astype("int32")
     gdf_subcatchments["AREA_HA"] = gdf_subcatchments.area / 10000.0
     gdf_subcatchments = gdf_subcatchments.set_crs(rasterprop["epsg"])
-    gdf_subcatchments.to_file(vct_subcatchments)
-    create_spatial_index(vct_subcatchments)
+    gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
     return (
         (rst_subcatchments.parent / (rst_subcatchments.stem + ".sdat")),
@@ -1333,7 +1332,7 @@ def identify_individual_priority_catchments(
             # assign sediout value to self.subcatchmprioritSHP
             gdf = gpd.read_file(vct_subcatch)
             gdf["sediout"] = max_sediout
-            gdf.to_file(vct_subcatch)
+            gdf.to_file(vct_subcatch, spatial_index="YES")
         else:
             vct_subcatch = template_name
             rst_subcatch = vct_subcatch.with_suffix(".sdat")
@@ -1357,8 +1356,7 @@ def identify_individual_priority_catchments(
 
     gdf_subcatchmpriority.crs = {"init": epsg}
     dst = resmap / "priority_catchments.shp"
-    gdf_subcatchmpriority.to_file(dst)
-    create_spatial_index(dst)
+    gdf_subcatchmpriority.to_file(dst, spatial_index="YES")
 
     return gdf_subcatchmpriority
 

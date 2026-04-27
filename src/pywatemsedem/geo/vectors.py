@@ -2,7 +2,6 @@ from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
-import pyogrio
 
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
@@ -150,18 +149,12 @@ class AbstractVector:
         if outfile_path is not None:
             outfile_path = Path(outfile_path)
         if outfile_path.suffix == ".shp":
-            pyogrio.write_dataframe(
-                self._geodata,
-                outfile_path,
-                driver="ESRI Shapefile",
-                SPATIAL_INDEX="YES",
+            self._geodata.to_file(
+                outfile_path, driver="ESRI Shapefile", spatial_index="YES"
             )
         elif outfile_path.suffix == "":
-            pyogrio.write_dataframe(
-                self._geodata,
-                outfile_path,
-                driver="ESRI Shapefile",
-                SPATIAL_INDEX="YES",
+            self._geodata.to_file(
+                outfile_path, driver="ESRI Shapefile", spatial_index="YES"
             )
         else:
             msg = f"Extension of  {outfile_path} not support in pywatemsedem"

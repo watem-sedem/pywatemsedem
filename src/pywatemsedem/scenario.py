@@ -1602,7 +1602,7 @@ def remove_known_grass_strips_from_parcels_vct_saga(parcels, vct_grass_strips):
         # check if NR is in vct_parcels
         if "NR" not in parcels:
             parcels["NR"] = np.arange(1, len(parcels) + 1, 1)
-        parcels.to_file(fname_parcels)
+        parcels.to_file(fname_parcels, spatial_index="YES")
         saga_intersection(
             str(fname_parcels),
             str(vct_grass_strips),
