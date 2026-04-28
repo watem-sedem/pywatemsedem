@@ -11,6 +11,7 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_float_dtype, is_integer_dtype
 
 from pywatemsedem.buffers import (
     filter_outlets_in_arr_extension_id,
@@ -381,8 +382,8 @@ class Scenario:
     def vct_parcels(self, vector_input):
         """Assign parcels polygon vector
 
-        The parcels vector should be polygon vector. Should contain a definition of
-        land-use (column "LANDUSE"):
+        The parcels vector should be polygon vector. Should contain a
+        definition of land-use (column "LANDUSE"):
 
             - *-5*: open water
             - *-4*: grass land
@@ -396,30 +397,31 @@ class Scenario:
             - *[0,1]*: C-factor for crop.
             - *NULL*: no C-factor defined.
 
-        Should contain a defiction of the C-reduction (column 'C_reduction'), used
+        Should contain a defiction of the C-reduction (column 'C_reduct'), used
         in case of source-oriented measures.
 
-        Can contain a 'NR' column which is the identification ID of the individual
-        parcel.
+        Can contain a 'NR' column which is the identification ID of the
+        individual parcel.
 
         Parameters
         ----------
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             Polygon vector
 
-            - *LANDUSE* (int): landuse value (-5: open water, -4: grass land, -3:
-            forest, -2: infrastructure (farms), -9999: agricultural land).
-            - *C_crop* (float): C-factor for crop, valid for considered time period
-              ([0,1], NULL-values allowed).
+            - *LANDUSE* (int): landuse value (-5: open water, -4: grass land,
+            -3: forest, -2: infrastructure (farms), -9999: agricultural land).
+            - *C_crop* (float): C-factor for crop, valid for considered time
+              period ([0,1], NULL-values allowed).
             - *NR* (int, optional): id.
-            - *C_reduction* (float): C-reduction values,  C-factor is reduced with this
-              percentage when source-oriented measures are used.
+            - *C_reduct* (float): C-reduction values, C-factor is reduced with
+              this percentage when source-oriented measures are used.
 
         Notes
         -----
-        The C-value for crops are defined as the C-factor that is valid as value for
-        the coupled crop given a time period (e.g. average C-factor for potato for one
-        year, or average C-factor for potato for the month April).
+        The C-value for crops are defined as the C-factor that is valid as
+        value for the coupled crop given a time period (e.g. average C-factor
+        for potato for one year, or average C-factor for potato for the month
+        April).
         """
         self._vct_parcels = self.vector_factory(
             vector_input, "Polygon", allow_empty=True
@@ -430,6 +432,16 @@ class Scenario:
             "Parcels",
             {"C_crop", "LANDUSE", "C_reduct"},
         )
+
+        if not is_integer_dtype(self._vct_parcels.geodata["LANDUSE"]):
+            raise TypeError("LANDUSE column should be integer")
+
+        if not is_float_dtype(self._vct_parcels.geodata["C_crop"]):
+            raise TypeError("C_crop column should be float")
+
+        if not is_float_dtype(self._vct_parcels.geodata["C_reduct"]):
+            raise TypeError("C_reduct column should be float")
+
         attribute_continuous_value_error(
             self._vct_parcels.geodata, "Parcels", "C_crop", lower=0, upper=1
         )
@@ -448,6 +460,9 @@ class Scenario:
             self._vct_parcels.geodata["NR"] = range(
                 0, len(self._vct_parcels.geodata), 1
             )
+        else:
+            if not is_integer_dtype(self._vct_parcels.geodata["NR"]):
+                raise TypeError("NR column should be integer")
 
         if np.any(self._vct_parcels.geodata["NR"] > 32767):
             msg = (
