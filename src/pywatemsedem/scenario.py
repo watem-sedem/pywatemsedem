@@ -1,3 +1,4 @@
+import copy
 import logging
 import os
 import shutil
@@ -300,7 +301,7 @@ class Scenario:
             Containing the pywatemsedem model settings.
         """
         # Init factories from catchm instance
-        self.catchm = catchm
+        self.catchm = copy.deepcopy(catchm)
         self.rp = self.catchm.rp
 
         # Initalize
@@ -336,7 +337,7 @@ class Scenario:
         # assign scenario number and user choices
         self.scenario_nr = scenario_nr
         self.year = year
-        self.choices = userchoices
+        self.choices = copy.deepcopy(userchoices)
         # self.choices = deepcopy(userchoices)
         self.rst_outlet = AbstractRaster()
         self.ini = None
