@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem API &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem API &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -60,7 +60,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data processing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Imports-and-example-data">Imports and example data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Define-WaTEM/SEDEM-exe">Define WaTEM/SEDEM exe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Define-WaTEM/SEDEM-binary">Define WaTEM/SEDEM binary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Generate-catchment">Generate catchment</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Input-rasters">Input rasters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Input-vectors">Input vectors</a></li>
@@ -165,9 +165,9 @@
 </div>
 </div>
 </section>
-<section id="Define-WaTEM/SEDEM-exe">
-<h2>Define WaTEM/SEDEM exe<a class="headerlink" href="#Define-WaTEM/SEDEM-exe" title="Link to this heading"></a></h2>
-<p>Pick it up the latest version from <a class="reference external" href="https://github.com/watem-sedem/watem-sedem/releases">https://github.com/watem-sedem/watem-sedem/releases</a> and put the exe in the folder of this notebook (or in a <code class="docutils literal notranslate"><span class="pre">.env</span></code>-file)</p>
+<section id="Define-WaTEM/SEDEM-binary">
+<h2>Define WaTEM/SEDEM binary<a class="headerlink" href="#Define-WaTEM/SEDEM-binary" title="Link to this heading"></a></h2>
+<p>Pick it up the latest version from <a class="reference external" href="https://github.com/watem-sedem/watem-sedem/releases">https://github.com/watem-sedem/watem-sedem/releases</a> and drop it in a directory. Put this directory name in a <code class="docutils literal notranslate"><span class="pre">.env</span></code>-file (key “WATEMSEDEM”)</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -181,7 +181,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WATEMSEDEM&quot;</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WATEMSEDEM&quot;</span><span class="p">))</span>
+<span class="n">watem_sedem_binary</span> <span class="o">=</span> <span class="s2">&quot;watem_sedem&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -189,23 +190,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_binary</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">watem_sedem_folder</span> <span class="o">/</span> <span class="n">watem_sedem_binary</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

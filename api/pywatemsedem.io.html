@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io package &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem.io package &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -70,7 +70,6 @@
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.grasstrips">pywatemsedem.grasstrips module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.ktc">pywatemsedem.ktc module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.parcelslanduse">pywatemsedem.parcelslanduse module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.plots">pywatemsedem.plots module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.postprocess">pywatemsedem.postprocess module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.scenario">pywatemsedem.scenario module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.templates">pywatemsedem.templates module</a></li>
@@ -200,18 +199,6 @@
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_cnwsinput">
-<span class="sig-name descname"><span class="pre">check_cnwsinput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_cnwsinput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_cnwsinput" title="Link to this definition"></a></dt>
-<dd><p>Create ‘scenario_x/modelinput’ folder</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_cnwsoutput">
-<span class="sig-name descname"><span class="pre">check_cnwsoutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_cnwsoutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_cnwsoutput" title="Link to this definition"></a></dt>
-<dd><p>Create ‘scenario_x/modeloutput’ folder</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_postprocessing">
 <span class="sig-name descname"><span class="pre">check_postprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_postprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_postprocessing" title="Link to this definition"></a></dt>
 <dd><p>Create ‘scenario_x/postprocess’ folder</p>
@@ -221,6 +208,18 @@
 <dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_scenario">
 <span class="sig-name descname"><span class="pre">check_scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_scenario" title="Link to this definition"></a></dt>
 <dd><p>Create ‘scenario_x’ folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_wsinput">
+<span class="sig-name descname"><span class="pre">check_wsinput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_wsinput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_wsinput" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x/modelinput’ folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_wsoutput">
+<span class="sig-name descname"><span class="pre">check_wsoutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_wsoutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_wsoutput" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x/modeloutput’ folder</p>
 </dd></dl>
 
 <dl class="py method">
@@ -254,34 +253,6 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>home_folder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Folder path of home.</p></li>
-<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_cnwsinput_folder">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_cnwsinput_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_cnwsinput_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_cnwsinput_folder" title="Link to this definition"></a></dt>
-<dd><p>Check and create home/scenario_x/modelinput folder</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
-<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_cnwsoutput_folder">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_cnwsoutput_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_cnwsoutput_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_cnwsoutput_folder" title="Link to this definition"></a></dt>
-<dd><p>Check and create home/scenario_x/modeloutput folder</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
 <li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
 </ul>
 </dd>
@@ -392,6 +363,34 @@ string (e.g. A, B, …)</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_wsinput_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_wsinput_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_wsinput_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_wsinput_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x/modelinput folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_wsoutput_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_wsoutput_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_wsoutput_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_wsoutput_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x/modeloutput folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_years_folder">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_years_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_years_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_years_folder" title="Link to this definition"></a></dt>
 <dd><p>Check and create home/scenario_x/year folder</p>
@@ -483,7 +482,7 @@ string (e.g. A, B, …)</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>buffers</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>Holding buffer properties, with columns,</p>
+<li><p><strong>buffers</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>Holding buffer properties, with columns,</p>
 <ul>
 <li><p><em>buffercap</em> (float): Volume</p></li>
 <li><p><em>hdam</em> (float): Height dam</p></li>
@@ -496,7 +495,7 @@ string (e.g. A, B, …)</p></li>
 <li><p><em>BUF_ID</em> (float): Buffer id</p></li>
 </ul>
 </p></li>
-<li><p><strong>forced_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>Forced routing table with columns,
+<li><p><strong>forced_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>Forced routing table with columns,
 see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#forcedroutingdata" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 <ul>
 <li><p><em>NR</em> (int):</p></li>
@@ -506,7 +505,7 @@ see <a class="reference external" href="https://watem-sedem.github.io/watem-sede
 <li><p><em>target row</em> (int): target pixel row</p></li>
 </ul>
 </p></li>
-<li><p><strong>river_underground</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>River underground routing table with columns, see
+<li><p><strong>river_underground</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>River underground routing table with columns, see
 <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#forcedroutingdata" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 <ul>
 <li><p><em>NR</em> (int):</p></li>
@@ -534,7 +533,7 @@ see <a class="reference external" href="https://watem-sedem.github.io/watem-sede
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>forced_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>Forced routing table with columns,
+<li><p><strong>forced_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>Forced routing table with columns,
 see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#forcedroutingdata" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 <ul>
 <li><p><em>NR</em> (int):</p></li>
@@ -544,7 +543,7 @@ see <a class="reference external" href="https://watem-sedem.github.io/watem-sede
 <li><p><em>target row</em> (int): target pixel row</p></li>
 </ul>
 </p></li>
-<li><p><strong>river_underground</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>River underground routing table with columns, see
+<li><p><strong>river_underground</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>River underground routing table with columns, see
 <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#forcedroutingdata" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 <ul>
 <li><p><em>NR</em> (int):</p></li>
@@ -565,7 +564,7 @@ see <a class="reference external" href="https://watem-sedem.github.io/watem-sede
 <dd><p>Add buffer extension and buffer parameters to config file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffers</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>Holding buffer properties, with columns,</p>
+<dd class="field-odd"><p><strong>buffers</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>Holding buffer properties, with columns,</p>
 <ul class="simple">
 <li><p><em>buffercap</em> (float): Volume</p></li>
 <li><p><em>hdam</em> (float): Height dam</p></li>
@@ -702,6 +701,43 @@ the ini-file or the value of the section-option None is returned.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a> or <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)">int</a> or <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a> or <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.ini.get_options_from_ini">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.ini.</span></span><span class="sig-name descname"><span class="pre">get_options_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/ini.html#get_options_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.ini.get_options_from_ini" title="Link to this definition"></a></dt>
+<dd><p>Gets all options from a certain section of an ini-file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the ini-file</p></li>
+<li><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Name of the desired section</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list with all options present in the section of the ini-file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.ini.get_sections_from_ini">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.ini.</span></span><span class="sig-name descname"><span class="pre">get_sections_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/ini.html#get_sections_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.ini.get_sections_from_ini" title="Link to this definition"></a></dt>
+<dd><p>Gets all sections from an ini-file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the ini-file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list with all sections present in the ini-file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -892,7 +928,7 @@ of routing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -959,7 +995,7 @@ For documentation, see <a class="reference external" href="https://watem-sedem.g
 <dd><p>Getter total sediment attribute.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#totalsedimenttxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.
 For explanation on colmun variables of dataframe: see
-<code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.cnwsoutput.load_total_sediment_file()</span></code>.</p>
+<a class="reference internal" href="#pywatemsedem.io.modeloutput.load_total_sediment_file" title="pywatemsedem.io.modeloutput.load_total_sediment_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.load_total_sediment_file()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -979,8 +1015,8 @@ and up_edges must be present in the array from the segments raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>adj_edges</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – Loaded adjacent edges text file, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#adjsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p></li>
-<li><p><strong>up_edges</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – Loaded up edges text file, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#upstrsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p></li>
+<li><p><strong>adj_edges</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – Loaded adjacent edges text file, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#adjsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p></li>
+<li><p><strong>up_edges</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – Loaded up edges text file, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#upstrsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Segment raster array</p></li>
 </ul>
 </dd>
@@ -1003,7 +1039,7 @@ from high to low</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
+<li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe()</span></code>)</p></li>
 <li><p><strong>profile</strong> (<em>rasterio.profiles</em>) – See <a class="reference external" href="https://rasterio.readthedocs.io/en/stable/api/rasterio.html#rasterio.open" title="(in rasterio)"><code class="xref py py-func docutils literal notranslate"><span class="pre">rasterio.open()</span></code></a></p></li>
 <li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – x percentage highest load that the user wants to analyse</p></li>
@@ -1040,8 +1076,8 @@ sediment.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rst_buffer</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of buffer raster with buffer id’s</p></li>
-<li><p><strong>rst_sediin</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><em>ppathlib.Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of CNWS SediIn raster, incoming sediment per pixel</p></li>
-<li><p><strong>rst_sediout</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of CNWS SediOut raster, outgoing sediment per pixel</p></li>
+<li><p><strong>rst_sediin</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><em>ppathlib.Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of WaTEM/SEDEM SediIn raster, incoming sediment per pixel</p></li>
+<li><p><strong>rst_sediout</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of WaTEM/SEDEM SediOut raster, outgoing sediment per pixel</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1055,7 +1091,7 @@ sediment.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1067,7 +1103,7 @@ sediment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.io.modeloutput.open_txt_routing_file" title="pywatemsedem.io.modeloutput.open_txt_routing_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.open_txt_routing_file()</span></code></a></p></li>
+<li><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.io.modeloutput.open_txt_routing_file" title="pywatemsedem.io.modeloutput.open_txt_routing_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.open_txt_routing_file()</span></code></a></p></li>
 <li><p><strong>rstparams</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – gdal dictionary holding all metadata for idrisi rasters</p></li>
 <li><p><strong>extent</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – min and max of rectangular frame to clip df [xmin, xmax, ymin, ymax]</p></li>
 </ul>
@@ -1076,7 +1112,7 @@ sediment.</p>
 <dd class="field-even"><p><strong>df_routing</strong> – See <a class="reference internal" href="#pywatemsedem.io.modeloutput.open_txt_routing_file" title="pywatemsedem.io.modeloutput.open_txt_routing_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.open_txt_routing_file()</span></code></a></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1226,7 +1262,7 @@ and shapes dictionary</p>
 <dd class="field-even"><p><strong>subcatchmentpriority</strong> – catchment shapes with number of catchment</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1268,7 +1304,8 @@ and shapes dictionary</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.load_total_sediment_file">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">load_total_sediment_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt_total_sediment_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#load_total_sediment_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.load_total_sediment_file" title="Link to this definition"></a></dt>
-<dd><p>Load the total sediment file of CNWS written in CNWS dict_output map</p>
+<dd><p>Load the total sediment file of WaTEM/SEDEM written in WaTEM/SEDEM
+dict_output map</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>txt_total_sediment_file</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File Path of the sediment file</p>
@@ -1294,7 +1331,7 @@ and shapes dictionary</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.make_routing_vct_saga">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">make_routing_vct_saga</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt_routing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_prckrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rstparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#make_routing_vct_saga"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.make_routing_vct_saga" title="Link to this definition"></a></dt>
-<dd><p>Generate a routing vct routing file (added with CNWS landuse) based on
+<dd><p>Generate a routing vct routing file (added with WaTEM/SEDEM landuse) based on
 the routing table
 extent and tilenumber are defined to make a routing file only for a
 certain extent</p>
@@ -1302,7 +1339,7 @@ certain extent</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>txt_routing</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of the WaTEM/SEDEM routing tabl</p></li>
-<li><p><strong>rst_prckrt</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – name of CNWS input ‘perceelskaart’</p></li>
+<li><p><strong>rst_prckrt</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – name of WaTEM/SEDEM input ‘perceelskaart’</p></li>
 <li><p><strong>vct_out</strong> – name of the shape outputfile</p></li>
 <li><p><strong>rstparams</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – gdal dictionary holding all metadata for idrisi rasters</p></li>
 <li><p><strong>extent</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>default None</em>) – list holding value of extent to consider, xmin,ymin,xmax,ymax</p></li>
@@ -1386,7 +1423,7 @@ x is determined by threshold.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1440,7 +1477,7 @@ this rectangular geographical extent</p>
 <dd><p>Remove river routing from routing dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – Long format of routing table</p>
+<dd class="field-odd"><p><strong>df_routing</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – Long format of routing table</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Long format of routing table, with river routing removed</p>
@@ -1492,7 +1529,7 @@ of all the load in a catchment. If this is true, adapt threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
+<li><p><strong>df_sediexport</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – Data Frame format of SediExport raster (format: see
 <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe()</span></code>)</p></li>
 <li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – See <a class="reference internal" href="#pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks" title="pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks()</span></code></a></p></li>
 </ul>
@@ -1516,7 +1553,7 @@ of all the load in a catchment. If this is true, adapt threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
 </ul>
 </dd>
@@ -1570,7 +1607,7 @@ changes lower bound to smallest value above zero.</p>
 <dd class="field-even"><p><strong>norm</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.10.8)">matplotlib.colors.Normalize</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.10.9)">matplotlib.colors.Normalize</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1581,13 +1618,13 @@ changes lower bound to smallest value above zero.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – [left, bottom, right, upper] as obtained from RasterProperties.bounds
 (See <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>)</p></li>
-<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.10.8)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.10.8)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
+<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.10.9)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.10.9)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
 <li><p><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default = True</em>) – Choice of displaying a colorbar</p></li>
 <li><p><strong>ticks</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>optional</em>) – Supply [min, 25th percentile, 50th percentile ,75th percentile, max]
 when norm is used!</p></li>
@@ -1604,19 +1641,36 @@ when norm is used!</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.plots.plot_cumulative_sedimentload">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.plots.</span></span><span class="sig-name descname"><span class="pre">plot_cumulative_sedimentload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/plots.html#plot_cumulative_sedimentload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.plots.plot_cumulative_sedimentload" title="Link to this definition"></a></dt>
+<dd><p>Make a cumulative plot of the ordered sediment load values (high to low)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – Data with cumulative sediment load
+- <em>value</em> (float): sediment load value
+- <em>cum_perc</em> (float): cumulative percentage
+- <em>rank</em> (float): rank</p></li>
+<li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><em>pathlib Path</em>) – File path of output figure</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.plots.plot_discrete_raster">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.plots.</span></span><span class="sig-name descname"><span class="pre">plot_discrete_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cividis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/plots.html#plot_discrete_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.plots.plot_discrete_raster" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – [left, bottom, right, upper] as obtained from RasterProperties.bounds
 (See <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>)</p></li>
 <li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Supply unique string for each value</p></li>
-<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.10.8)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis</em>)</p></li>
-<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.10.8)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
+<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.10.9)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis</em>)</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="(in Matplotlib v3.10.9)"><em>matplotlib.colors.Normalize</em></a><em>, </em><em>optional</em>) – normalisation function for colormapping</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1630,19 +1684,33 @@ when norm is used!</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.plots.plot_landuse">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.plots.</span></span><span class="sig-name descname"><span class="pre">plot_landuse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/plots.html#plot_landuse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.plots.plot_landuse" title="Link to this definition"></a></dt>
+<dd><p>Plot landuse maps with standardized colors for the different classes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy array</em>) – the landuse raster</p></li>
+<li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the nodata value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.plots.plot_output_raster">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.plots.</span></span><span class="sig-name descname"><span class="pre">plot_output_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/plots.html#plot_output_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.plots.plot_output_raster" title="Link to this definition"></a></dt>
 <dd><p>Standard non-linear continuous raster plot for output raster</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)"><em>matplotlib.figure.Figure</em></a>)</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><em>matplotlib.figure.Figure</em></a>)</p></li>
 <li><p><strong>ax</strong> (<em>matplotlib.pyplot.axis</em>)</p></li>
 <li><p><strong>arr</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Contains raster data</p></li>
 <li><p><strong>mask</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – Contains raster data, 0 outside of domain</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – [left, bottom, right, upper] as obtained from RasterProperties.bounds
 (See <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>)</p></li>
-<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.10.8)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
+<li><p><strong>cmap</strong> (<em>string</em><em> or </em><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Colormap.html#matplotlib.colors.Colormap" title="(in Matplotlib v3.10.9)"><em>matplotlib.colors.Colormap</em></a><em>, </em><em>default = 'cividis'</em>)</p></li>
 <li><p><strong>ticks</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>optional</em>) – When no list is given, 0th, 25th, 50th, 75th and 100th percentile are used</p></li>
 </ul>
 </dd>

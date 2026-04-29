@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -106,10 +106,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colors</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineString</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">..geo.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Factory</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Factory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_raster_properties_raster_with_template</span><span class="p">,</span>
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
     <span class="n">create_filename</span><span class="p">,</span>
@@ -123,9 +121,14 @@
     <span class="n">rst_to_vct_points</span><span class="p">,</span>
     <span class="n">write_arr_as_rst</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">axes_creator</span>  <span class="c1"># hvplot_continuous_raster,</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_scale_enabler</span><span class="p">,</span> <span class="n">plot_continuous_raster</span><span class="p">,</span> <span class="n">plot_output_raster</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..io.valid</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_array_type</span><span class="p">,</span> <span class="n">valid_boundaries</span><span class="p">,</span> <span class="n">valid_non_nan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">axes_creator</span><span class="p">,</span>
+    <span class="n">log_scale_enabler</span><span class="p">,</span>
+    <span class="n">plot_continuous_raster</span><span class="p">,</span>
+    <span class="n">plot_cumulative_sedimentload</span><span class="p">,</span>
+    <span class="n">plot_output_raster</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.valid</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_array_type</span><span class="p">,</span> <span class="n">valid_boundaries</span><span class="p">,</span> <span class="n">valid_non_nan</span>
 
 <span class="n">IMPLEMENTED_RASTER_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 <span class="n">COLORMAP</span> <span class="o">=</span> <span class="s2">&quot;cividis&quot;</span>
@@ -141,7 +144,7 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;AbstractRaster class with model outputs as attributes. Modeloutput class</span>
 <span class="sd">        serves the goal of automating the reading in, checking and visualisation</span>
-<span class="sd">        of the output data of the CNWS model.</span>
+<span class="sd">        of the output data of the WaTEM/SEDEM model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -560,7 +563,7 @@
 
 <span class="sd">        For documentation, see :ref:`here &lt;watemsedem:totalsedimenttxt&gt;`.</span>
 <span class="sd">        For explanation on colmun variables of dataframe: see</span>
-<span class="sd">        :func:`pywatemsedem.pywatemsedem.cnwsoutput.load_total_sediment_file`.</span>
+<span class="sd">        :func:`pywatemsedem.io.modeloutput.load_total_sediment_file`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment</span>
 
@@ -1089,7 +1092,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">make_routing_vct_saga</span><span class="p">(</span>
     <span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tile_number</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a routing vct routing file (added with CNWS landuse) based on</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a routing vct routing file (added with WaTEM/SEDEM landuse) based on</span>
 <span class="sd">    the routing table</span>
 <span class="sd">    extent and tilenumber are defined to make a routing file only for a</span>
 <span class="sd">    certain extent</span>
@@ -1099,7 +1102,7 @@
 <span class="sd">    txt_routing: str or pathlib.Path | str</span>
 <span class="sd">        File path of the WaTEM/SEDEM routing tabl</span>
 <span class="sd">    rst_prckrt: str</span>
-<span class="sd">        name of CNWS input &#39;perceelskaart&#39;</span>
+<span class="sd">        name of WaTEM/SEDEM input &#39;perceelskaart&#39;</span>
 <span class="sd">    vct_out:</span>
 <span class="sd">        name of the shape outputfile</span>
 <span class="sd">    rstparams: dict</span>
@@ -1388,8 +1391,7 @@
     <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">&quot;VALUE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">&quot;VALUE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int32&quot;</span><span class="p">)</span>
     <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">&quot;AREA_HA&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="mf">10000.0</span>
     <span class="n">gdf_subcatchments</span> <span class="o">=</span> <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">rasterprop</span><span class="p">[</span><span class="s2">&quot;epsg&quot;</span><span class="p">])</span>
-    <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">)</span>
-    <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">)</span>
+    <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span>
         <span class="p">(</span><span class="n">rst_subcatchments</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">rst_subcatchments</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;.sdat&quot;</span><span class="p">)),</span>
@@ -1451,7 +1453,7 @@
             <span class="c1"># assign sediout value to self.subcatchmprioritSHP</span>
             <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_subcatch</span><span class="p">)</span>
             <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;sediout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_sediout</span>
-            <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatch</span><span class="p">)</span>
+            <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatch</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">vct_subcatch</span> <span class="o">=</span> <span class="n">template_name</span>
             <span class="n">rst_subcatch</span> <span class="o">=</span> <span class="n">vct_subcatch</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.sdat&quot;</span><span class="p">)</span>
@@ -1475,8 +1477,7 @@
 
     <span class="n">gdf_subcatchmpriority</span><span class="o">.</span><span class="n">crs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">epsg</span><span class="p">}</span>
     <span class="n">dst</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;priority_catchments.shp&quot;</span>
-    <span class="n">gdf_subcatchmpriority</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
-    <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
+    <span class="n">gdf_subcatchmpriority</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">gdf_subcatchmpriority</span></div>
 
@@ -1569,9 +1570,9 @@
 <span class="sd">    rst_buffer: str or pathlib.Path | str</span>
 <span class="sd">        File path of buffer raster with buffer id&#39;s</span>
 <span class="sd">    rst_sediin: str or ppathlib.Path | str</span>
-<span class="sd">        File path of CNWS SediIn raster, incoming sediment per pixel</span>
+<span class="sd">        File path of WaTEM/SEDEM SediIn raster, incoming sediment per pixel</span>
 <span class="sd">    rst_sediout: str or pathlib.Path | str</span>
-<span class="sd">        File path of CNWS SediOut raster, outgoing sediment per pixel</span>
+<span class="sd">        File path of WaTEM/SEDEM SediOut raster, outgoing sediment per pixel</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1965,7 +1966,8 @@
 <div class="viewcode-block" id="load_total_sediment_file">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.load_total_sediment_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_total_sediment_file</span><span class="p">(</span><span class="n">txt_total_sediment_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the total sediment file of CNWS written in CNWS dict_output map</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the total sediment file of WaTEM/SEDEM written in WaTEM/SEDEM</span>
+<span class="sd">    dict_output map</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>

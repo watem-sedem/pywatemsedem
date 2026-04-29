@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -93,11 +93,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.geo.rasterproperties</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyogrio</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyproj</span><span class="w"> </span><span class="kn">import</span> <span class="n">CRS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyproj.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">CRSError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rasterio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Affine</span>
@@ -429,87 +427,6 @@
 <span class="sd">        numpy.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nrows</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="get_bounds_from_vct">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.get_bounds_from_vct">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_bounds_from_vct</span><span class="p">(</span><span class="n">vct_catchment</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">n_pixels_buffer</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get bounds from vector catchment.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    vct_catchment: pathlib.Path</span>
-<span class="sd">        Vector file of catchment.</span>
-<span class="sd">    resolution: int</span>
-<span class="sd">        Spatial resolution, see</span>
-<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">    n_pixels_buffer: int, default 5</span>
-<span class="sd">        Number of pixels that have to be taken into account to expand boundaries</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bounds: list</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_bounds</span><span class="p">(</span><span class="n">vct_catchment</span><span class="p">)</span>
-
-    <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
-        <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
-        <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
-        <span class="nb">round</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="n">n_pixels_buffer</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">,</span>
-    <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">bounds</span></div>
-
-
-
-<div class="viewcode-block" id="synchronize_bounds">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.synchronize_bounds">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">synchronize_bounds</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize target geographical bounds of a raster with source bounds given a</span>
-<span class="sd">     raster resolution.</span>
-
-<span class="sd">    Bounds are defined as a list of  xmin, ymin, xmax and ymax-values of a raster. The</span>
-<span class="sd">    boundaries leading to the smallest geographical model are selected as new</span>
-<span class="sd">    boundaries.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    target: list</span>
-<span class="sd">        To check target boundaries, see</span>
-<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.</span>
-<span class="sd">    source: pathlib.Path</span>
-<span class="sd">        Source boundaries to which target boundaries have to be checked, see</span>
-<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.</span>
-<span class="sd">    resolution: int</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bounds: list</span>
-<span class="sd">        Updated bounds</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">check</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># xmin en ymin</span>
-            <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">%</span> <span class="n">resolution</span>
-            <span class="k">if</span> <span class="n">rest</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">check</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">rest</span>
-
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># xmax en ymax</span>
-            <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">])</span> <span class="o">%</span> <span class="n">resolution</span>
-            <span class="k">if</span> <span class="n">rest</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">check</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">rest</span> <span class="o">+</span> <span class="n">resolution</span>
-    <span class="k">if</span> <span class="n">check</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Synchronizing x/y-axis model boundaries with input raster `</span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">`&quot;</span>
-        <span class="p">)</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">target</span></div>
 
 </pre></div>
 

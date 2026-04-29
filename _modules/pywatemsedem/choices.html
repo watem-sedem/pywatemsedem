@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.choices &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem.choices &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -95,7 +95,7 @@
   <h1>Source code for pywatemsedem.choices</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.ini</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_item_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.ini</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_item_from_ini</span><span class="p">,</span> <span class="n">get_options_from_ini</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -178,14 +178,26 @@
 <div class="viewcode-block" id="UserChoice.read_value_from_ini">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.choices.UserChoice.read_value_from_ini">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_value_from_ini</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_ini</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read value from an ini-file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read value from an ini-file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        default_ini: pathlib.Path</span>
+<span class="sd">            File path of the ini-file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">get_item_from_ini</span><span class="p">(</span><span class="n">default_ini</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="UserChoice.read_default_value_from_ini">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.choices.UserChoice.read_default_value_from_ini">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_default_value_from_ini</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_ini</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read default value from an ini-file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read default value from an ini-file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ini: pathlib.Path</span>
+<span class="sd">            File path of the ini-file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_value</span> <span class="o">=</span> <span class="n">get_item_from_ini</span><span class="p">(</span>
             <span class="n">default_ini</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
         <span class="p">)</span></div>
@@ -241,10 +253,19 @@
 <div class="viewcode-block" id="WSMixin.read_values_from_ini">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.choices.WSMixin.read_values_from_ini">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_values_from_ini</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the values present in an ini-file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ini: pathlib.Path</span>
+<span class="sd">            File path of the ini-file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">UserChoice</span><span class="p">):</span>
-                <span class="n">attribute</span><span class="o">.</span><span class="n">read_value_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">)</span></div>
+                <span class="n">available_options</span> <span class="o">=</span> <span class="n">get_options_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">attribute</span><span class="o">.</span><span class="n">section</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">available_options</span><span class="p">:</span>
+                    <span class="n">attribute</span><span class="o">.</span><span class="n">read_value_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">)</span></div>
 </div>
 
 
@@ -1079,8 +1100,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        extensions: pycnws.core.choices.WSExtensions</span>
-<span class="sd">            Instance of :class:`pycnws catchment &lt;pycnws.core.choices.WSExtensions&gt;`</span>
+<span class="sd">        extensions: pywatemsedem.choices.WSExtensions</span>
+<span class="sd">            Instance of :class:`pywatemsedem choices</span>
+<span class="sd">            &lt;pywatemsedem.choices.WSExtensions&gt;`</span>
 <span class="sd">            containing the settings on the used model extensions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 

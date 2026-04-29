@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -373,12 +373,6 @@
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.parcelslanduse.map_input_array_on_array"><code class="docutils literal notranslate"><span class="pre">map_input_array_on_array()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.plots">pywatemsedem.plots module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.plots.plot_cumulative_sedimentload"><code class="docutils literal notranslate"><span class="pre">plot_cumulative_sedimentload()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.plots.plot_landuse"><code class="docutils literal notranslate"><span class="pre">plot_landuse()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.plots.plot_time_series_for_in_river_points"><code class="docutils literal notranslate"><span class="pre">plot_time_series_for_in_river_points()</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.postprocess">pywatemsedem.postprocess module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.postprocess.PostProcess"><code class="docutils literal notranslate"><span class="pre">PostProcess</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.postprocess.PostProcess.add_sediment_to_subcatchments"><code class="docutils literal notranslate"><span class="pre">PostProcess.add_sediment_to_subcatchments()</span></code></a></li>
@@ -460,7 +454,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.scenario">pywatemsedem.scenario module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.CNWSException"><code class="docutils literal notranslate"><span class="pre">CNWSException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario"><code class="docutils literal notranslate"><span class="pre">Scenario</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.bufferoutlet"><code class="docutils literal notranslate"><span class="pre">Scenario.bufferoutlet</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.buffers"><code class="docutils literal notranslate"><span class="pre">Scenario.buffers</span></code></a></li>
@@ -499,6 +492,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.zip"><code class="docutils literal notranslate"><span class="pre">Scenario.zip()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.WSException"><code class="docutils literal notranslate"><span class="pre">WSException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.add_tillage_technical_measures_to_parcels"><code class="docutils literal notranslate"><span class="pre">add_tillage_technical_measures_to_parcels()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.assign_buffer_id_to_df_buffer"><code class="docutils literal notranslate"><span class="pre">assign_buffer_id_to_df_buffer()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.convert_grass_strips_to_agricultural_fields"><code class="docutils literal notranslate"><span class="pre">convert_grass_strips_to_agricultural_fields()</span></code></a></li>
@@ -525,15 +519,15 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.testing">pywatemsedem.testing module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.check_equal_rst"><code class="docutils literal notranslate"><span class="pre">check_equal_rst()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.compute_difference_table_cnws_buffers"><code class="docutils literal notranslate"><span class="pre">compute_difference_table_cnws_buffers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.compute_difference_table_cnws_prckrt_rasters"><code class="docutils literal notranslate"><span class="pre">compute_difference_table_cnws_prckrt_rasters()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.compute_difference_table_cnws_rasters"><code class="docutils literal notranslate"><span class="pre">compute_difference_table_cnws_rasters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.compute_difference_table_ws_buffers"><code class="docutils literal notranslate"><span class="pre">compute_difference_table_ws_buffers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.compute_difference_table_ws_prckrt_rasters"><code class="docutils literal notranslate"><span class="pre">compute_difference_table_ws_prckrt_rasters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.compute_difference_table_ws_rasters"><code class="docutils literal notranslate"><span class="pre">compute_difference_table_ws_rasters()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.equal_ini"><code class="docutils literal notranslate"><span class="pre">equal_ini()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.equal_rst"><code class="docutils literal notranslate"><span class="pre">equal_rst()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.equal_table"><code class="docutils literal notranslate"><span class="pre">equal_table()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.equal_total_sediment"><code class="docutils literal notranslate"><span class="pre">equal_total_sediment()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.process_arr_cnwsperceelskaart"><code class="docutils literal notranslate"><span class="pre">process_arr_cnwsperceelskaart()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.process_arr_default"><code class="docutils literal notranslate"><span class="pre">process_arr_default()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.process_arr_wsperceelskaart"><code class="docutils literal notranslate"><span class="pre">process_arr_wsperceelskaart()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.testing.serialize_process_raster"><code class="docutils literal notranslate"><span class="pre">serialize_process_raster()</span></code></a></li>
 </ul>
 </li>

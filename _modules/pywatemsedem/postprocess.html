@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.postprocess &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem.postprocess &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -108,7 +108,6 @@
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
     <span class="n">compute_statistics_rasters_per_polygon_vector</span><span class="p">,</span>
     <span class="n">create_filename</span><span class="p">,</span>
-    <span class="n">create_spatial_index</span><span class="p">,</span>
     <span class="n">execute_saga</span><span class="p">,</span>
     <span class="n">get_mask_template</span><span class="p">,</span>
     <span class="n">get_rstparams</span><span class="p">,</span>
@@ -131,10 +130,9 @@
     <span class="n">make_routing_vct_saga</span><span class="p">,</span>
     <span class="n">open_txt_routing_file</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.scenario</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNWSException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">package_resource</span><span class="p">,</span> <span class="n">zip_folder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.plots</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_cumulative_sedimentload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.scenario</span><span class="w"> </span><span class="kn">import</span> <span class="n">WSException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">package_resource</span><span class="p">,</span> <span class="n">zip_folder</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -267,7 +265,6 @@
         <span class="c1"># general</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsg</span> <span class="o">=</span> <span class="n">epsg</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catchment_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subcatchments_name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scenario_</span><span class="si">{</span><span class="n">scenario_label</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span> <span class="o">=</span> <span class="n">scenario_label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">year</span>
@@ -279,14 +276,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cfolder</span><span class="o">.</span><span class="n">check_catchment_folder</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_scenario</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_years</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_cnwsinput</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_cnwsoutput</span><span class="p">(</span><span class="n">error_if_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_wsinput</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_wsoutput</span><span class="p">(</span><span class="n">error_if_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">check_postprocessing</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># get raster properties based on DTM .tif file in Data_Bekken</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rstparams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterprop</span> <span class="o">=</span> <span class="n">get_rstparams</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span><span class="p">,</span>
-            <span class="n">catchmentname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">catchment_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">wsinput_folder</span><span class="p">,</span>
             <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># intialize functionalities factory</span>
@@ -294,11 +290,11 @@
             <span class="n">resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsg</span><span class="p">,</span> <span class="o">-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rasterprop</span><span class="p">[</span><span class="s2">&quot;minmax&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span> <span class="o">/</span> <span class="s2">&quot;mask.rst&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">wsinput_folder</span> <span class="o">/</span> <span class="s2">&quot;mask.rst&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arr_bindomain</span> <span class="o">=</span> <span class="n">get_mask_template</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">cnwsinput_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">wsinput_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment_name</span>
         <span class="p">)</span>
 
         <span class="c1"># regenerate user choices based on generated files</span>
@@ -316,14 +312,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">txt_routing_nonriver</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_sediexport</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_sewerin</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rst_endpoints_sewer</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rst_endpoints_ditch</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rst_sinks</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing_sediout</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rst_subcatchment_sinks</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_subcatchment_sinks</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vct_subcatchment_priority</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vct_subcatchment_priority</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -786,7 +778,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">rasterprop</span><span class="p">[</span><span class="s2">&quot;epsg&quot;</span><span class="p">],</span> <span class="n">allow_override</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
             <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="s2">&quot;priority_catchments_merged.shp&quot;</span>
-            <span class="n">gpd_priorities</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span></div>
+            <span class="n">gpd_priorities</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.convert_rst_sediexport_to_vct">
@@ -830,7 +822,7 @@
                 <span class="sa">f</span><span class="s2">&quot;sewer_and_riversinks_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">catchment_name</span><span class="si">}</span><span class="s2">_s</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span><span class="si">}</span><span class="s2">.shp&quot;</span>
             <span class="p">)</span>
             <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="n">vct_out</span>
-            <span class="n">gdf_sewerin</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span></div>
+            <span class="n">gdf_sewerin</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.compute_source_sinks">
@@ -871,7 +863,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">rasterprop</span><span class="p">[</span><span class="s2">&quot;epsg&quot;</span><span class="p">],</span> <span class="n">allow_override</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="c1"># check lijn hieronder</span>
-        <span class="n">df_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">dict_vct_subcatchmsinks</span><span class="p">[</span><span class="n">percentage</span><span class="p">])</span>
+        <span class="n">df_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span>
+            <span class="n">dict_vct_subcatchmsinks</span><span class="p">[</span><span class="n">percentage</span><span class="p">],</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+        <span class="p">)</span>
         <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">)</span></div>
 
 
@@ -1064,8 +1058,7 @@
         <span class="n">gdf_routing_sediout</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_routing_sediout</span><span class="p">)</span>
         <span class="n">gdf_routing_out_of_parcel</span> <span class="o">=</span> <span class="n">select_routing_out_of_parcel</span><span class="p">(</span><span class="n">gdf_routing_sediout</span><span class="p">)</span>
         <span class="n">out_shp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="s2">&quot;routing_out_of_parcel.shp&quot;</span>
-        <span class="n">gdf_routing_out_of_parcel</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">out_shp</span><span class="p">)</span>
-        <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">out_shp</span><span class="p">)</span>
+        <span class="n">gdf_routing_out_of_parcel</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">out_shp</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
         <span class="n">df_prckrt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_sedout_parcel</span><span class="p">(</span><span class="n">gdf_routing_out_of_parcel</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">df_prckrt</span></div>
@@ -1135,8 +1128,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing_sediout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_sediout.shp&quot;</span>
         <span class="p">)</span>
-        <span class="n">gdf_routing_sediout</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_routing_sediout</span><span class="p">)</span>
-        <span class="n">create_spatial_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_routing_sediout</span><span class="p">)</span>
+        <span class="n">gdf_routing_sediout</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_routing_sediout</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">gdf_routing_sediout</span></div>
 
@@ -1215,8 +1207,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">vct_out</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="n">gdf_routingsediout</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_routingsediout</span><span class="p">)</span>
             <span class="n">gdf_routingsediout</span> <span class="o">=</span> <span class="n">gdf_routingsediout</span><span class="p">[</span><span class="n">gdf_routingsediout</span><span class="p">[</span><span class="s2">&quot;lnduTarg&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
-            <span class="n">gdf_routingsediout</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
-            <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span></div>
+            <span class="n">gdf_routingsediout</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.get_total_sediment">
@@ -1360,7 +1351,7 @@
 
             <span class="k">if</span> <span class="n">cols</span><span class="p">:</span>
                 <span class="n">gdf_buffer</span> <span class="o">=</span> <span class="n">gdf_buffer</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
-            <span class="n">gdf_buffer</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
+            <span class="n">gdf_buffer</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">gdf_buffer</span>
 
@@ -1557,7 +1548,7 @@
             <span class="p">)</span>
             <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">&quot;sedar_ha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">&quot;sedar&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">10000.0</span>
             <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;VALUE&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">)</span></div>
+            <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.add_segment_results_to_vct">
@@ -1597,8 +1588,7 @@
                 <span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span><span class="si">}</span><span class="s2">.shp&quot;</span>
             <span class="p">)</span>
 
-            <span class="n">df_waterline</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_riversegment</span><span class="p">)</span>
-            <span class="n">create_spatial_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_riversegment</span><span class="p">)</span>
+            <span class="n">df_waterline</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vct_riversegment</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;txt_total_sediment_segments&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> or &quot;</span>
@@ -1640,7 +1630,7 @@
             <span class="n">df_sewerin</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s2">&quot;ids&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
         <span class="p">)</span>
         <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ids&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">)</span></div>
+        <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.make_routing_vct">
@@ -1736,7 +1726,7 @@
                 <span class="p">)</span>
 
                 <span class="n">vct_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">postprocess_folder</span> <span class="o">/</span> <span class="n">vct_out</span>
-                <span class="n">gpd_bindomain</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
+                <span class="n">gpd_bindomain</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gpd_bindomain</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> sinks in routing!&quot;</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -1768,11 +1758,11 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;set_no_data_rst&#39; failed for WaTEM/SEDEM perceelskaart.&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">CNWSException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">WSException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;check if scenario is defined correctly&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">CNWSException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">WSException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PostProcess.calculate_areas_prckrt">
@@ -2000,7 +1990,7 @@
 <span class="sd">    rst_grass_strips: str or ppathlib.Path</span>
 <span class="sd">        raster grass strips with id&#39;s filename</span>
 <span class="sd">    rst_prckrt: str or pathlib.Path</span>
-<span class="sd">        raster CNWS perceelskaart</span>
+<span class="sd">        raster WaTEM/SEDEM perceelskaart</span>
 <span class="sd">    rst_sediout: str or pathlib.Path</span>
 <span class="sd">        File path WaTEM/SEDEM output raster &#39;SediOut_kg.rst&#39;</span>
 
@@ -2298,7 +2288,7 @@
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.postprocess.filter_grass_strips_with_prckrt">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">filter_grass_strips_with_prckrt</span><span class="p">(</span><span class="n">df_grass_strips</span><span class="p">,</span> <span class="n">df_prckrt</span><span class="p">,</span> <span class="n">profile_grass_strips</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Use the CNWS &#39;perceelskaart&#39; to filter grass strips (lay-over infr. and</span>
+<span class="sd">    Use the WaTEM/SEDEM &#39;perceelskaart&#39; to filter grass strips (lay-over infr. and</span>
 <span class="sd">    river cells over gras_buffer_id)</span>
 
 <span class="sd">    Parameters</span>
@@ -2470,10 +2460,10 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    rst_prckrt: string or pathlib.Path</span>
-<span class="sd">        File path of the CNWS modelinput perceelskaart, note that the</span>
+<span class="sd">        File path of the WaTEM/SEDEM modelinput perceelskaart, note that the</span>
 <span class="sd">        parcels_ids are limited by int16 (for WaTEM/SEDEM Pascal)</span>
 <span class="sd">    rst_watereros: string or pathlib.Path</span>
-<span class="sd">        File path of the CNWS modelouput watereros map</span>
+<span class="sd">        File path of the WaTEM/SEDEM modelouput watereros map</span>
 <span class="sd">    rst_parcels_ids: string or pathlib.Path</span>
 <span class="sd">        File path of the rasterfile holding the parcels_ids, not limited by</span>
 <span class="sd">        int16</span>
@@ -2536,7 +2526,7 @@
         <span class="n">df_netto_erosion</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">txt_out</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">flag_join_vct_parcels</span><span class="p">:</span>
             <span class="n">vct_out</span> <span class="o">=</span> <span class="n">fmap</span> <span class="o">/</span> <span class="s2">&quot;netto_erosion_parcels.shp&quot;</span>
-            <span class="n">gdf_prcln</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
+            <span class="n">gdf_prcln</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_netto_erosion</span><span class="p">,</span> <span class="n">gdf_prcln</span></div>
 
@@ -3000,7 +2990,7 @@
     <span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;cumperc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;cumsum&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;sediment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span> <span class="o">*</span> <span class="mi">100</span>
     <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
     <span class="n">gdf_out</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">gdf_out</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span></div>
+    <span class="n">gdf_out</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span></div>
 
 
 

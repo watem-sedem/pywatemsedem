@@ -109,14 +109,6 @@ pywatemsedem.parcelslanduse module
    :show-inheritance:
    :undoc-members:
 
-pywatemsedem.plots module
--------------------------
-
-.. automodule:: pywatemsedem.plots
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 pywatemsedem.postprocess module
 -------------------------------
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo package &mdash; pywatemsedem 1.0.0 documentation</title>
+  <title>pywatemsedem.geo package &mdash; pywatemsedem 1.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../_static/documentation_options.js?v=fc837d61"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -72,7 +72,6 @@
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.grasstrips">pywatemsedem.grasstrips module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.ktc">pywatemsedem.ktc module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.parcelslanduse">pywatemsedem.parcelslanduse module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.plots">pywatemsedem.plots module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.postprocess">pywatemsedem.postprocess module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.scenario">pywatemsedem.scenario module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.templates">pywatemsedem.templates module</a></li>
@@ -211,7 +210,7 @@ see <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
+<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
 <li><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default True</em>) – Mask vector (True), nodata value will be that one of
 <cite>pywatemsedem.geo.factory.Factory.rp</cite>.</p></li>
 <li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – Allow vector to be empty, see
@@ -446,57 +445,6 @@ see <a class="reference external" href="https://epsg.io/">https://epsg.io/</a></
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.rasterproperties.get_bounds_from_vct">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.rasterproperties.</span></span><span class="sig-name descname"><span class="pre">get_bounds_from_vct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_catchment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pixels_buffer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasterproperties.html#get_bounds_from_vct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasterproperties.get_bounds_from_vct" title="Link to this definition"></a></dt>
-<dd><p>Get bounds from vector catchment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vct_catchment</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Vector file of catchment.</p></li>
-<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Spatial resolution, see
-<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p></li>
-<li><p><strong>n_pixels_buffer</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>default 5</em>) – Number of pixels that have to be taken into account to expand boundaries</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>bounds</strong> – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.rasterproperties.synchronize_bounds">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.rasterproperties.</span></span><span class="sig-name descname"><span class="pre">synchronize_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasterproperties.html#synchronize_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasterproperties.synchronize_bounds" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Synchronize target geographical bounds of a raster with source bounds given a</dt><dd><p>raster resolution.</p>
-</dd>
-</dl>
-<p>Bounds are defined as a list of  xmin, ymin, xmax and ymax-values of a raster. The
-boundaries leading to the smallest geographical model are selected as new
-boundaries.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – To check target boundaries, see
-<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>.</p></li>
-<li><p><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Source boundaries to which target boundaries have to be checked, see
-<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a>.</p></li>
-<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>bounds</strong> – Updated bounds</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="module-pywatemsedem.geo.rasters">
 <span id="pywatemsedem-geo-rasters-module"></span><h2>pywatemsedem.geo.rasters module<a class="headerlink" href="#module-pywatemsedem.geo.rasters" title="Link to this heading"></a></h2>
@@ -544,8 +492,8 @@ percentiles</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.8)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.9)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Used to mask no data values</p></li>
 <li><p><strong>ylogscale</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default = False</em>) – Log transformation on density axis if True</p></li>
 </ul>
@@ -599,8 +547,8 @@ as raster array.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.8)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><em>matplotlib.figure.Figure</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new figure</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.9)"><em>matplotlib.axes.Axes</em></a><em>, </em><em>default = None</em>) – if not given, defaults to generating new axis</p></li>
 <li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>default = None</em>) – Used to mask certain values present in arr which represent
 nodata (e.g. -9999)</p></li>
 </ul>
@@ -639,7 +587,7 @@ nodata (e.g. -9999)</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.geo.rasters.AbstractRaster.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfile_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'idrisi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('.')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster.write" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfile_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'idrisi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#AbstractRaster.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.AbstractRaster.write" title="Link to this definition"></a></dt>
 <dd><p>Write raster data to disk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -677,7 +625,7 @@ rasterproperties from inputfile are used.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.geo.rasters.RasterFile.clip">
-<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mode'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('.')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#RasterFile.clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.RasterFile.clip" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mode'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/rasters.html#RasterFile.clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.rasters.RasterFile.clip" title="Link to this definition"></a></dt>
 <dd><p>Clip function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -685,7 +633,6 @@ rasterproperties from inputfile are used.</p></li>
 <li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to user input raster.</p></li>
 <li><p><strong>rp</strong> (<a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><em>RasterProperties</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.rasterproperties.RasterProperties" title="pywatemsedem.geo.rasterproperties.RasterProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasterproperties.RasterProperties</span></code></a></p></li>
 <li><p><strong>resample</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default &quot;mode&quot;</em>) – Either “near” or “mode”, see <a class="reference internal" href="#pywatemsedem.geo.utils.clip_rst" title="pywatemsedem.geo.utils.clip_rst"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.utils.clip_rst()</span></code></a></p></li>
-<li><p><strong>dir</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em>, </em><em>default cwd</em>) – Directory for temporary files</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -783,30 +730,14 @@ dimension being temporal.</p>
 <section id="module-pywatemsedem.geo.utils">
 <span id="pywatemsedem-geo-utils-module"></span><h2>pywatemsedem.geo.utils module<a class="headerlink" href="#module-pywatemsedem.geo.utils" title="Link to this heading"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.add_length_lines_to_polygons">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">add_length_lines_to_polygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_polygons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_field</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#add_length_lines_to_polygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.add_length_lines_to_polygons" title="Link to this definition"></a></dt>
-<dd><p>Calculate the total length of line segments within a polygon</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vct_lines</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the input line shapefile</p></li>
-<li><p><strong>vct_polygons</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the input polygon shapefile</p></li>
-<li><p><strong>vct_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the output polygon shapefile</p></li>
-<li><p><strong>name_field</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Attribute name containing the lenght of the lines within a polygon</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.any_equal_element_in_vector">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">any_equal_element_in_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geoseries_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoseries_right</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#any_equal_element_in_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.any_equal_element_in_vector" title="Link to this definition"></a></dt>
 <dd><p>Check if there are equal vectors in the left and right geoseries</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoSeries</em></a>)</p></li>
-<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoSeries</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -819,38 +750,21 @@ dimension being temporal.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.calculate_sum_rst">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">calculate_sum_rst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#calculate_sum_rst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.calculate_sum_rst" title="Link to this definition"></a></dt>
-<dd><p>Calculate sum of a raster values</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rst</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the raster file</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>sum of the values in the raster</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.check_cuboid_condition">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">check_cuboid_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr_polygon_perimeter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr_polygon_area</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#check_cuboid_condition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.check_cuboid_condition" title="Link to this definition"></a></dt>
 <dd><p>Check if a shape can be classified as a cuboid</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
-<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
+<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
+<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>condition</strong> – 1D array holding True/False if cuboid</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)">pandas.Series</a></p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -870,41 +784,6 @@ dimension being temporal.</p>
 <li><p><strong>path_template</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Template raster</p></li>
 <li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – EPSG code of the cartographic projection</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.check_rst_dimensions">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">check_rst_dimensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#check_rst_dimensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.check_rst_dimensions" title="Link to this definition"></a></dt>
-<dd><p>This function checks if the input raster has the desired dimensions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path to input raster</p></li>
-<li><p><strong>minmax</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Containing xmin, ymin, xmax, ymax</p></li>
-<li><p><strong>ncols</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of columns in the raster</p></li>
-<li><p><strong>nrows</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Number of rows in the raster</p></li>
-<li><p><strong>transform</strong> (<em>rasterio.transform</em><em>, </em><em>default None</em>) – Transformation as defined in Rasterio.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Raster has the required dimensions (True/False)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.check_single_polygon">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">check_single_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#check_single_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.check_single_polygon" title="Link to this definition"></a></dt>
-<dd><p>Check if the catchment polygon is a single polygon (not empty or
-multipolygon).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>vct</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the shapefile</p>
 </dd>
 </dl>
 </dd></dl>
@@ -999,26 +878,6 @@ generated during a write of raster or vector file.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.clip_vct_with_bounds">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">clip_vct_with_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#clip_vct_with_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.clip_vct_with_bounds" title="Link to this definition"></a></dt>
-<dd><p>Clip a shapefile using a bounding box</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vct_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of shapefile to be clipped.</p></li>
-<li><p><strong>vct_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the destination shapefile</p></li>
-<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – list with xmin, ymin, xmax, ymax</p></li>
-<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – if True, overwrite existing file</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on ogr2ogr CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.compute_statistics_rasters_per_polygon_vector">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">compute_statistics_rasters_per_polygon_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst_rasters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lst_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_operators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ton</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#compute_statistics_rasters_per_polygon_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.compute_statistics_rasters_per_polygon_vector" title="Link to this definition"></a></dt>
 <dd><p>Compute statistics</p>
@@ -1061,42 +920,6 @@ formatted as a dictionary, e.g.:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.copy_rst">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">copy_rst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_out</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#copy_rst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.copy_rst" title="Link to this definition"></a></dt>
-<dd><p>Copy a raster and converts it to an idrisi-raster</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of input raster</p></li>
-<li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of output raster (extension must be .rst!)</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on gdal_translate CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.copy_vct">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">copy_vct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_out</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#copy_vct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.copy_vct" title="Link to this definition"></a></dt>
-<dd><p>Copies a shapefile to another location</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vct_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the shapefile to be copied.</p></li>
-<li><p><strong>folder_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the destination shapefile.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on ogr2ogr CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.create_filename">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">create_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suffix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('tempfiles_pywatemsedem')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#create_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.create_filename" title="Link to this definition"></a></dt>
 <dd><p>Create temporary filename in a dedicated directory</p>
@@ -1111,20 +934,6 @@ formatted as a dictionary, e.g.:</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)">pathlib.Path</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.create_hillshade">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">create_hillshade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_hillshade</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#create_hillshade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.create_hillshade" title="Link to this definition"></a></dt>
-<dd><p>Create a hillshade raster of the DTM</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of input raster</p></li>
-<li><p><strong>rst_hillshade</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of output raster</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1189,8 +998,8 @@ see also
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
-<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
+<li><p><strong>arr_polygon_perimeter</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the perimeter of each polygon</p></li>
+<li><p><strong>arr_polygon_area</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)"><em>pandas.Series</em></a>) – 1D array holding in each row the area of each polygon</p></li>
 <li><p><strong>nan_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – The value to fill in for nan_values</p></li>
 </ul>
 </dd>
@@ -1198,7 +1007,7 @@ see also
 <dd class="field-even"><p><strong>arr_est_polygon_width</strong> – 1D array holding in each row the estimated width</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)">pandas.Series</a></p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1284,23 +1093,6 @@ rasterio)</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.get_feature_count">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">get_feature_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#get_feature_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.get_feature_count" title="Link to this definition"></a></dt>
-<dd><p>Count the amount of features in a shapefile</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>vct</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of the shapefile.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>nr_features</strong> – Number of features in the shapefile</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)">int</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.get_fields_vct">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">get_fields_vct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#get_fields_vct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.get_fields_vct" title="Link to this definition"></a></dt>
 <dd><p>Get a list of all fields in a shapefile</p>
@@ -1336,12 +1128,12 @@ rasterio)</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.get_mask_template">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">get_mask_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CNWS_modelinputfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catchmentname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#get_mask_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.get_mask_template" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">get_mask_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinputfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catchmentname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#get_mask_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.get_mask_template" title="Link to this definition"></a></dt>
 <dd><p>Get a binary raster from template raster (P-factor)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>CNWS_modelinputfolder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the CNWS_modelinputfolder</p></li>
+<li><p><strong>modelinputfolder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the modelinputfolder of WaTEM/SEDEM</p></li>
 <li><p><strong>catchmentname</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Catchment name</p></li>
 <li><p><strong>rst_template</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em>, </em><em>default None</em>) – Path to a template file that can be used as template for geodata and bin mask</p></li>
 </ul>
@@ -1357,15 +1149,14 @@ rasterio)</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.get_rstparams">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">get_rstparams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CNWS_modelinputfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catchmentname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#get_rstparams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.get_rstparams" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">get_rstparams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelinputfolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#get_rstparams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.get_rstparams" title="Link to this definition"></a></dt>
 <dd><p>Get rstparams and rasterprofile from template raster (default:pkaart)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>CNWS_modelinputfolder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – the path to the CNWS_modelinputfolder</p></li>
+<li><p><strong>modelinputfolder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – the path to the modelinputfolder of WaTEM/SEDEM</p></li>
 <li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – the epsg code defining the coordinate system of the raster,
 format = “EPSG:XXXXX”</p></li>
-<li><p><strong>catchmentname</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – catchment name</p></li>
 <li><p><strong>template</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a><em>, </em><em>default None</em>) – File path to a template file that can be used as template for
 geodata and bin mask. Default the “P” raster is used.</p></li>
 </ul>
@@ -1424,55 +1215,18 @@ geodata and bin mask. Default the “P” raster is used.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.idrisi_to_tiff">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">idrisi_to_tiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiff_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:31370'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#idrisi_to_tiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.idrisi_to_tiff" title="Link to this definition"></a></dt>
-<dd><p>Convert an Idrisi RST to GeoTiff</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of the input rst.</p></li>
-<li><p><strong>tiff_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path of the output tiff file.</p></li>
-<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Data type of the destination rst, either ‘integer’ or ‘float’.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on gdal_translate CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.lines_to_direction">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">lines_to_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_template</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#lines_to_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.lines_to_direction" title="Link to this definition"></a></dt>
 <dd><p>Converts line features to a direction raster</p>
 <p>This function converts the direction of line features to a raster. See the
-<a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#routingmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">docs of cnws for more information</span></a> about this raster</p>
+<a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#routingmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">docs of WaTEM/SEDEM for more information</span></a> about this
+raster</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vct_line</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the input line shapefile</p></li>
 <li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the output raster</p></li>
 <li><p><strong>rst_template</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to a template raster</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on saga_cmd CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.lines_to_points">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">lines_to_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#lines_to_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.lines_to_points" title="Link to this definition"></a></dt>
-<dd><p>Converts a shapefile with lines to a shapefile with points.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>vct_lines</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the input shapefile with lines.</p></li>
-<li><p><strong>vct_points</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the output shapefile with points.</p></li>
-<li><p><strong>distance</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Distance between two points</p></li>
 </ul>
 </dd>
 </dl>
@@ -1501,23 +1255,6 @@ geodata and bin mask. Default the “P” raster is used.</p></li>
 <p class="admonition-title">Note</p>
 <p>Uses and relies on saga_cmd CLI</p>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.load_discharge_file">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">load_discharge_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#load_discharge_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.load_discharge_file" title="Link to this definition"></a></dt>
-<dd><p>Function to read the discharge file as a dictionary</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – discharge file</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>discharge</strong> – contains discharge information</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1558,99 +1295,13 @@ geodata and bin mask. Default the “P” raster is used.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.mask_raster">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">mask_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">un_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'masked'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#mask_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.mask_raster" title="Link to this definition"></a></dt>
-<dd><p>Mask a raster by setting no data with no data positions of mask</p>
-<p>The input raster is masked by the nodata value in the mask raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path raster to be masked</p></li>
-<li><p><strong>rst_mask</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>  or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path mask raster, see note for format</p></li>
-<li><p><strong>un_id</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – unique id of the raster</p></li>
-<li><p><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default 'masked'</em>) – Folder in which to safe masked raster</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>rst_masker</strong> – File path of masked raster</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ol class="arabic simple">
-<li><p>This mask raster should be a (<strong>no</strong> <cite>nodata</cite>, <cite>nodata</cite>)-raster in which the
-nodata  values indicate masking, and non-nodata values indicates not masking.</p></li>
-<li><p>Masking of the input raster is facilitated by setting to-mask-values in the
-input raster to <cite>nodata</cite>.</p></li>
-</ol>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.merge_lst_vct">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">merge_lst_vct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst_vct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#merge_lst_vct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.merge_lst_vct" title="Link to this definition"></a></dt>
-<dd><p>Merge a list of shapefiles to one shapefile</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lst_vct</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – List with file paths (str) of all shapefiles to be merged.</p></li>
-<li><p><strong>vct_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of merged vct</p></li>
-<li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The epsg code defining the coordinate system of the raster,
-format = “EPSG:XXXXX”</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on ogr2ogr CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.merge_lst_vct_saga">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">merge_lst_vct_saga</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst_vct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#merge_lst_vct_saga"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.merge_lst_vct_saga" title="Link to this definition"></a></dt>
-<dd><p>Merge a list of shapefiles to one shapefile</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lst_vct</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – List with file paths (str) of all shapefiles to be merged.</p></li>
-<li><p><strong>vct_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – File path + name of the destination shapefile.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on ogr2ogr CLI</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.merge_rasters">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">merge_rasters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst_rst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lst_rst_masks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#merge_rasters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.merge_rasters" title="Link to this definition"></a></dt>
-<dd><p>Merge several rasters to one raster with option to mask input rasters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lst_rst</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – List of file paths of rasters which have to be merged together</p></li>
-<li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of merged raster</p></li>
-<li><p><strong>lst_rst_masks</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – List of file paths of mask files to be used to mask lst_rst_in, see
-<a class="reference internal" href="#pywatemsedem.geo.utils.mask_raster" title="pywatemsedem.geo.utils.mask_raster"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.utils.mask_raster()</span></code></a>.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.nearly_identical">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">nearly_identical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#nearly_identical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.nearly_identical" title="Link to this definition"></a></dt>
 <dd><p>Identify nearly identical geometries</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoSeries</em></a>)</p></li>
 <li><p><strong>p</strong> (<em>shapely.Geometry</em>)</p></li>
 </ul>
 </dd>
@@ -1658,7 +1309,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p>True/False</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.1)">pandas.Series</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.2)">pandas.Series</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1712,7 +1363,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
+<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
 <li><p><strong>catchment_value</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>default 1</em>) – value that is used to define catchment</p></li>
 </ul>
 </dd>
@@ -1720,7 +1371,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>gdf_catchment</strong> – dissolved dataframe holding mask, in one polygon (row)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1746,7 +1397,7 @@ format = “EPSG:XXXXX”</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)">pandas.DataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)">pandas.DataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1758,7 +1409,7 @@ format = “EPSG:XXXXX”</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>A pandas format of the array raster with</p>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.2)"><em>pandas.DataFrame</em></a>) – <p>A pandas format of the array raster with</p>
 <ul>
 <li><p><em>row</em> (int): the row id</p></li>
 <li><p><em>col</em> (int): the column id</p></li>
@@ -1816,27 +1467,6 @@ format = “EPSG:XXXXX”</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.read_dtype_raster">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">read_dtype_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#read_dtype_raster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.read_dtype_raster" title="Link to this definition"></a></dt>
-<dd><p>Read dtype of raster</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the input raster</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dtype</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.4)">numpy.dtype</a></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Only works for single band rasters</p>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.read_rasterio_profile">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">read_rasterio_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#read_rasterio_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.read_rasterio_profile" title="Link to this definition"></a></dt>
 <dd><p>Read all spatial dimensions of a raster</p>
@@ -1871,30 +1501,6 @@ format = “EPSG:XXXXX”</p></li>
 </p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.reclass_rst">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">reclass_rst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_reclass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#reclass_rst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.reclass_rst" title="Link to this definition"></a></dt>
-<dd><p>Reclass of a raster based on pandas dataframe</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rst_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the input raster</p></li>
-<li><p><strong>rst_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path of the destination rst (.sdat)</p></li>
-<li><p><strong>df_reclass</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.1)"><em>pandas.DataFrame</em></a>) – <p>DataFrame containing the mapping with the columns:</p>
-<ul>
-<li><p><em>RST_VAL</em>: current values</p></li>
-<li><p><em>NEWVAL</em>: new value</p></li>
-</ul>
-</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Uses and relies on saga_cmd CLI</p>
-</div>
 </dd></dl>
 
 <dl class="py function">
@@ -2008,22 +1614,6 @@ outside domain is equal to zero.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.tiff_to_esri_shp">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">tiff_to_esri_shp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiff_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#tiff_to_esri_shp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.tiff_to_esri_shp" title="Link to this definition"></a></dt>
-<dd><p>Transform a tiff file to an esri shape (raster to shape)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tiff_in</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – name input tiff</p></li>
-<li><p><strong>vct_out</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – name input shapefile</p></li>
-<li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – the epsg code defining the coordinate system of the raster,
-format = “EPSG:XXXXX”</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.geo.utils.tiff_to_geopandas_df">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">tiff_to_geopandas_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiff_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#tiff_to_geopandas_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.tiff_to_geopandas_df" title="Link to this definition"></a></dt>
 <dd><p>Transform a tiff file to a geopandas dataframe</p>
@@ -2035,7 +1625,7 @@ format = “EPSG:XXXXX”</p></li>
 <dd class="field-even"><p><strong>gdf</strong> – Geopandas representation of tiff raster</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2179,18 +1769,6 @@ touched by lines or polygons will be updated.</p></li>
 <p class="admonition-title">Note</p>
 <p>Uses and relies on saga_cmd CLI</p>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.geo.utils.write_area_ha_to_vct">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.geo.utils.</span></span><span class="sig-name descname"><span class="pre">write_area_ha_to_vct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/utils.html#write_area_ha_to_vct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.utils.write_area_ha_to_vct" title="Link to this definition"></a></dt>
-<dd><p>Add a field ‘AREA_HA’ to a shapefile</p>
-<p>This function calculates the area of every feature in a shapefile in hectare</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>vct</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – File path to the input shapefile</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -2460,7 +2038,7 @@ and None (i.e. don’t check).</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Input data set.</p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoDataFrame</em></a>) – Input data set.</p></li>
 <li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Geometry type of input dataset</p></li>
 <li><p><strong>req_geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – Geometry type, for implemented types, see
 <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector.check_type" title="pywatemsedem.geo.vectors.AbstractVector.check_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector.check_type()</span></code></a></p></li>
@@ -2552,7 +2130,7 @@ convert_lines_to_direction:</p></li>
 <dd class="field-odd"><p><strong>vct_clip</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>pathlib.Path</em></a>) – Mask vector</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2567,7 +2145,7 @@ convert_lines_to_direction:</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoDataFrame</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>req_geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><em>default None</em>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
 <li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>default False</em>) – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
@@ -2581,12 +2159,12 @@ convert_lines_to_direction:</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – geodataframe of input data</p></li>
-<li><p><strong>clip_mask</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)"><em>geopandas.GeoDataFrame</em></a>) – Mask vector</p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoDataFrame</em></a>) – geodataframe of input data</p></li>
+<li><p><strong>clip_mask</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)"><em>geopandas.GeoDataFrame</em></a>) – Mask vector</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev76.dev+g4b19d4790)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev91.dev+g6516ee845)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
