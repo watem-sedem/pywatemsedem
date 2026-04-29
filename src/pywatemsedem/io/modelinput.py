@@ -8,6 +8,7 @@ import pandas as pd
 from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.rasters import AbstractRaster
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
     mask_array_with_val,
@@ -16,6 +17,7 @@ from pywatemsedem.io.plots import (
     axes_creator,
     plot_continuous_raster,
     plot_discrete_raster,
+    plot_landuse,
 )
 from pywatemsedem.io.valid import (
     valid_array_type,
@@ -44,6 +46,101 @@ def valid_segments(func):
     return wrapper
 
 
+# def make_modelinput_from_ini(ini):
+#     """Read model ini file and make Modelinput object."""
+#     input_folder = get_item_from_ini(ini, "Working directories",
+#     "input directory", str)
+#     input_folder = Path(input_folder)
+#
+#     f_template = input_folder / get_item_from_ini(
+#         ini, "Files", "P factor map filename", str
+#     )
+#
+#     profile, _, _ = get_rstparams(input_folder, template=f_template)
+#
+#     modelinput = Modelinput()
+#
+#     files = get_options_from_ini(ini, "Files")
+#     if "DTM filename" in files:
+#         modelinput.dtm = input_folder / get_item_from_ini(
+#             ini, "Files", "DTM filename", str
+#         )
+#     if "Parcel filename" in files:
+#         modelinput.compositelanduse = input_folder / get_item_from_ini(
+#             ini, "Files", "Parcel filename", str
+#         )
+#     if "P factor map filename" in files:
+#         modelinput.pfactor = input_folder / get_item_from_ini(
+#             ini, "Files", "P factor map filename", str
+#         )
+#     if "C factor map filename" in files:
+#         modelinput.cfactor = input_folder / get_item_from_ini(
+#             ini, "Files", "C factor map filename", str
+#         )
+#     if "K factor filename" in files:
+#         modelinput.kfactor = input_folder / get_item_from_ini(
+#             ini, "Files", "K factor filename", str
+#         )
+#     if "ktc map filename" in files:
+#         modelinput.ktc = input_folder / get_item_from_ini(
+#             ini, "Files", "ktc map filename", str
+#         )
+#     else:
+#         modelinput.ktc = input_folder / "ktc.rst"
+#     if "Outlet map filename" in files:
+#         modelinput.outlet = input_folder / get_item_from_ini(
+#             ini, "Files", "Outlet map filename", str
+#         )
+#     else:
+#         modelinput.outlet = input_folder / "outlet.rst"
+#     if "ktl map filename" in files:
+#         modelinput.ktil = input_folder / get_item_from_ini(
+#             ini, "Files", "ktl map filename", str
+#         )
+#     if "Sewer map filename" in files:
+#         modelinput.sewers = input_folder / get_item_from_ini(
+#             ini, "Files", "Sewer map filename", str
+#         )
+#     if "Buffer map filename" in files:
+#         modelinput.buffers = input_folder / get_item_from_ini(
+#             ini, "Files", "Buffer map filename", str
+#         )
+#     if "Ditch map filename" in files:
+#         modelinput.ditch = input_folder / get_item_from_ini(
+#             ini, "Files", "Ditch map filename", str
+#         )
+#     if "Dam map filename" in files:
+#         modelinput.dam = input_folder / get_item_from_ini(
+#             ini, "Files", "Dam map filename", str
+#         )
+#     if "River segment filename" in files:
+#         modelinput.riversegments = input_folder / get_item_from_ini(
+#             ini, "Files", "River segment filename", str
+#         )
+#     if "river routing filename" in files:
+#         modelinput.riverrouting = input_folder / get_item_from_ini(
+#             ini, "Files", "River routing filename", str
+#         )
+#     if "adjectant segments" in files:
+#         modelinput.adjacentsegments = input_folder / get_item_from_ini(
+#             ini, "Files", "adjectant segments", str
+#         )
+#     if "upstream segments" in files:
+#         modelinput.upstreamsegments = input_folder / get_item_from_ini(
+#             ini, "Files", "upstream segments", str
+#         )
+#     if "CN map filename" in files:
+#         modelinput.cn = input_folder / get_item_from_ini(
+#             ini, "Files", "CN map filename", str
+#         )
+#     if "Rainfall filename" in files:
+#         modelinput.rainfall = input_folder / get_item_from_ini(
+#             ini, "Files", "Rainfall filename", str
+#         )
+#     modelinput.ptef = input_folder / "PTEFmap.rst"
+#     return modelinput
+
+
 @dataclass
 class Modelinput(Factory):
     def __init__(self, template, resolution, epsg, nodata):
@@ -68,20 +165,27 @@ class Modelinput(Factory):
         self.mask = template
 
         # DATA
-        self._cfactor = None  # attribute
-        self._buffers = None
-        self._dtm = None
-        self._kfactor = None
-        self._ktc = None
-        self._outlet = None
-        self._pfactor = None
-        self._compositelanduse = None
-        self._ptef = None
-        self._riversegments = None
-        self._riverrouting = None
-        self._sewers = None
+        self._dtm = AbstractRaster()
+        self._compositelanduse = AbstractRaster()
+        self._pfactor = AbstractRaster()
+        self._kfactor = AbstractRaster()
+        self._cfactor = AbstractRaster()  # attribute
+        self._ktc = AbstractRaster()
+        self._outlet = AbstractRaster()
+        self._ktil = AbstractRaster()
+        self._sewers = AbstractRaster()
+        self._tillagedirection = AbstractRaster()
+        self._orientedroughness = AbstractRaster()
+        self._buffers = AbstractRaster()
+        self._ditches = AbstractRaster()
+        self._dams = AbstractRaster()
+        self._riversegments = AbstractRaster()
         self._upstreamsegments = None
         self._adjacentsegments = None
+        self._riverrouting = AbstractRaster()
+        self._cn = AbstractRaster()
+        self._rainfall = None
+        self._ptef = AbstractRaster()
 
     @property
     def cfactor(self):
@@ -455,54 +559,9 @@ class Modelinput(Factory):
         valid_boundaries(self.compositelanduse.arr, lower=-32757, upper=32757)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
-        # custom plotting features
-        colormap = colors.ListedColormap(
-            [
-                "#64cf1b",
-                "#3b7db4",
-                "#71b651",
-                "#387b00",
-                "#000000",
-                "#00bfff",
-                "#ffffff",
-                "#a47158",
-            ]
-        )
-        labels = [
-            "Grass strips (-6)",
-            "Pools (-5)",
-            "Meadow (-4)",
-            "Forest (-3)",
-            "Infrastructure (-2)",
-            "River (-1)",
-            "Outside boundaries (0)",
-            "Agriculture (>0)",
-        ]
-
-        def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for Landuseparecles
-
-             Parameters
-            ----------
-            fig: matplotlib.figure.Figure, default = None
-                if not given, defaults to generating new figure
-            ax: matplotlib.pyplot.axis, default = None
-                if not given, defaults to generating new axis
-
-            Returns
-            -------
-            fig: matplotlib.figure.Figure
-
-            ax: matplotlib.axes.Axes
-            """
-            fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.compositelanduse.arr, self.mask.arr, 0)
-            arr[arr > 0] = 1
-            fig, ax = plot_discrete_raster(
-                fig, ax, arr, self.rp.bounds, labels, colormap, *args, **kwargs
-            )
-            ax.set_title("Land use parcels")
-            return fig, ax
+        def plot(nodata=None, *args, **kwargs):
+            """Plotting fun"""
+            plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
 
@@ -791,3 +850,47 @@ class Modelinput(Factory):
         valid_non_nan(array)
         valid_values(array, unique_values=np.unique(self.riversegments.arr).tolist())
         valid_array_type(array, required_type=np.int64)
+
+    @property
+    def ktil(self):
+        """Getter ktil map."""
+        return self._ktil
+
+    @ktil.setter
+    def ktil(self, raster):
+        """Setter for ktil map"""
+        self._ktil = self.raster_factory(raster, flag_mask=False)
+        # checks
+        valid_non_nan(self._ktil.arr)
+        valid_array_type(self._ktil.arr, required_type=np.int16)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+
+    @property
+    def tillagedirection(self):
+        """Getter tillagedirection map."""
+        return self._tillagedirection
+
+    @property
+    def orientedroughness(self):
+        """Getter orientedroughness map."""
+        return self._orientedroughness
+
+    @property
+    def ditches(self):
+        """Getter ditches map."""
+        return self._ditches
+
+    @property
+    def dams(self):
+        """Getter dams map."""
+        return self._dams
+
+    @property
+    def cn(self):
+        """Getter cn map."""
+        return self._cn
+
+    @property
+    def rainfall(self):
+        """Getter rainfall map."""
+        return self._rainfall
