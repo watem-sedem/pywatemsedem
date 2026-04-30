@@ -9,13 +9,12 @@ import numpy as np
 from scipy import signal
 
 from pywatemsedem.geo.utils import (
+    clean_up_tempfiles,
     create_filename,
     estimate_width_of_polygon,
     saga_intersection,
     vct_to_rst_field,
 )
-
-from .geo.utils import clean_up_tempfiles
 
 # Add new kte scaling functions here
 logger = logging.getLogger(__name__)
@@ -760,7 +759,10 @@ def get_neighbour_grass_strips_ids_array(
     gdf = gdf[["NR", "buffer"]]
     gdf.rename(columns={"buffer": "geometry"}, inplace=True)
     gdf = gpd.GeoDataFrame(gdf, geometry="geometry")
-    gdf.to_file(vct_grass_strips.parent / (vct_grass_strips.stem + "_buffer" + ".shp"))
+    gdf.to_file(
+        vct_grass_strips.parent / (vct_grass_strips.stem + "_buffer" + ".shp"),
+        spatial_index="YES",
+    )
     rst_out = "neighbour_grass_strips_ids_array.tiff"
     vct_to_rst_field(
         vct_grass_strips, Path(rst_out), rst_params, "NR", alltouched=True, dtype=None
@@ -803,7 +805,7 @@ def extract_grass_strips_from_parcels(vct_parcels, year, resmap=Path.cwd(), tag=
         gdf = gdf.loc[gdf["Aspect"] < 0.25]
         if not gdf.empty:
             d["gras"] = grass_strips
-            gdf.to_file(grass_strips)
+            gdf.to_file(grass_strips, spatial_index="YES")
         vct_grass_strips_parcels = d
 
     return vct_grass_strips_parcels
@@ -863,9 +865,9 @@ def create_grass_strips_from_line_string(
     # year
     if polygons is not None:
         tmp_bankgrasstrips = create_filename(".shp")
-        grass_strips.to_file(tmp_bankgrasstrips)
+        grass_strips.to_file(tmp_bankgrasstrips, spatial_index="YES")
         tmp_polygons = create_filename(".shp")
-        polygons.to_file(tmp_polygons)
+        polygons.to_file(tmp_polygons, spatial_index="YES")
         tmp_bankstrips_polygons = create_filename(".shp")
         saga_intersection(
             tmp_bankgrasstrips,

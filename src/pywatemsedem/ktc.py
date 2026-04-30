@@ -1,8 +1,7 @@
 import numpy as np
 
+from pywatemsedem.geo.utils import clean_up_tempfiles, create_filename
 from pywatemsedem.grasstrips import scale_ktc_with_grass_strip_width, scale_ktc_zhang
-
-from .geo.utils import clean_up_tempfiles, create_filename
 
 
 def create_ktc(

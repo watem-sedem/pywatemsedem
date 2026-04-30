@@ -13,7 +13,6 @@ from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
     compute_statistics_rasters_per_polygon_vector,
     create_filename,
-    create_spatial_index,
     execute_saga,
     get_mask_template,
     get_rstparams,
@@ -36,10 +35,9 @@ from pywatemsedem.io.modeloutput import (
     make_routing_vct_saga,
     open_txt_routing_file,
 )
-
-from .plots import plot_cumulative_sedimentload
-from .scenario import CNWSException
-from .tools import package_resource, zip_folder
+from pywatemsedem.io.plots import plot_cumulative_sedimentload
+from pywatemsedem.scenario import WSException
+from pywatemsedem.tools import package_resource, zip_folder
 
 logger = logging.getLogger(__name__)
 
@@ -160,13 +158,13 @@ class PostProcess(Factory):
         self.cfolder.check_catchment_folder()
         self.sfolder.check_scenario()
         self.sfolder.check_years()
-        self.sfolder.check_cnwsinput()
-        self.sfolder.check_cnwsoutput(error_if_empty=True)
+        self.sfolder.check_wsinput()
+        self.sfolder.check_wsoutput(error_if_empty=True)
         self.sfolder.check_postprocessing(create=True)
 
         # get raster properties based on DTM .tif file in Data_Bekken
         self.rstparams, self.rasterprop = get_rstparams(
-            self.sfolder.cnwsinput_folder,
+            self.sfolder.wsinput_folder,
             epsg=self.epsg,
         )
         # intialize functionalities factory
@@ -174,11 +172,11 @@ class PostProcess(Factory):
             resolution, self.epsg, -9999, name, bounds=self.rasterprop["minmax"]
         )
 
-        self.mask = self.sfolder.cnwsinput_folder / "mask.rst"
+        self.mask = self.sfolder.wsinput_folder / "mask.rst"
 
         self.resolution = resolution
         self.arr_bindomain = get_mask_template(
-            self.sfolder.cnwsinput_folder, self.catchment_name
+            self.sfolder.wsinput_folder, self.catchment_name
         )
 
         # regenerate user choices based on generated files
@@ -636,7 +634,7 @@ class PostProcess(Factory):
                 self.rasterprop["epsg"], allow_override=True
             )
             vct_out = self.sfolder.postprocess_folder / "priority_catchments_merged.shp"
-            gpd_priorities.to_file(vct_out)
+            gpd_priorities.to_file(vct_out, spatial_index="YES")
 
     def convert_rst_sediexport_to_vct(self):
         """Convert the sediexport raster to a vector file."""
@@ -671,7 +669,7 @@ class PostProcess(Factory):
                 f"sewer_and_riversinks_{self.catchment_name}_s{self.scenario_label}.shp"
             )
             vct_out = self.sfolder.postprocess_folder / vct_out
-            gdf_sewerin.to_file(vct_out)
+            gdf_sewerin.to_file(vct_out, spatial_index="YES")
 
     def compute_source_sinks(self, percentage=50):
         """Source-sink algorithm to identify sources of erosion
@@ -709,7 +707,9 @@ class PostProcess(Factory):
             self.rasterprop["epsg"], allow_override=True
         )
         # check lijn hieronder
-        df_subcatchments.to_file(dict_vct_subcatchmsinks[percentage])
+        df_subcatchments.to_file(
+            dict_vct_subcatchmsinks[percentage], spatial_index="YES"
+        )
         clean_up_tempfiles(temp, "txt")
 
     def identify_sinks(self, percentage):
@@ -893,8 +893,7 @@ class PostProcess(Factory):
         gdf_routing_sediout = gpd.read_file(self.vct_routing_sediout)
         gdf_routing_out_of_parcel = select_routing_out_of_parcel(gdf_routing_sediout)
         out_shp = self.sfolder.postprocess_folder / "routing_out_of_parcel.shp"
-        gdf_routing_out_of_parcel.to_file(out_shp)
-        create_spatial_index(out_shp)
+        gdf_routing_out_of_parcel.to_file(out_shp, spatial_index="YES")
         df_prckrt = self.aggregate_sedout_parcel(gdf_routing_out_of_parcel)
 
         return df_prckrt
@@ -958,8 +957,7 @@ class PostProcess(Factory):
         self.vct_routing_sediout = self.vct_routing.parent / Path(
             self.vct_routing.stem + "_sediout.shp"
         )
-        gdf_routing_sediout.to_file(self.vct_routing_sediout)
-        create_spatial_index(self.vct_routing_sediout)
+        gdf_routing_sediout.to_file(self.vct_routing_sediout, spatial_index="YES")
 
         return gdf_routing_sediout
 
@@ -1032,8 +1030,7 @@ class PostProcess(Factory):
         if not vct_out.exists():
             gdf_routingsediout = gpd.read_file(self.vct_routingsediout)
             gdf_routingsediout = gdf_routingsediout[gdf_routingsediout["lnduTarg"] == 0]
-            gdf_routingsediout.to_file(vct_out)
-            create_spatial_index(vct_out)
+            gdf_routingsediout.to_file(vct_out, spatial_index="YES")
 
     def get_total_sediment(self):
         """Make nice output table
@@ -1164,7 +1161,7 @@ class PostProcess(Factory):
 
             if cols:
                 gdf_buffer = gdf_buffer[cols]
-            gdf_buffer.to_file(vct_out)
+            gdf_buffer.to_file(vct_out, spatial_index="YES")
 
             return gdf_buffer
 
@@ -1350,7 +1347,7 @@ class PostProcess(Factory):
             )
             gdf_subcatchments["sedar_ha"] = gdf_subcatchments["sedar"] * 10000.0
             gdf_subcatchments.drop(columns=["VALUE"], inplace=True)
-            gdf_subcatchments.to_file(vct_subcatchments)
+            gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
     def add_segment_results_to_vct(self):
         """Adds the sedimentinput to every riversegment and calculates the
@@ -1387,8 +1384,7 @@ class PostProcess(Factory):
                 f"s{self.scenario_label}.shp"
             )
 
-            df_waterline.to_file(self.vct_riversegment)
-            create_spatial_index(self.vct_riversegment)
+            df_waterline.to_file(self.vct_riversegment, spatial_index="YES")
         else:
             msg = (
                 f"{self.files['txt_total_sediment_segments']} or "
@@ -1427,7 +1423,7 @@ class PostProcess(Factory):
             df_sewerin, left_on="NR", right_on="ids", how="left"
         )
         gdf_subcatchments.drop(columns=["ids"], inplace=True)
-        gdf_subcatchments.to_file(vct_subcatchments)
+        gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
     def make_routing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing vector file based on routingfile
@@ -1514,7 +1510,7 @@ class PostProcess(Factory):
                 )
 
                 vct_out = self.sfolder.postprocess_folder / vct_out
-                gpd_bindomain.to_file(vct_out)
+                gpd_bindomain.to_file(vct_out, spatial_index="YES")
                 msg = f"{gpd_bindomain.shape[0]} sinks in routing!"
                 logger.info(msg)
 
@@ -1543,11 +1539,11 @@ class PostProcess(Factory):
         except KeyError:
             msg = "'set_no_data_rst' failed for WaTEM/SEDEM perceelskaart."
             logger.error(msg)
-            raise CNWSException(msg)
+            raise WSException(msg)
         except TypeError:
             msg = "check if scenario is defined correctly"
             logger.warning(msg)
-            raise CNWSException(msg)
+            raise WSException(msg)
 
     def calculate_areas_prckrt(self):
         """Calculates the areas and relative areas of all landuse classes in
@@ -1753,7 +1749,7 @@ def compute_efficiency_grass_strips(
     rst_grass_strips: str or ppathlib.Path
         raster grass strips with id's filename
     rst_prckrt: str or pathlib.Path
-        raster CNWS perceelskaart
+        raster WaTEM/SEDEM perceelskaart
     rst_sediout: str or pathlib.Path
         File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
 
@@ -2036,7 +2032,7 @@ def select_and_rename_cols_grass_routing(df_routing_grass, target_id):
 
 def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_strips):
     """
-    Use the CNWS 'perceelskaart' to filter grass strips (lay-over infr. and
+    Use the WaTEM/SEDEM 'perceelskaart' to filter grass strips (lay-over infr. and
     river cells over gras_buffer_id)
 
     Parameters
@@ -2196,10 +2192,10 @@ def compute_netto_erosion_parcels(
     Parameters
     ----------
     rst_prckrt: string or pathlib.Path
-        File path of the CNWS modelinput perceelskaart, note that the
+        File path of the WaTEM/SEDEM modelinput perceelskaart, note that the
         parcels_ids are limited by int16 (for WaTEM/SEDEM Pascal)
     rst_watereros: string or pathlib.Path
-        File path of the CNWS modelouput watereros map
+        File path of the WaTEM/SEDEM modelouput watereros map
     rst_parcels_ids: string or pathlib.Path
         File path of the rasterfile holding the parcels_ids, not limited by
         int16
@@ -2262,7 +2258,7 @@ def compute_netto_erosion_parcels(
         df_netto_erosion.to_csv(txt_out)
         if flag_join_vct_parcels:
             vct_out = fmap / "netto_erosion_parcels.shp"
-            gdf_prcln.to_file(vct_out)
+            gdf_prcln.to_file(vct_out, spatial_index="YES")
 
     return df_netto_erosion, gdf_prcln
 
@@ -2699,7 +2695,7 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out["cumperc"] = (gdf_out["cumsum"] / (gdf_out["sediment"].sum())) * 100
     gdf_out = gdf_out.reset_index()
     gdf_out.drop(columns=["index", "ID", "X", "Y"], inplace=True)
-    gdf_out.to_file(vct_out)
+    gdf_out.to_file(vct_out, spatial_index="YES")
 
 
 def compute_statistics_sediout_outside_domain(arr_sediout, arr_id, df_routing, profile):

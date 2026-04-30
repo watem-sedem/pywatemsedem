@@ -8,3 +8,4 @@ Contributors
 * Niels De Vleeschouwer (Fluves)
 * Stijn  Van Hoey (Fluves)
 * Olivier Bonte (UGent)
+* Baris Oztas <baris@bariso.dev>

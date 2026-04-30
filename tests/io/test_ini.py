@@ -4,7 +4,13 @@ from pathlib import Path
 import pytest
 from conftest import ini_file
 
-from pywatemsedem.io.ini import add_field, get_item_from_ini, modify_field
+from pywatemsedem.io.ini import (
+    add_field,
+    get_item_from_ini,
+    get_options_from_ini,
+    get_sections_from_ini,
+    modify_field,
+)
 
 
 class TestModifyField:
@@ -131,3 +137,25 @@ class TestGetItemFromIni:
                 "bool_option",
                 bool,
             )
+
+
+def test_get_sections_from_ini():
+    """Test if all sections are retrieved from an ini-file"""
+    sections = get_sections_from_ini(ini_file)
+    assert sections == [
+        "Model information",
+        "Working directories",
+        "Files",
+        "User Choices",
+        "Output maps",
+        "Variables",
+        "Buffer 1",
+        "Buffer 2",
+        "Test Section",
+    ]
+
+
+def test_get_options_from_ini():
+    """Test if all options of a section are retrieved from an ini-file"""
+    options = get_options_from_ini(ini_file, "Test Section")
+    assert options == ["string_option", "int_option", "float_option", "bool_option"]

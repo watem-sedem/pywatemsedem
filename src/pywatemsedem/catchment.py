@@ -10,6 +10,10 @@ import pyogrio
 from matplotlib import pyplot as plt
 
 from pywatemsedem.defaults import SAGA_FLAGS
+from pywatemsedem.errors import (
+    attribute_discrete_value_error,
+    raster_discrete_value_error,
+)
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.rasters import AbstractRaster, RasterMemory
@@ -25,15 +29,13 @@ from pywatemsedem.geo.utils import (
 from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.io.folders import CatchmentFolder
 from pywatemsedem.io.modeloutput import check_segment_edges
-from pywatemsedem.plots import plot_landuse
+from pywatemsedem.io.plots import plot_landuse
 from pywatemsedem.tools import (
     format_forced_routing,
     get_df_area_unique_values_array,
     zip_folder,
 )
-
-from .errors import attribute_discrete_value_error, raster_discrete_value_error
-from .valid import valid_req_property
+from pywatemsedem.valid import valid_req_property
 
 # from .valid import valid_req_property
 logger = logging.getLogger(__name__)
@@ -174,7 +176,7 @@ class Catchment(Factory):
         # to a file
         if type(vct_catchment) is gpd.GeoDataFrame:
             self.vct_catchment = self.folder.vct_folder / "catchment.shp"
-            vct_catchment.to_file(self.vct_catchment)
+            vct_catchment.to_file(self.vct_catchment, spatial_index="YES")
         else:
             self.vct_catchment = vct_catchment
         # input your own raster properties and do not self-generate them.

@@ -57,16 +57,16 @@ class ScenarioFolders:
         self.scenario_folder = (
             self.cfolder.home_folder / f"scenario_{self.scenario_label}"
         )
-        self.cnwsinput_folder = self.scenario_folder / "modelinput"
-        self.cnwsoutput_folder = self.scenario_folder / "modeloutput"
+        self.wsinput_folder = self.scenario_folder / "modelinput"
+        self.wsoutput_folder = self.scenario_folder / "modeloutput"
         self.postprocess_folder = self.scenario_folder / "postprocessing"
         self.scenarioyear_folder = self.scenario_folder / f"{self.year}"
 
     def create_all(self):
         self.cfolder.create_all()
         self.check_scenario(create=True)
-        self.check_cnwsinput(create=True)
-        self.check_cnwsoutput(create=True)
+        self.check_wsinput(create=True)
+        self.check_wsoutput(create=True)
         self.check_postprocessing(create=True)
         self.check_years(create=True)
 
@@ -76,13 +76,13 @@ class ScenarioFolders:
             self.cfolder.home_folder, self.scenario_label, **options
         )
 
-    def check_cnwsinput(self, **options):
+    def check_wsinput(self, **options):
         """Create 'scenario_x/modelinput' folder"""
-        check_and_create_cnwsinput_folder(self.scenario_folder, **options)
+        check_and_create_wsinput_folder(self.scenario_folder, **options)
 
-    def check_cnwsoutput(self, **options):
+    def check_wsoutput(self, **options):
         """Create 'scenario_x/modeloutput' folder"""
-        check_and_create_cnwsoutput_folder(self.scenario_folder, **options)
+        check_and_create_wsoutput_folder(self.scenario_folder, **options)
 
     def check_postprocessing(self, **options):
         """Create 'scenario_x/postprocess' folder"""
@@ -199,7 +199,7 @@ def check_and_create_scenario_folder(home_folder, scenario_label, **options):
     )
 
 
-def check_and_create_cnwsinput_folder(scenario_folder, **options):
+def check_and_create_wsinput_folder(scenario_folder, **options):
     """Check and create home/scenario_x/modelinput folder
 
     Parameters
@@ -216,7 +216,7 @@ def check_and_create_cnwsinput_folder(scenario_folder, **options):
     )
 
 
-def check_and_create_cnwsoutput_folder(scenario_folder, **options):
+def check_and_create_wsoutput_folder(scenario_folder, **options):
     """Check and create home/scenario_x/modeloutput folder
 
     Parameters

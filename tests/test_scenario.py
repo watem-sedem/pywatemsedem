@@ -64,18 +64,18 @@ class TestCreateModel:
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [53, 4028, 1107, 3947, 534, 28234, 11541])
+        np.testing.assert_allclose(counts, [53, 4262, 1083, 3947, 534, 28234, 11331])
 
         # c-factor
         un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
 
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+        np.testing.assert_allclose(counts, np.array([32735, 1087, 4288, 11334]))
 
         # kTC
         un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28234, 5135, 11541, 4534])
+        np.testing.assert_allclose(counts, [28234, 5345, 11331, 4534])
 
     @pytest.mark.saga
     def test_omit_water(self, dummy_scenario):
@@ -103,17 +103,17 @@ class TestCreateModel:
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+        np.testing.assert_allclose(counts, [2, 4288, 1087, 3965, 534, 28234, 11334])
 
         # c-factor
         un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+        np.testing.assert_allclose(counts, np.array([32735, 1087, 4288, 11334]))
 
         # kTC
         un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
+        np.testing.assert_allclose(counts, [28234, 5375, 11334, 4501])
 
     @pytest.mark.saga
     def test_omit_parcels(self, dummy_scenario):
@@ -181,7 +181,7 @@ class TestCreateModel:
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-6, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
         np.testing.assert_allclose(
-            counts, [1529, 2, 3842, 1011, 3965, 534, 28234, 10327]
+            counts, [1529, 2, 3990, 1002, 3965, 534, 28234, 10188]
         )
 
         # c-factor
@@ -211,7 +211,7 @@ class TestCreateModel:
         np.testing.assert_allclose(
             counts,
             np.array(
-                [32735, 1011, 4162, 39, 199, 43, 201, 19, 433, 2, 15, 245, 13, 10327]
+                [32735, 1002, 4317, 36, 198, 45, 222, 18, 425, 2, 17, 229, 10, 10188]
             ),
         )
 
@@ -248,23 +248,23 @@ class TestCreateModel:
             np.array(
                 [
                     28234,
-                    66,
-                    27,
+                    76,
                     17,
-                    189,
+                    17,
+                    196,
                     21,
-                    39,
-                    199,
-                    43,
-                    201,
-                    19,
-                    433,
+                    36,
+                    198,
+                    45,
+                    222,
+                    18,
+                    425,
                     2,
-                    15,
-                    4853,
-                    245,
-                    13,
-                    10327,
+                    17,
+                    4992,
+                    229,
+                    10,
+                    10188,
                     4501,
                 ]
             ),
@@ -398,7 +398,7 @@ class TestEndpoints:
         # endpoints
         un, counts = np.unique(dummy_scenario.endpoints.arr, return_counts=True)
         np.testing.assert_allclose(un, [0.0, 0.75])
-        np.testing.assert_allclose(counts, [49040, 404])
+        np.testing.assert_allclose(counts, [49041, 403])
 
         # endpoints_ids
         un, counts = np.unique(dummy_scenario.endpoints_id.arr, return_counts=True)
@@ -449,7 +449,7 @@ class TestParcels:
 
         # test number of values
         un = np.unique(dummy_scenario.parcels_ids.arr)
-        np.testing.assert_allclose(len(un), 384)
+        np.testing.assert_allclose(len(un), 388)
 
         # test if parcels and parcels ids is equal IN CASE max id <= 32767
         np.testing.assert_allclose(
@@ -527,127 +527,247 @@ class TestGrassStrips:
         # test output
         un, counts = np.unique(dummy_scenario.grass_strips.arr, return_counts=True)
 
-        np.testing.assert_allclose(un, [-9999.0] + list(range(0, 115)))
+        np.testing.assert_allclose(
+            un,
+            np.array(
+                [
+                    -9999,
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19,
+                    20,
+                    21,
+                    22,
+                    23,
+                    24,
+                    25,
+                    26,
+                    27,
+                    28,
+                    29,
+                    30,
+                    31,
+                    32,
+                    33,
+                    34,
+                    35,
+                    36,
+                    37,
+                    38,
+                    39,
+                    40,
+                    41,
+                    42,
+                    43,
+                    44,
+                    45,
+                    46,
+                    47,
+                    48,
+                    49,
+                    50,
+                    51,
+                    52,
+                    53,
+                    54,
+                    55,
+                    56,
+                    57,
+                    58,
+                    59,
+                    60,
+                    61,
+                    63,
+                    64,
+                    65,
+                    66,
+                    67,
+                    68,
+                    69,
+                    70,
+                    71,
+                    72,
+                    73,
+                    74,
+                    75,
+                    76,
+                    77,
+                    78,
+                    79,
+                    80,
+                    81,
+                    82,
+                    83,
+                    84,
+                    85,
+                    86,
+                    87,
+                    88,
+                    89,
+                    90,
+                    91,
+                    92,
+                    93,
+                    94,
+                    95,
+                    96,
+                    97,
+                    98,
+                    99,
+                    100,
+                    101,
+                    102,
+                    103,
+                    104,
+                    105,
+                    106,
+                    107,
+                    108,
+                    109,
+                    110,
+                    111,
+                    112,
+                    113,
+                    114,
+                ]
+            ),
+        )
         np.testing.assert_allclose(
             counts,
             np.array(
                 [
                     47318,
-                    7,
-                    14,
-                    27,
-                    37,
-                    26,
-                    15,
-                    3,
-                    8,
-                    13,
-                    15,
-                    27,
-                    4,
-                    10,
-                    3,
-                    28,
-                    27,
-                    15,
-                    7,
-                    11,
-                    13,
-                    22,
-                    23,
-                    20,
-                    28,
-                    14,
-                    7,
                     6,
+                    16,
+                    22,
+                    17,
+                    4,
                     9,
-                    5,
-                    17,
-                    5,
+                    14,
                     30,
-                    20,
-                    7,
-                    4,
-                    19,
-                    108,
-                    13,
+                    16,
+                    28,
+                    14,
                     25,
+                    26,
+                    13,
+                    3,
+                    17,
+                    7,
+                    24,
+                    7,
+                    16,
+                    20,
+                    32,
+                    13,
+                    11,
+                    27,
+                    5,
+                    13,
+                    13,
+                    20,
+                    15,
+                    20,
+                    5,
+                    5,
                     6,
                     10,
-                    4,
-                    15,
-                    13,
-                    10,
-                    29,
-                    26,
-                    22,
-                    8,
-                    43,
-                    12,
-                    4,
-                    11,
                     16,
-                    1,
-                    8,
-                    8,
-                    5,
-                    7,
-                    20,
-                    12,
-                    18,
+                    2,
                     19,
-                    8,
-                    29,
-                    36,
-                    5,
-                    5,
-                    16,
-                    12,
-                    29,
-                    25,
-                    32,
-                    21,
-                    25,
-                    7,
-                    8,
-                    5,
-                    30,
-                    28,
-                    23,
-                    22,
-                    17,
-                    30,
-                    3,
-                    27,
-                    11,
-                    11,
-                    23,
-                    20,
-                    10,
-                    13,
-                    25,
                     38,
-                    2,
-                    2,
-                    15,
-                    52,
+                    5,
                     26,
-                    33,
-                    10,
-                    30,
-                    32,
-                    21,
-                    18,
-                    39,
-                    9,
-                    58,
-                    53,
-                    22,
-                    25,
-                    16,
-                    20,
                     14,
+                    15,
+                    7,
+                    33,
+                    11,
+                    12,
                     16,
+                    6,
+                    20,
+                    20,
+                    21,
+                    13,
+                    28,
+                    17,
+                    30,
+                    108,
+                    43,
+                    3,
+                    7,
+                    15,
+                    8,
+                    32,
+                    16,
+                    9,
+                    33,
+                    4,
+                    15,
+                    38,
+                    28,
+                    2,
+                    21,
+                    30,
+                    51,
+                    53,
+                    26,
+                    39,
+                    11,
+                    4,
+                    3,
+                    16,
+                    14,
+                    19,
+                    2,
+                    38,
+                    29,
+                    20,
+                    11,
+                    24,
+                    16,
+                    52,
+                    5,
+                    19,
+                    30,
+                    16,
+                    40,
+                    5,
+                    14,
+                    10,
+                    19,
+                    34,
+                    8,
+                    24,
+                    16,
+                    26,
+                    22,
+                    7,
+                    25,
+                    9,
+                    20,
+                    8,
+                    10,
+                    11,
+                    10,
                 ]
             ),
         )
@@ -701,7 +821,7 @@ class TestBuffers:
         # test output
         un, counts = np.unique(dummy_scenario.buffers.arr, return_counts=True)
         np.testing.assert_allclose(un, [0, 1, 2, 16385, 16386])
-        np.testing.assert_allclose(counts, [49437, 1, 1, 3, 2])
+        np.testing.assert_allclose(counts, [49437, 1, 1, 2, 3])
 
         # Test if option 'Include buffers' is set off
         dummy_scenario.choices.extensions.include_buffers = False

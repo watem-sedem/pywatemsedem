@@ -1,4 +1,5 @@
 import functools
+import logging
 
 import matplotlib.colors as mplcolors
 import matplotlib.patches as mpatches
@@ -6,6 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..geo.utils import mask_array_with_val
+
+logger = logging.getLogger(__name__)
 
 
 def plot_continuous_raster(
@@ -18,7 +21,7 @@ def plot_continuous_raster(
     colorbar=True,
     ticks=None,
     *args,
-    **kwargs
+    **kwargs,
 ):
     """
     Parameters
@@ -321,3 +324,93 @@ def _inverse(y, mini, Q25, Q50, Q75, maxi):
     cond4 = (y <= 1) * (y > 0.75)
     x[cond4] = (maxi - Q75) / 0.25 * (y[cond4] - 0.75) + Q75
     return x
+
+
+def plot_cumulative_sedimentload(df, fname):
+    """Make a cumulative plot of the ordered sediment load values (high to low)
+
+    Parameters
+    ----------
+    df: pandas.DataFrame
+        Data with cumulative sediment load
+        - *value* (float): sediment load value
+        - *cum_perc* (float): cumulative percentage
+        - *rank* (float): rank
+    fname: str or pathlib Path
+        File path of output figure
+    """
+
+    fig, ax = plt.subplots(2, 1, figsize=[10, 7.5])
+
+    x = df.loc[:, "value"]
+    y = df.loc[:, "cdf"]
+    ax[0].plot(
+        x, y, color=[0.2] * 3, label=r"Cumulative percentage of sediment load (%)"
+    )
+    ax[1].plot(
+        df.loc[:, "rank"],
+        y,
+        color=[0.2] * 3,
+        label=r"Cumulative percentage of sediment load (%)",
+    )
+    ax[0].set_xlabel("Sediment load (-)")
+    ax[0].set_ylabel("CDF (%)")
+    ax[1].set_xlabel("Ranked id (-)")
+    ax[1].set_ylabel("CDF (%)")
+    ax[1].legend()
+    plt.savefig(fname, bbox_inches="tight")
+    plt.close()
+
+
+def plot_landuse(arr, nodata, *args, **kwargs):
+    """
+    Plot landuse maps with standardized colors for the different classes
+
+    Parameters
+    ----------
+    arr: numpy array
+        the landuse raster
+    nodata: int
+        the nodata value
+    """
+    plt.subplots(figsize=[10, 10])
+
+    cmap = mplcolors.ListedColormap(
+        [
+            "#64cf1b",
+            "#3b7db4",
+            "#71b651",
+            "#387b00",
+            "#000000",
+            "#00bfff",
+            "#ffffff",
+            "#a47158",
+        ]
+    )
+    bounds = [-6.5, -5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5]
+    norm = mplcolors.BoundaryNorm(bounds, cmap.N)
+    arr = arr.copy().astype(np.float32)
+    if nodata is not None:
+        arr[arr == nodata] = np.nan
+    img = plt.imshow(arr, cmap=cmap, norm=norm, *args, **kwargs)
+    cbar = plt.colorbar(
+        img,
+        cmap=cmap,
+        norm=norm,
+        boundaries=bounds,
+        ticks=[-6, -5, -4, -3, -2, -1, 0, 1],
+        shrink=0.5,
+    )
+    cbar.ax.set_yticklabels(
+        [
+            "Grass strips (-6)",
+            "Pools (-5)",
+            "Meadow (-4)",
+            "Forest (-3)",
+            "Infrastructure (-2)",
+            "River (-1)",
+            "Outside boundaries (0)",
+            "Agriculture (>0)",
+        ]
+    )
+    plt.show()

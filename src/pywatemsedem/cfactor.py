@@ -2,12 +2,11 @@ import warnings
 
 import numpy as np
 
+from pywatemsedem.geo.utils import clean_up_tempfiles, create_filename
 from pywatemsedem.grasstrips import (
     scale_cfactor_linear,
     scale_cfactor_with_grass_strips_width,
 )
-
-from .geo.utils import clean_up_tempfiles, create_filename
 
 
 def create_cfactor_degerick2015(

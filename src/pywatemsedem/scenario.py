@@ -5,36 +5,37 @@ import shutil
 # Standard libraries
 import subprocess
 import warnings
+from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_float_dtype, is_integer_dtype
 
-from pywatemsedem.cfactor import create_cfactor_degerick2015
-from pywatemsedem.geo.rasters import AbstractRaster
-from pywatemsedem.geo.utils import nearly_identical, saga_intersection
-from pywatemsedem.geo.vectors import AbstractVector
-from pywatemsedem.io.folders import ScenarioFolders
-from pywatemsedem.io.ini import IniFile
-from pywatemsedem.ktc import create_ktc
-from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
-from pywatemsedem.plots import plot_landuse
-
-from .buffers import (
+from pywatemsedem.buffers import (
     filter_outlets_in_arr_extension_id,
     process_buffer_outlets,
     process_buffers_in_river,
 )
-from .errors import (
+from pywatemsedem.cfactor import create_cfactor_degerick2015
+from pywatemsedem.errors import (
     attribute_continuous_value_error,
     attribute_discrete_value_error,
     missing_attribute_error_in_vct,
 )
-from .grasstrips import process_grass_strips
-from .templates import InputFileName
-from .tools import format_forced_routing, zip_folder
+from pywatemsedem.geo.rasters import AbstractRaster
+from pywatemsedem.geo.utils import nearly_identical, saga_intersection
+from pywatemsedem.geo.vectors import AbstractVector
+from pywatemsedem.grasstrips import process_grass_strips
+from pywatemsedem.io.folders import ScenarioFolders
+from pywatemsedem.io.ini import IniFile
+from pywatemsedem.io.plots import plot_landuse
+from pywatemsedem.ktc import create_ktc
+from pywatemsedem.parcelslanduse import ParcelsLanduse, get_source_landuse
+from pywatemsedem.templates import InputFileName
+from pywatemsedem.tools import format_forced_routing, zip_folder
 
 inputfilename = InputFileName()
 DEFAULT_CFACTOR = 0.37
@@ -272,7 +273,7 @@ def valid_ini(func):
     return wrapper
 
 
-class CNWSException(Exception):
+class WSException(Exception):
     """Exception from WaTEM/SEDEM pre- and postprocessing scripts"""
 
 
@@ -300,7 +301,7 @@ class Scenario:
             Containing the pywatemsedem model settings.
         """
         # Init factories from catchm instance
-        self.catchm = catchm
+        self.catchm = deepcopy(catchm)
         self.rp = self.catchm.rp
 
         # Initalize
@@ -312,7 +313,7 @@ class Scenario:
         self._vct_buffers = AbstractVector()  # vector
         self._vct_bufferoutlets = AbstractVector()  # vector
         self._vct_ditches = AbstractVector()
-        self._vct_condictive_dams = AbstractVector()
+        self._vct_conductive_dams = AbstractVector()
         self._vct_source_measures = AbstractVector()
         self._vct_endpoints = AbstractVector()
         self._endpoints = AbstractRaster()
@@ -336,8 +337,7 @@ class Scenario:
         # assign scenario number and user choices
         self.scenario_nr = scenario_nr
         self.year = year
-        self.choices = userchoices
-        # self.choices = deepcopy(userchoices)
+        self.choices = deepcopy(userchoices)
         self.rst_outlet = AbstractRaster()
         self.ini = None
 
@@ -382,8 +382,8 @@ class Scenario:
     def vct_parcels(self, vector_input):
         """Assign parcels polygon vector
 
-        The parcels vector should be polygon vector. Should contain a definition of
-        land-use (column "LANDUSE"):
+        The parcels vector should be polygon vector. Should contain a
+        definition of land-use (column "LANDUSE"):
 
             - *-5*: open water
             - *-4*: grass land
@@ -397,30 +397,31 @@ class Scenario:
             - *[0,1]*: C-factor for crop.
             - *NULL*: no C-factor defined.
 
-        Should contain a defiction of the C-reduction (column 'C_reduction'), used
+        Should contain a defiction of the C-reduction (column 'C_reduct'), used
         in case of source-oriented measures.
 
-        Can contain a 'NR' column which is the identification ID of the individual
-        parcel.
+        Can contain a 'NR' column which is the identification ID of the
+        individual parcel.
 
         Parameters
         ----------
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             Polygon vector
 
-            - *LANDUSE* (int): landuse value (-5: open water, -4: grass land, -3:
-            forest, -2: infrastructure (farms), -9999: agricultural land).
-            - *C_crop* (float): C-factor for crop, valid for considered time period
-              ([0,1], NULL-values allowed).
+            - *LANDUSE* (int): landuse value (-5: open water, -4: grass land,
+            -3: forest, -2: infrastructure (farms), -9999: agricultural land).
+            - *C_crop* (float): C-factor for crop, valid for considered time
+              period ([0,1], NULL-values allowed).
             - *NR* (int, optional): id.
-            - *C_reduction* (float): C-reduction values,  C-factor is reduced with this
-              percentage when source-oriented measures are used.
+            - *C_reduct* (float): C-reduction values, C-factor is reduced with
+              this percentage when source-oriented measures are used.
 
         Notes
         -----
-        The C-value for crops are defined as the C-factor that is valid as value for
-        the coupled crop given a time period (e.g. average C-factor for potato for one
-        year, or average C-factor for potato for the month April).
+        The C-value for crops are defined as the C-factor that is valid as
+        value for the coupled crop given a time period (e.g. average C-factor
+        for potato for one year, or average C-factor for potato for the month
+        April).
         """
         self._vct_parcels = self.vector_factory(
             vector_input, "Polygon", allow_empty=True
@@ -431,6 +432,16 @@ class Scenario:
             "Parcels",
             {"C_crop", "LANDUSE", "C_reduct"},
         )
+
+        if not is_integer_dtype(self._vct_parcels.geodata["LANDUSE"]):
+            raise TypeError("LANDUSE column should be integer")
+
+        if not is_float_dtype(self._vct_parcels.geodata["C_crop"]):
+            raise TypeError("C_crop column should be float")
+
+        if not is_float_dtype(self._vct_parcels.geodata["C_reduct"]):
+            raise TypeError("C_reduct column should be float")
+
         attribute_continuous_value_error(
             self._vct_parcels.geodata, "Parcels", "C_crop", lower=0, upper=1
         )
@@ -449,6 +460,9 @@ class Scenario:
             self._vct_parcels.geodata["NR"] = range(
                 0, len(self._vct_parcels.geodata), 1
             )
+        else:
+            if not is_integer_dtype(self._vct_parcels.geodata["NR"]):
+                raise TypeError("NR column should be integer")
 
         if np.any(self._vct_parcels.geodata["NR"] > 32767):
             msg = (
@@ -585,8 +599,8 @@ class Scenario:
         Grass strips are appointed the value -6 in the WaTEM/SEDEM parcels landuse
         raster. In addition, C-factors and kTC-values are assigned to grass strips
         pixels according to their width, see also
-        :func:`pywatemsedem.cfactor.create_cfactor_cnws` and
-        :func:`pywatemsedem.ktc.create_ktc_cnws`
+        :func:`pywatemsedem.cfactor.create_cfactor_degerick2015` and
+        :func:`pywatemsedem.ktc.create_ktc`
 
         Parameters
         ----------
@@ -844,7 +858,7 @@ class Scenario:
     @property
     def vct_conductive_dams(self):
         """Getter conductive dams vector"""
-        return self._vct_condictive_dams
+        return self._vct_conductive_dams
 
     @vct_conductive_dams.setter
     def vct_conductive_dams(self, vector_input):
@@ -855,7 +869,7 @@ class Scenario:
         vector_input: Pathlib.Path, str or geopandas.GeoDataFrame
             See :func:`pywatemsedem.catchment.vector_factory`.
         """
-        self._vct_condictive_dams = self.vector_factory(vector_input, "LineString")
+        self._vct_conductive_dams = self.vector_factory(vector_input, "LineString")
 
     @property
     def conductive_dams(self):
@@ -1409,59 +1423,57 @@ class Scenario:
     def prepare_input_files(self):
         """Prepare all files (write to disk)"""
         self.catchm.kfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.kfactor_file
+            self.sfolder.wsinput_folder / inputfilename.kfactor_file
         )
         self.catchm.dtm.write(
-            self.sfolder.cnwsinput_folder / inputfilename.dtm_file, nodata=-99999
+            self.sfolder.wsinput_folder / inputfilename.dtm_file, nodata=-99999
         )
         self.catchm.pfactor.write(
-            self.sfolder.cnwsinput_folder / inputfilename.pfactor_file, dtype=np.float32
+            self.sfolder.wsinput_folder / inputfilename.pfactor_file, dtype=np.float32
         )
         if self.choices.extensions.river_routing.value:
             self.catchm.adjacent_edges.to_csv(
-                self.sfolder.cnwsinput_folder / inputfilename.adjacentedges_file,
+                self.sfolder.wsinput_folder / inputfilename.adjacentedges_file,
                 sep="\t",
                 index=False,
             )
             self.catchm.up_edges.to_csv(
-                self.sfolder.cnwsinput_folder / inputfilename.upedges_file,
+                self.sfolder.wsinput_folder / inputfilename.upedges_file,
                 sep="\t",
                 index=False,
             )
             self.choices.extensions.output_per_river_segment = True
             self.catchm.routing.write(
-                self.sfolder.cnwsinput_folder / inputfilename.routing_file
+                self.sfolder.wsinput_folder / inputfilename.routing_file
             )
             # if self.choices.dict_output["Output per river segment"] == 1:
             self.catchm.segments.write(
-                self.sfolder.cnwsinput_folder / inputfilename.segments_file
+                self.sfolder.wsinput_folder / inputfilename.segments_file
             )
 
-        self.catchm.mask.write(self.sfolder.cnwsinput_folder / inputfilename.mask_file)
+        self.catchm.mask.write(self.sfolder.wsinput_folder / inputfilename.mask_file)
 
         self.composite_landuse.write(
-            self.sfolder.cnwsinput_folder / inputfilename.parcelmosaic_file,
+            self.sfolder.wsinput_folder / inputfilename.parcelmosaic_file,
             dtype=np.int32,
         )
         if self.choices.extensions.curve_number.value:
             if self.cn is not None:
-                self.cn.write(self.sfolder.cnwsinput_folder / inputfilename.cn_file)
+                self.cn.write(self.sfolder.wsinput_folder / inputfilename.cn_file)
             else:
                 msg = "Model version in 'CN-WS', define a CN raster to run CN."
                 raise IOError(msg)
         if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
-                self.ktc.write(self.sfolder.cnwsinput_folder / inputfilename.ktc_file)
+                self.ktc.write(self.sfolder.wsinput_folder / inputfilename.ktc_file)
             else:
                 msg = "UserProvidedKTC is 1 (True), provide ktc-raster."
                 raise IOError(msg)
 
-        self.cfactor.write(self.sfolder.cnwsinput_folder / inputfilename.cfactor_file)
+        self.cfactor.write(self.sfolder.wsinput_folder / inputfilename.cfactor_file)
 
         if self.choices.extensions.manual_outlet_selection.value:
-            self.outlets.write(
-                self.sfolder.cnwsinput_folder / inputfilename.outlet_file
-            )
+            self.outlets.write(self.sfolder.wsinput_folder / inputfilename.outlet_file)
         if not self.choices.options.only_routing.value:
             if self.choices.extensions.calibrate.value:
                 self.choices.output.write_sediment_export = False
@@ -1471,18 +1483,14 @@ class Scenario:
         if self.choices.extensions.include_buffers.value & (
             not self.buffers.is_empty()
         ):
-            self.buffers.write(
-                self.sfolder.cnwsinput_folder / inputfilename.buffers_file
-            )
+            self.buffers.write(self.sfolder.wsinput_folder / inputfilename.buffers_file)
 
         if self.choices.extensions.include_ditches.value:
-            self.ditches.write(
-                self.sfolder.cnwsinput_folder / inputfilename.ditches_file
-            )
+            self.ditches.write(self.sfolder.wsinput_folder / inputfilename.ditches_file)
 
         if self.choices.extensions.include_dams.value:
             self.conductive_dams.write(
-                self.sfolder.cnwsinput_folder / inputfilename.conductivedams_file
+                self.sfolder.wsinput_folder / inputfilename.conductivedams_file
             )
 
         # if self.choices.dict_model_options["FilterDTM"] == 1:
@@ -1490,18 +1498,18 @@ class Scenario:
         #    logger.info(msg)
         #    self.catchm.dtm.filter()
         #    self.catchm.dtm.write(
-        #        self.sfolder.cnwsinput_folder / inputfilename.dtm_file
+        #        self.sfolder.wsinput_folder / inputfilename.dtm_file
         #    )
 
         if self.choices.extensions.include_sewers.value:
             if not self.endpoints.is_empty():
                 self.endpoints.write(
-                    self.sfolder.cnwsinput_folder / inputfilename.endpoints_file,
+                    self.sfolder.wsinput_folder / inputfilename.endpoints_file,
                     format="idrisi",
                     dtype=np.float64,
                 )
                 self.endpoints_id.write(
-                    self.sfolder.cnwsinput_folder / inputfilename.endpoints_id_file,
+                    self.sfolder.wsinput_folder / inputfilename.endpoints_id_file,
                     format="idrisi",
                     dtype=np.float64,
                 )
@@ -1509,10 +1517,10 @@ class Scenario:
     def create_ini_file(self):
         """Creates an ini-file for the scenario"""
         logger.info("Creating ini-file...")
-        self.ini = self.sfolder.cnwsinput_folder / "inifile.ini"
+        self.ini = self.sfolder.wsinput_folder / "inifile.ini"
         ini = IniFile(
-            self.sfolder.cnwsinput_folder,
-            self.sfolder.cnwsoutput_folder,
+            self.sfolder.wsinput_folder,
+            self.sfolder.wsoutput_folder,
             self.choices,
         )
         ini.add_sections()
@@ -1543,7 +1551,7 @@ class Scenario:
 
         # Check if watem_sedem executable can be found
         if (
-            shutil.which("watem_sedem") is None
+            shutil.which(ws_binary) is None
         ):  # watem_sedem cannot be found in the PATH variable
             # Check if there is an environment variable "WATEMSEDEM"
             if (
@@ -1553,7 +1561,7 @@ class Scenario:
                 os.environ["PATH"] = (
                     os.environ.get("WATEMSEDEM") + os.pathsep + os.environ["PATH"]
                 )  # Add watem sedem location to PATH
-                if shutil.which("watem_sedem") is None:
+                if shutil.which(ws_binary) is None:
                     msg = (
                         "WATEM-SEDEM is not properly installed, pywatemsedem cannot"
                         " access watem_sedem via PATH or WATEMSEDEM"
@@ -1609,7 +1617,7 @@ def remove_known_grass_strips_from_parcels_vct_saga(parcels, vct_grass_strips):
         # check if NR is in vct_parcels
         if "NR" not in parcels:
             parcels["NR"] = np.arange(1, len(parcels) + 1, 1)
-        parcels.to_file(fname_parcels)
+        parcels.to_file(fname_parcels, spatial_index="YES")
         saga_intersection(
             str(fname_parcels),
             str(vct_grass_strips),
