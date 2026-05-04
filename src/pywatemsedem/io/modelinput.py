@@ -1,18 +1,17 @@
 from dataclasses import dataclass
+from pathlib import Path
 
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
-
-# hvplot functionalities
 from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
-from pywatemsedem.geo.rasters import AbstractRaster
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
     mask_array_with_val,
 )
+from pywatemsedem.io.ini import get_item_from_ini
 from pywatemsedem.io.plots import (
     axes_creator,
     plot_continuous_raster,
@@ -143,16 +142,15 @@ def valid_segments(func):
 
 @dataclass
 class Modelinput(Factory):
-    def __init__(self, template, resolution, epsg, nodata):
+    def __init__(self, ini, resolution, epsg, nodata):
         """AbstractRaster class with model inputs as attributes. Modelinput class
         serves the goal of automating the reading in, checking and visualisation
         of the input data of the WaTEM/SEDEM model.
 
         Parameters
         ----------
-        template: pathlib.Path | str
-            Template raster needed to extract raster properties.
-            Raster contains values in [0,1]. Values in ]0,1] define the catchment.
+        ini: pathlib.Path
+            ini file
         resolution: int
             See :class:`pywatemsedem.geo.RasterProperties`
         epsg: int
@@ -160,32 +158,34 @@ class Modelinput(Factory):
         nodata: int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
+
+        # inifile and modelinput folder
+        self.ini = ini
+        self.modelinputfolder = Path(
+            get_item_from_ini(ini, "Working directories", "input directory", str)
+        )
+
         # apply factory and set mask
-        super().__init__(resolution, epsg, nodata, template.parent)
-        self.mask = template
+        super().__init__(resolution, epsg, nodata, self.modelinputfolder)
+        self.mask = self.modelinputfolder / get_item_from_ini(
+            ini, "Files", "shapefile catchment", str
+        )
 
         # DATA
-        self._dtm = AbstractRaster()
-        self._compositelanduse = AbstractRaster()
-        self._pfactor = AbstractRaster()
-        self._kfactor = AbstractRaster()
-        self._cfactor = AbstractRaster()  # attribute
-        self._ktc = AbstractRaster()
-        self._outlet = AbstractRaster()
-        self._ktil = AbstractRaster()
-        self._sewers = AbstractRaster()
-        self._tillagedirection = AbstractRaster()
-        self._orientedroughness = AbstractRaster()
-        self._buffers = AbstractRaster()
-        self._ditches = AbstractRaster()
-        self._dams = AbstractRaster()
-        self._riversegments = AbstractRaster()
+        self._cfactor = None  # attribute
+        self._buffers = None
+        self._dtm = None
+        self._kfactor = None
+        self._ktc = None
+        self._outlet = None
+        self._pfactor = None
+        self._compositelanduse = None
+        self._ptef = None
+        self._riversegments = None
+        self._riverrouting = None
+        self._sewers = None
         self._upstreamsegments = None
         self._adjacentsegments = None
-        self._riverrouting = AbstractRaster()
-        self._cn = AbstractRaster()
-        self._rainfall = None
-        self._ptef = AbstractRaster()
 
     @property
     def cfactor(self):
@@ -193,6 +193,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:cmap>`
         """
+        if self._cfactor is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "c factor map filename", str
+            )
+            self.cfactor = raster
         return self._cfactor
 
     @cfactor.setter
@@ -247,6 +252,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:buffermap>`
         """
+        if self._buffers is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "buffer map filename", str
+            )
+            self.buffers = raster
         return self._buffers
 
     @buffers.setter
@@ -300,6 +310,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:dtmmap>`
         """
+        if self._dtm is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "dtm filename", str
+            )
+            self.dtm = raster
         return self._dtm
 
     @dtm.setter
@@ -352,6 +367,11 @@ class Modelinput(Factory):
         """Getter kfactor attribute.
         For documentation, see :ref:`here <watemsedem:kmap>`
         """
+        if self._kfactor is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "k factor filename", str
+            )
+            self.kfactor = raster
         return self._kfactor
 
     @kfactor.setter
@@ -407,6 +427,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:ktcmap>`
         """
+        if self._ktc is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "ktc map filename", str
+            )
+            self.ktc = raster
         return self._ktc
 
     @ktc.setter
@@ -466,6 +491,20 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:outletmap>`
         """
+        if self._outlet is None:
+            try:
+                filename = get_item_from_ini(
+                    self.ini, "Files", "outlet map filename", str
+                )
+            except (ValueError, FileNotFoundError):
+                filename = None
+
+            if filename is None:
+                filename = "Outlet.rst"
+
+            raster = self.modelinputfolder / filename
+            self.outlet = raster
+
         return self._outlet
 
     @outlet.setter
@@ -490,6 +529,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:pmap>`
         """
+        if self._pfactor is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "p factor map filename", str
+            )
+            self.pfactor = raster
         return self._pfactor
 
     @pfactor.setter
@@ -541,6 +585,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:prcmap>`
         """
+        if self._compositelanduse is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "parcel filename", str
+            )
+            self.compositelanduse = raster
         return self._compositelanduse
 
     @compositelanduse.setter
@@ -571,6 +620,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:parceltrapppingcrop>`
         """
+        if self._ptef is None:
+            filename = "PTEFmap.rst"
+            raster = self.modelinputfolder / filename
+            self.ptef = raster
+
         return self._ptef
 
     @ptef.setter
@@ -617,12 +671,16 @@ class Modelinput(Factory):
 
         self._ptef.plot = plot
 
-    @property
     def riversegments(self):
         """Getter riversegments attribute.
 
         For documentation, see :ref:`here <watemsedem:riversegmentfile>`
         """
+        if self._riversegments is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "river segment filename", str
+            )
+            self.riversegments = raster
         return self._riversegments
 
     @riversegments.setter
@@ -685,6 +743,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:routingmap>`
         """
+        if self._riverrouting is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "river routing filename", str
+            )
+            self.riverrouting = raster
         return self._riverrouting
 
     @riverrouting.setter
@@ -722,7 +785,6 @@ class Modelinput(Factory):
             "7 (West)",
             "8 (NorthWest)",
         ]
-        np.arange(0, 9).tolist()
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for riverrouting
@@ -757,6 +819,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:sewermapfile>`
         """
+        if self._sewers is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "Sewer map filename", str
+            )
+            self.sewers = raster
         return self._sewers
 
     @sewers.setter
@@ -809,6 +876,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:upstrsegments>`
         """
+        if self._upstreamsegments is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "upstream segments", str
+            )
+            self.upstreamsegments = raster
         return self._upstreamsegments
 
     @upstreamsegments.setter
@@ -833,6 +905,11 @@ class Modelinput(Factory):
 
         For documentation, see :ref:`here <watemsedem:adjsegments>`
         """
+        if self._adjacentsegments is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "adjectant segments", str
+            )
+            self.adjacentsegments = raster
         return self._adjacentsegments
 
     @adjacentsegments.setter
@@ -854,6 +931,20 @@ class Modelinput(Factory):
     @property
     def ktil(self):
         """Getter ktil map."""
+        if self._ktil is None:
+            try:
+                filename = get_item_from_ini(
+                    self.ini, "Files", "ktil map filename", str
+                )
+            except (ValueError, FileNotFoundError):
+                filename = None
+
+            if filename is None:
+                filename = "ktilmap.rst"
+
+            raster = self.modelinputfolder / filename
+            self.ktil = raster
+
         return self._ktil
 
     @ktil.setter
@@ -868,29 +959,268 @@ class Modelinput(Factory):
     @property
     def tillagedirection(self):
         """Getter tillagedirection map."""
+        if self._tillagedirection is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "Tillage direction filename", str
+            )
+            self.tillagedirection = raster
         return self._tillagedirection
+
+    @tillagedirection.setter
+    def tillagedirection(self, raster):
+        """Setter tillagedirection map."""
+        self._tillagedirection = self.raster_factory(raster, flag_mask=False)
+
+        valid_non_nan(self.tillagedirection.arr)
+        valid_nodata(self.tillagedirection.arr)
+        valid_array_type(self.tillagedirection.arr, required_type=np.float32)
+        valid_boundaries(self.tillagedirection.arr, lower=0, upper=360)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.tillagedirection.arr, self.mask.arr, None)
+            fig, ax = plot_continuous_raster(
+                fig, ax, arr, self.rp.bounds, *args, **kwargs
+            )
+            ax.set_title("Tillage direction")
+            return fig, ax
+
+        self._tillagedirection.plot = plot
 
     @property
     def orientedroughness(self):
         """Getter orientedroughness map."""
+        if self._orientedroughness is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "Oriented roughness filename", str
+            )
+            self.orientedroughness = raster
         return self._orientedroughness
+
+    @orientedroughness.setter
+    def orientedroughness(self, raster):
+        """Setter orientedroughness map."""
+        self._orientedroughness = self.raster_factory(raster, flag_mask=False)
+
+        valid_non_nan(self.orientedroughness.arr)
+        valid_nodata(self.orientedroughness.arr)
+        valid_array_type(self.orientedroughness.arr, required_type=np.float32)
+        valid_boundaries(self.orientedroughness.arr, lower=0, upper=None)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plotting function"""
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.orientedroughness.arr, self.mask.arr, None)
+            fig, ax = plot_continuous_raster(
+                fig, ax, arr, self.rp.bounds, *args, **kwargs
+            )
+            ax.set_title("Oriented roughness")
+            return fig, ax
+
+        self._orientedroughness.plot = plot
 
     @property
     def ditches(self):
         """Getter ditches map."""
+        if self._ditches is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "Ditch map filename", str
+            )
+            self.ditches = raster
         return self._ditches
+
+    @ditches.setter
+    def ditches(self, raster):
+        """Setter ditches map."""
+        self._ditches = self.raster_factory(raster, flag_mask=False)
+
+        valid_non_nan(self.ditches.arr)
+        valid_nodata(self.ditches.arr)
+        valid_values(
+            self.ditches.arr[self.ditches.arr != -9999],
+            unique_values=np.arange(0, 9).tolist(),
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        colormap_start = mpl.cm.get_cmap("tab10")
+        colorlist = []
+        for i in range(0, 9):
+            color = mpl.colors.rgb2hex(colormap_start(i))
+            colorlist.append(color)
+        colormap_routing = colors.ListedColormap(colorlist)
+        labels = [
+            "0 (no routing)",
+            "1 (North)",
+            "2 (NorthEast)",
+            "3 (East)",
+            "4 (SouthEast)",
+            "5 (South)",
+            "6 (SouthWest)",
+            "7 (West)",
+            "8 (NorthWest)",
+        ]
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot for ditches
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.ditches.arr, self.mask.arr, 0)
+            arr[arr == -9999] = 0  # no routing
+            fig, ax = plot_discrete_raster(
+                fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
+            )
+            ax.set_title("Ditches")
+            return fig, ax
+
+        self._ditches.plot = plot
 
     @property
     def dams(self):
         """Getter dams map."""
+        if self._dams is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "Dam map filename", str
+            )
+            self.dams = raster
         return self._dams
+
+    @dams.setter
+    def dams(self, raster):
+        """Setter dams map."""
+        self._dams = self.raster_factory(raster, flag_mask=False)
+
+        valid_non_nan(self.dams.arr)
+        valid_nodata(self.dams.arr)
+        valid_values(
+            self.dams.arr[self.dams.arr != -9999],
+            unique_values=np.arange(0, 9).tolist(),
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        colormap_start = mpl.cm.get_cmap("tab10")
+        colorlist = []
+        for i in range(0, 9):
+            color = mpl.colors.rgb2hex(colormap_start(i))
+            colorlist.append(color)
+        colormap_routing = colors.ListedColormap(colorlist)
+        labels = [
+            "0 (no routing)",
+            "1 (North)",
+            "2 (NorthEast)",
+            "3 (East)",
+            "4 (SouthEast)",
+            "5 (South)",
+            "6 (SouthWest)",
+            "7 (West)",
+            "8 (NorthWest)",
+        ]
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot for dams
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.dams.arr, self.mask.arr, 0)
+            arr[arr == -9999] = 0  # no routing
+            fig, ax = plot_discrete_raster(
+                fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
+            )
+            ax.set_title("Dams")
+            return fig, ax
+
+        self._dams.plot = plot
 
     @property
     def cn(self):
         """Getter cn map."""
+        if self._cn is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "CN map filename", str
+            )
+            self.cn = raster
         return self._cn
+
+    @cn.setter
+    def cn(self, raster):
+        """Setter cn map."""
+        self._cn = self.raster_factory(raster, flag_mask=False)
+
+        valid_non_nan(self.cn.arr)
+        valid_nodata(self.cn.arr)
+        valid_array_type(self.cn.arr, required_type=np.float32)
+        valid_boundaries(self.orientedroughness.arr, lower=0, upper=100)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plotting function"""
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.cn.arr, self.mask.arr, None)
+            fig, ax = plot_continuous_raster(
+                fig, ax, arr, self.rp.bounds, *args, **kwargs
+            )
+            ax.set_title("Curve Number (CN)")
+            return fig, ax
+
+        self._cn.plot = plot
 
     @property
     def rainfall(self):
-        """Getter rainfall map."""
+        """Getter rainfall dataframe."""
+        if self._rainfall is None:
+            text = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "Rainfall filename", str
+            )
+            self.rainfall = text
         return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, text):
+        """Setter
+
+        Parameters
+        ----------
+        text: pathlib.Path | str
+        """
+        self._rainfall = pd.read_csv(text, sep="\t")
+
+        if self._rainfall.shape[1] == 1:
+            self._rainfall = pd.read_csv(text, sep=" ")
+
+            if self._rainfall.shape[1] == 1:
+                raise ValueError(
+                    f"Rainfall file '{text}' could not be parsed correctly. "
+                    "Expected 2 columns but only one column was detected "
+                    "with both tab and space delimiters."
+                )
+
+        # checks
+        array = self.rainfall.values
+        valid_non_nan(array)
+        valid_non_nan(array)
+        valid_boundaries(self.rainfall.arr, lower=0, upper=100)
+        valid_array_type(array, required_type=np.float32)
