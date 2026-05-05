@@ -671,6 +671,7 @@ class Modelinput(Factory):
 
         self._ptef.plot = plot
 
+    @property
     def riversegments(self):
         """Getter riversegments attribute.
 
