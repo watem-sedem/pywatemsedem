@@ -447,12 +447,12 @@ class Modelinput(Factory):
         valid_non_nan(self.ktc.arr)
         valid_array_type(self.ktc.arr, required_type=np.float32)
         valid_boundaries(
-            self.ktc.arr[self.ktc.arr != 9999], lower=0, upper=20
+            self.ktc.arr[self.ktc.arr != -9999], lower=0, upper=20
         )  # 0 to 20 if not nodata
-        valid_values(self.ktc.arr[self._ktc.arr > 20], [9999])
+        valid_values(self.ktc.arr[self._ktc.arr > 20], [-9999])
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
-        label = ["9999"]
+        label = ["-9999"]
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot for kTC parameter with cividis as colormap
@@ -472,11 +472,11 @@ class Modelinput(Factory):
             """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.ktc.arr, self.mask.arr, 0)
-            arr_nodata = mask_array_with_val(arr, arr, 9999)
+            arr_nodata = mask_array_with_val(arr, arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr_nodata, self.rp.bounds, *args, **kwargs
             )
-            arr_only_nodata = np.ma.masked_where(arr != 9999, arr)
+            arr_only_nodata = np.ma.masked_where(arr != -9999, arr)
             fig, ax = plot_discrete_raster(
                 fig, ax, arr_only_nodata, self.rp.bounds, label, "Set1"
             )
