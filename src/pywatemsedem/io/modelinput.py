@@ -695,9 +695,9 @@ class Modelinput(Factory):
         self._riversegments = self.raster_factory(raster, flag_mask=False)
 
         # checks
-        valid_non_nan(self.ptef.arr)
-        valid_array_type(self.ptef.arr, required_type=np.int16)
-        valid_boundaries(self.ptef.arr, lower=0, upper=None)
+        valid_non_nan(self.riversegments.arr)
+        valid_array_type(self.riversegments.arr, required_type=np.int16)
+        valid_boundaries(self.riversegments.arr, lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
