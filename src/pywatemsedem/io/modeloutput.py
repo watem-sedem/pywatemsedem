@@ -38,8 +38,8 @@ from pywatemsedem.io.valid import valid_array_type, valid_boundaries, valid_non_
 
 IMPLEMENTED_RASTER_TYPES = [np.int16, np.int32, np.int64, np.float32, np.float64]
 COLORMAP = "cividis"
-COLORMAP_SEDIOUT = colors.LinearSegmentedColormap.from_list(
-    "SediOutcmap", ["#ffffff", "#fecc5c", "#ff8c00", "#d7191c", "#bd0026"]
+COLORMAP_SEDI_OUT = colors.LinearSegmentedColormap.from_list(
+    "sedi_outcmap", ["#ffffff", "#fecc5c", "#ff8c00", "#d7191c", "#bd0026"]
 )
 
 
@@ -78,7 +78,6 @@ class Modeloutput(Factory):
         )
 
         # DATA
-        self._sediout = None
         self._routing = None
         self._routing_missing = None
         self._ls = None
@@ -91,73 +90,6 @@ class Modeloutput(Factory):
         self._sedi_out = None
         self._capacity = None
         self._rusle = None
-
-    @property
-    def sediout(self):
-        """Getter SediOut attribute.
-
-        For documentation, see :ref:`here <watemsedem:sedioutrst>`
-        """
-        if self._sediout is None:
-            self.sediout = self.modeloutputfolder / "SediOut_kg.rst"
-        return self._sediout
-
-    @sediout.setter
-    def sediout(self, raster):
-        """Setter
-
-        Parameters
-        ----------
-        raster: pathlib.Path | str
-        """
-        self._sediout = self.raster_factory(raster, flag_mask=False)
-        # checks on raster data
-        valid_non_nan(self.sediout.arr)
-        valid_array_type(self.sediout.arr, required_type=np.float32)
-        valid_boundaries(
-            self.sediout.arr[self.sediout.arr != -9999], lower=0, upper=None
-        )
-
-        title = "SediOut [kg/year]"
-
-        def plot(
-            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
-        ):
-            """Plot for SediOut with nonlinear colorscale. Masked under 100 kg/year.
-
-            Parameters
-            ----------
-            fig: matplotlib.figure.Figure, default = None
-                if not given, defaults to generating new figure
-            ax: matplotlib.pyplot.axis, default = None
-                if not given, defaults to generating new axis
-            ticks: list, default = [0,10000,20000,40000,80000]
-                    Possibility to supply a list of 5 values for ticks of colorscale.
-                    If ticks = None, 0th, 25th, 50th, 75th and 100th percentile of
-                    the data are used as ticks
-
-            Returns
-            -------
-            fig: matplotlib.figure.Figure
-
-            ax: matplotlib.axes.Axes
-            """
-            arr = np.ma.masked_where(self.sediout.arr < 100, self.sediout.arr)
-            fig, ax = plot_output_raster(
-                fig,
-                ax,
-                arr,
-                self.mask.arr,
-                self.rp.bounds,
-                title,
-                ticks,
-                cmap=COLORMAP_SEDIOUT,
-                *args,
-                **kwargs,
-            )
-            return fig, ax
-
-        self._sediout.plot = plot
 
     @property
     def routing(self):
@@ -566,7 +498,7 @@ class Modeloutput(Factory):
                 self.rp.bounds,
                 title,
                 ticks,
-                cmap=COLORMAP_SEDIOUT,
+                cmap=COLORMAP_SEDI_OUT,
                 *args,
                 **kwargs,
             )
@@ -576,7 +508,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_export(self):
-        """Getter SediExport attribute.
+        """Getter sedi_export attribute.
 
         For documentation, see :ref:`here <watemsedem:sediexportrst>`
         """
@@ -599,10 +531,10 @@ class Modeloutput(Factory):
             self.sedi_export.arr[self.sedi_export.arr != -9999], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        title = "SediExport [kg/year]"
+        title = "sedi_export [kg/year]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for SediExport with non-linear colormap. Zeros are filtered out
+            """Plot for sedi_export with non-linear colormap. Zeros are filtered out
 
             Parameters
             ----------
@@ -626,7 +558,7 @@ class Modeloutput(Factory):
             arr = mask_array_with_val(self.sedi_export.arr, self.sedi_export.arr, -9999)
             # mask where the river is not present
             if not self.ls:
-                msg = "Assign ls to Modeloutput before plotting SediExport"
+                msg = "Assign ls to Modeloutput before plotting sedi_export"
                 raise NotImplementedError(msg)
             else:
                 arr = np.ma.masked_where(self.ls.arr != -9999, arr)
@@ -645,7 +577,7 @@ class Modeloutput(Factory):
                 self.rp.bounds,
                 title,
                 ticks,
-                cmap=COLORMAP_SEDIOUT,
+                cmap=COLORMAP_SEDI_OUT,
                 *args,
                 **kwargs,
             )
@@ -655,7 +587,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_in(self):
-        """Getter SediIn attribute.
+        """Getter sedi_in attribute.
 
         For documentation, see :ref:`here <watemsedem:sediinrst>`
         """
@@ -678,12 +610,12 @@ class Modeloutput(Factory):
             self.sedi_in.arr[self.sedi_in.arr != -9999], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        title = "SediIn [kg/year]"
+        title = "sedi_in [kg/year]"
 
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for SediIn
+            """Plot for sedi_in
 
             Parameters
             ----------
@@ -710,7 +642,7 @@ class Modeloutput(Factory):
                 title=title,
                 bounds=self.rp.bounds,
                 ticks=ticks,
-                cmap=COLORMAP_SEDIOUT,
+                cmap=COLORMAP_SEDI_OUT,
                 *args,
                 **kwargs,
             )
@@ -719,7 +651,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_out(self):
-        """Getter SediOut attribute.
+        """Getter sedi_out attribute.
 
         For documentation, see :ref:`here <watemsedem:sedioutrst>`
         """
@@ -742,12 +674,12 @@ class Modeloutput(Factory):
             self.sedi_out.arr[self.sedi_out.arr != -9999], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        title = "SediOut [kg/year]"
+        title = "sedi_out [kg/year]"
 
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for SediOut
+            """Plot for sedi_out
 
             Parameters
             ----------
@@ -774,7 +706,7 @@ class Modeloutput(Factory):
                 title=title,
                 bounds=self.rp.bounds,
                 ticks=ticks,
-                cmap=COLORMAP_SEDIOUT,
+                cmap=COLORMAP_SEDI_OUT,
                 *args,
                 **kwargs,
             )
@@ -919,7 +851,7 @@ class Modeloutput(Factory):
         self._rusle.plot = plot
 
     def make_routing_vector(
-        self, landuse, sediout, percentile=90, routing_missing=False
+        self, landuse, sedi_out, percentile=90, routing_missing=False
     ):
         """Converts pandas dataframe of routing or routing_missing to a geopandas
         dataframe
@@ -928,10 +860,10 @@ class Modeloutput(Factory):
         ----------
         landuse: pathlib.Path | str | str
                 Path of landuse raster
-        sediout: pathlib.Path | str | str
-                Path of sediout raster
+        sedi_out: pathlib.Path | str | str
+                Path of sedi_out raster
         percentile: int, default = 90
-            Only vectors belonging to SediOutdata percentile and higher is kept
+            Only vectors belonging to sedi_outdata percentile and higher is kept
         routing_missing: bool, default = False
                         set to True to apply function to routing_missing instead
                         of routing
@@ -950,10 +882,10 @@ class Modeloutput(Factory):
         )
 
         # selecting what to vectorise
-        sediout_arr, sediout_profile = load_raster(sediout)
-        sediout_df = raster_array_to_pandas_dataframe(sediout_arr, sediout_profile)
-        seditout_df_sel = sediout_df.loc[
-            sediout_df["val"] > np.percentile(sediout_df["val"], percentile)
+        sedi_out_arr, sedi_out_profile = load_raster(sedi_out)
+        sedi_out_df = raster_array_to_pandas_dataframe(sedi_out_arr, sedi_out_profile)
+        seditout_df_sel = sedi_out_df.loc[
+            sedi_out_df["val"] > np.percentile(sedi_out_df["val"], percentile)
         ]
         if routing_missing:
             df = self.routing_missing
@@ -1384,7 +1316,7 @@ def define_subcatchments_saga(
 
 
 def identify_individual_priority_catchments(
-    arr_sediout,
+    arr_sedi_out,
     rst_profile,
     txt_routing_non_river,
     nmax,
@@ -1397,7 +1329,7 @@ def identify_individual_priority_catchments(
 
     Parameters
     ----------
-    arr_sediout: numpy.ndarray
+    arr_sedi_out: numpy.ndarray
         numpy array format of sedout raster
     rst_profile: rasterio profile
         rasterio profile of the sedout raster
@@ -1419,8 +1351,8 @@ def identify_individual_priority_catchments(
     while True:
 
         # identify point with highest sediment load
-        id_, max_sediout = create_id_raster_for_highest_value_arr(
-            arr_sediout, id_, rst_profile, resmap=resmap / "priority_catchments"
+        id_, max_sedi_out = create_id_raster_for_highest_value_arr(
+            arr_sedi_out, id_, rst_profile, resmap=resmap / "priority_catchments"
         )
 
         # identify subcatchment/cluster coupled to this point
@@ -1431,9 +1363,9 @@ def identify_individual_priority_catchments(
             rst_subcatch, vct_subcatch = define_subcatchments_saga(
                 id_, txt_routing_non_river, tag=template_name
             )
-            # assign sediout value to self.subcatchmprioritSHP
+            # assign sedi_out value to self.subcatchmprioritSHP
             gdf = gpd.read_file(vct_subcatch)
-            gdf["sediout"] = max_sediout
+            gdf["sedi_out"] = max_sedi_out
             gdf.to_file(vct_subcatch, spatial_index="YES")
         else:
             vct_subcatch = template_name
@@ -1441,12 +1373,12 @@ def identify_individual_priority_catchments(
 
         # condition: if a max number of clusters is identified
         # OR all pixels are classified: stop
-        if (n >= nmax) | (np.sum(arr_sediout != rst_profile["nodata"]) == 0):
+        if (n >= nmax) | (np.sum(arr_sedi_out != rst_profile["nodata"]) == 0):
             nmax = n
             break
         else:
             arr_subcatch, _ = load_raster(rst_subcatch)
-            arr_sediout[arr_subcatch != -99999.0] = rst_profile["nodata"]
+            arr_sedi_out[arr_subcatch != -99999.0] = rst_profile["nodata"]
             n += 1
 
     # merge different subcatchments to one file
@@ -1530,7 +1462,7 @@ def remove_river_routing(df_routing):
     return df_routing
 
 
-def compute_efficiency_buffers(rst_buffer, rst_sediin, rst_sediout):
+def compute_efficiency_buffers(rst_buffer, rst_sedi_in, rst_sedi_out):
     """Compute efficiency per buffer
 
     This function calculates the incoming and outgoing sediment per buffer.
@@ -1541,10 +1473,10 @@ def compute_efficiency_buffers(rst_buffer, rst_sediin, rst_sediout):
     ----------
     rst_buffer: str or pathlib.Path | str
         File path of buffer raster with buffer id's
-    rst_sediin: str or ppathlib.Path | str
-        File path of WaTEM/SEDEM SediIn raster, incoming sediment per pixel
-    rst_sediout: str or pathlib.Path | str
-        File path of WaTEM/SEDEM SediOut raster, outgoing sediment per pixel
+    rst_sedi_in: str or ppathlib.Path | str
+        File path of WaTEM/SEDEM sedi_in raster, incoming sediment per pixel
+    rst_sedi_out: str or pathlib.Path | str
+        File path of WaTEM/SEDEM sedi_out raster, outgoing sediment per pixel
 
     Returns
     -------
@@ -1552,25 +1484,25 @@ def compute_efficiency_buffers(rst_buffer, rst_sediin, rst_sediout):
         Holding results of mass balance of buffers.
 
         - *buf_id* (float): id of the buffer (as in the buffer raster)
-        - *sediin* (float): total incoming sediment in the buffer.
-        - *sediout* (float): total outgoing sediment in the buffer.
+        - *sedi_in* (float): total incoming sediment in the buffer.
+        - *sedi_out* (float): total outgoing sediment in the buffer.
         - *buff_sed* (float): amount sediment deposited in the buffer.
     """
     arr_buffers, profile = load_raster(rst_buffer)
-    arr_sediin, _ = load_raster(rst_sediin)
-    arr_sediout, _ = load_raster(rst_sediout)
+    arr_sedi_in, _ = load_raster(rst_sedi_in)
+    arr_sedi_out, _ = load_raster(rst_sedi_out)
 
-    df_out = pd.DataFrame(columns=["NR", "sediin", "sediout", "buff_sed"])
+    df_out = pd.DataFrame(columns=["NR", "sedi_in", "sedi_out", "buff_sed"])
     condition = (arr_buffers < 2**14) & (arr_buffers > 0)
     arr_unique_buffer = np.unique(arr_buffers[condition])
     for buf_id in arr_unique_buffer:
-        arr_sediin_buffer = np.sum(arr_sediin[arr_buffers == buf_id])
-        arr_sediout_buffer = np.sum(arr_sediout[arr_buffers == buf_id])
-        arr_deposition = arr_sediin_buffer - arr_sediout_buffer
+        arr_sedi_in_buffer = np.sum(arr_sedi_in[arr_buffers == buf_id])
+        arr_sedi_out_buffer = np.sum(arr_sedi_out[arr_buffers == buf_id])
+        arr_deposition = arr_sedi_in_buffer - arr_sedi_out_buffer
         df_out.loc[df_out.shape[0] + 1] = [
             buf_id,
-            arr_sediin_buffer,
-            arr_sediout_buffer,
+            arr_sedi_in_buffer,
+            arr_sedi_out_buffer,
             arr_deposition,
         ]
     return df_out
@@ -1671,9 +1603,9 @@ def create_deposition_raster(rst_watereros):
 
 
 def map_rank_sediment_loads(
-    rst_sediexport, threshold, vct_out="rank.shp", rst_endpoints=None, unit="kg"
+    rst_sedi_export, threshold, vct_out="rank.shp", rst_endpoints=None, unit="kg"
 ):
-    """Rank the sediment loads in sediexport (and sewerin) from high to low
+    """Rank the sediment loads in sedi_export (and sewer_in) from high to low
 
     This function uses the rank output raster/dataframe of
     :func:`pywatemsedem.io.modeloutput.identify_rank_sediment_loads`
@@ -1684,14 +1616,14 @@ def map_rank_sediment_loads(
 
     Parameters
     ----------
-    rst_sediexport: str or pathlib.Path | str
-        File path of WaTEM/SEDEM sediexport raster.
+    rst_sedi_export: str or pathlib.Path | str
+        File path of WaTEM/SEDEM sedi_export raster.
     threshold: float
         See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`
     vct_out: str or pathlib.Path | str
         File path of output vector.
     rst_endpoints: str or pathlib.Path | str, default None
-        File path to WaTEM/SEDEM sewerin raster (endpoints in pywatemsedem).
+        File path to WaTEM/SEDEM sewer_in raster (endpoints in pywatemsedem).
     unit: str
         "kg" or "ton"
 
@@ -1704,91 +1636,93 @@ def map_rank_sediment_loads(
         f"Unit '{unit}' should be either 'kg' op 'ton'."
 
     rst_out = create_filename(".rst")
-    df_sediexport, threshold = identify_rank_sediment_loads(
-        rst_sediexport, threshold, rst_out, rst_endpoints
+    df_sedi_export, threshold = identify_rank_sediment_loads(
+        rst_sedi_export, threshold, rst_out, rst_endpoints
     )
     rst_to_vct_points(rst_out, vct_out)
     gdf_out = gpd.read_file(vct_out)
     gdf_out["rank"] = gdf_out[Path(rst_out).stem]
-    gdf_out = gdf_out.merge(df_sediexport, on="rank")
+    gdf_out = gdf_out.merge(df_sedi_export, on="rank")
     if unit == "ton":
-        gdf_out["sediexport"] = gdf_out["sediexport"] / 1000
+        gdf_out["sedi_export"] = gdf_out["sedi_export"] / 1000
     clean_up_tempfiles(Path(rst_out), "rst")
 
     return gdf_out
 
 
 def identify_rank_sediment_loads(
-    rst_sediexport, threshold, rst_out, rst_endpoints=None
+    rst_sedi_export, threshold, rst_out, rst_endpoints=None
 ):
     """Identify the highest ``threshold`` percentage sediment loads.
 
-    This functions identifies the cumulative distribution of the sediexport
-    (and sewerin, optional) raster:
+    This functions identifies the cumulative distribution of the sedi_export
+    (and sewer_in, optional) raster:
 
-    - (optional) map sewerin  raster to sediexport raster
-    - convert sediexport raster to a list-format
+    - (optional) map sewer_in  raster to sedi_export raster
+    - convert sedi_export raster to a list-format
     - sort from high to low
     - compute cumulative distribution
     - classify
 
     Parameters
     ----------
-    rst_sediexport: str or pathlib.Path | str
-        File path to WaTEM/SEDEM sediexport raster.
+    rst_sedi_export: str or pathlib.Path | str
+        File path to WaTEM/SEDEM sedi_export raster.
     threshold: float
         See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`
     rst_out: str of pathlib.Path | str
         Output raster containing ranks of highest sediment loads (1: highest,
         2: second highest, ..)
     rst_endpoints: str or pathlib.Path | str
-        File path to WaTEM/SEDEM sewerin raster.
+        File path to WaTEM/SEDEM sewer_in raster.
 
     Returns
     -------
-    df_sediexport: pandas.DataFrame
-        Data Frame format of SediExport raster (format: see
+    df_sedi_export: pandas.DataFrame
+        Data Frame format of sedi_export raster (format: see
         :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`)
     threshold: float
         See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`
     """
-    arr_sediexport, profile = load_raster(rst_sediexport)
-    arr_sediexport = np.where(arr_sediexport == profile["nodata"], 0, arr_sediexport)
+    arr_sedi_export, profile = load_raster(rst_sedi_export)
+    arr_sedi_export = np.where(arr_sedi_export == profile["nodata"], 0, arr_sedi_export)
 
     if rst_endpoints is not None:
-        arr_sewerin, _ = load_raster(rst_endpoints)
-        arr_sewerin = np.where(arr_sewerin == profile["nodata"], 0, arr_sewerin)
-        arr_sediexport += arr_sewerin
+        arr_sewer_in, _ = load_raster(rst_endpoints)
+        arr_sewer_in = np.where(arr_sewer_in == profile["nodata"], 0, arr_sewer_in)
+        arr_sedi_export += arr_sewer_in
 
-    df_sediexport = raster_array_to_pandas_dataframe(arr_sediexport, profile)
+    df_sedi_export = raster_array_to_pandas_dataframe(arr_sedi_export, profile)
     profile["driver"] = "GTiff"
 
     # sort and select points
-    df_sediexport, threshold = compute_cumulative_loads_in_sinks(
-        df_sediexport, profile, threshold, plot=False
+    df_sedi_export, threshold = compute_cumulative_loads_in_sinks(
+        df_sedi_export, profile, threshold, plot=False
     )
-    arr_sediexport = raster_dataframe_to_arr(df_sediexport, profile, "rank", np.float32)
+    arr_sedi_export = raster_dataframe_to_arr(
+        df_sedi_export, profile, "rank", np.float32
+    )
 
     write_arr_as_rst(
-        arr_sediexport,
+        arr_sedi_export,
         rst_out,
         "float32",
         profile,
     )
 
-    return df_sediexport, threshold
+    return df_sedi_export, threshold
 
 
 def compute_cumulative_loads_in_sinks(
-    df_sediexport, profile, threshold, delta=10, plot=False
+    df_sedi_export, profile, threshold, delta=10, plot=False
 ):
-    """Analyse cumulative sediment load by sorting SediExport values
+    """Analyse cumulative sediment load by sorting sedi_export values
     from high to low
 
     Parameters
     ----------
-    df_sediexport: pandas.DataFrame
-        Data Frame format of SediExport raster (format: see
+    df_sedi_export: pandas.DataFrame
+        Data Frame format of sedi_export raster (format: see
         :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`)
     profile: rasterio.profiles
         See :func:`rasterio.open`
@@ -1797,12 +1731,12 @@ def compute_cumulative_loads_in_sinks(
     delta: int
         Delta used to iterate percentage
     plot: bool, default False
-        True if you want a cumulative SediExport plot
+        True if you want a cumulative sedi_export plot
 
     Returns
     -------
-    df_sediexport: pandas.DataFrame
-        Data Frame format of SediExport raster (format: see
+    df_sedi_export: pandas.DataFrame
+        Data Frame format of sedi_export raster (format: see
         :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`) added
         with:
 
@@ -1815,81 +1749,83 @@ def compute_cumulative_loads_in_sinks(
     """
 
     # sort according to values of sediment load into river
-    df_sediexport["sediexport"] = df_sediexport["val"]
-    df_sediexport = df_sediexport.sort_values("sediexport", ascending=False)
+    df_sedi_export["sedi_export"] = df_sedi_export["val"]
+    df_sedi_export = df_sedi_export.sort_values("sedi_export", ascending=False)
 
     # calculate cumulative sum, in percentage
-    cond = (df_sediexport["sediexport"] != profile["nodata"]) & (
-        df_sediexport["val"] != 0.0
+    cond = (df_sedi_export["sedi_export"] != profile["nodata"]) & (
+        df_sedi_export["val"] != 0.0
     )
-    df_sediexport.loc[cond, "cum_sum"] = df_sediexport.loc[cond, "sediexport"].cumsum()
-    df_sediexport.loc[cond, "cum_perc"] = (
+    df_sedi_export.loc[cond, "cum_sum"] = df_sedi_export.loc[
+        cond, "sedi_export"
+    ].cumsum()
+    df_sedi_export.loc[cond, "cum_perc"] = (
         100
-        * df_sediexport.loc[cond, "cum_sum"]
-        / df_sediexport.loc[cond, "sediexport"].sum()
+        * df_sedi_export.loc[cond, "cum_sum"]
+        / df_sedi_export.loc[cond, "sedi_export"].sum()
     )
 
     if plot:
         plot_cumulative_sedimentload(
-            df_sediexport.loc[cond],
+            df_sedi_export.loc[cond],
             threshold,
-            "cumulative_sediexport.png",
+            "cumulative_sedi_export.png",
         )
 
     # hotfix on percentage: if the first percentage is higher than the
     # user-predefined percentage, adjust it (small catchments)!
-    threshold = verify_highest_load_with_threshold(df_sediexport, threshold)
+    threshold = verify_highest_load_with_threshold(df_sedi_export, threshold)
 
     # prepare ids for subcatchment delineation
-    df_sediexport["rank"] = profile["nodata"]
-    df_sediexport["class"] = profile["nodata"]
+    df_sedi_export["rank"] = profile["nodata"]
+    df_sedi_export["class"] = profile["nodata"]
 
     # assign unique id's - in order of importance - to records
-    cond = (df_sediexport["cum_perc"] <= threshold) & (
-        ~df_sediexport["cum_perc"].isnull()
+    cond = (df_sedi_export["cum_perc"] <= threshold) & (
+        ~df_sedi_export["cum_perc"].isnull()
     )
-    df_sediexport.loc[cond, "rank"] = np.arange(np.sum(cond)) + 1
+    df_sedi_export.loc[cond, "rank"] = np.arange(np.sum(cond)) + 1
 
     # calculate percentage
-    df_sediexport["perc"] = [
+    df_sedi_export["perc"] = [
         (
-            df_sediexport["cum_perc"].iloc[i] - df_sediexport["cum_perc"].iloc[i - 1]
+            df_sedi_export["cum_perc"].iloc[i] - df_sedi_export["cum_perc"].iloc[i - 1]
             if i != 0
-            else df_sediexport["cum_perc"].iloc[i]
+            else df_sedi_export["cum_perc"].iloc[i]
         )
-        for i in range(0, len(df_sediexport))
+        for i in range(0, len(df_sedi_export))
     ]
 
     # chekc if begin percentage is below delta_perc
     bperc = delta
     eperc = int(threshold + 1)
-    if df_sediexport["cum_perc"].iloc[0] > bperc:
-        bperc = int(np.ceil(df_sediexport["cum_perc"].iloc[0] / 10) * 10)
+    if df_sedi_export["cum_perc"].iloc[0] > bperc:
+        bperc = int(np.ceil(df_sedi_export["cum_perc"].iloc[0] / 10) * 10)
 
     for i in range(bperc, eperc, delta):
         cond = (
-            (df_sediexport["cum_perc"] > i - delta)
-            & (df_sediexport["cum_perc"] <= i)
-            & (~df_sediexport["cum_perc"].isnull())
+            (df_sedi_export["cum_perc"] > i - delta)
+            & (df_sedi_export["cum_perc"] <= i)
+            & (~df_sedi_export["cum_perc"].isnull())
         )
-        df_sediexport.loc[cond, "class"] = i
+        df_sedi_export.loc[cond, "class"] = i
 
     return (
-        df_sediexport[
-            ["col", "row", "rank", "perc", "cum_perc", "class", "sediexport"]
+        df_sedi_export[
+            ["col", "row", "rank", "perc", "cum_perc", "class", "sedi_export"]
         ],
         int(threshold),
     )
 
 
-def verify_highest_load_with_threshold(df_sediexport, threshold):
+def verify_highest_load_with_threshold(df_sedi_export, threshold):
     """Verify whether that the highest load is not accountable for more than 50 percent
     of all the load in a catchment. If this is true, adapt threshold.
 
     Parameters
     ----------
-    df_sediexport: pandas.DataFrame
-        Data Frame format of SediExport raster (format: see
+    df_sedi_export: pandas.DataFrame
+        Data Frame format of sedi_export raster (format: see
         :func:`pywatemsedem.pywatemsedem.utils.raster_array_to_pandas_dataframe`)
     threshold: float
         See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`
@@ -1899,7 +1835,7 @@ def verify_highest_load_with_threshold(df_sediexport, threshold):
     threshold_: float
         Adapted threshold (depending on if-else clause).
     """
-    cum_sum_sinks0 = df_sediexport["cum_perc"].iloc[0]
+    cum_sum_sinks0 = df_sedi_export["cum_perc"].iloc[0]
 
     if cum_sum_sinks0 > threshold:
         threshold_ = np.ceil(cum_sum_sinks0)
