@@ -62,14 +62,17 @@ class Modeloutput(Factory):
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
-        # inifile and modelinput folder
+        # inifile and modeloutput folder
         self.ini = ini
+        self.modelinputfolder = Path(
+            get_item_from_ini(ini, "Working directories", "input directory", str)
+        )
         self.modeloutputfolder = Path(
             get_item_from_ini(ini, "Working directories", "output directory", str)
         )
 
         # apply factory and set mask
-        super().__init__(resolution, epsg, nodata, self.modelinputfolder)
+        super().__init__(resolution, epsg, nodata, self.modeloutputfolder)
         self.mask = self.modelinputfolder / get_item_from_ini(
             ini, "Files", "shapefile catchment", str
         )
@@ -85,6 +88,7 @@ class Modeloutput(Factory):
         self._sewer_in = None
         self._sedi_export = None
         self._sedi_in = None
+        self._sedi_out = None
         self._capacity = None
         self._rusle = None
 
@@ -590,7 +594,7 @@ class Modeloutput(Factory):
         """
         self._sedi_export = self.raster_factory(raster, flag_mask=False)
 
-        valid_array_type(self.sewer_in.arr, required_type=np.float32)
+        valid_array_type(self.sedi_export.arr, required_type=np.float32)
         valid_boundaries(
             self.sedi_export.arr[self.sedi_export.arr != -9999], lower=0, upper=None
         )
@@ -714,6 +718,70 @@ class Modeloutput(Factory):
         self._sedi_in.plot = plot
 
     @property
+    def sedi_out(self):
+        """Getter SediOut attribute.
+
+        For documentation, see :ref:`here <watemsedem:sedioutrst>`
+        """
+        if self._sedi_out is None:
+            self.sedi_out = self.modeloutputfolder / "SediOut_kg.rst"
+        return self._sedi_out
+
+    @sedi_out.setter
+    def sedi_out(self, raster):
+        """Setter
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._sedi_out = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        valid_boundaries(
+            self.sedi_out.arr[self.sedi_out.arr != -9999], lower=0, upper=None
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "SediOut [kg/year]"
+
+        def plot(
+            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
+        ):
+            """Plot for SediOut
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [0,10000,20000,40000,80000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.sedi_out.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_SEDIOUT,
+                *args,
+                **kwargs,
+            )
+
+        self._sedi_out.plot = plot
+
+    @property
     def capacity(self):
         """Getter capacity attribute.
 
@@ -835,7 +903,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.rusle.arr, self.rusle.arr, 0)
+            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, -9999)
             fig, ax = plot_output_raster(
                 fig=fig,
                 ax=ax,

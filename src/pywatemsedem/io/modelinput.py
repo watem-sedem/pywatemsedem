@@ -209,6 +209,7 @@ class Modelinput(Factory):
         raster: pathlib.Path | str
         """
         self._cfactor = self.raster_factory(raster, flag_mask=False)
+
         # checks on raw raster data
         valid_non_nan(self.cfactor.arr)
         valid_array_type(self.cfactor.arr, required_type=np.float32)
@@ -473,7 +474,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.ktc.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.ktc.arr, self.mask.arr, -9999)
             arr_nodata = mask_array_with_val(arr, arr, 9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr_nodata, self.rp.bounds, *args, **kwargs
