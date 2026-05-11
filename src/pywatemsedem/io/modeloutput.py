@@ -26,6 +26,7 @@ from pywatemsedem.geo.utils import (
     rst_to_vct_points,
     write_arr_as_rst,
 )
+from pywatemsedem.io.ini import get_item_from_ini
 from pywatemsedem.io.plots import (
     axes_creator,
     log_scale_enabler,
@@ -44,25 +45,34 @@ COLORMAP_SEDIOUT = colors.LinearSegmentedColormap.from_list(
 
 @dataclass
 class Modeloutput(Factory):
-    def __init__(self, template, resolution, epsg, nodata):
+    def __init__(self, ini, resolution, epsg, nodata):
         """AbstractRaster class with model outputs as attributes. Modeloutput class
         serves the goal of automating the reading in, checking and visualisation
         of the output data of the WaTEM/SEDEM model.
 
         Parameters
         ----------
-        template: pathlib.Path | str
-            Template raster needed to extract raster properties.
-            Raster contains values in [0,1]. Values in ]0,1] define the catchment.
+        ini: pathlib.Path
+            ini file
         resolution: int
-            See :class:`pywatemsedem.geo.RasterProperties`.
+            See :class:`pywatemsedem.geo.RasterProperties`
         epsg: int
             See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata: float
+        nodata: int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
-        super().__init__(resolution, epsg, nodata, template.parent)
-        self.mask = template
+
+        # inifile and modelinput folder
+        self.ini = ini
+        self.modeloutputfolder = Path(
+            get_item_from_ini(ini, "Working directories", "output directory", str)
+        )
+
+        # apply factory and set mask
+        super().__init__(resolution, epsg, nodata, self.modelinputfolder)
+        self.mask = self.modelinputfolder / get_item_from_ini(
+            ini, "Files", "shapefile catchment", str
+        )
 
         # DATA
         self._sediout = None
@@ -84,6 +94,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:sedioutrst>`
         """
+        if self._sediout is None:
+            self.sediout = self.modeloutputfolder / "SediOut_kg.rst"
         return self._sediout
 
     @sediout.setter
@@ -148,6 +160,8 @@ class Modeloutput(Factory):
         """Getter routing attribute.
         For documentation, see :ref:`here <watemsedem:routingtxt>`
         """
+        if self._routing is None:
+            self.routing = self.modeloutputfolder / "routing.txt"
         return self._routing
 
     @routing.setter
@@ -210,6 +224,8 @@ class Modeloutput(Factory):
         """Getter routing_missing attribute.
         For documentation, see :ref:`here <watemsedem:missingroutingtxt>`
         """
+        if self._routing_missing is None:
+            self.routing_missing = self.modeloutputfolder / "routing_missing.txt"
         return self._routing_missing
 
     @routing_missing.setter
@@ -284,6 +300,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:lsmap>`
         """
+        if self._ls is None:
+            self.ls = self.modeloutputfolder / "LS.rst"
         return self._ls
 
     @ls.setter
@@ -343,6 +361,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:slopemap>`
         """
+        if self._slope is None:
+            self.slope = self.modeloutputfolder / "SLOPE.rst"
         return self._slope
 
     @slope.setter
@@ -402,6 +422,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:upareamap>`
         """
+        if self._uparea is None:
+            self.uparea = self.modeloutputfolder / "UPAREA.rst"
         return self._uparea
 
     @uparea.setter
@@ -468,6 +490,8 @@ class Modeloutput(Factory):
         For explanation on colmun variables of dataframe: see
         :func:`pywatemsedem.io.modeloutput.load_total_sediment_file`.
         """
+        if self._total_sediment is None:
+            self.total_sediment = self.modeloutputfolder / "Total sediment.txt"
         return self._total_sediment
 
     @total_sediment.setter
@@ -487,6 +511,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:sewerinrst>`
         """
+        if self._sewer_in is None:
+            self.sewer_in = self.modeloutputfolder / "sewer_in.rst"
         return self._sewer_in
 
     @sewer_in.setter
@@ -550,6 +576,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:sediexportrst>`
         """
+        if self._sedi_export is None:
+            self.sedi_export = self.modeloutputfolder / "SediExport_kg.rst"
         return self._sedi_export
 
     @sedi_export.setter
@@ -627,6 +655,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:sediinrst>`
         """
+        if self._sedi_in is None:
+            self.sedi_in = self.modeloutputfolder / "SediIn_kg.rst"
         return self._sedi_in
 
     @sedi_in.setter
@@ -689,6 +719,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:capacityrst>`
         """
+        if self._capacity is None:
+            self.capacity = self.modeloutputfolder / "Capacity.rst"
         return self._capacity
 
     @capacity.setter
@@ -761,6 +793,8 @@ class Modeloutput(Factory):
 
         For documentation, see :ref:`here <watemsedem:ruslerst>`
         """
+        if self._rusle is None:
+            self.rusle = self.modeloutputfolder / "RUSLE.rst"
         return self._rusle
 
     @rusle.setter
