@@ -243,6 +243,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
             ax.set_title("C-factor [-]")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._cfactor.plot = plot
@@ -301,6 +302,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, labels, *args, **kwargs
             )
             ax.set_title("Buffers")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._buffers.plot = plot
@@ -359,6 +361,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
             ax.set_title("DTM [m MSL]")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._dtm.plot = plot
@@ -418,6 +421,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
             ax.set_title("K-factor [kg.h]/[MJ.mm]")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._kfactor.plot = plot
@@ -484,6 +488,7 @@ class Modelinput(Factory):
                 fig, ax, arr_only_nodata, self.rp.bounds, label, "Set1"
             )
             ax.set_title("kTC [m]")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._ktc.plot = plot
@@ -580,6 +585,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
             ax.set_title("P-factor [-]")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._pfactor.plot = plot
@@ -672,6 +678,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
             ax.set_title("PTEF [%]")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._ptef.plot = plot
@@ -738,6 +745,7 @@ class Modelinput(Factory):
                 alpha=0.8,
             )
             ax.set_title("Riversegments")
+            ax.set_facecolor("lightgray")
 
             return fig, ax
 
@@ -815,6 +823,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
             )
             ax.set_title("Riverrouting")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._riverrouting.plot = plot
@@ -871,6 +880,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
             ax.set_title("Fraction of sediment in sewers")
+            ax.set_facecolor("lightgray")
 
             return fig, ax
 
@@ -990,6 +1000,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
             ax.set_title("Tillage direction")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._tillagedirection.plot = plot
@@ -1023,6 +1034,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
             ax.set_title("Oriented roughness")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._orientedroughness.plot = plot
@@ -1090,6 +1102,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
             )
             ax.set_title("Ditches")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._ditches.plot = plot
@@ -1157,6 +1170,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
             )
             ax.set_title("Dams")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._dams.plot = plot
@@ -1190,6 +1204,7 @@ class Modelinput(Factory):
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
             ax.set_title("Curve Number (CN)")
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._cn.plot = plot
