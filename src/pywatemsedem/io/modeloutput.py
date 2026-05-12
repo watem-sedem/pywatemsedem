@@ -41,6 +41,9 @@ COLORMAP = "cividis"
 COLORMAP_SEDI_OUT = colors.LinearSegmentedColormap.from_list(
     "sedi_outcmap", ["#ffffff", "#fecc5c", "#ff8c00", "#d7191c", "#bd0026"]
 )
+COLORMAP_WATEREROS = colors.LinearSegmentedColormap.from_list(
+    "watereroscmap", ["#bd0026", "#ff8c00", "#ffffff", "#4292c6", "#08306b"]
+)
 
 
 @dataclass
@@ -91,6 +94,9 @@ class Modeloutput(Factory):
         self._sedi_export = None
         self._sedi_in = None
         self._sedi_out = None
+        self._cumulative = None
+        self._watereros_kg = None
+        self._watereros_mm = None
         self._capacity = None
         self._rusle = None
 
@@ -149,6 +155,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._aspect.plot = plot
@@ -313,7 +320,7 @@ class Modeloutput(Factory):
         self._ls = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.ls.arr, required_type=np.float32)
-        valid_boundaries(self.ls.arr[self.ls.arr != -9999], lower=0, upper=None)
+        valid_boundaries(self.ls.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "LS [-]"
@@ -349,6 +356,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._ls.plot = plot
@@ -374,7 +382,7 @@ class Modeloutput(Factory):
         self._slope = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.slope.arr, required_type=np.float32)
-        valid_boundaries(self.slope.arr[self.slope.arr != -9999], lower=0, upper=None)
+        valid_boundaries(self.slope.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "Slope [rad]"
@@ -410,6 +418,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._slope.plot = plot
@@ -435,7 +444,7 @@ class Modeloutput(Factory):
         self._uparea = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.uparea.arr, required_type=np.float32)
-        valid_boundaries(self.uparea.arr[self.uparea.arr != -9999], lower=0, upper=None)
+        valid_boundaries(self.uparea.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "uparea [m²]"
@@ -476,6 +485,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._uparea.plot = plot
@@ -592,9 +602,7 @@ class Modeloutput(Factory):
         self._sewer_in = self.raster_factory(raster, flag_mask=True)
 
         valid_array_type(self.sewer_in.arr, required_type=np.float32)
-        valid_boundaries(
-            self.sewer_in.arr[self.sewer_in.arr != -9999], lower=0, upper=None
-        )
+        valid_boundaries(self.sewer_in.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sewer in [kg/year]"
 
@@ -632,6 +640,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._sewer_in.plot = plot
@@ -658,7 +667,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_export.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_export.arr[self.sedi_export.arr != -9999], lower=0, upper=None
+            self.sedi_export.arr[self.mask.arr != -9999], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_export [kg/year]"
@@ -711,6 +720,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._sedi_export.plot = plot
@@ -736,9 +746,7 @@ class Modeloutput(Factory):
         self._sedi_in = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.sedi_in.arr, required_type=np.float32)
-        valid_boundaries(
-            self.sedi_in.arr[self.sedi_in.arr != -9999], lower=0, upper=None
-        )
+        valid_boundaries(self.sedi_in.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_in [kg/year]"
 
@@ -776,8 +784,74 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
 
         self._sedi_in.plot = plot
+
+    @property
+    def cumulative(self):
+        """Getter cumulative attribute.
+
+        For documentation, see :ref:`here <watemsedem:cumulativerst>`
+        """
+        if self._cumulative is None:
+            self.cumulative = self.modeloutputfolder / "cumulative.rst"
+        return self._cumulative
+
+    @cumulative.setter
+    def cumulative(self, raster):
+        """Setter cumulative attribute
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._cumulative = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        valid_boundaries(
+            self.cumulative.arr[self.mask.arr != -9999], lower=0, upper=None
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "cumulative [kg/year]"
+
+        def plot(
+            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
+        ):
+            """Plot for cumulative
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [0,10000,20000,40000,80000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.cumulative.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_SEDI_OUT,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._cumulative.plot = plot
 
     @property
     def sedi_out(self):
@@ -800,9 +874,7 @@ class Modeloutput(Factory):
         self._sedi_out = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
-        valid_boundaries(
-            self.sedi_out.arr[self.sedi_out.arr != -9999], lower=0, upper=None
-        )
+        valid_boundaries(self.sedi_out.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_out [kg/year]"
 
@@ -840,8 +912,135 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
 
         self._sedi_out.plot = plot
+
+    @property
+    def watereros_kg(self):
+        """Getter watereros_kg attribute.
+
+        For documentation, see :ref:`here <watemsedem:watereroskgrst>`
+        """
+        if self._watereros_kg is None:
+            self.watereros_kg = (
+                self.modeloutputfolder / "WATEREROS (kg per gridcel).rst"
+            )
+        return self._watereros_kg
+
+    @watereros_kg.setter
+    def watereros_kg(self, raster):
+        """Setter watereros_kg attribute
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._watereros_kg = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "watereros_kg [kg per year per gridcell]"
+
+        def plot(
+            fig=None, ax=None, ticks=[-10000, -5000, 0, 5000, 10000], *args, **kwargs
+        ):
+            """Plot for watereros_kg
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [-20000, -10000, 0, 10000, 20000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.watereros_kg.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_WATEREROS,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._watereros_kg.plot = plot
+
+    @property
+    def watereros_mm(self):
+        """Getter watereros_mm attribute.
+
+        For documentation, see :ref:`here <watemsedem:watererosmmrst>`
+        """
+        if self._watereros_mm is None:
+            self.watereros_mm = (
+                self.modeloutputfolder / "WATEREROS (mm per gridcel).rst"
+            )
+        return self._watereros_mm
+
+    @watereros_mm.setter
+    def watereros_mm(self, raster):
+        """Setter watereros_mm attribute
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._watereros_mm = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "watereros_mm [mm per year per gridcell]"
+
+        def plot(fig=None, ax=None, ticks=[-2, -1, 0, 1, 2], *args, **kwargs):
+            """Plot for watereros_mm
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [-20000, -10000, 0, 10000, 20000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.watereros_mm.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_WATEREROS,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._watereros_mm.plot = plot
 
     @property
     def capacity(self):
@@ -864,9 +1063,7 @@ class Modeloutput(Factory):
         self._capacity = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
-        valid_boundaries(
-            self.capacity.arr[self.capacity.arr != -9999], lower=0, upper=None
-        )
+        valid_boundaries(self.capacity.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "Capacity [kg/year]"
@@ -912,6 +1109,7 @@ class Modeloutput(Factory):
                 **kwargs,
             )
             ax.set_title(title)
+            ax.set_facecolor("lightgray")
             return fig, ax
 
         self._capacity.plot = plot
@@ -938,9 +1136,7 @@ class Modeloutput(Factory):
         self._rusle = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
-        valid_boundaries(
-            self.capacity.arr[self.capacity.arr != -9999], lower=0, upper=None
-        )
+        valid_boundaries(self.rusle.arr[self.mask.arr != -9999], lower=0, upper=None)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "RUSLE [kg/(year.m²)]"
@@ -977,6 +1173,7 @@ class Modeloutput(Factory):
                 *args,
                 **kwargs,
             )
+            ax.set_facecolor("lightgray")
 
         self._rusle.plot = plot
 
