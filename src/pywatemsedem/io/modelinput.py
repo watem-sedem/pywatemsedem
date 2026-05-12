@@ -238,7 +238,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cfactor.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.cfactor.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -294,7 +294,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.buffers.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.buffers.arr, self.mask.arr, -9999)
             # binary plotting: if larger than 0, it is a buffer id!
             arr[arr > 0] = 1  # binary plotting!
             fig, ax = plot_discrete_raster(
@@ -354,7 +354,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.dtm.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.dtm.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -413,7 +413,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.kfactor.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.kfactor.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -549,11 +549,13 @@ class Modelinput(Factory):
         """
         self._pfactor = self.raster_factory(raster, flag_mask=False)
         # checks on raster data
-        valid_non_nan(self.pfactor.arr)
-        valid_nodata(self.pfactor.arr)  # since only binary values of use!
+        valid_non_nan(self.pfactor.arr[self.mask.arr == 1])
+        valid_nodata(
+            self.pfactor.arr[self.mask.arr == 1]
+        )  # since only binary values of use!
         lower, upper = 0, 1
-        valid_boundaries(self.pfactor.arr, lower=lower, upper=upper)
-        valid_array_type(self.pfactor.arr, required_type=np.float32)
+        valid_boundaries(self.pfactor.arr[self.mask.arr == 1], lower=lower, upper=upper)
+        valid_array_type(self.pfactor.arr[self.mask.arr == 1], required_type=np.float32)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
@@ -573,7 +575,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.pfactor.arr, self.mask.arr, None)
+            arr = mask_array_with_val(self.pfactor.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -613,7 +615,7 @@ class Modelinput(Factory):
 
         def plot(nodata=None, *args, **kwargs):
             """Plotting fun"""
-            plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
+            plot_landuse(self._compositelanduse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
 
@@ -665,7 +667,7 @@ class Modelinput(Factory):
 
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.ptef.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.ptef.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -720,7 +722,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.riversegments.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.riversegments.arr, self.mask.arr, -9999)
             arr_only_rivers = np.ma.masked_where(arr == 0, arr)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr_only_rivers, self.rp.bounds, *args, **kwargs
@@ -807,7 +809,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.riverrouting.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.riverrouting.arr, self.mask.arr, -9999)
             arr[arr == -9999] = 0  # no routing
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
@@ -864,7 +866,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.sewers.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.sewers.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -983,7 +985,7 @@ class Modelinput(Factory):
 
         def plot(fig=None, ax=None, *args, **kwargs):
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.tillagedirection.arr, self.mask.arr, None)
+            arr = mask_array_with_val(self.tillagedirection.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -1016,7 +1018,7 @@ class Modelinput(Factory):
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plotting function"""
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.orientedroughness.arr, self.mask.arr, None)
+            arr = mask_array_with_val(self.orientedroughness.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -1082,7 +1084,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.ditches.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.ditches.arr, self.mask.arr, -9999)
             arr[arr == -9999] = 0  # no routing
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
@@ -1149,7 +1151,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.dams.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.dams.arr, self.mask.arr, -9999)
             arr[arr == -9999] = 0  # no routing
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
@@ -1183,7 +1185,7 @@ class Modelinput(Factory):
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plotting function"""
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cn.arr, self.mask.arr, None)
+            arr = mask_array_with_val(self.cn.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
