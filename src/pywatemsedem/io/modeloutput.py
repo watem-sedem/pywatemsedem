@@ -78,6 +78,7 @@ class Modeloutput(Factory):
         )
 
         # DATA
+        self._aspect = None
         self._routing = None
         self._routing_missing = None
         self._ls = None
@@ -90,6 +91,65 @@ class Modeloutput(Factory):
         self._sedi_out = None
         self._capacity = None
         self._rusle = None
+
+    @property
+    def aspect(self):
+        """Getter aspect attribute.
+
+        For documentation, see :ref:`here <watemsedem:aspectmap>`
+        """
+        if self._aspect is None:
+            self.aspect = self.modeloutputfolder / "AspectMap.rst"
+        return self._aspect
+
+    @aspect.setter
+    def aspect(self, raster):
+        """Setter
+
+        Parameters
+        ---------
+        raster: pathlib.Path | str
+        """
+        self._aspect = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.aspect.arr, required_type=np.float32)
+        valid_boundaries(self.aspect.arr, lower=0, upper=2 * np.pi)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+
+        title = "Aspect [rad]"
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot for aspect
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, -9999)
+            ticks = [0, np.pi / 2, np.pi, 3 / 2 * np.pi, 2 * np.pi]
+            fig, ax = plot_output_raster(
+                fig,
+                ax,
+                arr,
+                self.mask.arr,
+                self.rp.bounds,
+                title,
+                ticks,
+                *args,
+                **kwargs,
+            )
+            return fig, ax
+
+        self._aspect.plot = plot
 
     @property
     def routing(self):
