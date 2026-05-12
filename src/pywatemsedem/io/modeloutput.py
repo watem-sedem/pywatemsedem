@@ -980,18 +980,14 @@ class Modeloutput(Factory):
 
         self._rusle.plot = plot
 
-    def make_routing_vector(
-        self, landuse, sedi_out, percentile=90, routing_missing=False
-    ):
+    def make_routing_vector(self, modelinput, percentile=90, routing_missing=False):
         """Converts pandas dataframe of routing or routing_missing to a geopandas
         dataframe
 
         Parameters
         ----------
-        landuse: pathlib.Path | str | str
-                Path of landuse raster
-        sedi_out: pathlib.Path | str | str
-                Path of sedi_out raster
+        modelinput: Object
+            instance of Modelinput class (see pywatemsedem/io/modelinput.py)
         percentile: int, default = 90
             Only vectors belonging to sedi_outdata percentile and higher is kept
         routing_missing: bool, default = False
@@ -1002,20 +998,19 @@ class Modeloutput(Factory):
         --------
         geopandas.GeoDataFrame
         """
-        raster, landuse_rasterio_profile = load_raster(landuse)
-        # cheks op raster
-        valid_non_nan(raster)
-        valid_array_type(raster, required_type=np.int16)
-        valid_boundaries(raster, lower=-32757, upper=32757)
-        check_raster_properties_raster_with_template(
-            landuse, landuse, epsg=self.rp.epsg
-        )
+        arr_compositelanduse = modelinput.compositelanduse.arr
+
+        # checks op raster
+        valid_non_nan(arr_compositelanduse)
+        valid_array_type(arr_compositelanduse, required_type=np.int16)
+        valid_boundaries(arr_compositelanduse, lower=-32757, upper=32757)
 
         # selecting what to vectorise
-        sedi_out_arr, sedi_out_profile = load_raster(sedi_out)
-        sedi_out_df = raster_array_to_pandas_dataframe(sedi_out_arr, sedi_out_profile)
-        seditout_df_sel = sedi_out_df.loc[
-            sedi_out_df["val"] > np.percentile(sedi_out_df["val"], percentile)
+        raster = self.modeloutputfolder / "SediOut_kg.rst"
+        arr_sedi_out, profile_sedi_out = load_raster(raster)
+        df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile_sedi_out)
+        df_sedi_out_sel = df_sedi_out.loc[
+            df_sedi_out["val"] > np.percentile(df_sedi_out["val"], percentile)
         ]
         if routing_missing:
             df = self.routing_missing
@@ -1035,7 +1030,7 @@ class Modeloutput(Factory):
             stubnames=["targetcol", "targetrow", "distance", "part"],
             j="cell",
         ).reset_index()
-        df_comb = seditout_df_sel.merge(df_temp, how="left", on=["row", "col"])
+        df_comb = df_sedi_out_sel.merge(df_temp, how="left", on=["row", "col"])
         # filter out data where part = 0 of None/NaN
         df_comb = df_comb[df_comb["part"] != 0]
         df_comb = df_comb[np.invert(pd.isnull(df_comb["part"]).values)]
