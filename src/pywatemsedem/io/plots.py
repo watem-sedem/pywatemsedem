@@ -153,7 +153,7 @@ def plot_output_raster(
     ax: matplotlib.pyplot.axis
     """
     fig, ax = axes_creator(fig, ax)
-    arr = mask_array_with_val(arr, mask, 0)
+    arr = mask_array_with_val(arr, mask, -9999)
     arr = np.ma.filled(arr, np.nan)
     if not ticks:
         ticks = np.nanpercentile(arr, [0, 25, 50, 75, 100])
