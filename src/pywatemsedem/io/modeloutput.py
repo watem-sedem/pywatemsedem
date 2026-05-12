@@ -94,9 +94,13 @@ class Modeloutput(Factory):
         self._sedi_export = None
         self._sedi_in = None
         self._sedi_out = None
+        self._sedtil_in = None
+        self._sedtil_out = None
         self._cumulative = None
         self._watereros_kg = None
         self._watereros_mm = None
+        self._tileros_kg = None
+        self._tileros_mm = None
         self._capacity = None
         self._rusle = None
 
@@ -789,6 +793,199 @@ class Modeloutput(Factory):
         self._sedi_in.plot = plot
 
     @property
+    def sedi_out(self):
+        """Getter sedi_out attribute.
+
+        For documentation, see :ref:`here <watemsedem:sedioutrst>`
+        """
+        if self._sedi_out is None:
+            self.sedi_out = self.modeloutputfolder / "SediOut_kg.rst"
+        return self._sedi_out
+
+    @sedi_out.setter
+    def sedi_out(self, raster):
+        """Setter
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._sedi_out = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        valid_boundaries(self.sedi_out.arr[self.mask.arr != -9999], lower=0, upper=None)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "sedi_out [kg/year]"
+
+        def plot(
+            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
+        ):
+            """Plot for sedi_out
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [0,10000,20000,40000,80000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.sedi_out.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_SEDI_OUT,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._sedi_out.plot = plot
+
+    @property
+    def sedtil_in(self):
+        """Getter sedtil_in attribute.
+
+        For documentation, see :ref:`here <watemsedem:sedtilinrst>`
+        """
+        if self._sedtil_in is None:
+            self.sedtil_in = self.modeloutputfolder / "SEDTIL_IN.rst"
+        return self._sedtil_in
+
+    @sedtil_in.setter
+    def sedtil_in(self, raster):
+        """Setter
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._sedtil_in = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedtil_in.arr, required_type=np.float32)
+        valid_boundaries(
+            self.sedtil_in.arr[self.mask.arr != -9999], lower=0, upper=None
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "sedtil_in [kg/year]"
+
+        def plot(
+            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
+        ):
+            """Plot for sedtil_in
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [0,10000,20000,40000,80000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.sedtil_in.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_SEDI_OUT,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._sedtil_in.plot = plot
+
+    @property
+    def sedtil_out(self):
+        """Getter sedtil_out attribute.
+
+        For documentation, see :ref:`here <watemsedem:sedtiloutrst>`
+        """
+        if self._sedtil_out is None:
+            self.sedtil_out = self.modeloutputfolder / "SEDTIL_OUT.rst"
+        return self._sedtil_out
+
+    @sedtil_out.setter
+    def sedtil_out(self, raster):
+        """Setter
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._sedtil_out = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedtil_out.arr, required_type=np.float32)
+        valid_boundaries(
+            self.sedtil_out.arr[self.mask.arr != -9999], lower=0, upper=None
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "sedtil_out [kg/year]"
+
+        def plot(
+            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
+        ):
+            """Plot for sedtil_out
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [0,10000,20000,40000,80000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.sedtil_out.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_SEDI_OUT,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._sedtil_out.plot = plot
+
+    @property
     def cumulative(self):
         """Getter cumulative attribute.
 
@@ -852,69 +1049,6 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._cumulative.plot = plot
-
-    @property
-    def sedi_out(self):
-        """Getter sedi_out attribute.
-
-        For documentation, see :ref:`here <watemsedem:sedioutrst>`
-        """
-        if self._sedi_out is None:
-            self.sedi_out = self.modeloutputfolder / "SediOut_kg.rst"
-        return self._sedi_out
-
-    @sedi_out.setter
-    def sedi_out(self, raster):
-        """Setter
-
-        Parameters
-        ----------
-        raster: pathlib.Path | str
-        """
-        self._sedi_out = self.raster_factory(raster, flag_mask=False)
-
-        valid_array_type(self.sedi_out.arr, required_type=np.float32)
-        valid_boundaries(self.sedi_out.arr[self.mask.arr != -9999], lower=0, upper=None)
-        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        title = "sedi_out [kg/year]"
-
-        def plot(
-            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
-        ):
-            """Plot for sedi_out
-
-            Parameters
-            ----------
-            fig: matplotlib.figure.Figure, default = None
-                if not given, defaults to generating new figure
-            ax: matplotlib.pyplot.axis, default = None
-                if not given, defaults to generating new axis
-            ticks: list, default = [0,10000,20000,40000,80000]
-                    Possibility to supply a list of 5 values for ticks of colorscale.
-                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
-                    of the data are used as ticks
-
-            Returns
-            -------
-            fig: matplotlib.figure.Figure
-
-            ax: matplotlib.axes.Axes
-            """
-            fig, ax = plot_output_raster(
-                fig=fig,
-                ax=ax,
-                arr=self.sedi_out.arr,
-                mask=self.mask.arr,
-                title=title,
-                bounds=self.rp.bounds,
-                ticks=ticks,
-                cmap=COLORMAP_SEDI_OUT,
-                *args,
-                **kwargs,
-            )
-            ax.set_facecolor("lightgray")
-
-        self._sedi_out.plot = plot
 
     @property
     def watereros_kg(self):
