@@ -85,6 +85,8 @@ class Modeloutput(Factory):
         self._slope = None
         self._uparea = None
         self._total_sediment = None
+        self._total_sediment_segments = None
+        self._cumulative_sediment_segments = None
         self._sewer_in = None
         self._sedi_export = None
         self._sedi_in = None
@@ -483,7 +485,7 @@ class Modeloutput(Factory):
         """Getter total sediment attribute.
 
         For documentation, see :ref:`here <watemsedem:totalsedimenttxt>`.
-        For explanation on colmun variables of dataframe: see
+        For explanation on column variables of dataframe: see
         :func:`pywatemsedem.io.modeloutput.load_total_sediment_file`.
         """
         if self._total_sediment is None:
@@ -492,7 +494,7 @@ class Modeloutput(Factory):
 
     @total_sediment.setter
     def total_sediment(self, text):
-        """Setter
+        """Setter total sediment attribute.
 
         Parameters
         ----------
@@ -500,6 +502,74 @@ class Modeloutput(Factory):
         """
         dict = load_total_sediment_file(text)
         self._total_sediment = pd.DataFrame(dict, index=[0])
+
+    @property
+    def total_sediment_segments(self):
+        """Getter total sediment segments attribute.
+
+        For documentation, see :ref:`here <watemsedem:totalsedimentsegmentstxt>`.
+        For explanation on column variables of dataframe: see
+        :func:`pywatemsedem.io.modeloutput.load_total_sediment_segments_file`.
+        """
+        if self._total_sediment_segments is None:
+            self.total_sediment_segments = (
+                self.modeloutputfolder / "Total sediment segments.txt"
+            )
+        return self._total_sediment_segments
+
+    @total_sediment_segments.setter
+    def total_sediment_segments(self, text):
+        """Setter total sediment segments attribute.
+
+        Parameters
+        ----------
+        text: pathlib.Path | str
+        """
+        df_total_sediment_segments = load_sediment_segments_file(text)
+        self._total_sediment_segments = df_total_sediment_segments
+
+        segment_ids = df_total_sediment_segments.index.values
+        sediment_values = df_total_sediment_segments["Sediment"].values
+        valid_non_nan(segment_ids)
+        valid_non_nan(sediment_values)
+        valid_array_type(segment_ids, required_type=np.int64)
+        valid_array_type(sediment_values, required_type=np.float64)
+        valid_boundaries(segment_ids, lower=1, upper=None)
+        valid_boundaries(sediment_values, lower=0, upper=None)
+
+    @property
+    def cumulative_sediment_segments(self):
+        """Getter cumulative sediment segments attribute.
+
+        For documentation, see :ref:`here <watemsedem:cumulativesedimentsegmentstxt>`.
+        For explanation on column variables of dataframe: see
+        :func:`pywatemsedem.io.modeloutput.load_cumulative_sediment_segments_file`.
+        """
+        if self._cumulative_sediment_segments is None:
+            self.cumulative_sediment_segments = (
+                self.modeloutputfolder / "Cumulative sediment segments.txt"
+            )
+        return self._cumulative_sediment_segments
+
+    @cumulative_sediment_segments.setter
+    def cumulative_sediment_segments(self, text):
+        """Setter cumulative sediment segments attribute.
+
+        Parameters
+        ----------
+        text: pathlib.Path | str
+        """
+        df_cumulative_sediment_segments = load_sediment_segments_file(text)
+        self._cumulative_sediment_segments = df_cumulative_sediment_segments
+
+        segment_ids = df_cumulative_sediment_segments.index.values
+        sediment_values = df_cumulative_sediment_segments["Sediment"].values
+        valid_non_nan(segment_ids)
+        valid_non_nan(sediment_values)
+        valid_array_type(segment_ids, required_type=np.int64)
+        valid_array_type(sediment_values, required_type=np.float64)
+        valid_boundaries(segment_ids, lower=1, upper=None)
+        valid_boundaries(sediment_values, lower=0, upper=None)
 
     @property
     def sewer_in(self):
@@ -1957,6 +2027,28 @@ def load_total_sediment_file(txt_total_sediment_file):
             dict_output["endpoints"] = float(line[-2])
 
     return dict_output
+
+
+def load_sediment_segments_file(txt_sediment_segments_file):
+    """Load the WaTEM/SEDEM total/cumulative sediment per segment file.
+
+    Parameters
+    ----------
+    txt_sediment_segments_file : str or pathlib.Path
+        Path to the text file containing sediment values for each segment.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame containing the sediment data per segment. The table contains:
+
+        - first column: segment identifiers (integer)
+        - second column: sediment values associated with each segment (float)
+
+    """
+    df_sediment_segments = pd.read_table(txt_sediment_segments_file, skiprows=1)
+
+    return df_sediment_segments.set_index("segment_id")
 
 
 def check_segment_edges(adj_edges, up_edges, arr):
