@@ -9,7 +9,6 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-import geopandas as gpd
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_float_dtype, is_integer_dtype
@@ -26,7 +25,7 @@ from pywatemsedem.errors import (
     missing_attribute_error_in_vct,
 )
 from pywatemsedem.geo.rasters import AbstractRaster
-from pywatemsedem.geo.utils import nearly_identical, saga_intersection
+from pywatemsedem.geo.utils import nearly_identical
 from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.grasstrips import process_grass_strips
 from pywatemsedem.io.folders import ScenarioFolders
@@ -1589,129 +1588,6 @@ class Scenario:
     def zip(self):
 
         zip_folder(self.sfolder.scenario_folder)
-
-
-def remove_known_grass_strips_from_parcels_vct_saga(parcels, vct_grass_strips):
-    """Remove parcels with overlap above 75%
-
-    Remove the parcels in vct_parcels that overlap with grass strips
-    in vct_grass_strips if the overlap for both features is at least 75%.
-
-    The function updates the vct_parcels input layer
-
-    The amount of intersection or overlap between a parcel is caluclated as
-    area_intersect(grass strips, parcel)/area(parcel).
-
-    Parameters
-    ----------
-    parcels: geopandas.GeoDataFrame
-        Can have any column, should have geometries
-    vct_grass_strips: str or pathlib.Path
-        File path of parcel shapefile
-    """
-    cond = (vct_grass_strips is not None) and (parcels is not None)
-    fname_temp = vct_grass_strips.parents[0] / "temp_intersect.shp"
-    fname_parcels = vct_grass_strips.parents[0] / "temp_parcels.shp"
-
-    if cond:
-        # check if NR is in vct_parcels
-        if "NR" not in parcels:
-            parcels["NR"] = np.arange(1, len(parcels) + 1, 1)
-        parcels.to_file(fname_parcels, spatial_index="YES")
-        saga_intersection(
-            str(fname_parcels),
-            str(vct_grass_strips),
-            fname_temp,
-        )
-
-        # intersect
-        parcels_intersection = gpd.read_file(fname_temp)
-
-        # couple considered parcels from this year and prior year (only consider
-        # largest intersect)
-        parcels_intersection["area_inter"] = parcels_intersection["geometry"].area
-
-        # find largest interesecting parcel and select only those
-        parcels_intersection["area_inter_max"] = parcels_intersection.groupby("NR")[
-            "area_inter"
-        ].transform(np.max)
-        cond = (
-            parcels_intersection["area_inter_max"] == parcels_intersection["area_inter"]
-        )
-        parcels_intersection = parcels_intersection[cond]
-
-        # load parcels
-        parcels.loc[:, "area"] = parcels["geometry"].area.values
-
-        parcels = parcels.merge(
-            parcels_intersection[["NR", "area_inter"]],
-            on="NR",
-            how="left",
-        )
-
-        # normalize area intersction  with area of parcel of considered year
-        parcels["norm_over"] = parcels["area_inter"] / parcels["area"] * 100
-
-        # define condition
-        cond = (parcels["norm_over"].isnull()) | (parcels["norm_over"] <= 75)
-        parcels = parcels.loc[cond]
-        parcels = parcels.drop(
-            columns=["area_inter_max", "norm_over", "area_inter"], errors="ignore"
-        )
-
-    return parcels
-
-
-def convert_grass_strips_to_agricultural_fields(parcels, vct_grass_strips):
-    """Convert known grass strips to agricultural fields in the parcels shape file.
-
-    If a parcel in vct_parcels intersects for 75% or more with a grass strip in
-    vct_grass_strips, the attributes of the parcel are changed: "LANDUSE" is set
-    to -9999 (agriculture), "GWSCOD_H" is set to "9999" (unknown crop) and
-    "C-factor" is set to 0.37. This function updates the input vct_parcels.
-
-    The amount of intersection or overlap between a parcel is caluclated as
-    area_intersect(grasstri, parcel)/area(parcel).
-
-    Parameters
-    ----------
-    parcels: geopandas.GeoDataFrame
-        Can have any column, should have geometries
-
-    vct_grass_strips: str or pathlib.Path
-        File path of parcel shapefiles
-
-    Returns
-    -------
-    parcels: geopandas.GeoDataFrame
-        With added column:
-
-        - *default_cfactor* (bool): convert to default C-factor (and landuse).
-
-    """
-
-    if vct_grass_strips is not None and parcels is not None:
-        if "C_factor" not in parcels:
-            parcels["C_factor"] = np.nan
-        gdf_grass = gpd.read_file(vct_grass_strips)
-        matches = parcels.geometry.apply(lambda x: nearly_identical(gdf_grass, x))
-        matches = matches.unstack().reset_index(0, drop=True).dropna()
-        gdf_grass_matched = gdf_grass.reindex(index=matches.values)
-        gdf_grass_matched.index = matches.index
-        gdf_grass_matched["grasstrip"] = 1
-        gdf_grass_matched = gdf_grass_matched[["grasstrip"]]
-        parcels = pd.merge(
-            parcels,
-            gdf_grass_matched,
-            how="left",
-            left_index=True,
-            right_index=True,
-        )
-        parcels.loc[parcels["grasstrip"] == 1, "LANDUSE"] = -9999
-        parcels.loc[parcels["grasstrip"] == 1, "GWSCOD_H"] = 9999
-        parcels.loc[parcels["grasstrip"] == 1, "C_factor"] = 0.37
-
-    return parcels
 
 
 def assign_buffer_id_to_df_buffer(df):
