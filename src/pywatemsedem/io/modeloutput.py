@@ -1043,6 +1043,128 @@ class Modeloutput(Factory):
         self._watereros_mm.plot = plot
 
     @property
+    def tileros_kg(self):
+        """Getter tileros_kg attribute.
+
+        For documentation, see :ref:`here <watemsedem:tileroskgrst>`
+        """
+        if self._tileros_kg is None:
+            self.tileros_kg = self.modeloutputfolder / "TILEROS (kg per gridcel).rst"
+        return self._tileros_kg
+
+    @tileros_kg.setter
+    def tileros_kg(self, raster):
+        """Setter tileros_kg attribute
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._tileros_kg = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "tileros_kg [kg per year per gridcell]"
+
+        def plot(
+            fig=None, ax=None, ticks=[-10000, -5000, 0, 5000, 10000], *args, **kwargs
+        ):
+            """Plot for tileros_kg
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [-20000, -10000, 0, 10000, 20000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.tileros_kg.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_WATEREROS,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._tileros_kg.plot = plot
+
+    @property
+    def tileros_mm(self):
+        """Getter tileros_mm attribute.
+
+        For documentation, see :ref:`here <watemsedem:tilerosmmrst>`
+        """
+        if self._tileros_mm is None:
+            self.tileros_mm = self.modeloutputfolder / "TILEROS (mm per gridcel).rst"
+        return self._tileros_mm
+
+    @tileros_mm.setter
+    def tileros_mm(self, raster):
+        """Setter tileros_mm attribute
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._tileros_mm = self.raster_factory(raster, flag_mask=False)
+
+        valid_array_type(self.sedi_out.arr, required_type=np.float32)
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        title = "tileros_mm [mm per year per gridcell]"
+
+        def plot(fig=None, ax=None, ticks=[-2, -1, 0, 1, 2], *args, **kwargs):
+            """Plot for tileros_mm
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = [-20000, -10000, 0, 10000, 20000]
+                    Possibility to supply a list of 5 values for ticks of colorscale.
+                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
+                    of the data are used as ticks
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = plot_output_raster(
+                fig=fig,
+                ax=ax,
+                arr=self.tileros_mm.arr,
+                mask=self.mask.arr,
+                title=title,
+                bounds=self.rp.bounds,
+                ticks=ticks,
+                cmap=COLORMAP_WATEREROS,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+
+        self._tileros_mm.plot = plot
+
+    @property
     def capacity(self):
         """Getter capacity attribute.
 
