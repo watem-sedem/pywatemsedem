@@ -1,0 +1,60 @@
+abstract: "pywatemsedem is a Python package to create input files, run and post-process
+the output of the WaTEM/SEDEM model.
+
+Pywatemsedem is developed to facilitate standardized and reproducible
+applications of the WaTEM/SEDEM model.
+The package provides a user-friendly interface to set up and run the model,
+as well as tools for visualizing and analyzing the model output.
+
+The python package is developed by Fluves funded by the
+Departement Omgeving of the Vlaamse Overheid.
+
+WaTEM/SEDEM is a soil erosion and sediment delivery model used for catchment-scale simulations.
+The model incorporates a Revised Universal Soil Loss Equation (RUSLE) module to simulate gross erosion,
+extended with a spatially explicit sediment routing module to simulate sediment transport based on a cellular
+transport capacity. The model therefore provides the user with estimations of gross and net soil erosion at
+the catchment scale."
+authors:
+  - family-names: Renders
+    given-names: Daan
+    affiliation: Fluves
+    orcid: https://orcid.org/0009-0002-5362-9462
+  - family-names: Gobeyn
+    given-names: Sacha
+    orcid: https://orcid.org/0000-0002-4615-6655
+    affiliation: Fluves
+  - family-names: Van de Wauw
+    given-names: Johan
+    affiliation: Fluves
+    orcid: https://orcid.org/0000-0003-0150-3315
+  - family-names: De Vleeschouwer
+    given-names: Niels
+    affiliation: Fluves
+  - family-names: Van Hoey
+    given-names: Stijn
+    orcid: https://orcid.org/0000-0001-6413-3185
+    affiliation: Fluves
+  - family-names: Callewaert
+    given-names: Seth
+    affiliation: Departement Omgeving, Vlaamse Overheid
+  - family-names: De Geeter
+    given-names: Sofie
+    orcid: https://orcid.org/0000-0002-3598-5108
+    affiliation: Departement Omgeving, Vlaamse Overheid
+  - family-names: Deproost
+    given-names: Petra
+    affiliation: Departement Omgeving, Vlaamse Overheid
+cff-version: 1.2.0
+keywords:
+  - "erosion"
+  - "soil"
+  - "sediment"
+  - "sediment transport"
+  - "modelling"
+  - "watem/sedem"
+  - "RUSLE"
+  - "pywatemsedem"
+license: "MIT"
+repository: "https://github.com/watem-sedem/pywatemsedem"
+title: "pywatemsedem: 1.1.0"
+type: "software"
