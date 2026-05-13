@@ -129,7 +129,7 @@ class Modeloutput(Factory):
         title = "Aspect [rad]"
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for aspect
+            """Plot the aspect raster.
 
             Parameters
             ----------
@@ -211,7 +211,7 @@ class Modeloutput(Factory):
         valid_boundaries(self.routing["distance2"].values, lower=0)
 
         def plot():
-            """Interactive plot for routing
+            """Plot the routing table interactively.
 
             Returns
             --------
@@ -229,7 +229,7 @@ class Modeloutput(Factory):
 
     @property
     def routing_missing(self):
-        """Return the missing-routing table.
+        """Return the routing_missing table.
 
         For documentation, see :ref:`here <watemsedem:missingroutingtxt>`
         """
@@ -239,7 +239,7 @@ class Modeloutput(Factory):
 
     @routing_missing.setter
     def routing_missing(self, text):
-        """Set the missing-routing table.
+        """Set the routing_missing table.
 
         Parameters
         ---------
@@ -283,7 +283,7 @@ class Modeloutput(Factory):
             valid_boundaries(self.routing_missing["distance2"].values, lower=0)
 
         def plot():
-            """Interactive plot for routing_missing
+            """Plot the routing_missing table interactively.
 
             Returns
             --------
@@ -330,7 +330,7 @@ class Modeloutput(Factory):
         title = "LS [-]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for LS with non-linear colormap
+            """Plot the LS raster with a non-linear colormap.
 
             Parameters
             ----------
@@ -392,7 +392,7 @@ class Modeloutput(Factory):
         title = "Slope [rad]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for Slope with non-linear colormap
+            """Plot the slope raster with a non-linear colormap.
 
             Parameters
             ----------
@@ -454,7 +454,7 @@ class Modeloutput(Factory):
         title = "uparea [m²]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for uparea with non-linear colormap
+            """Plot the uparea raster with a non-linear colormap.
 
             Parameters
             ----------
@@ -496,7 +496,7 @@ class Modeloutput(Factory):
 
     @property
     def total_sediment(self):
-        """Return the total-sediment table.
+        """Return the total_sediment table.
 
         For documentation, see :ref:`here <watemsedem:totalsedimenttxt>`.
         For explanation on column variables of dataframe: see
@@ -508,7 +508,7 @@ class Modeloutput(Factory):
 
     @total_sediment.setter
     def total_sediment(self, text):
-        """Set the total-sediment table.
+        """Set the total_sediment table.
 
         Parameters
         ----------
@@ -519,7 +519,7 @@ class Modeloutput(Factory):
 
     @property
     def total_sediment_segments(self):
-        """Return the total-sediment-segments table.
+        """Return the total_sediment_segments table.
 
         For documentation, see :ref:`here <watemsedem:totalsedimentsegmentstxt>`.
         For explanation on column variables of dataframe: see
@@ -533,7 +533,7 @@ class Modeloutput(Factory):
 
     @total_sediment_segments.setter
     def total_sediment_segments(self, text):
-        """Set the total-sediment-segments table.
+        """Set the total_sediment_segments table.
 
         Parameters
         ----------
@@ -553,7 +553,7 @@ class Modeloutput(Factory):
 
     @property
     def cumulative_sediment_segments(self):
-        """Return the cumulative-sediment-segments table.
+        """Return the cumulative_sediment_segments table.
 
         For documentation, see :ref:`here <watemsedem:cumulativesedimentsegmentstxt>`.
         For explanation on column variables of dataframe: see
@@ -567,7 +567,7 @@ class Modeloutput(Factory):
 
     @cumulative_sediment_segments.setter
     def cumulative_sediment_segments(self, text):
-        """Set the cumulative-sediment-segments table.
+        """Set the cumulative_sediment_segments table.
 
         Parameters
         ----------
@@ -587,7 +587,7 @@ class Modeloutput(Factory):
 
     @property
     def sewer_in(self):
-        """Return the sewer-in raster.
+        """Return the sewer_in raster.
 
         For documentation, see :ref:`here <watemsedem:sewerinrst>`
         """
@@ -597,7 +597,7 @@ class Modeloutput(Factory):
 
     @sewer_in.setter
     def sewer_in(self, raster):
-        """Set the sewer-in raster.
+        """Set the sewer_in raster.
 
         Parameters
         ---------
@@ -611,7 +611,9 @@ class Modeloutput(Factory):
         title = "sewer in [kg/year]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for sewer_in with non-linear colormap. Zeros are filtered out
+            """Plot the sewer_in raster with a non-linear colormap.
+
+            Zeros are filtered out.
 
             Parameters
             ----------
@@ -651,7 +653,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_export(self):
-        """Return the sedi-export raster.
+        """Return the sedi_export raster.
 
         For documentation, see :ref:`here <watemsedem:sediexportrst>`
         """
@@ -661,7 +663,7 @@ class Modeloutput(Factory):
 
     @sedi_export.setter
     def sedi_export(self, raster):
-        """Set the sedi-export raster.
+        """Set the sedi_export raster.
 
         Parameters
         ----------
@@ -677,7 +679,9 @@ class Modeloutput(Factory):
         title = "sedi_export [kg/year]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for sedi_export with non-linear colormap. Zeros are filtered out
+            """Plot the sedi_export raster with a non-linear colormap.
+
+            Zeros are filtered out.
 
             Parameters
             ----------
@@ -731,7 +735,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_in(self):
-        """Return the sedi-in raster.
+        """Return the sedi_in raster.
 
         For documentation, see :ref:`here <watemsedem:sediinrst>`
         """
@@ -741,7 +745,7 @@ class Modeloutput(Factory):
 
     @sedi_in.setter
     def sedi_in(self, raster):
-        """Set the sedi-in raster.
+        """Set the sedi_in raster.
 
         Parameters
         ----------
@@ -757,7 +761,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for sedi_in
+            """Plot the sedi_in raster.
 
             Parameters
             ----------
@@ -794,7 +798,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_out(self):
-        """Return the sedi-out raster.
+        """Return the sedi_out raster.
 
         For documentation, see :ref:`here <watemsedem:sedioutrst>`
         """
@@ -804,7 +808,7 @@ class Modeloutput(Factory):
 
     @sedi_out.setter
     def sedi_out(self, raster):
-        """Set the sedi-out raster.
+        """Set the sedi_out raster.
 
         Parameters
         ----------
@@ -820,7 +824,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for sedi_out
+            """Plot the sedi_out raster.
 
             Parameters
             ----------
@@ -857,7 +861,7 @@ class Modeloutput(Factory):
 
     @property
     def sedtil_in(self):
-        """Return the sedtil-in raster.
+        """Return the sedtil_in raster.
 
         For documentation, see :ref:`here <watemsedem:sedtilinrst>`
         """
@@ -867,7 +871,7 @@ class Modeloutput(Factory):
 
     @sedtil_in.setter
     def sedtil_in(self, raster):
-        """Set the sedtil-in raster.
+        """Set the sedtil_in raster.
 
         Parameters
         ----------
@@ -885,7 +889,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for sedtil_in
+            """Plot the sedtil_in raster.
 
             Parameters
             ----------
@@ -922,7 +926,7 @@ class Modeloutput(Factory):
 
     @property
     def sedtil_out(self):
-        """Return the sedtil-out raster.
+        """Return the sedtil_out raster.
 
         For documentation, see :ref:`here <watemsedem:sedtiloutrst>`
         """
@@ -932,7 +936,7 @@ class Modeloutput(Factory):
 
     @sedtil_out.setter
     def sedtil_out(self, raster):
-        """Set the sedtil-out raster.
+        """Set the sedtil_out raster.
 
         Parameters
         ----------
@@ -950,7 +954,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for sedtil_out
+            """Plot the sedtil_out raster.
 
             Parameters
             ----------
@@ -1015,7 +1019,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
         ):
-            """Plot for cumulative
+            """Plot the cumulative raster.
 
             Parameters
             ----------
@@ -1052,7 +1056,7 @@ class Modeloutput(Factory):
 
     @property
     def watereros_kg(self):
-        """Return the watereros-kg raster.
+        """Return the watereros_kg raster.
 
         For documentation, see :ref:`here <watemsedem:watereroskgrst>`
         """
@@ -1064,7 +1068,7 @@ class Modeloutput(Factory):
 
     @watereros_kg.setter
     def watereros_kg(self, raster):
-        """Set the watereros-kg raster.
+        """Set the watereros_kg raster.
 
         Parameters
         ----------
@@ -1079,7 +1083,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[-10000, -5000, 0, 5000, 10000], *args, **kwargs
         ):
-            """Plot for watereros_kg
+            """Plot the watereros_kg raster.
 
             Parameters
             ----------
@@ -1116,7 +1120,7 @@ class Modeloutput(Factory):
 
     @property
     def watereros_mm(self):
-        """Return the watereros-mm raster.
+        """Return the watereros_mm raster.
 
         For documentation, see :ref:`here <watemsedem:watererosmmrst>`
         """
@@ -1128,7 +1132,7 @@ class Modeloutput(Factory):
 
     @watereros_mm.setter
     def watereros_mm(self, raster):
-        """Set the watereros-mm raster.
+        """Set the watereros_mm raster.
 
         Parameters
         ----------
@@ -1141,7 +1145,7 @@ class Modeloutput(Factory):
         title = "watereros_mm [mm per year per gridcell]"
 
         def plot(fig=None, ax=None, ticks=[-2, -1, 0, 1, 2], *args, **kwargs):
-            """Plot for watereros_mm
+            """Plot the watereros_mm raster.
 
             Parameters
             ----------
@@ -1178,7 +1182,7 @@ class Modeloutput(Factory):
 
     @property
     def tileros_kg(self):
-        """Return the tileros-kg raster.
+        """Return the tileros_kg raster.
 
         For documentation, see :ref:`here <watemsedem:tileroskgrst>`
         """
@@ -1188,7 +1192,7 @@ class Modeloutput(Factory):
 
     @tileros_kg.setter
     def tileros_kg(self, raster):
-        """Set the tileros-kg raster.
+        """Set the tileros_kg raster.
 
         Parameters
         ----------
@@ -1203,7 +1207,7 @@ class Modeloutput(Factory):
         def plot(
             fig=None, ax=None, ticks=[-10000, -5000, 0, 5000, 10000], *args, **kwargs
         ):
-            """Plot for tileros_kg
+            """Plot the tileros_kg raster.
 
             Parameters
             ----------
@@ -1240,7 +1244,7 @@ class Modeloutput(Factory):
 
     @property
     def tileros_mm(self):
-        """Return the tileros-mm raster.
+        """Return the tileros_mm raster.
 
         For documentation, see :ref:`here <watemsedem:tilerosmmrst>`
         """
@@ -1250,7 +1254,7 @@ class Modeloutput(Factory):
 
     @tileros_mm.setter
     def tileros_mm(self, raster):
-        """Set the tileros-mm raster.
+        """Set the tileros_mm raster.
 
         Parameters
         ----------
@@ -1263,7 +1267,7 @@ class Modeloutput(Factory):
         title = "tileros_mm [mm per year per gridcell]"
 
         def plot(fig=None, ax=None, ticks=[-2, -1, 0, 1, 2], *args, **kwargs):
-            """Plot for tileros_mm
+            """Plot the tileros_mm raster.
 
             Parameters
             ----------
@@ -1325,7 +1329,7 @@ class Modeloutput(Factory):
         title = "Capacity [kg/year]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for Capacity with logarithmic colormap
+            """Plot the capacity raster with a logarithmic colormap.
 
             Parameters
             ----------
@@ -1397,7 +1401,7 @@ class Modeloutput(Factory):
         title = "RUSLE [kg/(year.m²)]"
 
         def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
-            """Plot for RUSLE
+            """Plot the RUSLE raster.
 
             Parameters
             ----------

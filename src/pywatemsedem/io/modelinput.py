@@ -222,7 +222,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for _cfactor with cividis as colormap
+            """Plot the cfactor raster.
 
             Parameters
             ----------
@@ -279,7 +279,7 @@ class Modelinput(Factory):
         labels = ["No buffer", "Buffer"]
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for buffers
+            """Plot the buffers raster.
 
             Parameters
             ----------
@@ -340,7 +340,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for DTM with cividis as colormap
+            """Plot the dtm raster.
 
             Parameters
             ----------
@@ -401,7 +401,7 @@ class Modelinput(Factory):
         self._kfactor = raster
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for K-factor with cividis as colormap
+            """Plot the kfactor raster.
 
             Parameters
             ----------
@@ -463,7 +463,7 @@ class Modelinput(Factory):
         label = ["9999"]
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for kTC parameter with cividis as colormap
+            """Plot the ktc raster.
 
             Parameters
             ----------
@@ -565,7 +565,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for P-factor
+            """Plot the pfactor raster.
 
              Parameters
             ----------
@@ -593,7 +593,7 @@ class Modelinput(Factory):
 
     @property
     def compositelanduse(self):
-        """Return the composite land-use raster.
+        """Return the compositelanduse raster.
 
         For documentation, see :ref:`here <watemsedem:prcmap>`
         """
@@ -606,7 +606,7 @@ class Modelinput(Factory):
 
     @compositelanduse.setter
     def compositelanduse(self, raster):
-        """Set the composite land-use raster.
+        """Set the compositelanduse raster.
 
         Parameters
         ----------
@@ -621,7 +621,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plot the composite land-use raster."""
+            """Plot the compositelanduse raster."""
             plot_landuse(self._compositelanduse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
@@ -657,7 +657,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for PTEF
+            """Plot the ptef raster.
 
             Parameters
             ----------
@@ -686,7 +686,7 @@ class Modelinput(Factory):
 
     @property
     def riversegments(self):
-        """Return the river-segments raster.
+        """Return the riversegments raster.
 
         For documentation, see :ref:`here <watemsedem:riversegmentfile>`
         """
@@ -699,7 +699,7 @@ class Modelinput(Factory):
 
     @riversegments.setter
     def riversegments(self, raster):
-        """Set the river-segments raster.
+        """Set the riversegments raster.
 
         Parameters
         ----------
@@ -714,7 +714,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for riversegments
+            """Plot the riversegments raster.
 
             Parameters
             ----------
@@ -754,7 +754,7 @@ class Modelinput(Factory):
 
     @property
     def riverrouting(self):
-        """Return the river-routing raster.
+        """Return the riverrouting raster.
 
         For documentation, see :ref:`here <watemsedem:routingmap>`
         """
@@ -767,7 +767,7 @@ class Modelinput(Factory):
 
     @riverrouting.setter
     def riverrouting(self, raster):
-        """Set the river-routing raster.
+        """Set the riverrouting raster.
 
         Parameters
         ----------
@@ -802,7 +802,7 @@ class Modelinput(Factory):
         ]
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for riverrouting
+            """Plot the riverrouting raster.
 
             Parameters
             ----------
@@ -860,7 +860,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for sewers
+            """Plot the sewers raster.
 
             Parameters
             ----------
@@ -889,7 +889,7 @@ class Modelinput(Factory):
 
     @property
     def upstreamsegments(self):
-        """Return the upstream-segments table.
+        """Return the upstreamsegments table.
 
         For documentation, see :ref:`here <watemsedem:upstrsegments>`
         """
@@ -903,7 +903,7 @@ class Modelinput(Factory):
     @upstreamsegments.setter
     @valid_segments
     def upstreamsegments(self, text):
-        """Set the upstream-segments table.
+        """Set the upstreamsegments table.
 
         Parameters
         ----------
@@ -918,7 +918,7 @@ class Modelinput(Factory):
 
     @property
     def adjacentsegments(self):
-        """Return the adjacent-segments table.
+        """Return the adjacentsegments table.
 
         For documentation, see :ref:`here <watemsedem:adjsegments>`
         """
@@ -932,7 +932,7 @@ class Modelinput(Factory):
     @adjacentsegments.setter
     @valid_segments
     def adjacentsegments(self, text):
-        """Set the adjacent-segments table.
+        """Set the adjacentsegments table.
 
         Parameters
         ----------
@@ -975,7 +975,7 @@ class Modelinput(Factory):
 
     @property
     def tillagedirection(self):
-        """Return the tillage-direction raster."""
+        """Return the tillagedirection raster."""
         if self._tillagedirection is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Tillage direction filename", str
@@ -985,7 +985,7 @@ class Modelinput(Factory):
 
     @tillagedirection.setter
     def tillagedirection(self, raster):
-        """Set the tillage-direction raster."""
+        """Set the tillagedirection raster."""
         self._tillagedirection = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.tillagedirection.arr)
@@ -995,7 +995,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the tillage-direction raster."""
+            """Plot the tillagedirection raster."""
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.tillagedirection.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
@@ -1009,7 +1009,7 @@ class Modelinput(Factory):
 
     @property
     def orientedroughness(self):
-        """Return the oriented-roughness raster."""
+        """Return the orientedroughness raster."""
         if self._orientedroughness is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Oriented roughness filename", str
@@ -1019,7 +1019,7 @@ class Modelinput(Factory):
 
     @orientedroughness.setter
     def orientedroughness(self, raster):
-        """Set the oriented-roughness raster."""
+        """Set the orientedroughness raster."""
         self._orientedroughness = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.orientedroughness.arr)
@@ -1029,7 +1029,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the oriented-roughness raster."""
+            """Plot the orientedroughness raster."""
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.orientedroughness.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
@@ -1082,7 +1082,7 @@ class Modelinput(Factory):
         ]
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for ditches
+            """Plot the ditches raster.
 
             Parameters
             ----------
@@ -1150,7 +1150,7 @@ class Modelinput(Factory):
         ]
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot for dams
+            """Plot the dams raster.
 
             Parameters
             ----------
