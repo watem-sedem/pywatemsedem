@@ -189,7 +189,7 @@ class Modelinput(Factory):
 
     @property
     def cfactor(self):
-        """Getter cfactor attribute.
+        """Return the C-factor raster.
 
         For documentation, see :ref:`here <watemsedem:cmap>`
         """
@@ -202,7 +202,7 @@ class Modelinput(Factory):
 
     @cfactor.setter
     def cfactor(self, raster):
-        """Setter
+        """Set the C-factor raster.
 
         Parameters
         ----------
@@ -250,7 +250,7 @@ class Modelinput(Factory):
 
     @property
     def buffers(self):
-        """Getter buffers attribute.
+        """Return the buffers raster.
 
         For documentation, see :ref:`here <watemsedem:buffermap>`
         """
@@ -263,7 +263,7 @@ class Modelinput(Factory):
 
     @buffers.setter
     def buffers(self, raster):
-        """Setter
+        """Set the buffers raster.
 
         Parameters
         ----------
@@ -309,7 +309,7 @@ class Modelinput(Factory):
 
     @property
     def dtm(self):
-        """Getter dtm attribute.
+        """Return the DTM raster.
 
         For documentation, see :ref:`here <watemsedem:dtmmap>`
         """
@@ -322,7 +322,7 @@ class Modelinput(Factory):
 
     @dtm.setter
     def dtm(self, raster):
-        """Setter
+        """Set the DTM raster.
 
         Parameters
         ----------
@@ -368,7 +368,8 @@ class Modelinput(Factory):
 
     @property
     def kfactor(self):
-        """Getter kfactor attribute.
+        """Return the K-factor raster.
+
         For documentation, see :ref:`here <watemsedem:kmap>`
         """
         if self._kfactor is None:
@@ -380,7 +381,7 @@ class Modelinput(Factory):
 
     @kfactor.setter
     def kfactor(self, raster_input):
-        """Setter
+        """Set the K-factor raster.
 
         Parameters
         ----------
@@ -428,7 +429,7 @@ class Modelinput(Factory):
 
     @property
     def ktc(self):
-        """Getter kTC parameter attribute.
+        """Return the kTC raster.
 
         For documentation, see :ref:`here <watemsedem:ktcmap>`
         """
@@ -441,7 +442,7 @@ class Modelinput(Factory):
 
     @ktc.setter
     def ktc(self, raster):
-        """Setter
+        """Set the kTC raster.
 
         Parameters
         ----------
@@ -495,7 +496,7 @@ class Modelinput(Factory):
 
     @property
     def outlet(self):
-        """Getter outlet attribute.
+        """Return the outlet raster.
 
         For documentation, see :ref:`here <watemsedem:outletmap>`
         """
@@ -517,7 +518,7 @@ class Modelinput(Factory):
 
     @outlet.setter
     def outlet(self, raster):
-        """Setter
+        """Set the outlet raster.
 
         Parameters
         ----------
@@ -533,7 +534,7 @@ class Modelinput(Factory):
 
     @property
     def pfactor(self):
-        """Getter P-factor attribute.
+        """Return the P-factor raster.
 
         For documentation, see :ref:`here <watemsedem:pmap>`
         """
@@ -546,7 +547,7 @@ class Modelinput(Factory):
 
     @pfactor.setter
     def pfactor(self, raster):
-        """Setter
+        """Set the P-factor raster.
 
         Parameters
         ----------
@@ -592,7 +593,7 @@ class Modelinput(Factory):
 
     @property
     def compositelanduse(self):
-        """Getter landuseparcels attribute.
+        """Return the composite land-use raster.
 
         For documentation, see :ref:`here <watemsedem:prcmap>`
         """
@@ -605,7 +606,7 @@ class Modelinput(Factory):
 
     @compositelanduse.setter
     def compositelanduse(self, raster):
-        """Setter
+        """Set the composite land-use raster.
 
         Parameters
         ----------
@@ -620,14 +621,14 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the composite land-use raster."""
             plot_landuse(self._compositelanduse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
 
     @property
     def ptef(self):
-        """Getter ptef attribute.
+        """Return the PTEF raster.
 
         For documentation, see :ref:`here <watemsedem:parceltrapppingcrop>`
         """
@@ -640,7 +641,7 @@ class Modelinput(Factory):
 
     @ptef.setter
     def ptef(self, raster):
-        """Setter
+        """Set the PTEF raster.
 
         Parameters
         ----------
@@ -685,7 +686,7 @@ class Modelinput(Factory):
 
     @property
     def riversegments(self):
-        """Getter riversegments attribute.
+        """Return the river-segments raster.
 
         For documentation, see :ref:`here <watemsedem:riversegmentfile>`
         """
@@ -698,7 +699,7 @@ class Modelinput(Factory):
 
     @riversegments.setter
     def riversegments(self, raster):
-        """Setter
+        """Set the river-segments raster.
 
         Parameters
         ----------
@@ -753,7 +754,7 @@ class Modelinput(Factory):
 
     @property
     def riverrouting(self):
-        """Getter riverrouting attribute.
+        """Return the river-routing raster.
 
         For documentation, see :ref:`here <watemsedem:routingmap>`
         """
@@ -766,7 +767,7 @@ class Modelinput(Factory):
 
     @riverrouting.setter
     def riverrouting(self, raster):
-        """Setter
+        """Set the river-routing raster.
 
         Parameters
         ----------
@@ -830,7 +831,7 @@ class Modelinput(Factory):
 
     @property
     def sewers(self):
-        """Getter sewers attribute.
+        """Return the sewers raster.
 
         For documentation, see :ref:`here <watemsedem:sewermapfile>`
         """
@@ -843,7 +844,7 @@ class Modelinput(Factory):
 
     @sewers.setter
     def sewers(self, raster):
-        """Setter
+        """Set the sewers raster.
 
         Parameters
         ----------
@@ -888,7 +889,7 @@ class Modelinput(Factory):
 
     @property
     def upstreamsegments(self):
-        """Getter upstreamsegments dataframe.
+        """Return the upstream-segments table.
 
         For documentation, see :ref:`here <watemsedem:upstrsegments>`
         """
@@ -902,7 +903,7 @@ class Modelinput(Factory):
     @upstreamsegments.setter
     @valid_segments
     def upstreamsegments(self, text):
-        """Setter
+        """Set the upstream-segments table.
 
         Parameters
         ----------
@@ -917,7 +918,7 @@ class Modelinput(Factory):
 
     @property
     def adjacentsegments(self):
-        """Getter adjacentsegments dataframe.
+        """Return the adjacent-segments table.
 
         For documentation, see :ref:`here <watemsedem:adjsegments>`
         """
@@ -931,7 +932,7 @@ class Modelinput(Factory):
     @adjacentsegments.setter
     @valid_segments
     def adjacentsegments(self, text):
-        """Setter
+        """Set the adjacent-segments table.
 
         Parameters
         ----------
@@ -946,7 +947,7 @@ class Modelinput(Factory):
 
     @property
     def ktil(self):
-        """Getter ktil map."""
+        """Return the ktil raster."""
         if self._ktil is None:
             try:
                 filename = get_item_from_ini(
@@ -965,7 +966,7 @@ class Modelinput(Factory):
 
     @ktil.setter
     def ktil(self, raster):
-        """Setter for ktil map"""
+        """Set the ktil raster."""
         self._ktil = self.raster_factory(raster, flag_mask=False)
         # checks
         valid_non_nan(self._ktil.arr)
@@ -974,7 +975,7 @@ class Modelinput(Factory):
 
     @property
     def tillagedirection(self):
-        """Getter tillagedirection map."""
+        """Return the tillage-direction raster."""
         if self._tillagedirection is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Tillage direction filename", str
@@ -984,7 +985,7 @@ class Modelinput(Factory):
 
     @tillagedirection.setter
     def tillagedirection(self, raster):
-        """Setter tillagedirection map."""
+        """Set the tillage-direction raster."""
         self._tillagedirection = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.tillagedirection.arr)
@@ -994,6 +995,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot the tillage-direction raster."""
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.tillagedirection.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
@@ -1007,7 +1009,7 @@ class Modelinput(Factory):
 
     @property
     def orientedroughness(self):
-        """Getter orientedroughness map."""
+        """Return the oriented-roughness raster."""
         if self._orientedroughness is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Oriented roughness filename", str
@@ -1017,7 +1019,7 @@ class Modelinput(Factory):
 
     @orientedroughness.setter
     def orientedroughness(self, raster):
-        """Setter orientedroughness map."""
+        """Set the oriented-roughness raster."""
         self._orientedroughness = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.orientedroughness.arr)
@@ -1027,7 +1029,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plotting function"""
+            """Plot the oriented-roughness raster."""
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.orientedroughness.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
@@ -1041,7 +1043,7 @@ class Modelinput(Factory):
 
     @property
     def ditches(self):
-        """Getter ditches map."""
+        """Return the ditches raster."""
         if self._ditches is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Ditch map filename", str
@@ -1051,7 +1053,7 @@ class Modelinput(Factory):
 
     @ditches.setter
     def ditches(self, raster):
-        """Setter ditches map."""
+        """Set the ditches raster."""
         self._ditches = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.ditches.arr)
@@ -1109,7 +1111,7 @@ class Modelinput(Factory):
 
     @property
     def dams(self):
-        """Getter dams map."""
+        """Return the dams raster."""
         if self._dams is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Dam map filename", str
@@ -1119,7 +1121,7 @@ class Modelinput(Factory):
 
     @dams.setter
     def dams(self, raster):
-        """Setter dams map."""
+        """Set the dams raster."""
         self._dams = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.dams.arr)
@@ -1177,7 +1179,7 @@ class Modelinput(Factory):
 
     @property
     def cn(self):
-        """Getter cn map."""
+        """Return the CN raster."""
         if self._cn is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "CN map filename", str
@@ -1187,7 +1189,7 @@ class Modelinput(Factory):
 
     @cn.setter
     def cn(self, raster):
-        """Setter cn map."""
+        """Set the CN raster."""
         self._cn = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.cn.arr)
@@ -1197,7 +1199,7 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plotting function"""
+            """Plot the CN raster."""
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.cn.arr, self.mask.arr, -9999)
             fig, ax = plot_continuous_raster(
@@ -1211,7 +1213,7 @@ class Modelinput(Factory):
 
     @property
     def rainfall(self):
-        """Getter rainfall dataframe."""
+        """Return the rainfall table."""
         if self._rainfall is None:
             text = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Rainfall filename", str
@@ -1221,7 +1223,7 @@ class Modelinput(Factory):
 
     @rainfall.setter
     def rainfall(self, text):
-        """Setter
+        """Set the rainfall table.
 
         Parameters
         ----------

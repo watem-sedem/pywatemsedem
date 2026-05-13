@@ -49,9 +49,7 @@ COLORMAP_WATEREROS = colors.LinearSegmentedColormap.from_list(
 @dataclass
 class Modeloutput(Factory):
     def __init__(self, ini, resolution, epsg, nodata):
-        """AbstractRaster class with model outputs as attributes. Modeloutput class
-        serves the goal of automating the reading in, checking and visualisation
-        of the output data of the WaTEM/SEDEM model.
+        """Initialize model outputs and validation for a WaTEM/SEDEM setup.
 
         Parameters
         ----------
@@ -106,7 +104,7 @@ class Modeloutput(Factory):
 
     @property
     def aspect(self):
-        """Getter aspect attribute.
+        """Return the aspect raster.
 
         For documentation, see :ref:`here <watemsedem:aspectmap>`
         """
@@ -116,7 +114,7 @@ class Modeloutput(Factory):
 
     @aspect.setter
     def aspect(self, raster):
-        """Setter
+        """Set the aspect raster.
 
         Parameters
         ---------
@@ -166,7 +164,8 @@ class Modeloutput(Factory):
 
     @property
     def routing(self):
-        """Getter routing attribute.
+        """Return the routing table.
+
         For documentation, see :ref:`here <watemsedem:routingtxt>`
         """
         if self._routing is None:
@@ -175,7 +174,7 @@ class Modeloutput(Factory):
 
     @routing.setter
     def routing(self, text):
-        """Setter
+        """Set the routing table.
 
         Parameters
         ----------
@@ -230,7 +229,8 @@ class Modeloutput(Factory):
 
     @property
     def routing_missing(self):
-        """Getter routing_missing attribute.
+        """Return the missing-routing table.
+
         For documentation, see :ref:`here <watemsedem:missingroutingtxt>`
         """
         if self._routing_missing is None:
@@ -239,7 +239,7 @@ class Modeloutput(Factory):
 
     @routing_missing.setter
     def routing_missing(self, text):
-        """Setter
+        """Set the missing-routing table.
 
         Parameters
         ---------
@@ -305,7 +305,7 @@ class Modeloutput(Factory):
 
     @property
     def ls(self):
-        """Getter LS (length-slope) attribute.
+        """Return the LS raster.
 
         For documentation, see :ref:`here <watemsedem:lsmap>`
         """
@@ -315,7 +315,7 @@ class Modeloutput(Factory):
 
     @ls.setter
     def ls(self, raster):
-        """Setter
+        """Set the LS raster.
 
         Parameters
         ---------
@@ -367,7 +367,7 @@ class Modeloutput(Factory):
 
     @property
     def slope(self):
-        """Getter slope attribute.
+        """Return the slope raster.
 
         For documentation, see :ref:`here <watemsedem:slopemap>`
         """
@@ -377,7 +377,7 @@ class Modeloutput(Factory):
 
     @slope.setter
     def slope(self, raster):
-        """Setter
+        """Set the slope raster.
 
         Parameters
         ---------
@@ -429,7 +429,7 @@ class Modeloutput(Factory):
 
     @property
     def uparea(self):
-        """Getter uparea attribute.
+        """Return the uparea raster.
 
         For documentation, see :ref:`here <watemsedem:upareamap>`
         """
@@ -439,7 +439,7 @@ class Modeloutput(Factory):
 
     @uparea.setter
     def uparea(self, raster):
-        """Setter
+        """Set the uparea raster.
 
         Parameters
         ---------
@@ -496,7 +496,7 @@ class Modeloutput(Factory):
 
     @property
     def total_sediment(self):
-        """Getter total sediment attribute.
+        """Return the total-sediment table.
 
         For documentation, see :ref:`here <watemsedem:totalsedimenttxt>`.
         For explanation on column variables of dataframe: see
@@ -508,7 +508,7 @@ class Modeloutput(Factory):
 
     @total_sediment.setter
     def total_sediment(self, text):
-        """Setter total sediment attribute.
+        """Set the total-sediment table.
 
         Parameters
         ----------
@@ -519,7 +519,7 @@ class Modeloutput(Factory):
 
     @property
     def total_sediment_segments(self):
-        """Getter total sediment segments attribute.
+        """Return the total-sediment-segments table.
 
         For documentation, see :ref:`here <watemsedem:totalsedimentsegmentstxt>`.
         For explanation on column variables of dataframe: see
@@ -533,7 +533,7 @@ class Modeloutput(Factory):
 
     @total_sediment_segments.setter
     def total_sediment_segments(self, text):
-        """Setter total sediment segments attribute.
+        """Set the total-sediment-segments table.
 
         Parameters
         ----------
@@ -553,7 +553,7 @@ class Modeloutput(Factory):
 
     @property
     def cumulative_sediment_segments(self):
-        """Getter cumulative sediment segments attribute.
+        """Return the cumulative-sediment-segments table.
 
         For documentation, see :ref:`here <watemsedem:cumulativesedimentsegmentstxt>`.
         For explanation on column variables of dataframe: see
@@ -567,7 +567,7 @@ class Modeloutput(Factory):
 
     @cumulative_sediment_segments.setter
     def cumulative_sediment_segments(self, text):
-        """Setter cumulative sediment segments attribute.
+        """Set the cumulative-sediment-segments table.
 
         Parameters
         ----------
@@ -587,7 +587,7 @@ class Modeloutput(Factory):
 
     @property
     def sewer_in(self):
-        """Getter sewer_in attribute.
+        """Return the sewer-in raster.
 
         For documentation, see :ref:`here <watemsedem:sewerinrst>`
         """
@@ -597,7 +597,7 @@ class Modeloutput(Factory):
 
     @sewer_in.setter
     def sewer_in(self, raster):
-        """Setter
+        """Set the sewer-in raster.
 
         Parameters
         ---------
@@ -651,7 +651,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_export(self):
-        """Getter sedi_export attribute.
+        """Return the sedi-export raster.
 
         For documentation, see :ref:`here <watemsedem:sediexportrst>`
         """
@@ -661,7 +661,7 @@ class Modeloutput(Factory):
 
     @sedi_export.setter
     def sedi_export(self, raster):
-        """Setter
+        """Set the sedi-export raster.
 
         Parameters
         ----------
@@ -731,7 +731,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_in(self):
-        """Getter sedi_in attribute.
+        """Return the sedi-in raster.
 
         For documentation, see :ref:`here <watemsedem:sediinrst>`
         """
@@ -741,7 +741,7 @@ class Modeloutput(Factory):
 
     @sedi_in.setter
     def sedi_in(self, raster):
-        """Setter
+        """Set the sedi-in raster.
 
         Parameters
         ----------
@@ -794,7 +794,7 @@ class Modeloutput(Factory):
 
     @property
     def sedi_out(self):
-        """Getter sedi_out attribute.
+        """Return the sedi-out raster.
 
         For documentation, see :ref:`here <watemsedem:sedioutrst>`
         """
@@ -804,7 +804,7 @@ class Modeloutput(Factory):
 
     @sedi_out.setter
     def sedi_out(self, raster):
-        """Setter
+        """Set the sedi-out raster.
 
         Parameters
         ----------
@@ -857,7 +857,7 @@ class Modeloutput(Factory):
 
     @property
     def sedtil_in(self):
-        """Getter sedtil_in attribute.
+        """Return the sedtil-in raster.
 
         For documentation, see :ref:`here <watemsedem:sedtilinrst>`
         """
@@ -867,7 +867,7 @@ class Modeloutput(Factory):
 
     @sedtil_in.setter
     def sedtil_in(self, raster):
-        """Setter
+        """Set the sedtil-in raster.
 
         Parameters
         ----------
@@ -922,7 +922,7 @@ class Modeloutput(Factory):
 
     @property
     def sedtil_out(self):
-        """Getter sedtil_out attribute.
+        """Return the sedtil-out raster.
 
         For documentation, see :ref:`here <watemsedem:sedtiloutrst>`
         """
@@ -932,7 +932,7 @@ class Modeloutput(Factory):
 
     @sedtil_out.setter
     def sedtil_out(self, raster):
-        """Setter
+        """Set the sedtil-out raster.
 
         Parameters
         ----------
@@ -987,7 +987,7 @@ class Modeloutput(Factory):
 
     @property
     def cumulative(self):
-        """Getter cumulative attribute.
+        """Return the cumulative raster.
 
         For documentation, see :ref:`here <watemsedem:cumulativerst>`
         """
@@ -997,7 +997,7 @@ class Modeloutput(Factory):
 
     @cumulative.setter
     def cumulative(self, raster):
-        """Setter cumulative attribute
+        """Set the cumulative raster.
 
         Parameters
         ----------
@@ -1052,7 +1052,7 @@ class Modeloutput(Factory):
 
     @property
     def watereros_kg(self):
-        """Getter watereros_kg attribute.
+        """Return the watereros-kg raster.
 
         For documentation, see :ref:`here <watemsedem:watereroskgrst>`
         """
@@ -1064,7 +1064,7 @@ class Modeloutput(Factory):
 
     @watereros_kg.setter
     def watereros_kg(self, raster):
-        """Setter watereros_kg attribute
+        """Set the watereros-kg raster.
 
         Parameters
         ----------
@@ -1116,7 +1116,7 @@ class Modeloutput(Factory):
 
     @property
     def watereros_mm(self):
-        """Getter watereros_mm attribute.
+        """Return the watereros-mm raster.
 
         For documentation, see :ref:`here <watemsedem:watererosmmrst>`
         """
@@ -1128,7 +1128,7 @@ class Modeloutput(Factory):
 
     @watereros_mm.setter
     def watereros_mm(self, raster):
-        """Setter watereros_mm attribute
+        """Set the watereros-mm raster.
 
         Parameters
         ----------
@@ -1178,7 +1178,7 @@ class Modeloutput(Factory):
 
     @property
     def tileros_kg(self):
-        """Getter tileros_kg attribute.
+        """Return the tileros-kg raster.
 
         For documentation, see :ref:`here <watemsedem:tileroskgrst>`
         """
@@ -1188,7 +1188,7 @@ class Modeloutput(Factory):
 
     @tileros_kg.setter
     def tileros_kg(self, raster):
-        """Setter tileros_kg attribute
+        """Set the tileros-kg raster.
 
         Parameters
         ----------
@@ -1240,7 +1240,7 @@ class Modeloutput(Factory):
 
     @property
     def tileros_mm(self):
-        """Getter tileros_mm attribute.
+        """Return the tileros-mm raster.
 
         For documentation, see :ref:`here <watemsedem:tilerosmmrst>`
         """
@@ -1250,7 +1250,7 @@ class Modeloutput(Factory):
 
     @tileros_mm.setter
     def tileros_mm(self, raster):
-        """Setter tileros_mm attribute
+        """Set the tileros-mm raster.
 
         Parameters
         ----------
@@ -1300,7 +1300,7 @@ class Modeloutput(Factory):
 
     @property
     def capacity(self):
-        """Getter capacity attribute.
+        """Return the capacity raster.
 
         For documentation, see :ref:`here <watemsedem:capacityrst>`
         """
@@ -1310,7 +1310,7 @@ class Modeloutput(Factory):
 
     @capacity.setter
     def capacity(self, raster):
-        """Setter
+        """Set the capacity raster.
 
         Parameters
         ---------
@@ -1372,8 +1372,7 @@ class Modeloutput(Factory):
 
     @property
     def rusle(self):
-        """Getter rusle attribute.
-
+        """Return the RUSLE raster.
 
         For documentation, see :ref:`here <watemsedem:ruslerst>`
         """
@@ -1383,7 +1382,7 @@ class Modeloutput(Factory):
 
     @rusle.setter
     def rusle(self, raster):
-        """Setter
+        """Set the RUSLE raster.
 
         Parameters
         ---------
