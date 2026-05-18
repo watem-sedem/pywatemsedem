@@ -1093,7 +1093,7 @@ class Modeloutput(Factory):
         title = "watereros_kg [kg per year per gridcell]"
 
         def plot(
-            fig=None, ax=None, ticks=[-10000, -5000, 0, 5000, 10000], *args, **kwargs
+            fig=None, ax=None, ticks=[-2000, -1000, 0, 1000, 2000], *args, **kwargs
         ):
             """Plot the watereros_kg raster.
 
@@ -1103,7 +1103,7 @@ class Modeloutput(Factory):
                 if not given, defaults to generating new figure
             ax: matplotlib.pyplot.axis, default = None
                 if not given, defaults to generating new axis
-            ticks: list, default = [-20000, -10000, 0, 10000, 20000]
+            ticks: list, default = [-2000, -1000, 0, 1000, 2000]
                     Possibility to supply a list of 5 values for ticks of colorscale.
                     If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
                     of the data are used as ticks
