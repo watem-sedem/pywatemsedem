@@ -398,56 +398,6 @@ def get_extent_vct(vct):
     return extent  # xmin, ymin, xmax, ymax
 
 
-@valid_input(dict={"vct": valid_vector, "vct_clip": valid_vector})
-def clip_vct(vct_in, vct_out, vct_clip, overwrite=False, lst_ignore_field=None):
-    """Clip a shapefile by another shapefile
-
-    Parameters
-    ----------
-    vct_in: str or pathlib.Path
-        File path of shapefile to be clipped.
-    vct_out: str or pathlib.Path
-        File path of the destination shapefile
-    vct_clip: str or pathlib.Path
-        File path of the clip boundary vector
-    overwrite: bool, default False
-        If True, overwrite existing file
-    lst_ignore_field: list, optional
-        Ignore a specific field from input in output.
-
-    Note
-    ----
-    Uses and relies on ogr2ogr CLI
-    """
-    cond = True
-    if not overwrite:
-        if vct_out.exists():
-            cond = False
-    if cond:
-        logger.info(f"Clipping {vct_in.name}...")
-        ext = get_extent_vct(vct_clip)
-        cmd_args = [
-            "ogr2ogr",
-            "-spat",
-            str(ext[0]),
-            str(ext[1]),
-            str(ext[2]),
-            str(ext[3]),
-        ]
-        cmd_args += ["-skipfailures"]
-        cmd_args += ["-clipsrc", str(vct_clip)]
-        if lst_ignore_field is not None:
-            fields = get_fields_vct(vct_in)
-            cmd_args += [
-                "-select",
-                (", ").join(
-                    [field for field in fields if field not in lst_ignore_field]
-                ),
-            ]
-        cmd_args += [str(vct_out), str(vct_in)]
-        execute_subprocess(cmd_args)
-
-
 @valid_input(dict={"lst_rasters": valid_rasterlist, "vct_polygon": valid_vector})
 def compute_statistics_rasters_per_polygon_vector(
     lst_rasters,
