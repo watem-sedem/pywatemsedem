@@ -191,7 +191,7 @@ def valid_exists(rst, fun):
     Parameters
     ----------
     rst: pathlib.Path
-        File path to raster.
+        File path to file, e.g. raster or vector.
     fun: callable
         See :func:`pywatemsedem.geo.valid.valid_input`.
     """
@@ -199,11 +199,11 @@ def valid_exists(rst, fun):
     if not Path(rst).exists():
         if fun is not None:
             msg = (
-                f"Input raster '{rst}' does not exist, cannot execute "
+                f"Input file '{rst}' does not exist, cannot execute "
                 f"'{fun.__name__}'."
             )
         else:
-            msg = f"Input raster '{rst}' does not exist"
+            msg = f"Input file '{rst}' does not exist"
         raise PywatemsedemInputError(msg)
 
     return True
@@ -248,14 +248,14 @@ def valid_input(func=None, dict=None):
     ::
 
         from pywatemsedem.geo.utils import (
-            valid_input,valid_rasterlist,valid_polygonvector
+            valid_input, valid_rasterlist, valid_polygonvector
         )
         #note: only on-keyword arguments!
         @valid_input(dict={"lst_rst": valid_rasterlist, "vct_in": valid_polygonvector})
-        def grid_statistics(lst_rst,vct_in):
+        def grid_statistics(lst_rst, vct_in):
         # ... function code
 
-    Above example check if input of lst_rst is a list of rasters (and rasters exist)
+    Above example checks if input of lst_rst is a list of rasters (and rasters exist)
     (1) and if input of vct_in is a polygoon shape (2).
 
     Note
