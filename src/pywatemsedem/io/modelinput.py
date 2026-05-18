@@ -532,6 +532,33 @@ class Modelinput(Factory):
         valid_values(self.outlet.arr, unique_values=[0, 1])
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot the outlet raster.
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.outlet.arr, self.mask.arr, -9999)
+            fig, ax = plot_discrete_raster(
+                fig, ax, arr, self.rp.bounds, ["no outlet", "outlet"], "Reds"
+            )
+            ax.set_title("Outlet (1) and non-outlet (0) cells")
+            ax.set_facecolor("lightgray")
+            return fig, ax
+
+        self._outlet.plot = plot
+
     @property
     def pfactor(self):
         """Return the P-factor raster.
