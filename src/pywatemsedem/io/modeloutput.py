@@ -1016,10 +1016,8 @@ class Modeloutput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "cumulative [kg/year]"
 
-        def plot(
-            fig=None, ax=None, ticks=[0, 10000, 20000, 40000, 80000], *args, **kwargs
-        ):
-            """Plot the cumulative raster.
+        def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
+            """Plot the cumulative raster with a logarithmic colormap.
 
             Parameters
             ----------
@@ -1027,10 +1025,9 @@ class Modeloutput(Factory):
                 if not given, defaults to generating new figure
             ax: matplotlib.pyplot.axis, default = None
                 if not given, defaults to generating new axis
-            ticks: list, default = [0,10000,20000,40000,80000]
+            ticks: list, default = None
                     Possibility to supply a list of 5 values for ticks of colorscale.
-                    If ticks =None, 0th, 25th, 50th, 75th and 100th percentile
-                    of the data are used as ticks
+                    Default is 0th, 25th, 50th, 75th and 100th percentile
 
             Returns
             -------
@@ -1038,19 +1035,24 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            fig, ax = plot_output_raster(
-                fig=fig,
-                ax=ax,
-                arr=self.cumulative.arr,
-                mask=self.mask.arr,
-                title=title,
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, -9999)
+            lower = log_scale_enabler(arr, cnorm="log")
+            norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
+            fig, ax = plot_continuous_raster(
+                fig,
+                ax,
+                arr=arr,
                 bounds=self.rp.bounds,
+                norm=norm,
+                colorbar=True,
                 ticks=ticks,
-                cmap=COLORMAP_SEDI_OUT,
                 *args,
                 **kwargs,
             )
+            ax.set_title(title)
             ax.set_facecolor("lightgray")
+            return fig, ax
 
         self._cumulative.plot = plot
 
