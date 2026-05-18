@@ -30,21 +30,6 @@ IMPLEMENTED_RASTER_TYPES = [np.int16, np.int32, np.int64, np.float32, np.float64
 COLORMAP = "cividis"
 
 
-def valid_segments(func):
-    """Check if you have defined a river segments raster."""
-
-    def wrapper(self, *args, **kwargs):
-        if self._riversegments.is_empty():
-            msg = (
-                f"Please first define WaTEM/SEDEM river segments, see "
-                f"{Modelinput.riversegments}!"
-            )
-            raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 # def make_modelinput_from_ini(ini):
 #     """Read model ini file and make Modelinput object."""
 #     input_folder = get_item_from_ini(ini, "Working directories",
@@ -121,11 +106,11 @@ def valid_segments(func):
 #             ini, "Files", "River routing filename", str
 #         )
 #     if "adjectant segments" in files:
-#         modelinput.adjacentsegments = input_folder / get_item_from_ini(
+#         modelinput.adjacent_segments = input_folder / get_item_from_ini(
 #             ini, "Files", "adjectant segments", str
 #         )
 #     if "upstream segments" in files:
-#         modelinput.upstreamsegments = input_folder / get_item_from_ini(
+#         modelinput.upstream_segments = input_folder / get_item_from_ini(
 #             ini, "Files", "upstream segments", str
 #         )
 #     if "CN map filename" in files:
@@ -185,8 +170,8 @@ class Modelinput(Factory):
         self._riversegments = None
         self._riverrouting = None
         self._sewers = None
-        self._upstreamsegments = None
-        self._adjacentsegments = None
+        self._upstream_segments = None
+        self._adjacent_segments = None
 
     @property
     def mask(self):
@@ -1033,59 +1018,58 @@ class Modelinput(Factory):
         self._sewers.plot = plot
 
     @property
-    def upstreamsegments(self):
-        """Return the upstreamsegments table.
+    def upstream_segments(self):
+        """Return the upstream_segments table.
 
         For documentation, see :ref:`here <watemsedem:upstrsegments>`
         """
-        if self._upstreamsegments is None:
+        if self._upstream_segments is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "upstream segments", str
             )
-            self.upstreamsegments = raster
-        return self._upstreamsegments
+            self.upstream_segments = raster
+        return self._upstream_segments
 
-    @upstreamsegments.setter
-    @valid_segments
-    def upstreamsegments(self, text):
-        """Set the upstreamsegments table.
+    @upstream_segments.setter
+    def upstream_segments(self, text):
+        """Set the upstream_segments table.
 
         Parameters
         ----------
         text: pathlib.Path | str
         """
-        self._upstreamsegments = pd.read_table(text)
+        self._upstream_segments = pd.read_table(text)
         # checks
-        array = self.upstreamsegments[["line_id", "upstream_line"]].values
+        array = self.upstream_segments[["line_id", "upstream_line"]].values
         valid_non_nan(array)
         valid_values(array, unique_values=np.unique(self.riversegments.arr).tolist())
         valid_array_type(array, required_type=np.int64)
 
     @property
-    def adjacentsegments(self):
-        """Return the adjacentsegments table.
+    def adjacent_segments(self):
+        """Return the adjacent_segments table.
 
         For documentation, see :ref:`here <watemsedem:adjsegments>`
         """
-        if self._adjacentsegments is None:
+        if self._adjacent_segments is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "adjectant segments", str
             )
-            self.adjacentsegments = raster
-        return self._adjacentsegments
+            self.adjacent_segments = raster
+        return self._adjacent_segments
 
-    @adjacentsegments.setter
-    @valid_segments
-    def adjacentsegments(self, text):
-        """Set the adjacentsegments table.
+    @adjacent_segments.setter
+    def adjacent_segments(self, text):
+        """Set the adjacent_segments table.
 
         Parameters
         ----------
         text: pathlib.Path | str
         """
-        self._adjacentsegments = pd.read_table(text)
+
+        self._adjacent_segments = pd.read_table(text)
         # checks
-        array = self.adjacentsegments.values
+        array = self.adjacent_segments.values
         valid_non_nan(array)
         valid_values(array, unique_values=np.unique(self.riversegments.arr).tolist())
         valid_array_type(array, required_type=np.int64)
