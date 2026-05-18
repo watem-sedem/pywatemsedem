@@ -1,3 +1,14 @@
+"""utils.py
+
+This module provides utility functions for geospatial data processing,
+including raster and vector data manipulation, rasterization, polygonization,
+and statistical analysis of raster data within polygon features. T
+
+The functions rely on libraries such as rasterio, geopandas, pyogrio, and subprocess
+to perform various geospatial operations. The module also includes decorators for input
+validation and type checking to ensure that the functions are used correctly.
+"""
+
 # Standard libraries
 import logging
 import random
