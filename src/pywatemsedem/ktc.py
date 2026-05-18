@@ -125,7 +125,7 @@ def scale_ktc_gdf_grass_strips(gdf_grass_strips, ktc_low, ktc_high):
     if ("width" not in gdf_grass_strips.columns) or (
         "scale_ktc" not in gdf_grass_strips.columns
     ):
-        msg = "Columns 'BREEDTE' and 'scale_ktc' should be in grass strips dataframe"
+        msg = "Columns 'width' and 'scale_ktc' should be in grass strips dataframe"
         return KeyError(msg)
 
     arr_ktc_grass, arr_ste = scale_ktc_with_grass_strip_width(
