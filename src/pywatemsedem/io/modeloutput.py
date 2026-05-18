@@ -323,8 +323,18 @@ class Modeloutput(Factory):
         """
         self._ls = self.raster_factory(raster, flag_mask=False)
 
+        segments = self.raster_factory(
+            self.modelinputfolder
+            / get_item_from_ini(self.ini, "Files", "river segment filename", str),
+            flag_mask=True,
+        )
+
         valid_array_type(self.ls.arr, required_type=np.float32)
-        valid_boundaries(self.ls.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.ls.arr[(self.mask.arr != -9999) & (segments.arr < 1)],
+            lower=0,
+            upper=None,
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "LS [-]"
