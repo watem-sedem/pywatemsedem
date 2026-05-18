@@ -1,5 +1,4 @@
 import logging
-import platform
 import shutil
 import sys
 from pathlib import Path
@@ -198,52 +197,6 @@ def get_df_area_unique_values_array(arr, resolution):
     df["values"] = vals
     df["area"] = areas
     return df
-
-
-def check_cn_ws_binary(cn_ws_binary=None, fixed_name_cmd="cn_ws"):
-    """
-    Check if the compiled CN_WS program is known in the environment,
-    or if the path reference exists
-
-    Parameters
-    ----------
-    cn_ws_binary: str, default None
-        File Path of compiled cn_ws Pascal code. If None, check environment.
-    fixed_name_cmd: str, default 'cn_ws'
-        Name of exe/program.
-
-    Returns
-    -------
-    cn_ws_exe: str
-        File path of compiled cn_ws Pascal code.
-    """
-    if cn_ws_binary is None:
-        cn_ws_defined_in_path = shutil.which(fixed_name_cmd)
-        if cn_ws_defined_in_path is None:
-            try_location = Path.home() / "GitHub" / "cn_ws" / "cn_ws" / "cn_ws"
-            if try_location.exists():
-                cn_ws_binary = try_location
-            else:
-                msg = (
-                    "CN_WSmodel exe/program not found in environment, make sure you "
-                    "have defined a compiled version of cn_ws in your "
-                    "environment correctly!"
-                )
-                raise FileNotFoundError(msg)
-        else:
-            cn_ws_binary = fixed_name_cmd
-    else:
-        if (platform.system() == "Windows") and (Path(cn_ws_binary).suffix is None):
-            cn_ws_binary = cn_ws_binary + ".exe"
-        if not Path(cn_ws_binary).exists():
-            msg = (
-                f"The custom-path defined for the CN_WSmodel exe/program "
-                f"{cn_ws_binary} is incorrect, please check you refer "
-                f"to a compiled CN_WSmodel."
-            )
-            raise FileNotFoundError(msg)
-
-    return cn_ws_binary
 
 
 def check_courant_criterium(velocity, time_step, resolution, factor=0.75):
