@@ -1,3 +1,9 @@
+"""tools.py
+
+This module contains some general purpose functions.
+
+"""
+
 import logging
 import platform
 import shutil
