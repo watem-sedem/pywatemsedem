@@ -1347,14 +1347,8 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            if not self.ls:
-                msg = "Assign ls to Modeloutput before plotting Capacity"
-                raise NotImplementedError(msg)
-            else:
-                arr = mask_array_with_val(self.capacity.arr, self.ls.arr, -9999)
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(arr, self.mask.arr, 0)
-            arr = np.ma.filled(arr, np.nan)
+            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, -9999)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
