@@ -172,6 +172,7 @@ class Modelinput(Factory):
         )
 
         # DATA
+        self._rivermask = None
         self._cfactor = None  # attribute
         self._buffers = None
         self._dtm = None
@@ -186,6 +187,123 @@ class Modelinput(Factory):
         self._sewers = None
         self._upstreamsegments = None
         self._adjacentsegments = None
+
+    @property
+    def mask(self):
+        """Return mask raster."""
+        return super().mask
+
+    @mask.setter
+    def mask(self, mask):
+        """Set mask raster and define a dedicated plotting function.
+
+        Parameters
+        ----------
+        mask: pathlib.Path | str
+            Raster or polygon mask file used to create the model mask.
+        """
+        Factory.mask.fset(self, mask)
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot the mask raster.
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.mask.arr, self.mask.arr, -9999)
+            fig, ax = plot_discrete_raster(
+                fig, ax, arr, self.rp.bounds, labels=["catchment"], *args, **kwargs
+            )
+            ax.set_title("Catchment mask")
+            ax.set_facecolor("lightgray")
+
+            return fig, ax
+
+        self._mask.plot = plot
+
+    @property
+    def rivermask(self):
+        """Return the river mask raster.
+        Not an actual input of the model,
+        but a raster that can be derived from the river segments raster,
+        useful for visualisation purposes.
+        """
+        if self._rivermask is None:
+            raster = self.modelinputfolder / get_item_from_ini(
+                self.ini, "Files", "river segment filename", str
+            )
+            self.rivermask = raster
+        return self._rivermask
+
+    @rivermask.setter
+    def rivermask(self, raster):
+        """Set the rivermask raster.
+        Not an actual input of the model,
+        but a raster that can be derived from the river segments raster,
+        useful for visualisation purposes.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._rivermask = self.raster_factory(raster, flag_mask=False)
+        self._rivermask.arr[self._rivermask.arr > 0] = 1
+        self._rivermask.arr[self._rivermask.arr != 1] = -9999
+
+        # checks
+        valid_non_nan(self.rivermask.arr)
+        valid_array_type(self.rivermask.arr, required_type=np.int16)
+        valid_values(
+            self.rivermask.arr[self.rivermask.arr != -9999],
+            unique_values=[1],
+        )
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+
+        def plot(fig=None, ax=None, *args, **kwargs):
+            """Plot the rivermask raster.
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.rivermask.arr, self.mask.arr, -9999)
+            arr[arr == -9999] = 0  # for plotting purposes
+            fig, ax = plot_discrete_raster(
+                fig,
+                ax,
+                arr,
+                self.rp.bounds,
+                labels=["catchment", "rivers"],
+                *args,
+                **kwargs,
+            )
+            ax.set_title("River mask (in context of the catchment mask)")
+            ax.set_facecolor("lightgray")
+
+            return fig, ax
+
+        self._rivermask.plot = plot
 
     @property
     def cfactor(self):
