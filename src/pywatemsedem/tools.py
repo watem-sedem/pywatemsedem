@@ -1,7 +1,6 @@
 import logging
 import shutil
 import sys
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -114,59 +113,6 @@ def zip_folder(folder2zip, outfile=None):
     if outfile is None:
         outfile = folder2zip
     shutil.make_archive(outfile, "zip", folder2zip)
-
-
-def extract_tags_from_template_file(template):
-    """Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart
-    template file.
-
-
-    Parameters
-    ----------
-    template: pathlib.Path or str
-        File path to CN-WS perceelskaart template file.
-
-    Returns
-    -------
-    catchment_name: str
-        Catchment name
-    scenario: str
-        Scenario number (in string!)
-    year: int
-        Simulation year.
-    valid: bool
-        Tag that indicate whether template format agrees with defined template format.
-
-    Note
-    ----
-    The template format should be
-
-    """
-    # take first template file and drop extension
-    template_, _, _ = Path(template).name.partition(".")
-
-    # split template name on "_"
-    template_ = template_.split("_")
-
-    # valid if template conveys with define template format
-    if len(template_) != 4:
-        msg = (
-            f"Template {template} does not convey with defined template format "
-            "`fname_%year_%catchmentname_s%scenariolabel.rst`."
-        )
-        logger.warning(msg)
-        valid = False
-    else:
-        valid = True
-
-    # get catchment name which is on the third position (index 2)
-    catchment_name = template_[2]
-    # get scenario number (str) from last position and drop "s"
-    scenario = template_[-1].replace("s", "")
-    # get year (int) from second position (index 1)
-    year = int(template_[1])
-
-    return catchment_name, scenario, year, valid
 
 
 def get_df_area_unique_values_array(arr, resolution):

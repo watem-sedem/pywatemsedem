@@ -7,7 +7,6 @@ from numpy.testing import assert_almost_equal
 from shapely import LineString
 
 from pywatemsedem.tools import (
-    extract_tags_from_template_file,
     format_forced_routing,
     reformat_LineString_to_source_targetf,
 )
@@ -23,17 +22,6 @@ from pywatemsedem.tools import (
         ("perceelskaart_2018_molenbeek_velm_s1.rst", False),
     ],
 )
-def test_extract_tags_from_template_file(template, valid):
-    """Test function for extracting tags (catchment, year, scenario identifier) from a
-    template file"""
-    catchment, scenario, year, valid_ = extract_tags_from_template_file(template)
-
-    assert catchment == "molenbeek"
-    assert scenario == "1"
-    assert year == 2018
-    assert valid == valid_
-
-
 class TestReformatRouting:
     """Test class for reformat LineString to Source/target dataframe"""
 
