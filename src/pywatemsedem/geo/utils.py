@@ -72,7 +72,7 @@ def read_rst_params(rst_in):
 
 @valid_input(dict={"rst_in": valid_raster})
 def read_rasterio_profile(rst_in):
-    """Read all spatial dimensions of a raster
+    """Read all spatial dimensions of a raster as a rasterio profile
 
     Parameters
     ----------
@@ -172,11 +172,15 @@ def grid_difference(rst_in1, rst_in2, rst_out):
     Parameters
     ----------
     rst_in1: str
-        File path to inputraster 1
+        File path to input raster 1
     rst_in2: str
-        File path to inputraster 2
+        File path to input raster 2
     rst_out: str
-        File path to outputraster
+        File path to output raster
+
+    Note
+    ----
+    Uses the SAGA CLI command "grid_calculus" with the option "3" (difference).
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_calculus", "3"]
     cmd_args += ["-A", str(rst_in1), "-B", str(rst_in2), "-C", str(rst_out)]
@@ -251,7 +255,7 @@ def tiff_to_geopandas_df(tiff_in):
 
 
 def valid_gdal_type(func):
-    """Check if your input array mask is valid. Use as decorator"""
+    """Check if your input array mask is valid. Use this function as decorator"""
 
     @wraps(func)
     def wrapper(*args, dtype):
@@ -298,8 +302,8 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
         File path of the input tiff file
     rst_out: pathlib.Path or str
         File path of the destination rst
-    dtype: str, default Float64
-        Raster type
+    dtype: str
+        Raster type (e.g. "Float32", "Int16", "Int32", "Int64")
 
     Note
     ----
@@ -355,7 +359,9 @@ def clip_rst(rst_in, rst_out, cnst, resampling="near"):
 
     Notes
     -----
-    1. "mode" and "near" have been tested, see
+    1. This function uses the gdalwarp CLI, see
+       https://gdal.org/en/stable/programs/gdalwarp.html for more information
+    2. "mode" and "near" have been tested, see
         https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r
     """
 
@@ -452,7 +458,7 @@ def compute_statistics_rasters_per_polygon_vector(
     normalize=True,
     ton=False,
 ):
-    """Compute statistics
+    """Compute statistics of a raster per polygon feature
 
     Parameters
     ----------
@@ -682,16 +688,16 @@ def vct_to_rst_value(
             rst_out,
             raster_properties,
             nodata=-9999,
-            alltouched=True,
-            dtype=None,
+            alltouched=alltouched,
+            dtype=dtype,
         )
     else:
         vct_to_rst_value_saga(
             vct_in,
             rst_out,
             raster_properties,
-            alltouched=True,
-            dtype=None,
+            alltouched=alltouched,
+            dtype=dtype,
         )
 
 
@@ -699,7 +705,7 @@ def vct_to_rst_value(
 def raster_to_polygon(rst_in, vct_out):
     """Polygonize a raster
 
-    This function converts rastercells to polygons
+    This function converts raster cells to polygons
 
     Parameters
     ----------
@@ -710,7 +716,7 @@ def raster_to_polygon(rst_in, vct_out):
 
     Note
     -----
-    Uses and relies on saga_cmd CLI
+    Uses and relies on saga_cmd CLI shapes_grid -6
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "6", "-GRID", str(rst_in)]
     cmd_args += ["-POLYGONS", str(vct_out), "-CLASS_ALL", "1", "-SPLIT", "0"]
@@ -864,7 +870,7 @@ def execute_saga(cmd_args):
 
 @valid_input(dict={"vct_point": valid_pointvector, "rst_template": valid_raster})
 def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
-    """Converts a polygon shapefile to a raster
+    """Converts a point shapefile to a raster
 
     Parameters
     ----------
@@ -1008,23 +1014,23 @@ def create_spatial_index(vct_in):
 
 @valid_input(dict={"rst": valid_raster})
 def load_raster(rst, return_bounds=False):
-    """load raster with rasterio
+    """read raster with rasterio as a numpy array.
 
     Parameters
     ----------
     rst: str or pathlib.Path
         File path of the file, .rst arr.
     return_bounds: bool, default False
-        Flag to indicate whether a bounds of the arr should be returned.
+        Flag to indicate whether the bounds of the arr should be returned.
 
     Returns
     -------
     arr: numpy.ndarray
         Array format of raster file.
-    bounds: list
-        List of bounds (xmin,ymin,xmax,ymax).
     profile: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
+    bounds: list
+        List of bounds (xmin,ymin,xmax,ymax) if return_bounds is True
     """
     # load
     try:
@@ -1233,20 +1239,20 @@ def rasterprofile_to_rstparams(profile):
 
 
 def rstparams_to_rasterprofile(rstparams, epsg=None):
-    """Transform rstparams dictionary to to rasterio rasterprofile dictionary
+    """Transform rstparams dictionary to rasterio raster profile dictionary
 
     Parameters
     ----------
-    rstparams: rasterio.profiles
-        See :class:`rasterio.profiles.Profile`
+    rstparams: dict
+        gdal dictionary holding all metadata for idrisi rasters
     epsg: str, default None
         The epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
 
     Returns
     -------
-    rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
+    profile: rasterio.profiles
+        See :class:`rasterio.profiles.Profile`
 
     """
     profile = {"nodata": rstparams["nodata"]}
@@ -1291,7 +1297,7 @@ def set_no_data_rst(
     profile: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
     dtype: numpy.dtype, default None
-        e.g. np.float64, np.float32, ..
+        e.g. np.float64, np.float32, ...
     nodata_val: int, default -9999
         Standard value for nodata
     """
@@ -1369,7 +1375,7 @@ def set_no_data_arr(arr, arr_mask, nodata):
 
 
 def set_dtype_arr_rst(arr, profile, dtype=None):
-    """Set type for an array
+    """Set dtype for a numpy array and update the raster profile
 
     Parameters
     ----------
@@ -1681,7 +1687,7 @@ def define_extent_from_vct(
 def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
     """Create temporary filename in a dedicated directory
 
-    Create directory if it is not exists
+    Create directory if it does not exist
 
     Only filenames are generated, not the files
 
