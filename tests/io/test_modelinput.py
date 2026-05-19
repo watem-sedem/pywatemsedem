@@ -8,60 +8,73 @@ from pywatemsedem.io.modelinput import Modelinput
 
 def test_modelinput_all():
     """tests for Modelinput class"""
-    # folder = Path(r"pywatemsedem/tests/io/data")
-    folder = Path("tests") / "io" / "data"
-    filepath = folder / "model_in"
-    ini = filepath / "ini.ini"
+    # Initialization
+    file_path = Path("tests") / "runs" / "langegracht" / "scenario_1" / "modelinput"
+    ini = file_path / "ini.ini"
     example = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
+
     # C-factor
-    example.cfactor = filepath / "cfactor.rst"
+    example.cfactor = file_path / "cfactor.rst"
     example.cfactor.plot()
     # example.cfactor.hv_plot()
+
     # Buffers: no data for langegracht
-    example.buffers = filepath / "buffers.rst"
+    example.buffers = file_path / "buffers.rst"
     example.buffers.plot()
     # example.buffers.hv_plot()
+
     # DTM
-    example.dtm = filepath / "dtm.rst"
+    example.dtm = file_path / "dtm.rst"
     example.dtm.plot()
     # example.dtm.hv_plot()
+
     # K-factor
-    example.kfactor = filepath / "Kfactor.rst"
+    example.kfactor = file_path / "kfactor.rst"
     example.kfactor.plot()
     # example.kfactor.hv_plot()
+
     # kTC
-    example.ktc = filepath / "ktc.rst"
+    example.ktc = file_path / "ktc_map.rst"
     example.ktc.plot()
     # example.ktc.hv_plot()
+
     # Outlet
-    example.outlet = filepath / "Outlet.rst"
+    example.outlet = file_path / "Outlet.rst"
     example.outlet.plot()
     # example.outlet.hv_plot()
+
     # P-factor
-    example.pfactor = filepath / "pfactor.rst"
+    example.pfactor = file_path / "pfactor.rst"
     example.pfactor.plot()
     # example.pfactor.hv_plot()
+
     # landuseparcels
-    example.compositelanduse = filepath / "perceelskaart.rst"
+    example.compositelanduse = file_path / "parcels_landuse.rst"
     # example.landuseparcels.plot()
     # example.landuseparcels.hv_plot()
+
     # PTEF
-    example.ptef = filepath / "PTEFmap.rst"
+    example.ptef = file_path / "PTEFmap.rst"
     example.ptef.plot()
     # example.ptef.hv_plot()
+
     # riversegments
-    example.riversegments = filepath / "segments.rst"
+    example.riversegments = file_path / "segments.rst"
     example.riversegments.plot()
     # example.riversegments.hv_plot()
+
     # riverrouting
-    example.riverrouting = filepath / "routing.rst"
+    example.riverrouting = file_path / "routing.rst"
     example.riverrouting.plot()
     # example.riverrouting.hv_plot()
-    # sewers
-    example.sewers = filepath / "sewers.rst"
-    example.sewers.plot()
-    # example.sewers.hv_plot()
+
+    ## sewers
+    # example.sewers = file_path / "sewers.rst"
+    # example.sewers.plot()
+    ## example.sewers.hv_plot()
+
     # upstream segments
-    example.upstreamsegments = filepath / "upedges.txt"
+    example.upstreamsegments = file_path / "up_edges.txt"
+
     # adjecant segments
-    example.adjacentsegments = filepath / "adjedges.txt"
+    example.adjacentsegments = file_path / "adjacentedges.txt"
