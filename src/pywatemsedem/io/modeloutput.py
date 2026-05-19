@@ -144,7 +144,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, self._nodata)
             ticks = [0, np.pi / 2, np.pi, 3 / 2 * np.pi, 2 * np.pi]
             fig, ax = plot_output_raster(
                 fig,
@@ -331,7 +331,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.ls.arr, required_type=np.float32)
         valid_boundaries(
-            self.ls.arr[(self.mask.arr != -9999) & (segments.arr < 1)],
+            self.ls.arr[(self.mask.arr != self._nodata) & (segments.arr < 1)],
             lower=0,
             upper=None,
         )
@@ -358,7 +358,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.ls.arr, self.ls.arr, -9999)
+            arr = mask_array_with_val(self.ls.arr, self.ls.arr, self._nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -396,7 +396,9 @@ class Modeloutput(Factory):
         self._slope = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.slope.arr, required_type=np.float32)
-        valid_boundaries(self.slope.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.slope.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "Slope [rad]"
@@ -420,7 +422,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.slope.arr, self.slope.arr, -9999)
+            arr = mask_array_with_val(self.slope.arr, self.slope.arr, self._nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -458,7 +460,9 @@ class Modeloutput(Factory):
         self._uparea = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.uparea.arr, required_type=np.float32)
-        valid_boundaries(self.uparea.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.uparea.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "uparea [m²]"
@@ -487,7 +491,7 @@ class Modeloutput(Factory):
                 msg = "Assign ls to Modeloutput before plotting uparea"
                 raise NotImplementedError(msg)
             else:
-                arr = mask_array_with_val(self.uparea.arr, self.ls.arr, -9999)
+                arr = mask_array_with_val(self.uparea.arr, self.ls.arr, self._nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -616,7 +620,9 @@ class Modeloutput(Factory):
         self._sewer_in = self.raster_factory(raster, flag_mask=True)
 
         valid_array_type(self.sewer_in.arr, required_type=np.float32)
-        valid_boundaries(self.sewer_in.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.sewer_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sewer in [kg/year]"
 
@@ -642,7 +648,9 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.sewer_in.arr, self.sewer_in.arr, -9999)
+            arr = mask_array_with_val(
+                self.sewer_in.arr, self.sewer_in.arr, self._nodata
+            )
             arr = mask_array_with_val(arr, self.sewer_in.arr, 0)
             fig, ax = plot_output_raster(
                 fig,
@@ -683,7 +691,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_export.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_export.arr[self.mask.arr != -9999], lower=0, upper=None
+            self.sedi_export.arr[self.mask.arr != self._nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_export [kg/year]"
@@ -712,13 +720,15 @@ class Modeloutput(Factory):
             """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.sedi_export.arr, self.mask.arr, 0)
-            arr = mask_array_with_val(self.sedi_export.arr, self.sedi_export.arr, -9999)
+            arr = mask_array_with_val(
+                self.sedi_export.arr, self.sedi_export.arr, self._nodata
+            )
             # mask where the river is not present
             if not self.ls:
                 msg = "Assign ls to Modeloutput before plotting sedi_export"
                 raise NotImplementedError(msg)
             else:
-                arr = np.ma.masked_where(self.ls.arr != -9999, arr)
+                arr = np.ma.masked_where(self.ls.arr != self._nodata, arr)
             if not ticks:
                 arr_nozeros = mask_array_with_val(arr, arr, 0)
                 arr_nozeros = np.ma.filled(arr_nozeros, np.nan)
@@ -764,7 +774,9 @@ class Modeloutput(Factory):
         self._sedi_in = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.sedi_in.arr, required_type=np.float32)
-        valid_boundaries(self.sedi_in.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.sedi_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_in [kg/year]"
 
@@ -827,7 +839,9 @@ class Modeloutput(Factory):
         self._sedi_out = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
-        valid_boundaries(self.sedi_out.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.sedi_out.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_out [kg/year]"
 
@@ -891,7 +905,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedtil_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedtil_in.arr[self.mask.arr != -9999], lower=0, upper=None
+            self.sedtil_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedtil_in [kg/year]"
@@ -956,7 +970,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedtil_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedtil_out.arr[self.mask.arr != -9999], lower=0, upper=None
+            self.sedtil_out.arr[self.mask.arr != self._nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedtil_out [kg/year]"
@@ -1021,7 +1035,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.cumulative.arr[self.mask.arr != -9999], lower=0, upper=None
+            self.cumulative.arr[self.mask.arr != self._nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "cumulative [kg/year]"
@@ -1046,7 +1060,7 @@ class Modeloutput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, self._nodata)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
@@ -1335,7 +1349,9 @@ class Modeloutput(Factory):
         self._capacity = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
-        valid_boundaries(self.capacity.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.capacity.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "Capacity [kg/year]"
@@ -1360,7 +1376,7 @@ class Modeloutput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, self._nodata)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
@@ -1401,7 +1417,9 @@ class Modeloutput(Factory):
         self._rusle = self.raster_factory(raster, flag_mask=False)
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
-        valid_boundaries(self.rusle.arr[self.mask.arr != -9999], lower=0, upper=None)
+        valid_boundaries(
+            self.rusle.arr[self.mask.arr != self._nodata], lower=0, upper=None
+        )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         title = "RUSLE [kg/(year.m²)]"
@@ -1426,7 +1444,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, self._nodata)
             fig, ax = plot_output_raster(
                 fig=fig,
                 ax=ax,

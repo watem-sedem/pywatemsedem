@@ -206,7 +206,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.mask.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.mask.arr, self.mask.arr, self._nodata)
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels=["catchment"], *args, **kwargs
             )
@@ -244,13 +244,13 @@ class Modelinput(Factory):
         """
         self._rivermask = self.raster_factory(raster, flag_mask=False)
         self._rivermask.arr[self._rivermask.arr > 0] = 1
-        self._rivermask.arr[self._rivermask.arr != 1] = -9999
+        self._rivermask.arr[self._rivermask.arr != 1] = self._nodata
 
         # checks
         valid_non_nan(self.rivermask.arr)
         valid_array_type(self.rivermask.arr, required_type=np.int16)
         valid_values(
-            self.rivermask.arr[self.rivermask.arr != -9999],
+            self.rivermask.arr[self.rivermask.arr != self._nodata],
             unique_values=[1],
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
@@ -272,8 +272,8 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.rivermask.arr, self.mask.arr, -9999)
-            arr[arr == -9999] = 0  # for plotting purposes
+            arr = mask_array_with_val(self.rivermask.arr, self.mask.arr, self._nodata)
+            arr[arr == self._nodata] = 0  # for plotting purposes
             fig, ax = plot_discrete_raster(
                 fig,
                 ax,
@@ -341,7 +341,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cfactor.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.cfactor.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -398,7 +398,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.buffers.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.buffers.arr, self.mask.arr, self._nodata)
             # binary plotting: if larger than 0, it is a buffer id!
             arr[arr > 0] = 1  # binary plotting!
             fig, ax = plot_discrete_raster(
@@ -436,8 +436,8 @@ class Modelinput(Factory):
         valid_non_nan(self.dtm.arr)
         valid_array_type(self.dtm.arr, required_type=np.float32)
         # crucial that code does NOT run when nodata values detected!
-        valid_nodata(self.dtm.arr, nodata_value=-9999)
-        valid_nodata(self.dtm.arr, nodata_value=-99999)
+        valid_nodata(self.dtm.arr, nodata_value=self._nodata)
+        valid_nodata(self.dtm.arr, nodata_value=self._nodata9)
         valid_boundaries(self.dtm.arr, lower=-431, upper=9000)
         # +- lowest and highest points on earth
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
@@ -459,7 +459,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.dtm.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.dtm.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -496,7 +496,7 @@ class Modelinput(Factory):
         # NO need for checking no data, deal with this in plotting!
         valid_array_type(raster.arr, required_type=np.int16)
         valid_boundaries(
-            raster.arr[raster.arr != -9999], lower=0, upper=None
+            raster.arr[raster.arr != self._nodata], lower=0, upper=None
         )  # No data value excluded from check
         check_raster_properties_raster_with_template(
             self.rp, raster_input, epsg=self.rp.epsg
@@ -520,7 +520,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.kfactor.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.kfactor.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -556,7 +556,7 @@ class Modelinput(Factory):
         valid_non_nan(self.ktc.arr)
         valid_array_type(self.ktc.arr, required_type=np.float32)
         valid_boundaries(
-            self.ktc.arr[(self.ktc.arr != 9999) & (self.ktc.arr != -9999)],
+            self.ktc.arr[(self.ktc.arr != 9999) & (self.ktc.arr != self._nodata)],
             lower=0,
             upper=20,
         )  # 0 to 20 if not nodata
@@ -582,7 +582,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.ktc.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.ktc.arr, self.mask.arr, self._nodata)
             arr_nodata = mask_array_with_val(arr, arr, 9999)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr_nodata, self.rp.bounds, *args, **kwargs
@@ -652,7 +652,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.outlet.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.outlet.arr, self.mask.arr, self._nodata)
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, ["no outlet", "outlet"], "Reds"
             )
@@ -711,7 +711,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.pfactor.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.pfactor.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -804,7 +804,7 @@ class Modelinput(Factory):
 
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.ptef.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.ptef.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -860,7 +860,9 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.riversegments.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(
+                self.riversegments.arr, self.mask.arr, self._nodata
+            )
             arr_only_rivers = np.ma.masked_where(arr == 0, arr)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr_only_rivers, self.rp.bounds, *args, **kwargs
@@ -909,7 +911,7 @@ class Modelinput(Factory):
         valid_non_nan(self.riverrouting.arr)
         valid_array_type(self.riverrouting.arr, required_type=np.int16)
         valid_values(
-            self.riverrouting.arr[self.riverrouting.arr != -9999],
+            self.riverrouting.arr[self.riverrouting.arr != self._nodata],
             unique_values=np.arange(0, 9).tolist(),
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
@@ -948,8 +950,10 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.riverrouting.arr, self.mask.arr, -9999)
-            arr[arr == -9999] = 0  # no routing
+            arr = mask_array_with_val(
+                self.riverrouting.arr, self.mask.arr, self._nodata
+            )
+            arr[arr == self._nodata] = 0  # no routing
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
             )
@@ -1006,7 +1010,7 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.sewers.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.sewers.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, vmin=lower, vmax=upper, *args, **kwargs
             )
@@ -1126,7 +1130,9 @@ class Modelinput(Factory):
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot the tillagedirection raster."""
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.tillagedirection.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(
+                self.tillagedirection.arr, self.mask.arr, self._nodata
+            )
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -1160,7 +1166,9 @@ class Modelinput(Factory):
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot the orientedroughness raster."""
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.orientedroughness.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(
+                self.orientedroughness.arr, self.mask.arr, self._nodata
+            )
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
@@ -1188,7 +1196,7 @@ class Modelinput(Factory):
         valid_non_nan(self.ditches.arr)
         valid_nodata(self.ditches.arr)
         valid_values(
-            self.ditches.arr[self.ditches.arr != -9999],
+            self.ditches.arr[self.ditches.arr != self._nodata],
             unique_values=np.arange(0, 9).tolist(),
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
@@ -1227,8 +1235,8 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.ditches.arr, self.mask.arr, -9999)
-            arr[arr == -9999] = 0  # no routing
+            arr = mask_array_with_val(self.ditches.arr, self.mask.arr, self._nodata)
+            arr[arr == self._nodata] = 0  # no routing
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
             )
@@ -1256,7 +1264,7 @@ class Modelinput(Factory):
         valid_non_nan(self.dams.arr)
         valid_nodata(self.dams.arr)
         valid_values(
-            self.dams.arr[self.dams.arr != -9999],
+            self.dams.arr[self.dams.arr != self._nodata],
             unique_values=np.arange(0, 9).tolist(),
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
@@ -1295,8 +1303,8 @@ class Modelinput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.dams.arr, self.mask.arr, -9999)
-            arr[arr == -9999] = 0  # no routing
+            arr = mask_array_with_val(self.dams.arr, self.mask.arr, self._nodata)
+            arr[arr == self._nodata] = 0  # no routing
             fig, ax = plot_discrete_raster(
                 fig, ax, arr, self.rp.bounds, labels, colormap_routing, *args, **kwargs
             )
@@ -1330,7 +1338,7 @@ class Modelinput(Factory):
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot the CN raster."""
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cn.arr, self.mask.arr, -9999)
+            arr = mask_array_with_val(self.cn.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
                 fig, ax, arr, self.rp.bounds, *args, **kwargs
             )
