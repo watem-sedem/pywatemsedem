@@ -11,8 +11,8 @@ def test_modelinput_all():
     # folder = Path(r"pywatemsedem/tests/io/data")
     folder = Path("tests") / "io" / "data"
     filepath = folder / "model_in"
-    P_ex = filepath / "pfactor.rst"
-    example = Modelinput(P_ex, resolution=20, epsg=31370, nodata=-9999)
+    ini = filepath / "ini.ini"
+    example = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
     # C-factor
     example.cfactor = filepath / "cfactor.rst"
     example.cfactor.plot()
@@ -38,7 +38,7 @@ def test_modelinput_all():
     example.outlet.plot()
     # example.outlet.hv_plot()
     # P-factor
-    example.pfactor = P_ex
+    example.pfactor = filepath / "pfactor.rst"
     example.pfactor.plot()
     # example.pfactor.hv_plot()
     # landuseparcels
