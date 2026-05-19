@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from pytest import approx
 
+from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
     Modeloutput,
     check_segment_edges,
@@ -13,68 +14,83 @@ from pywatemsedem.io.modeloutput import (
 )
 
 
-def test_modelouput():
+def test_modeloutput():
     """Testing the modeloutput class"""
-    folder = Path(r"tests/io/data")
-    filepath_out = folder / "model_out"
-    filepath_in = folder / "model_in"
-    ini = filepath_in / "ini.ini"
-    example = Modeloutput(ini, resolution=20, epsg=31370, nodata=-9999)
-    # sediout
-    example.sediout = filepath_out / "SediOut_kg.rst"
-    example.sediout.plot()
-    # example.sediout.hv_plot()
+    # Initialization
+    file_path_in = Path("tests") / "runs" / "langegracht" / "scenario_1" / "modelinput"
+    file_path_out = (
+        Path("tests") / "runs" / "langegracht" / "scenario_1" / "modeloutput"
+    )
+    ini = file_path_in / "inifile.ini"
+    example_in = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
+    example_out = Modeloutput(ini, resolution=20, epsg=31370, nodata=-9999)
+
+    # sedi_out
+    example_out.sedi_out = file_path_out / "SediOut_kg.rst"
+    example_out.sedi_out.plot()
+    # example_out.sedi_out.hv_plot()
+
     # routing
-    example.routing = filepath_out / "routing.txt"
-    landuse_path = filepath_in / "perceelskaart.rst"
-    sediout_path = filepath_out / "SediOut_kg.rst"
-    example.make_routing_vector(landuse_path, sediout_path)
-    # example.routing.plot()
+    example_out.routing = file_path_out / "routing.txt"
+    file_path_in / "parcels_landuse.rst"
+    file_path_out / "SediOut_kg.rst"
+    example_out.make_routing_vector(example_in)
+    # example_out.routing.plot()
+
     # routing_missing
-    example.routing_missing = filepath_out / "routing_missing.txt"
-    example.make_routing_vector(landuse_path, sediout_path, routing_missing=True)
-    example.routing_missing.plot()
+    example_out.routing_missing = file_path_out / "routing_missing.txt"
+    example_out.make_routing_vector(example_in, routing_missing=True)
+    example_out.routing_missing.plot()
+
     # ls
-    example.ls = filepath_out / "LS.rst"
-    example.ls.plot()
-    # example.ls.hv_plot()
+    example_out.ls = file_path_out / "LS.rst"
+    example_out.ls.plot()
+    # example_out.ls.hv_plot()
+
     # slope
-    example.slope = filepath_out / "SLOPE.rst"
-    example.slope.plot()
-    # example.slope.hv_plot()
+    example_out.slope = file_path_out / "SLOPE.rst"
+    example_out.slope.plot()
+    # example_out.slope.hv_plot()
+
     # uparea
-    example.uparea = filepath_out / "UPAREA.rst"
-    example.uparea.plot()
-    # example.uparea.hv_plot()
+    example_out.uparea = file_path_out / "UPAREA.rst"
+    example_out.uparea.plot()
+    # example_out.uparea.hv_plot()
+
     # total sediment
-    example.total_sediment = filepath_out / "Total sediment.txt"
-    # sewer in
-    example.sewer_in = filepath_out / "sewer_in.rst"
-    example.sewer_in.plot()
-    # example.sewer_in.hv_plot()
-    # SediExport
-    example.sedi_export = filepath_out / "SediExport_kg.rst"
-    example.sedi_export.plot()
-    # example.sedi_export.hv_plot()
-    # SediIn
-    example.sedi_in = filepath_out / "SediIn_kg.rst"
-    example.sedi_in.plot()
-    # example.sedi_in.hv_plot()
+    example_out.total_sediment = file_path_out / "Total sediment.txt"
+
+    ## sewer in
+    # example_out.sewer_in = file_path_out / "sewer_in.rst"
+    # example_out.sewer_in.plot()
+    ## example_out.sewer_in.hv_plot()
+
+    # sedi_export
+    example_out.sedi_export = file_path_out / "SediExport_kg.rst"
+    example_out.sedi_export.plot()
+    # example_out.sedi_export.hv_plot()
+
+    # sedi_in
+    example_out.sedi_in = file_path_out / "SediIn_kg.rst"
+    example_out.sedi_in.plot()
+    # example_out.sedi_in.hv_plot()
+
     # Capacity
-    example.capacity = filepath_out / "Capacity.rst"
-    example.capacity.plot()
-    # example.capacity.hv_plot()
+    example_out.capacity = file_path_out / "Capacity.rst"
+    example_out.capacity.plot()
+    # example_out.capacity.hv_plot()
+
     # RUSLE
-    example.rusle = filepath_out / "RUSLE.rst"
-    example.rusle.plot()
-    # example.rusle.hv_plot()
+    example_out.rusle = file_path_out / "RUSLE.rst"
+    example_out.rusle.plot()
+    # example_out.rusle.hv_plot()
 
 
 def test_compute_efficiency_buffers():
     """Compute efficiency buffers"""
 
-    exp_sediin = np.array([5928.877930, 4209.729492])
-    exp_sediout = np.array([1482.219482, 1052.4324])
+    exp_sedi_in = np.array([5928.877930, 4209.729492])
+    exp_sedi_out = np.array([1482.219482, 1052.4324])
     buff_sed = np.array([4446.658203, 3157.297])
 
     folder = Path(r"tests/io/data")
@@ -87,8 +103,8 @@ def test_compute_efficiency_buffers():
         filepath_out / "SediOut_kg.rst",
     )
 
-    np.testing.assert_allclose(df["sediout"], exp_sediout, atol=1e-2)
-    np.testing.assert_allclose(df["sediin"], exp_sediin, atol=1e-2)
+    np.testing.assert_allclose(df["sedi_out"], exp_sedi_out, atol=1e-2)
+    np.testing.assert_allclose(df["sedi_in"], exp_sedi_in, atol=1e-2)
     np.testing.assert_allclose(df["buff_sed"], buff_sed, atol=1e-2)
 
 
@@ -132,8 +148,8 @@ def test_identify_rank_sediment_loads(
     df_export = df_export[df_export["class"] != -9999]
 
     assert df_export.shape[0] == n_ranks
-    assert np.sum(df_export["sediexport"]) == approx(sum_sediment_load, abs=1)
-    assert np.mean(df_export["sediexport"]) == approx(mean_sediment_load, abs=1)
+    assert np.sum(df_export["sedi_export"]) == approx(sum_sediment_load, abs=1)
+    assert np.mean(df_export["sedi_export"]) == approx(mean_sediment_load, abs=1)
 
 
 def test_check_segment_edges():

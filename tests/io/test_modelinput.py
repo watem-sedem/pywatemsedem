@@ -10,7 +10,7 @@ def test_modelinput_all():
     """tests for Modelinput class"""
     # Initialization
     file_path = Path("tests") / "runs" / "langegracht" / "scenario_1" / "modelinput"
-    ini = file_path / "ini.ini"
+    ini = file_path / "inifile.ini"
     example = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
 
     # C-factor

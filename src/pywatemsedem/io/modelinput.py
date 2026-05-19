@@ -437,7 +437,7 @@ class Modelinput(Factory):
         valid_array_type(self.dtm.arr, required_type=np.float32)
         # crucial that code does NOT run when nodata values detected!
         valid_nodata(self.dtm.arr, nodata_value=self._nodata)
-        valid_nodata(self.dtm.arr, nodata_value=self._nodata9)
+        valid_nodata(self.dtm.arr, nodata_value=self._nodata)
         valid_boundaries(self.dtm.arr, lower=-431, upper=9000)
         # +- lowest and highest points on earth
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
