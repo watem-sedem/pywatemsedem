@@ -18,8 +18,8 @@ def test_modelouput():
     folder = Path(r"tests/io/data")
     filepath_out = folder / "model_out"
     filepath_in = folder / "model_in"
-    P_ex = filepath_in / "pfactor.rst"
-    example = Modeloutput(P_ex, resolution=20, epsg=31370, nodata=-9999)
+    ini = filepath_in / "ini.ini"
+    example = Modeloutput(ini, resolution=20, epsg=31370, nodata=-9999)
     # sediout
     example.sediout = filepath_out / "SediOut_kg.rst"
     example.sediout.plot()
