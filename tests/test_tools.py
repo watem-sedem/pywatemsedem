@@ -2,7 +2,6 @@
 
 import geopandas as gpd
 import pandas as pd
-import pytest
 from numpy.testing import assert_almost_equal
 from shapely import LineString
 
@@ -12,16 +11,6 @@ from pywatemsedem.tools import (
 )
 
 
-@pytest.mark.parametrize(
-    "template,valid",
-    [
-        ("perceelskaart_2018_molenbeek_s1.rst", True),
-        ("perceelskaart_2018_molenbeek_s1.rdc", True),
-        ("perceelskaart_2018_molenbeek_s1.rst.aux", True),
-        ("perceelskaart_2018_molenbeek_s1.rst.aux.rst", True),
-        ("perceelskaart_2018_molenbeek_velm_s1.rst", False),
-    ],
-)
 class TestReformatRouting:
     """Test class for reformat LineString to Source/target dataframe"""
 
