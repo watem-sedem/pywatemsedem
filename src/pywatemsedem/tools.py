@@ -1,8 +1,6 @@
 import logging
-import platform
 import shutil
 import sys
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -117,59 +115,6 @@ def zip_folder(folder2zip, outfile=None):
     shutil.make_archive(outfile, "zip", folder2zip)
 
 
-def extract_tags_from_template_file(template):
-    """Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart
-    template file.
-
-
-    Parameters
-    ----------
-    template: pathlib.Path or str
-        File path to CN-WS perceelskaart template file.
-
-    Returns
-    -------
-    catchment_name: str
-        Catchment name
-    scenario: str
-        Scenario number (in string!)
-    year: int
-        Simulation year.
-    valid: bool
-        Tag that indicate whether template format agrees with defined template format.
-
-    Note
-    ----
-    The template format should be
-
-    """
-    # take first template file and drop extension
-    template_, _, _ = Path(template).name.partition(".")
-
-    # split template name on "_"
-    template_ = template_.split("_")
-
-    # valid if template conveys with define template format
-    if len(template_) != 4:
-        msg = (
-            f"Template {template} does not convey with defined template format "
-            "`fname_%year_%catchmentname_s%scenariolabel.rst`."
-        )
-        logger.warning(msg)
-        valid = False
-    else:
-        valid = True
-
-    # get catchment name which is on the third position (index 2)
-    catchment_name = template_[2]
-    # get scenario number (str) from last position and drop "s"
-    scenario = template_[-1].replace("s", "")
-    # get year (int) from second position (index 1)
-    year = int(template_[1])
-
-    return catchment_name, scenario, year, valid
-
-
 def get_df_area_unique_values_array(arr, resolution):
     """Calculate the total area for every value in an array
 
@@ -198,52 +143,6 @@ def get_df_area_unique_values_array(arr, resolution):
     df["values"] = vals
     df["area"] = areas
     return df
-
-
-def check_cn_ws_binary(cn_ws_binary=None, fixed_name_cmd="cn_ws"):
-    """
-    Check if the compiled CN_WS program is known in the environment,
-    or if the path reference exists
-
-    Parameters
-    ----------
-    cn_ws_binary: str, default None
-        File Path of compiled cn_ws Pascal code. If None, check environment.
-    fixed_name_cmd: str, default 'cn_ws'
-        Name of exe/program.
-
-    Returns
-    -------
-    cn_ws_exe: str
-        File path of compiled cn_ws Pascal code.
-    """
-    if cn_ws_binary is None:
-        cn_ws_defined_in_path = shutil.which(fixed_name_cmd)
-        if cn_ws_defined_in_path is None:
-            try_location = Path.home() / "GitHub" / "cn_ws" / "cn_ws" / "cn_ws"
-            if try_location.exists():
-                cn_ws_binary = try_location
-            else:
-                msg = (
-                    "CN_WSmodel exe/program not found in environment, make sure you "
-                    "have defined a compiled version of cn_ws in your "
-                    "environment correctly!"
-                )
-                raise FileNotFoundError(msg)
-        else:
-            cn_ws_binary = fixed_name_cmd
-    else:
-        if (platform.system() == "Windows") and (Path(cn_ws_binary).suffix is None):
-            cn_ws_binary = cn_ws_binary + ".exe"
-        if not Path(cn_ws_binary).exists():
-            msg = (
-                f"The custom-path defined for the CN_WSmodel exe/program "
-                f"{cn_ws_binary} is incorrect, please check you refer "
-                f"to a compiled CN_WSmodel."
-            )
-            raise FileNotFoundError(msg)
-
-    return cn_ws_binary
 
 
 def check_courant_criterium(velocity, time_step, resolution, factor=0.75):
