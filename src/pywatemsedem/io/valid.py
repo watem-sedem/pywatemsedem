@@ -3,39 +3,66 @@ import warnings
 import numpy as np
 
 
-def valid_boundaries(arr, lower=None, upper=None):
-    """Checks if values are within specified boundaries
+def valid_boundaries(arr, lower=None, upper=None, tolerance=None):
+    """Checks if values are within specified boundaries.
 
     Parameters
-    ---------
-    arr: numpy.ndarray
-        Input array
-    lower: int, float, default None
-        Lower boundary
-    upper: int, float, default None
-        Upper boundary
+    ----------
+    arr : numpy.ndarray
+        Input array.
+    lower : int, float, default None
+        Lower boundary.
+    upper : int, float, default None
+        Upper boundary.
+    tolerance : float, default None
+        Allowed tolerance outside the boundaries.
+
+        Example:
+        - upper=10, tolerance=0.5  -> values up to 10.5 allowed
+        - lower=0, tolerance=0.5   -> values down to -0.5 allowed
 
     Returns
     -------
-    True
+    bool
+        True if all values are within allowed boundaries.
     """
 
     if (lower is None) and (upper is None):
         msg = "No lower or upper boundaries are defined, omitting boundary check"
         warnings.warn(msg)
 
+    if tolerance is None:
+        tolerance = 0.0
+
+    if not isinstance(tolerance, (int, float)):
+        raise TypeError("Tolerance should be numeric.")
+
+    if tolerance < 0:
+        raise ValueError("Tolerance should be >= 0.")
+
     if upper is not None:
         if not isinstance(upper, (int, float)):
-            msg = "Upper boundary should be numeric."
-            raise TypeError(msg)
-        if np.any(arr > upper):
-            raise ValueError(f"Values are higher than upper bound ('{upper}')")
+            raise TypeError("Upper boundary should be numeric.")
+
+        effective_upper = upper + tolerance
+
+        if np.any(arr > effective_upper):
+            raise ValueError(
+                f"Values are higher than upper bound "
+                f"('{upper}') with tolerance ('{tolerance}')"
+            )
+
     if lower is not None:
         if not isinstance(lower, (int, float)):
-            msg = "Lower boundary should be numeric."
-            raise TypeError(msg)
-        if np.any(arr < lower):
-            raise ValueError(f"Values are lower than lower bound ('{lower}')")
+            raise TypeError("Lower boundary should be numeric.")
+
+        effective_lower = lower - tolerance
+
+        if np.any(arr < effective_lower):
+            raise ValueError(
+                f"Values are lower than lower bound "
+                f"('{lower}') with tolerance ('{tolerance}')"
+            )
 
     return True
 
