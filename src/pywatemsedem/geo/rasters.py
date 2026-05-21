@@ -314,6 +314,8 @@ class RasterFile(AbstractRaster):
         if rp:
             with rasterio.open(file_path) as src:
                 rst_profile = src.profile
+            if rst_profile["driver"] == "RST":
+                rst_profile["crs"] = None
             if rst_profile["crs"] is not None:
                 if rst_profile["crs"].to_epsg() != rp.epsg:
                     msg = (
