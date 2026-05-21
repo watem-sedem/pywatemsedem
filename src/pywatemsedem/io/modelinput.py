@@ -40,7 +40,7 @@ COLORMAP = "cividis"
 #         ini, "Files", "P factor map filename", str
 #     )
 #
-#     profile, _, _ = get_rstparams(input_folder, template=f_template)
+#     profile, _, _ = get_rstparams(ini, template=f_template)
 #
 #     modelinput = Modelinput()
 #

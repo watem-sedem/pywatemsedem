@@ -14,51 +14,47 @@ from pywatemsedem.io.modeloutput import (
 )
 
 
-def test_modeloutput():
+def test_modeloutput_all():
     """Testing the modeloutput class"""
     # Initialization
-    file_path_in = Path("tests") / "runs" / "langegracht" / "scenario_1" / "modelinput"
-    file_path_out = (
-        Path("tests") / "runs" / "langegracht" / "scenario_1" / "modeloutput"
-    )
+    file_path_in = Path("tests") / "io" / "data" / "modelinput"
+    Path("tests") / "io" / "data" / "modeloutput"
     ini = file_path_in / "inifile.ini"
     example_in = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
     example_out = Modeloutput(ini, resolution=20, epsg=31370, nodata=-9999)
 
     # sedi_out
-    example_out.sedi_out = file_path_out / "SediOut_kg.rst"
+    example_out.sedi_out
     example_out.sedi_out.plot()
     # example_out.sedi_out.hv_plot()
 
     # routing
-    example_out.routing = file_path_out / "routing.txt"
-    file_path_in / "parcels_landuse.rst"
-    file_path_out / "SediOut_kg.rst"
+    example_out.routing
     example_out.make_routing_vector(example_in)
     # example_out.routing.plot()
 
     # routing_missing
-    example_out.routing_missing = file_path_out / "routing_missing.txt"
+    example_out.routing_missing
     example_out.make_routing_vector(example_in, routing_missing=True)
     example_out.routing_missing.plot()
 
     # ls
-    example_out.ls = file_path_out / "LS.rst"
+    example_out.ls
     example_out.ls.plot()
     # example_out.ls.hv_plot()
 
     # slope
-    example_out.slope = file_path_out / "SLOPE.rst"
+    example_out.slope
     example_out.slope.plot()
     # example_out.slope.hv_plot()
 
     # uparea
-    example_out.uparea = file_path_out / "UPAREA.rst"
+    example_out.uparea
     example_out.uparea.plot()
     # example_out.uparea.hv_plot()
 
     # total sediment
-    example_out.total_sediment = file_path_out / "Total sediment.txt"
+    example_out.total_sediment
 
     ## sewer in
     # example_out.sewer_in = file_path_out / "sewer_in.rst"
@@ -66,22 +62,22 @@ def test_modeloutput():
     ## example_out.sewer_in.hv_plot()
 
     # sedi_export
-    example_out.sedi_export = file_path_out / "SediExport_kg.rst"
+    example_out.sedi_export
     example_out.sedi_export.plot()
     # example_out.sedi_export.hv_plot()
 
     # sedi_in
-    example_out.sedi_in = file_path_out / "SediIn_kg.rst"
+    example_out.sedi_in
     example_out.sedi_in.plot()
     # example_out.sedi_in.hv_plot()
 
     # Capacity
-    example_out.capacity = file_path_out / "Capacity.rst"
+    example_out.capacity
     example_out.capacity.plot()
     # example_out.capacity.hv_plot()
 
     # RUSLE
-    example_out.rusle = file_path_out / "RUSLE.rst"
+    example_out.rusle
     example_out.rusle.plot()
     # example_out.rusle.hv_plot()
 
@@ -89,13 +85,13 @@ def test_modeloutput():
 def test_compute_efficiency_buffers():
     """Compute efficiency buffers"""
 
-    exp_sedi_in = np.array([5928.877930, 4209.729492])
-    exp_sedi_out = np.array([1482.219482, 1052.4324])
-    buff_sed = np.array([4446.658203, 3157.297])
+    exp_sedi_in = np.array([12947.483, 17984.963])
+    exp_sedi_out = np.array([3236.8708, 4496.2407])
+    buff_sed = np.array([9710.612, 13488.723])
 
     folder = Path(r"tests/io/data")
-    filepath_out = folder / "model_out"
-    filepath_in = folder / "model_in"
+    filepath_out = folder / "modeloutput"
+    filepath_in = folder / "modelinput"
 
     df = compute_efficiency_buffers(
         filepath_in / "buffers.rst",
@@ -111,8 +107,8 @@ def test_compute_efficiency_buffers():
 @pytest.mark.parametrize(
     "threshold,n_ranks,sum_sediment_load,mean_sediment_load",
     [
-        (50, 12, 337717.72, 28143.142578125),
-        (20, 2, 100766.0, 50383.0),
+        (50, 10, 610229.44, 61022.945),
+        (20, 2, 175243.22, 87621.61),
     ],
 )
 def test_identify_rank_sediment_loads(
@@ -137,13 +133,13 @@ def test_identify_rank_sediment_loads(
     tag = "rank"
     folder = Path(r"tests/io/data")
 
-    filepath_out = folder / "model_out" / "SediExport_kg.rst"
+    filepath_out = folder / "modeloutput" / "SediExport_kg.rst"
 
     df_export, _ = identify_rank_sediment_loads(
         filepath_out,
         threshold,
         tmp_path / (tag + ".rst"),
-        rst_endpoints=folder / "model_out" / "sewer_in.rst",
+        rst_endpoints=folder / "modeloutput" / "sewer_in.rst",
     )
     df_export = df_export[df_export["class"] != -9999]
 

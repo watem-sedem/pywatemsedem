@@ -18,17 +18,17 @@ class TestModifyField:
 
     def test_modify(self, tmp_path):
         """Test basic func"""
-        modify_field(ini_file, "User Choices", "max kernel", 3)
+        modify_field(ini_file, "Parameters", "max kernel", 3)
 
     def test_wrong_section(self, tmp_path):
         """Expect error when the section does not exist"""
-        with pytest.raises(KeyError, match="Section 'User Choice' does not exist"):
-            modify_field(ini_file, "User Choice", "max kernel", 3)
+        with pytest.raises(KeyError, match="Section 'Parameter' does not exist"):
+            modify_field(ini_file, "Parameter", "max kernel", 3)
 
     def test_wrong_key(self, tmp_path):
         """Expect error when the to-modify-key does not exist"""
         with pytest.raises(KeyError, match="Key 'max kernelzz' does not exist"):
-            modify_field(ini_file, "User Choices", "max kernelzz", 3)
+            modify_field(ini_file, "Parameters", "max kernelzz", 3)
 
 
 class TestAddField:
@@ -37,17 +37,17 @@ class TestAddField:
     def test_add(self, tmp_path):
         """Test basic func"""
         shutil.copy(ini_file, tmp_path / "test.ini")
-        add_field(tmp_path / "test.ini", "User Choices", "max kernelzzz", 3)
+        add_field(tmp_path / "test.ini", "Parameters", "max kernelzzz", 3)
 
     def test_wrong_section(self, tmp_path):
         """Expect error when the section does not exist"""
-        with pytest.raises(KeyError, match="Section 'User Choice' does not exist"):
-            add_field(ini_file, "User Choice", "max kernel", 3)
+        with pytest.raises(KeyError, match="Section 'Parameter' does not exist"):
+            add_field(ini_file, "Parameter", "max kernel", 3)
 
     def test_key_exists(self, tmp_path):
         """Expect error when the to-add-key already exists"""
         with pytest.raises(KeyError, match="Key 'max kernel' already exist in"):
-            add_field(ini_file, "User Choices", "max kernel", 3)
+            add_field(ini_file, "Parameters", "max kernel", 3)
 
 
 class TestGetItemFromIni:
@@ -146,9 +146,11 @@ def test_get_sections_from_ini():
         "Model information",
         "Working directories",
         "Files",
-        "User Choices",
-        "Output maps",
-        "Variables",
+        "Parameters",
+        "Output",
+        "Options",
+        "Extensions",
+        "Parameters Extensions",
         "Buffer 1",
         "Buffer 2",
         "Test Section",

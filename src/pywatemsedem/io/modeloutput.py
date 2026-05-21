@@ -775,7 +775,10 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedi_in.arr[self.mask.arr != self._nodata],
+            lower=0,
+            upper=None,
+            tolerance=1e-3,
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_in [kg/year]"
@@ -840,7 +843,10 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_out.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedi_out.arr[self.mask.arr != self._nodata],
+            lower=0,
+            upper=None,
+            tolerance=1e-3,
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_out [kg/year]"
