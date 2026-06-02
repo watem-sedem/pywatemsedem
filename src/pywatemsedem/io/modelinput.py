@@ -40,7 +40,8 @@ class Modelinput(Factory):
         Parameters
         ----------
         ini: pathlib.Path
-            ini file
+            Path to the ini file with model settings and input file paths of
+            WaTEM-SEDEM.
         resolution: int
             See :class:`pywatemsedem.geo.RasterProperties`
         epsg: int
@@ -985,7 +986,9 @@ class Modelinput(Factory):
 
     @property
     def ktil(self):
-        """Return the ktil raster."""
+        """Return the ktil raster.
+
+        For documentation, see :ref:`here <watemsedem:ktilmap>`"""
         if self._ktil is None:
             try:
                 filename = get_item_from_ini(
@@ -1004,7 +1007,12 @@ class Modelinput(Factory):
 
     @ktil.setter
     def ktil(self, raster):
-        """Set the ktil raster."""
+        """Set the ktil raster.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
         self._ktil = self.raster_factory(raster, flag_mask=False)
         # checks
         valid_non_nan(self._ktil.arr)
@@ -1013,7 +1021,9 @@ class Modelinput(Factory):
 
     @property
     def tillagedirection(self):
-        """Return the tillagedirection raster."""
+        """Return the tillagedirection raster.
+
+        For documentation, see :ref:`here <watemsedem:tildirmap>`"""
         if self._tillagedirection is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Tillage direction filename", str
@@ -1023,7 +1033,12 @@ class Modelinput(Factory):
 
     @tillagedirection.setter
     def tillagedirection(self, raster):
-        """Set the tillagedirection raster."""
+        """Set the tillagedirection raster.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
         self._tillagedirection = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.tillagedirection.arr)
@@ -1049,7 +1064,10 @@ class Modelinput(Factory):
 
     @property
     def orientedroughness(self):
-        """Return the orientedroughness raster."""
+        """Return the orientedroughness raster.
+
+        For documentation, see :ref:`here <watemsedem:orientedroughnessmap>`
+        """
         if self._orientedroughness is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Oriented roughness filename", str
@@ -1059,7 +1077,12 @@ class Modelinput(Factory):
 
     @orientedroughness.setter
     def orientedroughness(self, raster):
-        """Set the orientedroughness raster."""
+        """Set the orientedroughness raster.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
         self._orientedroughness = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.orientedroughness.arr)
@@ -1085,7 +1108,10 @@ class Modelinput(Factory):
 
     @property
     def ditches(self):
-        """Return the ditches raster."""
+        """Return the ditches raster.
+
+        For documentation, see :ref:`here <watemsedem:ditchmap>`
+        """
         if self._ditches is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Ditch map filename", str
@@ -1095,7 +1121,12 @@ class Modelinput(Factory):
 
     @ditches.setter
     def ditches(self, raster):
-        """Set the ditches raster."""
+        """Set the ditches raster.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
         self._ditches = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.ditches.arr)
@@ -1153,7 +1184,10 @@ class Modelinput(Factory):
 
     @property
     def dams(self):
-        """Return the dams raster."""
+        """Return the dams raster.
+
+        For documentation, see :ref:`here <watemsedem:dammap>`
+        """
         if self._dams is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Dam map filename", str
@@ -1163,7 +1197,12 @@ class Modelinput(Factory):
 
     @dams.setter
     def dams(self, raster):
-        """Set the dams raster."""
+        """Set the dams raster.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
         self._dams = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.dams.arr)
@@ -1221,7 +1260,10 @@ class Modelinput(Factory):
 
     @property
     def cn(self):
-        """Return the CN raster."""
+        """Return the CN raster.
+
+        For documentation, see :ref:`here <watemsedem:cnmap>`
+        """
         if self._cn is None:
             raster = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "CN map filename", str
@@ -1231,7 +1273,12 @@ class Modelinput(Factory):
 
     @cn.setter
     def cn(self, raster):
-        """Set the CN raster."""
+        """Set the CN raster.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
         self._cn = self.raster_factory(raster, flag_mask=False)
 
         valid_non_nan(self.cn.arr)
@@ -1255,7 +1302,10 @@ class Modelinput(Factory):
 
     @property
     def rainfall(self):
-        """Return the rainfall table."""
+        """Return the rainfall table.
+
+        For documentation, see :ref:`here <watemsedem:rainfallfile>`
+        """
         if self._rainfall is None:
             text = self.modelinputfolder / get_item_from_ini(
                 self.ini, "Files", "Rainfall filename", str
