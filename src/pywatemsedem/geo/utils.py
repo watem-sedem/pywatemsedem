@@ -1401,7 +1401,7 @@ def get_rstparams(ini, epsg=None, template=None):
     Parameters
     ----------
     ini: pathlib.Path
-        ini file
+        file path to ini-file of WaTEM-SEDEM
     epsg: str, default None
         the epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
