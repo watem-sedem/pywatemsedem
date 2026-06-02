@@ -34,6 +34,7 @@ from pywatemsedem.geo.valid import (
     valid_rasterlist,
     valid_vector,
 )
+from pywatemsedem.io.ini import get_item_from_ini
 
 logger = logging.getLogger(__name__)
 
@@ -1394,13 +1395,13 @@ def set_dtype_arr_rst(arr, profile, dtype=None):
     return arr, profile
 
 
-def get_rstparams(modelinputfolder, epsg=None, template=None):
+def get_rstparams(ini, epsg=None, template=None):
     """Get rstparams and rasterprofile from template raster (default:pkaart)
 
     Parameters
     ----------
-    modelinputfolder: str or pathlib.Path
-        the path to the modelinputfolder of WaTEM/SEDEM
+    ini: pathlib.Path
+        file path to ini-file of WaTEM-SEDEM
     epsg: str, default None
         the epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
@@ -1420,7 +1421,13 @@ def get_rstparams(modelinputfolder, epsg=None, template=None):
     """
     # this template is used to generate binair mask
     if template is None:
-        template = Path(modelinputfolder) / "pfactor.rst"
+        modelinputfolder = Path(
+            get_item_from_ini(ini, "Working directories", "input directory", str)
+        )
+        template = modelinputfolder / get_item_from_ini(
+            ini, "Files", "p factor map filename", str
+        )
+
     # open and assign profile to rstparams
     try:
         src = rasterio.open(template)

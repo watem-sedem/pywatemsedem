@@ -21,7 +21,7 @@ folder_core = Path("tests/data")
 folder_geo = Path("tests/geo/data")
 folder_io = Path("tests/io/data")
 userchoices_file = folder_core / "userchoices.ini"
-ini_file = folder_io / "model_in" / "ini.ini"
+ini_file = folder_io / "modelinput" / "inifile.ini"
 default_ini_file = folder_core / "default_values.ini"
 
 
