@@ -14,7 +14,6 @@ from pywatemsedem.geo.utils import (
     compute_statistics_rasters_per_polygon_vector,
     create_filename,
     execute_saga,
-    get_mask_template,
     get_rstparams,
     load_raster,
     raster_array_to_pandas_dataframe,
@@ -25,7 +24,9 @@ from pywatemsedem.geo.utils import (
 )
 from pywatemsedem.grasstrips import estimate_ste
 from pywatemsedem.io.folders import CatchmentFolder, ScenarioFolders
+from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
+    Modeloutput,
     compute_efficiency_buffers,
     create_deposition_raster,
     create_erosion_raster,
@@ -121,10 +122,8 @@ class PostProcess(Factory):
 
     Parameters
     ----------
-    name: str
-        Name of catchment to which results of scenario run are written too
-    resolution: int
-        model resolution
+    home_folder: str or pathlib.Path
+        path of folder to which results of scenario run are written too
     scenario_label: int
         scenario number
     year: int
@@ -136,48 +135,51 @@ class PostProcess(Factory):
     Examples
     --------
     >>> from pywatemsedem.postprocess import PostProcess
-    >>> pp = PostProcess(r"molenbeek", 20, 1, 2019, 31370) # note that the folder
+    >>> pp = PostProcess(r"molenbeek", 1, 2019, 31370) # note that the folder
     >>> #molenbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
     >>> pp.make_routing_vct() #make a vector file of the text routig file.
 
     """
 
-    def __init__(self, name, resolution, scenario_label, year, epsg=31370):
+    def __init__(self, home_folder, resolution, scenario_label, year, epsg):
 
         # general
-        self.epsg = epsg
-        self.catchment_name = Path(name).stem
-        self.scenario = f"scenario_{scenario_label}"
+        self.home_folder = Path(home_folder)
+        self.resolution = resolution
         self.scenario_label = scenario_label
         self.year = year
+        self.epsg = epsg
+
+        self.catchment_name = self.home_folder.stem
+        self.scenario = f"scenario_{self.scenario_label}"
 
         # test if fmap_results is found
-        self.cfolder = CatchmentFolder(name, resolution)
-        self.sfolder = ScenarioFolders(self.cfolder, scenario_label, year)
-        self.cfolder.check_home_folder()
-        self.cfolder.check_catchment_folder()
-        self.sfolder.check_scenario()
-        self.sfolder.check_years()
-        self.sfolder.check_wsinput()
-        self.sfolder.check_wsoutput(error_if_empty=True)
-        self.sfolder.check_postprocessing(create=True)
+        self.cfolder = CatchmentFolder(self.home_folder, self.resolution)
+        self.sfolder = ScenarioFolders(self.cfolder, self.scenario_label, self.year)
 
-        # get raster properties based on DTM .tif file in Data_Bekken
-        self.rstparams, self.rasterprop = get_rstparams(
-            self.sfolder.wsinput_folder,
-            epsg=self.epsg,
-        )
-        # intialize functionalities factory
-        super().__init__(
-            resolution, self.epsg, -9999, name, bounds=self.rasterprop["minmax"]
+        self.cfolder.check_all()
+        self.sfolder.check_all()
+
+        # Initialise ModelInput and ModelOutput objects
+        self.ini = self.home_folder / self.scenario / "modelinput" / "inifile.ini"
+        self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
+        self.nodata = self.rp["nodata"]
+
+        self.modelinput = Modelinput(self.ini, self.resolution, self.epsg, self.nodata)
+        self.modeloutput = Modeloutput(
+            self.ini, self.resolution, self.epsg, self.nodata
         )
 
-        self.mask = self.sfolder.wsinput_folder / "mask.rst"
+        #        # intialize functionalities factory
+        #        super().__init__(
+        #            self.resolution, self.epsg, self.nodata,
+        #            self.catchment_name, bounds=self.rp["minmax"]
+        #        )
 
-        self.resolution = resolution
-        self.arr_bindomain = get_mask_template(
-            self.sfolder.wsinput_folder, self.catchment_name
-        )
+        #        self.mask = self.sfolder.wsinput_folder / "mask.rst"
+        #        self.arr_bindomain = get_mask_template(
+        #            self.sfolder.wsinput_folder, self.catchment_name
+        #        )
 
         # regenerate user choices based on generated files
         self.dict_ecm_options = {}
@@ -185,11 +187,11 @@ class PostProcess(Factory):
         self.dict_output_options = {}
 
         # automatically assign
-        self.assign_filenames(self.sfolder.scenario_folder)
+        #        self.assign_filenames(self.sfolder.scenario_folder)
 
         # initialize path postprocessing files
         self.vct_routing = None
-        self._routing = pd.read_csv(self.files["txt_routing"], sep="\t")
+        # self._routing = pd.read_csv(self.files["txt_routing"], sep="\t")
         self.vct_routing_missing = None
         self.txt_routing_nonriver = None
         self.vct_sediexport = None
@@ -198,6 +200,10 @@ class PostProcess(Factory):
         self.vct_routing_sediout = None
         self.rst_subcatchment_sinks = None
         self.vct_subcatchment_sinks = None
+
+    def zip_folder(self):
+        """Zip output folder of scenario_x"""
+        zip_folder(self.sfolder.scenario_folder)
 
     @property
     def sinks(self):
@@ -363,10 +369,6 @@ class PostProcess(Factory):
                 logger.info(msg)
                 raise IOError(msg)
 
-    def zip_folder(self):
-        """Zip output folder of scenario_x"""
-        zip_folder(self.sfolder.scenario_folder)
-
     def compute_statistics_rasters_per_polygon_vector(self, vct):
         """Compute statistics for raster for an input polygon vector
 
@@ -430,7 +432,7 @@ class PostProcess(Factory):
                 self.files["vct_buffers"],
                 self.txt_routing_nonriver,
                 self.sfolder.postprocess_folder,
-                self.rasterprop,
+                self.rp,
                 self.catchment_name,
                 self.scenario_label,
             )
@@ -630,9 +632,7 @@ class PostProcess(Factory):
                 index=range(len(l_priorities)),
             )
 
-            gpd_priorities = gpd_priorities.to_crs(
-                self.rasterprop["epsg"], allow_override=True
-            )
+            gpd_priorities = gpd_priorities.to_crs(self.rp["epsg"], allow_override=True)
             vct_out = self.sfolder.postprocess_folder / "priority_catchments_merged.shp"
             gpd_priorities.to_file(vct_out, spatial_index="YES")
 
@@ -641,7 +641,7 @@ class PostProcess(Factory):
         vct_out = self.files["rst_sediexport"].stem + ".shp"
         vct_out = self.sfolder.postprocess_folder / vct_out
         self.vct_sediexport = convert_rst_sinks_to_vct(
-            self.files["rst_sediexport"], vct_out, "river", self.rasterprop["epsg"]
+            self.files["rst_sediexport"], vct_out, "river", self.rp["epsg"]
         )
 
     def convert_rst_sewerin_to_vct(self):
@@ -649,7 +649,7 @@ class PostProcess(Factory):
         vct_out = self.files["rst_sewerin"].stem + ".shp"
         vct_out = self.sfolder.postprocess_folder / vct_out
         self.vct_sewerin = convert_rst_sinks_to_vct(
-            self.files["rst_sewerin"], vct_out, "sewer", self.rasterprop["epsg"]
+            self.files["rst_sewerin"], vct_out, "sewer", self.rp["epsg"]
         )
 
     def merge_vct_sinks(self):
@@ -694,7 +694,7 @@ class PostProcess(Factory):
             self.rst_sinks,
             temp,
             self.sfolder.postprocess_folder,
-            self.rasterprop,
+            self.rp,
             f"sourcesink_perc_{percentage}",
         )
         # assign cumulative percentage, percentage and class
@@ -704,7 +704,7 @@ class PostProcess(Factory):
         )
         df_subcatchments.drop(columns=["id"], inplace=True)
         df_subcatchments = df_subcatchments.set_crs(
-            self.rasterprop["epsg"], allow_override=True
+            self.rp["epsg"], allow_override=True
         )
         # check lijn hieronder
         df_subcatchments.to_file(
@@ -1474,7 +1474,7 @@ class PostProcess(Factory):
             else:
                 df_routing = pd.read_csv(txt, sep="\t")
 
-            Cnst = self.rasterprop
+            Cnst = self.rp
             # df_route = df_route.loc[(df_route.target1row != -99) & (
             # df_route.target2row != -99)].copy()
             # punten -99 zijn buiten modeldomein
@@ -1555,7 +1555,7 @@ class PostProcess(Factory):
 
         arr_prckrt, _ = load_raster(self.files["rst_prckrt"])
 
-        res = self.rasterprop["res"]
+        res = self.rp["res"]
         arr_prckrt = np.where(arr_prckrt >= 1, 1, arr_prckrt)
         vals, counts = np.unique(arr_prckrt, return_counts=True)
         areas = np.multiply(counts, res**2)
@@ -1585,7 +1585,7 @@ class PostProcess(Factory):
 
             opp_catch = np.sum(
                 self.arr_bindomain[self.arr_bindomain != self.rstparams["nodata"]]
-            ) * (self.rasterprop["res"] ** 2)
+            ) * (self.rp["res"] ** 2)
             opp_catch_ha = opp_catch / 10000.0
 
             f.write(f"Oppervlakte bekken (ha);{opp_catch_ha}\n")
