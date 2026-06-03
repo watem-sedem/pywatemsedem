@@ -4,6 +4,16 @@ from pathlib import Path
 
 @dataclass
 class CatchmentFolder:
+    """Class for keeping track of catchment folder paths.
+
+    Parameters
+    ----------
+    home_folder: pathlib.Path
+        Root folder containing catchment data.
+    resolution: int
+        Spatial raster resolution in meters.
+    """
+
     home_folder: Path
     resolution: int
 
@@ -14,25 +24,26 @@ class CatchmentFolder:
         self.rst_folder = self.catchment_folder / f"Rst_{self.resolution}m"
 
     def create_all(self):
+        """Create all required catchment subfolders when missing."""
         self.check_home_folder(create=True)
         self.check_catchment_folder(create=True)
         self.check_vct_folder(create=True)
         self.check_rst_folder(create=True)
 
     def check_home_folder(self, **options):
-        """Create home folder"""
+        """Check and optionally create the home folder."""
         check_and_create_home_folder(self.home_folder, **options)
 
     def check_catchment_folder(self, **options):
-        """Create 'Data_bekken' folder"""
+        """Check and optionally create the `Data_Bekken` folder."""
         check_and_create_catchment_folder(self.home_folder, **options)
 
     def check_vct_folder(self, **options):
-        """Create home folder"""
+        """Check and optionally create the `Shps` vector folder."""
         check_and_create_vct_folder(self.catchment_folder, **options)
 
     def check_rst_folder(self, **options):
-        """Create 'Data_bekken' folder"""
+        """Check and optionally create the resolution raster folder."""
         check_and_create_rst_folder(self.catchment_folder, self.resolution, **options)
 
 
