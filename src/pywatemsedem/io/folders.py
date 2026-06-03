@@ -135,8 +135,8 @@ class ScenarioFolders:
 
     @property
     def postprocess_folder(self) -> Path:
-        """Return the postprocessing output directory."""
-        return self.scenario_folder / "postprocessing"
+        """Return the postprocess output directory."""
+        return self.scenario_folder / "postprocess"
 
     @property
     def year_folder(self) -> Path:
@@ -151,7 +151,7 @@ class ScenarioFolders:
             self.scenario_folder,
             self.wsinput_folder,
             self.wsoutput_folder,
-            self.postprocessing_folder,
+            self.postprocess_folder,
             self.year_folder,
         ):
             folder.mkdir(parents=True, exist_ok=True)
@@ -170,7 +170,7 @@ class ScenarioFolders:
             self.scenario_folder,
             self.wsinput_folder,
             self.wsoutput_folder,
-            self.postprocessing_folder,
+            self.postprocess_folder,
             self.year_folder,
         ):
             ensure_folder(folder, **options)
