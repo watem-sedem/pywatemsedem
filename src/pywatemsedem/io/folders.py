@@ -134,7 +134,7 @@ class ScenarioFolders:
         return self.scenario_folder / "modeloutput"
 
     @property
-    def postprocessing_folder(self) -> Path:
+    def postprocess_folder(self) -> Path:
         """Return the postprocessing output directory."""
         return self.scenario_folder / "postprocessing"
 
