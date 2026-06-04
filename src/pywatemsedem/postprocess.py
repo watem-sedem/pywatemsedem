@@ -170,83 +170,31 @@ class PostProcess(Factory):
             self.ini, self.resolution, self.epsg, self.nodata
         )
 
-        #        # intialize functionalities factory
-        #        super().__init__(
-        #            self.resolution, self.epsg, self.nodata,
-        #            self.catchment_name, bounds=self.rp["minmax"]
-        #        )
-
-        #        self.mask = self.sfolder.wsinput_folder / "mask.rst"
-        #        self.arr_bindomain = get_mask_template(
-        #            self.sfolder.wsinput_folder, self.catchment_name
-        #        )
-
-        # regenerate user choices based on generated files
-        self.dict_ecm_options = {}
-        self.dict_model_options = {}
-        self.dict_output_options = {}
-
-        # automatically assign
-        #        self.assign_filenames(self.sfolder.scenario_folder)
-
-        # initialize path postprocessing files
-        self.vct_routing = None
-        # self._routing = pd.read_csv(self.files["txt_routing"], sep="\t")
-        self.vct_routing_missing = None
-        self.txt_routing_nonriver = None
-        self.vct_sediexport = None
-        self.vct_sewerin = None
-        self.rst_sinks = None
-        self.vct_routing_sediout = None
-        self.rst_subcatchment_sinks = None
-        self.vct_subcatchment_sinks = None
-
     def zip_folder(self):
         """Zip output folder of scenario_x"""
         zip_folder(self.sfolder.scenario_folder)
 
-    def compute_statistics_rasters_per_polygon_vector(self, vct):
-        """Compute statistics for raster for an input polygon vector
+    def remove_river_routing(self):
+        """Remove river routing from routing file to identify subcatchments to
+        buffers."""
 
-        Parameters
-        ----------
-        vct: pathlib.Path
-            Polygon vector file
+        # Identify the rows and columns of the routing file
+        # that are river routing (lnduSource == -1)
+        rows, cols = np.where(self.modelinput.compositelanduse.arr == -1)
+        river_coords = list(
+            zip(rows + 1, cols + 1)
+        )  # +1 as routing file is 1-based and not 0-based
 
-        Returns
-        -------
-        geopandas.GeoDataFrame
-            Geopandas dataframe of vct with statistics per polygon.
-        """
-        dict_operators = {"SUM": True}
-        vct_out = self.sfolder.postprocessing_folder / Path(
-            f"{vct.stem}_statistics.shp"
-        )
-        rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file)
-        rst_deposition = create_deposition_raster(self.modeloutput.watereros_kg.file)
-        lst_rasters = [
-            rst_erosion.absolute(),
-            rst_deposition.absolute(),
-            self.modeloutput.sedi_export.file.absolute(),
-            # self.modeloutput.sewers_in.file.absolute(),
-            # self.modeloutput.ditches_in.file.absolute(),
-        ]
-        lst_names = [
-            "Erosion (kg)",
-            "Deposition (kg)",
-            "River (kg)",
-            # "Sewers (kg)",
-            # "Ditches (kg)",
-        ]
+        # Remove these rows and columns from the routing file
+        df = self.modeloutput.routing.copy()
+        to_remove = set(river_coords)
+        df_filtered = df[~df[["row", "col"]].apply(tuple, axis=1).isin(to_remove)]
 
-        compute_statistics_rasters_per_polygon_vector(
-            lst_rasters,
-            Path(vct).absolute(),
-            vct_out.absolute(),
-            lst_names,
-            dict_operators,
-            normalize=True,
-            ton=False,
+        # Save the filtered routing file
+        df_filtered.to_csv(
+            self.sfolder.postprocessing_folder / "routing_nonriver.txt",
+            sep="\t",
+            index=False,
         )
 
     def identify_subcatchments_to_buffers(self):
@@ -255,7 +203,26 @@ class PostProcess(Factory):
         See :func:`pywatemsedem.postprocess.identify_subcatchments_to_buffers`
         """
         logger.info("Defining catchments to buffers...")
-        if self.dict_ecm_options["Include buffers"] == 1:
+
+        try:
+            getattr(self.modeloutput, "routing")
+        except Exception as e:
+            msg = (
+                f"No routing file is available in {self.modeloutput.modeloutputfolder}"
+            )
+            logger.error(msg)
+            raise RuntimeError(msg) from e
+
+        try:
+            getattr(self.modeloutput, "routing")
+        except Exception as e:
+            msg = (
+                f"No routing file is available in {self.modeloutput.modeloutputfolder}"
+            )
+            logger.error(msg)
+            raise RuntimeError(msg) from e
+
+        if self.modeloutput.routing.file.exists():
             if self.txt_routing_nonriver is None:
                 self.remove_river_routing()
             elif not Path(self.txt_routing_nonriver).exists():
@@ -1639,6 +1606,50 @@ class PostProcess(Factory):
                 )
                 logger.info(msg)
                 raise IOError(msg)
+
+    def compute_statistics_rasters_per_polygon_vector(self, vct):
+        """Compute statistics for raster for an input polygon vector
+
+        Parameters
+        ----------
+        vct: pathlib.Path
+            Polygon vector file
+
+        Returns
+        -------
+        geopandas.GeoDataFrame
+            Geopandas dataframe of vct with statistics per polygon.
+        """
+        dict_operators = {"SUM": True}
+        vct_out = self.sfolder.postprocessing_folder / Path(
+            f"{vct.stem}_statistics.shp"
+        )
+        rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file)
+        rst_deposition = create_deposition_raster(self.modeloutput.watereros_kg.file)
+        lst_rasters = [
+            rst_erosion.absolute(),
+            rst_deposition.absolute(),
+            self.modeloutput.sedi_export.file.absolute(),
+            # self.modeloutput.sewers_in.file.absolute(),
+            # self.modeloutput.ditches_in.file.absolute(),
+        ]
+        lst_names = [
+            "Erosion (kg)",
+            "Deposition (kg)",
+            "River (kg)",
+            # "Sewers (kg)",
+            # "Ditches (kg)",
+        ]
+
+        compute_statistics_rasters_per_polygon_vector(
+            lst_rasters,
+            Path(vct).absolute(),
+            vct_out.absolute(),
+            lst_names,
+            dict_operators,
+            normalize=True,
+            ton=False,
+        )
 
 
 def check_if_file_exists(full_filename, mandatory):
