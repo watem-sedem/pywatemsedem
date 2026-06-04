@@ -205,174 +205,8 @@ class PostProcess(Factory):
         """Zip output folder of scenario_x"""
         zip_folder(self.sfolder.scenario_folder)
 
-    @property
-    def sinks(self):
-        """Getter Sinks attribute."""
-        return self._sinks
-
-    @sinks.setter
-    def sinks(self, raster):
-        """Setter
-
-        Parameters
-        ----------
-        raster: pathlib.Path | str
-        """
-        self._sinks = self.raster_factory(raster, flag_mask=True)
-
-    def assign_filenames(self, fmap_results):
-        """Use filestructure defined in the package to appoint names of files
-
-        Parameters
-        ----------
-        fmap_results: str or pathlib.Path
-            Folder path (scenario_XX)
-        """
-        files = {}
-
-        df_datastructure_files = read_filestructure()
-
-        for index in df_datastructure_files.index:
-            f = get_tuple_datastructure(df_datastructure_files, index)
-            argument_inputs = {
-                "year": self.year,
-                "catchment_name": self.catchment_name,
-                "scenario": self.scenario_label,
-            }
-            filename = self.process_and_check_filename(
-                fmap_results, *f, argument_inputs
-            )
-            tag_variable = df_datastructure_files.loc[index, "tag_variable"]
-            prefix_variable = df_datastructure_files.loc[index, "prefix_variable"]
-            files[prefix_variable + "_" + tag_variable] = filename
-
-        self.files = files
-
-    def process_and_check_filename(
-        self,
-        fmap_results,
-        subfolder,
-        filename,
-        extension,
-        arguments,
-        mandatory,
-        condition,
-        arguments_input,
-    ):
-        """
-        Build full filename and set conditions coupled to the presence of a
-        file
-
-        Parameters
-        ----------
-        fmap_results: str or pathlib.Path
-            Folder path (scenario_XX)
-        subfolder: str or pathlib.Path
-            Folder path in which a specific file 'filename' resides
-        filename: str
-            File path (without full path, without extension, with string
-            formatting %)
-        extension: str
-            Extension of the file (e.g. .tif, .shp, ..)
-        arguments:
-            Argument for the string formatting
-        mandatory: int
-            Indicate whether file is a mandatory file (0/1)
-        condition
-            Condition coupled when file is present (e.g. `Include buffers`,
-            `Include sewers`, ..)
-
-        Returns
-        -------
-        full_filename: pathlib.Path
-            File path
-        """
-        full_filename = process_filename(
-            fmap_results, subfolder, filename, extension, arguments, arguments_input
-        )
-        exists = check_if_file_exists(full_filename, mandatory)
-        self.check_condition_files(condition, exists)
-
-        if int(mandatory) == 1:
-            try:
-                open(full_filename)
-            except IOError:
-                msg = f"Mandatory file '{filename}' not found"
-                logging.error(msg)
-        else:
-            try:
-                open(full_filename)
-            except IOError:
-                msg = f"Optional file '{filename}' not found, ignoring"
-                logging.warning(msg)
-
-        return full_filename
-
-    def check_condition_files(self, condition, exists):
-        """Set conditions coupled to the presence of a file
-
-        Parameters
-        ----------
-        condition: str
-            Specific condition coupled to the presence of a file
-        exists: bool
-            File exist (True/False)
-
-        Notes
-        -----
-        The condition defines which pywatemsedem option
-        (see :func:pywatemsedem.CNWS.UserChoices) should be considered as
-        True/False given that a file (exists) is present in the pywatemsedem
-        filesystem. For example: the presence of the buffers.rst raster in the
-        modeloutput indicates that the Include buffers option was set to True in
-        the pywatemsedem data processing.
-
-        """
-        lst_output_options = [
-            "Write aspect",
-            "Write LS factor",
-            "Write slope",
-            "Write upstream area",
-            "Write routing table",
-            "Write RUSLE",
-            "Write sediment export",
-            "Write water erosion",
-            "Output per river segment",
-        ]
-
-        lst_ecm_options = ["Include buffers", "UseGras"]
-
-        if condition != "":
-            if condition == "Include sewers":
-                if exists:
-                    self.dict_model_options["Include sewers"] = True
-                else:
-                    self.dict_model_options["Include sewers"] = False
-
-            elif condition in lst_ecm_options:
-                if exists:
-                    self.dict_ecm_options[condition] = True
-                else:
-                    self.dict_ecm_options[condition] = False
-
-            elif condition in lst_output_options:
-                if exists:
-                    self.dict_output_options[condition] = True
-                else:
-                    self.dict_output_options[condition] = False
-
-            else:
-                msg = (
-                    f"Condition '{condition}' not know, check implementation in "
-                    f"datamodel'"
-                )
-                logger.info(msg)
-                raise IOError(msg)
-
     def compute_statistics_rasters_per_polygon_vector(self, vct):
         """Compute statistics for raster for an input polygon vector
-
-
 
         Parameters
         ----------
@@ -385,24 +219,24 @@ class PostProcess(Factory):
             Geopandas dataframe of vct with statistics per polygon.
         """
         dict_operators = {"SUM": True}
-        vct_out = self.sfolder.postprocess_folder / Path(f"{vct.stem}_statistics.shp")
-        self.files["rst_erosion"] = create_erosion_raster(self.files["rst_watereros"])
-        self.files["rst_deposition"] = create_deposition_raster(
-            self.files["rst_watereros"]
+        vct_out = self.sfolder.postprocessing_folder / Path(
+            f"{vct.stem}_statistics.shp"
         )
+        rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file)
+        rst_deposition = create_deposition_raster(self.modeloutput.watereros_kg.file)
         lst_rasters = [
-            self.files["rst_erosion"].absolute(),
-            self.files["rst_deposition"].absolute(),
-            self.files["rst_sediexport"].absolute(),
-            self.files["rst_sewers_in"].absolute(),
-            self.files["rst_ditches_in"].absolute(),
+            rst_erosion.absolute(),
+            rst_deposition.absolute(),
+            self.modeloutput.sedi_export.file.absolute(),
+            # self.modeloutput.sewers_in.file.absolute(),
+            # self.modeloutput.ditches_in.file.absolute(),
         ]
         lst_names = [
             "Erosion (kg)",
             "Deposition (kg)",
             "River (kg)",
-            "Sewers (kg)",
-            "Ditches (kg)",
+            # "Sewers (kg)",
+            # "Ditches (kg)",
         ]
 
         compute_statistics_rasters_per_polygon_vector(
@@ -1641,6 +1475,170 @@ class PostProcess(Factory):
         self.files["rst_deposition"] = create_deposition_raster(
             self.files["rst_watereros"]
         )
+
+    @property
+    def sinks(self):
+        """Getter Sinks attribute."""
+        return self._sinks
+
+    @sinks.setter
+    def sinks(self, raster):
+        """Setter
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str
+        """
+        self._sinks = self.raster_factory(raster, flag_mask=True)
+
+    def assign_filenames(self, fmap_results):
+        """Use filestructure defined in the package to appoint names of files
+
+        Parameters
+        ----------
+        fmap_results: str or pathlib.Path
+            Folder path (scenario_XX)
+        """
+        files = {}
+
+        df_datastructure_files = read_filestructure()
+
+        for index in df_datastructure_files.index:
+            f = get_tuple_datastructure(df_datastructure_files, index)
+            argument_inputs = {
+                "year": self.year,
+                "catchment_name": self.catchment_name,
+                "scenario": self.scenario_label,
+            }
+            filename = self.process_and_check_filename(
+                fmap_results, *f, argument_inputs
+            )
+            tag_variable = df_datastructure_files.loc[index, "tag_variable"]
+            prefix_variable = df_datastructure_files.loc[index, "prefix_variable"]
+            files[prefix_variable + "_" + tag_variable] = filename
+
+        self.files = files
+
+    def process_and_check_filename(
+        self,
+        fmap_results,
+        subfolder,
+        filename,
+        extension,
+        arguments,
+        mandatory,
+        condition,
+        arguments_input,
+    ):
+        """
+        Build full filename and set conditions coupled to the presence of a
+        file
+
+        Parameters
+        ----------
+        fmap_results: str or pathlib.Path
+            Folder path (scenario_XX)
+        subfolder: str or pathlib.Path
+            Folder path in which a specific file 'filename' resides
+        filename: str
+            File path (without full path, without extension, with string
+            formatting %)
+        extension: str
+            Extension of the file (e.g. .tif, .shp, ..)
+        arguments:
+            Argument for the string formatting
+        mandatory: int
+            Indicate whether file is a mandatory file (0/1)
+        condition
+            Condition coupled when file is present (e.g. `Include buffers`,
+            `Include sewers`, ..)
+
+        Returns
+        -------
+        full_filename: pathlib.Path
+            File path
+        """
+        full_filename = process_filename(
+            fmap_results, subfolder, filename, extension, arguments, arguments_input
+        )
+        exists = check_if_file_exists(full_filename, mandatory)
+        self.check_condition_files(condition, exists)
+
+        if int(mandatory) == 1:
+            try:
+                open(full_filename)
+            except IOError:
+                msg = f"Mandatory file '{filename}' not found"
+                logging.error(msg)
+        else:
+            try:
+                open(full_filename)
+            except IOError:
+                msg = f"Optional file '{filename}' not found, ignoring"
+                logging.warning(msg)
+
+        return full_filename
+
+    def check_condition_files(self, condition, exists):
+        """Set conditions coupled to the presence of a file
+
+        Parameters
+        ----------
+        condition: str
+            Specific condition coupled to the presence of a file
+        exists: bool
+            File exist (True/False)
+
+        Notes
+        -----
+        The condition defines which pywatemsedem option
+        (see :func:pywatemsedem.CNWS.UserChoices) should be considered as
+        True/False given that a file (exists) is present in the pywatemsedem
+        filesystem. For example: the presence of the buffers.rst raster in the
+        modeloutput indicates that the Include buffers option was set to True in
+        the pywatemsedem data processing.
+
+        """
+        lst_output_options = [
+            "Write aspect",
+            "Write LS factor",
+            "Write slope",
+            "Write upstream area",
+            "Write routing table",
+            "Write RUSLE",
+            "Write sediment export",
+            "Write water erosion",
+            "Output per river segment",
+        ]
+
+        lst_ecm_options = ["Include buffers", "UseGras"]
+
+        if condition != "":
+            if condition == "Include sewers":
+                if exists:
+                    self.dict_model_options["Include sewers"] = True
+                else:
+                    self.dict_model_options["Include sewers"] = False
+
+            elif condition in lst_ecm_options:
+                if exists:
+                    self.dict_ecm_options[condition] = True
+                else:
+                    self.dict_ecm_options[condition] = False
+
+            elif condition in lst_output_options:
+                if exists:
+                    self.dict_output_options[condition] = True
+                else:
+                    self.dict_output_options[condition] = False
+
+            else:
+                msg = (
+                    f"Condition '{condition}' not know, check implementation in "
+                    f"datamodel'"
+                )
+                logger.info(msg)
+                raise IOError(msg)
 
 
 def check_if_file_exists(full_filename, mandatory):
