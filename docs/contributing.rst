@@ -30,6 +30,13 @@ required dependencies are included in the development requirements installed whe
 
 on the main level of the package (``pywatemsedem`` folder, location where the file ``.pre-commit-config.yaml`` is located)
 
+After the installation of the pre-commit hooks, it is a good idea to update the hooks
+to make sure you have the latest version of the hooks:
+
+::
+
+    pre-commit autoupdate
+
 If you just want to run the hooks on your files to see the effect (not during a git commit),
 you can use the command at any time:
 
