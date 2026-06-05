@@ -198,51 +198,31 @@ class PostProcess(Factory):
         )
 
     def identify_subcatchments_to_buffers(self):
-        """Define the seperate subcatchments to the buffer outlets
+        """Define the separate subcatchments to the buffer outlets.
 
         See :func:`pywatemsedem.postprocess.identify_subcatchments_to_buffers`
         """
-        logger.info("Defining catchments to buffers...")
 
         try:
-            getattr(self.modeloutput, "routing")
-        except Exception as e:
-            msg = (
-                f"No routing file is available in {self.modeloutput.modeloutputfolder}"
-            )
-            logger.error(msg)
-            raise RuntimeError(msg) from e
+            buffers = self.modelinput.buffers
+        except AttributeError as exc:
+            raise ValueError(
+                "No buffers defined in modelinput. Cannot identify "
+                "subcatchments to buffers."
+            ) from exc
 
-        try:
-            getattr(self.modeloutput, "routing")
-        except Exception as e:
-            msg = (
-                f"No routing file is available in {self.modeloutput.modeloutputfolder}"
-            )
-            logger.error(msg)
-            raise RuntimeError(msg) from e
+        routing_nonriver = self.sfolder.postprocessing_folder / "routing_nonriver.txt"
 
-        if self.modeloutput.routing.file.exists():
-            if self.txt_routing_nonriver is None:
-                self.remove_river_routing()
-            elif not Path(self.txt_routing_nonriver).exists():
-                self.remove_river_routing()
-            self.txt_routing_nonriver
-            identify_subcatchments_to_buffers(
-                self.files["rst_buffers"],
-                self.files["vct_buffers"],
-                self.txt_routing_nonriver,
-                self.sfolder.postprocess_folder,
-                self.rp,
-                self.catchment_name,
-                self.scenario_label,
-            )
-        else:
-            msg = (
-                "No buffers simulated in model. Can not identify "
-                "subcatchments to buffer."
-            )
-            logger.warning(msg)
+        # Create routing file without river routing if needed
+        if not routing_nonriver.exists():
+            self.remove_river_routing()
+
+        identify_subcatchments_to_buffers(
+            buffers.file,
+            routing_nonriver,
+            self.sfolder.postprocessing_folder,
+            self.rp,
+        )
 
     def identify_priority_areas(self, nmax=10, flag_merge=True):
         """Identify priority areas
@@ -2457,7 +2437,6 @@ def transform_dict_netto_erosion_to_df(dict_netto_ero):
 
 def identify_subcatchments_to_buffers(
     rst_buffers,
-    vct_buffers,
     txt_routing_nonriver,
     resmap,
     profile,
@@ -2468,8 +2447,6 @@ def identify_subcatchments_to_buffers(
     ----------
     rst_buffers: str or pathlib.Path
         File path of WaTEM/SEDEM buffer raster
-    vct_buffers: str or pathlib.Path
-        File path of buffers polygons
     txt_routing_nonriver: str or pathlib.Path
         File path of the WaTEM/SEDEM routing table without river routing included
     resmap: str or pathlib.Path
@@ -2478,9 +2455,8 @@ def identify_subcatchments_to_buffers(
             see :func:`rasterio.open`
     """
     arr_buffer, _ = load_raster(rst_buffers)
-    gdf_buffers = gpd.read_file(vct_buffers)
-    outlet_ids = gdf_buffers["BUF_ID"].tolist()
-    mask = np.in1d(arr_buffer, outlet_ids).reshape(arr_buffer.shape)
+    outlet_ids = np.unique(arr_buffer[(arr_buffer > 0) & (arr_buffer < 2**14 + 1)])
+    mask = np.isin(arr_buffer, outlet_ids)
     arr_outlet = np.where(mask, arr_buffer, profile["nodata"]).astype(np.float32)
 
     rst_outlet = resmap / (str(rst_buffers.stem) + "_outlet.rst")
