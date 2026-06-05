@@ -1768,9 +1768,6 @@ def prepare_make_routing_vct_saga(
 
     if extent is not None:
         df_routing = open_txt_routing_file(txt_routing)
-        if df_routing.empty:
-            msg = f"{txt_routing.name} is empty"
-            raise IOError(msg)
         df_routing = condition_routing_dataframe_on_extent(
             df_routing, rstparams, extent
         )
@@ -1788,9 +1785,6 @@ def prepare_make_routing_vct_saga(
         vct_temp = vct_out
         condition = True
         df_routing = open_txt_routing_file(txt_routing)
-        if df_routing.empty:
-            msg = f"{txt_routing.name} is empty"
-            raise IOError(msg)
         if seperator != "\t":
             df_routing.to_csv(txt_routing, sep="\t", index=False)
 
@@ -2142,42 +2136,50 @@ def compute_efficiency_buffers(rst_buffer, rst_sedi_in, rst_sedi_out):
 
 
 def open_txt_routing_file(txt_routing):
-    """Open routing file with exceptions and seperators as needed
-
-    Parameters
-    ----------
-    txt_routing: str or pathlib.Path | str
-        File path of the WaTEM/SEDEM routing table
-
+    """
     Returns
     -------
-    df_routing: pandas.DataFrame
-        The routing DataFrame contains the following columns:
+    pandas.DataFrame
+        Routing table if successful
 
-        - *col* (int): source column in rasters
-        - *row* (int): source row in rasters
-        - *target1col* (int): first target column in rasters
-        - *target1row* (int): first target row in rasters
-        - *part1* (float): Part that flows to target1
-        - *distance1* (float): Distance of 1st vector
-        - *target2col* (int): second target column in rasters
-        - *target2row* (int): second target row in rasters
-        - *part2* (float): Part that flows to target2
-        - *distance2* (float): Distance of 2nd vector
+    Raises
+    ------
+    FileNotFoundError
+        If file does not exist
+    ValueError
+        If file exists but is empty or invalid
+    RuntimeError
+        For other reading/parsing issues
     """
-    try:
-        with open(txt_routing) as f:
-            first_line = f.readline()
-        seperator = ";" if "\t" not in first_line else "\t"
-        df_routing = pd.read_csv(txt_routing, sep=seperator)
-        if df_routing.empty:
-            msg = f"{txt_routing.name} is empty"
-            raise IOError(msg)
-    except IOError:
-        msg = f"'{txt_routing}' does not exist"
-        return IOError(msg)
 
-    return df_routing
+    txt_routing = Path(txt_routing)
+
+    # 1. File does not exist
+    if not txt_routing.exists():
+        raise FileNotFoundError(f"Routing file does not exist: '{txt_routing}'")
+
+    try:
+        # 2. Check if empty
+        with open(txt_routing) as f:
+            first_line = f.readline().strip()
+
+        if first_line == "":
+            raise ValueError(f"Routing file is empty: '{txt_routing}'")
+
+        separator = ";" if "\t" not in first_line else "\t"
+
+        df_routing = pd.read_csv(txt_routing, sep=separator)
+
+        if df_routing.empty:
+            raise ValueError(f"Routing file has no data rows: '{txt_routing}'")
+
+        return df_routing
+
+    except pd.errors.EmptyDataError:
+        raise ValueError(f"Routing file contains no readable data: '{txt_routing}'")
+
+    except Exception as e:
+        raise RuntimeError(f"Error reading routing file '{txt_routing}': {e}") from e
 
 
 def create_erosion_raster(rst_watereros):

@@ -250,11 +250,31 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-    def make_missing_routing_vct_saga(self):
-        """Make a routing vector file based on routingfile with missing"""
-        txt = self.txt_routing_missing
-        if txt.exists():
-            self.vct_routing_missing = make_routing_vct_saga(txt, "missing_routing")
+    def make_routing_missing_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing missing vector file based on routing missing file
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tilenumber: int
+            id of tile
+        tag: str
+            tag to add to filename
+        """
+
+        vct_routing_missing = self.sfolder.postprocessing_folder / (
+            self.modeloutput.routing_missing.file.stem + tag + ".shp"
+        )
+
+        make_routing_vct_saga(
+            self.modeloutput.routing_missing.file,
+            self.modelinput.compositelanduse.file,
+            vct_routing_missing,
+            self.rstparams,
+            extent=extent,
+            tile_number=tile_number,
+        )
 
     def identify_priority_areas(self, nmax=10, flag_merge=True):
         """Identify priority areas
