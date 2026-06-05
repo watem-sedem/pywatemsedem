@@ -224,6 +224,38 @@ class PostProcess(Factory):
             self.rp,
         )
 
+    def make_routing_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing vector file based on routingfile
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tilenumber: int
+            id of tile
+        tag: str
+            tag to add to filename
+        """
+
+        vct_routing = self.sfolder.postprocessing_folder / (
+            self.modeloutput.routing.file.stem + tag + ".shp"
+        )
+
+        make_routing_vct_saga(
+            self.modeloutput.routing.file,
+            self.modelinput.compositelanduse.file,
+            vct_routing,
+            self.rstparams,
+            extent=extent,
+            tile_number=tile_number,
+        )
+
+    def make_missing_routing_vct_saga(self):
+        """Make a routing vector file based on routingfile with missing"""
+        txt = self.txt_routing_missing
+        if txt.exists():
+            self.vct_routing_missing = make_routing_vct_saga(txt, "missing_routing")
+
     def identify_priority_areas(self, nmax=10, flag_merge=True):
         """Identify priority areas
 
@@ -245,16 +277,16 @@ class PostProcess(Factory):
         5. Repeat 2 until 4, for a number of iterations (nmax).
         """
         # Generate temporary folder to write maps
-        tempfolder = self.sfolder.postprocess_folder / "priority_areas"
+        tempfolder = self.sfolder.postprocessing_folder / "priority_areas"
         if not tempfolder.exists():
             os.makedirs(tempfolder)
 
         # load SediOut_kg file
-        arr_sediout, profile = load_raster(self.files["rst_sediout"])
+        arr_sediout = self.modeloutput.sedi_out.arr
 
         # delineate individual catchments based on highest values in sediout
         gdf_subcatchmpriority = self.identify_individual_priority_catchments(
-            arr_sediout, profile, self.vct_routing, nmax
+            arr_sediout, self.rp, self.vct_routing, nmax
         )
         # merge overlapping catchments into joint catchments
         self.merge_overlapping_catchments(gdf_subcatchmpriority, merge=flag_merge)
@@ -1205,37 +1237,6 @@ class PostProcess(Factory):
         )
         gdf_subcatchments.drop(columns=["ids"], inplace=True)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
-
-    def make_routing_vct(self, extent=None, tile_number=None, tag=""):
-        """Make a routing vector file based on routingfile
-
-        Parameters
-        ----------
-        extent: list
-            list holding value of extent to consider, xmin,ymin,xmax,ymax
-        tilenumber: int
-            id of tile
-        tag: str
-            tag to add to filename
-        """
-        txt_routing = self.files["txt_routing"]
-        self.vct_routing = self.sfolder.postprocess_folder / (
-            self.files["txt_routing"].stem + tag + ".shp"
-        )
-        make_routing_vct_saga(
-            txt_routing,
-            self.files["rst_prckrt"],
-            self.vct_routing,
-            self.rstparams,
-            extent=extent,
-            tile_number=tile_number,
-        )
-
-    def make_missing_routing_vct_saga(self):
-        """Make a routing vector file based on routingfile with missing"""
-        txt = self.txt_routing_missing
-        if txt.exists():
-            self.vct_routing_missing = make_routing_vct_saga(txt, "missing_routing")
 
     def identify_sinks_in_routing(self):
         """Identify sinks based on whether more than one routing vector goes to
