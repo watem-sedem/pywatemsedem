@@ -329,7 +329,7 @@ class Scenario:
         # WaTEM/SEDEM input
         self._ktc = AbstractRaster()
         self._cn = AbstractRaster()
-        self._cn_table = None
+        self._rainfall = None
         self._cfactor = AbstractRaster()
         self._composite_landuse = AbstractRaster()
 
@@ -1196,6 +1196,34 @@ class Scenario:
             3-D raster: x,y raster for every season.
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
+
+    @property
+    def rainfall(self):
+        """Getter rainfall file"""
+        return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, rainfall_filename):
+        """Setter rainfall file
+
+        Parameters
+        ----------
+        file_path: str or pathlib.Path
+            rainfall time series, for documentation, see
+            :ref:`here <watemsedem:rainfallfile>`
+
+        """
+        if not (
+            isinstance(rainfall_filename, str) or isinstance(rainfall_filename, Path)
+        ):
+            msg = "Rainfall filename is not of type `str` or `pathlib.Path`."
+            raise TypeError(msg)
+
+        if not Path(rainfall_filename).exists():
+            msg = f"Rainfall filename {rainfall_filename} does not exist."
+            raise IOError(msg)
+
+        self._rainfall = Path(rainfall_filename)
 
     @valid_landuse
     @valid_river
