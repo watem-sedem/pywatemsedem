@@ -574,7 +574,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Rainfall filename",
-                "Rainfall.txt",  # TODO: define in templates
+                (self.wsinput_folder / inputfilename.rainfall_file).name,
             )
             self.cfg.set(
                 "Parameters Extensions",

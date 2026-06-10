@@ -1441,11 +1441,21 @@ class Scenario:
             dtype=np.int32,
         )
         if self.choices.extensions.curve_number.value:
-            if self.cn is not None:
+            if not self.cn.is_empty():
                 self.cn.write(self.sfolder.wsinput_folder / inputfilename.cn_file)
             else:
-                msg = "Model version in 'CN-WS', define a CN raster to run CN."
+                msg = "CN extension is enabled, define a CN raster to run CN."
                 raise IOError(msg)
+
+            if self.rainfall is not None:
+                shutil.copy(
+                    self.rainfall,
+                    self.sfolder.wsinput_folder / inputfilename.rainfall_file,
+                )
+            else:
+                msg = "CN extension is enabled, define a rainfall file to run CN."
+                raise IOError(msg)
+
         if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.wsinput_folder / inputfilename.ktc_file)
