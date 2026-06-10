@@ -1123,50 +1123,6 @@ class Scenario:
         self.endpoints = np.where(cond_mask, 0, self.endpoints.arr)
 
     @property
-    def cn_table(self):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        return self._cn_table
-
-    @cn_table.setter
-    def cn_table(self, df):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        if not {"CNmaxID", "CNmax_1", "CNmax_2", "CNmax_3", "CNmax_4"}.issubset(df):
-            msg = (
-                "Dataframe should have columns 'CNmaxID', 'CNmax_1', 'CNmax_2', "
-                "'CNmax_3', 'CNmax_4'."
-            )
-            raise IOError(msg)
-        self._cn_table = df
-
-    @property
     def composite_landuse(self):
         """Getter infrastructure polygon vector"""
         return self._composite_landuse
