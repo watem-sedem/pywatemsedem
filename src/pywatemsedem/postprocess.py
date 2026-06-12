@@ -412,10 +412,12 @@ class PostProcess(Factory):
 
     def convert_rst_sewerin_to_vct(self):
         """Convert the sewerin raster to a vector file."""
-        vct_out = self.files["rst_sewerin"].stem + ".shp"
-        vct_out = self.sfolder.postprocess_folder / vct_out
+        vct_out = (
+            self.sfolder.postprocessing_folder
+            / f"{self.modeloutput.sewer_in.file.stem}.shp"
+        )
         self.vct_sewerin = convert_rst_sinks_to_vct(
-            self.files["rst_sewerin"], vct_out, "sewer", self.rp["epsg"]
+            self.modeloutput.sewer_in.file, vct_out, "sewer", self.rp["epsg"]
         )
 
     def merge_vct_sinks(self):
