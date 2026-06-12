@@ -400,12 +400,14 @@ class PostProcess(Factory):
         vct_out = self.sfolder.postprocessing_folder / "priority_catchments_merged.shp"
         gpd_priorities.to_file(vct_out, spatial_index="YES")
 
-    def convert_rst_sediexport_to_vct(self):
+    def convert_rst_sedi_export_to_vct(self):
         """Convert the sediexport raster to a vector file."""
-        vct_out = self.files["rst_sediexport"].stem + ".shp"
-        vct_out = self.sfolder.postprocess_folder / vct_out
+        vct_out = (
+            self.sfolder.postprocessing_folder
+            / f"{self.modeloutput.sedi_export.file.stem}.shp"
+        )
         self.vct_sediexport = convert_rst_sinks_to_vct(
-            self.files["rst_sediexport"], vct_out, "river", self.rp["epsg"]
+            self.modeloutput.sedi_export.file, vct_out, "river", self.rp["epsg"]
         )
 
     def convert_rst_sewerin_to_vct(self):
@@ -2743,7 +2745,7 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
 
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "3"]
     cmd_args += ["-GRIDS", str(rst_in)]
-    cmd_args += ["-SHAPES", str(vct_out)]
+    cmd_args += ["-POINTS", str(vct_out)]
     execute_saga(cmd_args)
 
     gdf_out = gpd.read_file(vct_out)
@@ -2757,7 +2759,7 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out["cumsum"] = gdf_out["sediment"].cumsum()
     gdf_out["cumperc"] = (gdf_out["cumsum"] / (gdf_out["sediment"].sum())) * 100
     gdf_out = gdf_out.reset_index()
-    gdf_out.drop(columns=["index", "ID", "X", "Y"], inplace=True)
+    gdf_out.drop(columns=["index"], inplace=True)
     gdf_out.to_file(vct_out, spatial_index="YES")
 
 
