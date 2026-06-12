@@ -630,7 +630,10 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sewer_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sewer_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sewer_in.arr[self.mask.arr != self._nodata],
+            lower=0,
+            upper=None,
+            tolerance=0.001,
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sewer in [kg/year]"
@@ -701,7 +704,10 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_export.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_export.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedi_export.arr[self.mask.arr != self._nodata],
+            lower=0,
+            upper=None,
+            tolerance=0.001,
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_export [kg/year]"
