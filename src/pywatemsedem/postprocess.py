@@ -80,12 +80,12 @@ def valid_routing_vector(self):
         raise IOError(msg)
 
 
-def valid_routing_sediout_vector(self):
+def valid_routing_sedi_out_vector(self):
     """Check if routing vector is defined"""
     if self.vct_routing is None:
         msg = (
-            "No routing vector (with sediout) created, please rirst run "
-            "'couple_sediout_routing."
+            "No routing vector (with sedi_out) created, please rirst run "
+            "'couple_sedi_out_routing."
         )
         raise IOError(msg)
 
@@ -303,27 +303,29 @@ class PostProcess(Factory):
         ----
         Algorithm to identify priority areas:
 
-        1. Load sediout raster as an array
-        2. Identify pixel with highest sediout value i.
-        3. Identify subcatchment j coupled to this highest sediout value i.
+        1. Load sedi_out raster as an array
+        2. Identify pixel with highest sedi_out value i.
+        3. Identify subcatchment j coupled to this highest sedi_out value i.
         4. Set all sediment values within subcathcment j to no_value.
         5. Repeat 2 until 4, for a number of iterations (nmax).
         """
         # Generate temporary folder to write maps
-        tempfolder = self.sfolder.postprocessing_folder / "priority_areas"
+        tempfolder = self.sfolder.postprocessing_folder / "priority_catchments"
         if not tempfolder.exists():
             os.makedirs(tempfolder)
 
         # load SediOut_kg file
         arr_sedi_out = self.modeloutput.sedi_out.arr
 
-        # make a routing vector file if not available yet
-        if getattr(self, "vct_routing", None) is None:
-            self.make_routing_vct()
-
-        # delineate individual catchments based on highest values in sediout
+        # delineate individual catchments based on highest values in sedi_out
         gdf_subcatchmpriority = identify_individual_priority_catchments(
-            arr_sedi_out, self.rp, self.vct_routing, nmax
+            arr_sedi_out,
+            self.rp,
+            self.rstparams,
+            self.routing_non_river.file,
+            nmax,
+            resmap=tempfolder,
+            epsg=self.epsg,
         )
         # merge overlapping catchments into joint catchments
         self.merge_overlapping_catchments(gdf_subcatchmpriority, merge=flag_merge)
@@ -331,7 +333,7 @@ class PostProcess(Factory):
     def identify_priority_catchments_based_on_highest_loads(self, nmax=10):
         """Identify the priority catchments.
 
-        Identify the pixels with the highest loads in the sediout raster,
+        Identify the pixels with the highest loads in the sedi_out raster,
         sort them from high too low, and delineate the subcatchment for these
         pixels up until nmax catchments. See
         :func:`pywatemsedem.postprocess.identify_individual_priority_catchments`.
@@ -341,11 +343,11 @@ class PostProcess(Factory):
         nmax: int
             Maximum number of catchment to identify
         """
-        arr_sediout, profile = load_raster(self.files["rst_sediout"])
+        arr_sedi_out, profile = load_raster(self.files["rst_sedi_out"])
         temp_routing_wide = create_filename(".txt")
         self.routing_non_river_wide.to_csv(temp_routing_wide, sep="\t", index=False)
         identify_individual_priority_catchments(
-            arr_sediout,
+            arr_sedi_out,
             profile,
             temp_routing_wide,
             nmax,
@@ -364,73 +366,65 @@ class PostProcess(Factory):
             Catchment shapes with number of catchment.
         merge: bool, default True
             Merge the separate priority areas to one shapefile.
-
         """
-        if merge:
+        if not merge:
+            return
 
-            # fix formatting
-            gdf_subcatchmpriority["VALUE"] = gdf_subcatchmpriority["VALUE"].astype(int)
-            gdf_subcatchmpriority = gdf_subcatchmpriority.sort_values(
-                "VALUE", ascending=True
-            )
+        # fix formatting
+        gdf_subcatchmpriority["VALUE"] = gdf_subcatchmpriority["VALUE"].astype(int)
+        gdf_subcatchmpriority = gdf_subcatchmpriority.sort_values(
+            "VALUE", ascending=True
+        ).copy()
 
-            # Merge overlapping shapes together and assign how many times it
-            # was identified
-            gdf_subcatchmpriority["cond"] = False
+        # make a new dataframe with overlapping shapes together
+        l_priorities = []
+        l_polygons = []
+        l_sedi_out_low = []
+        l_sedi_out_high = []
 
-            # make a new dataframe with overlapping shapes together
-            l_priorities = []
-            l_polygons = []
-            l_sediout_low = []
-            l_sediout_high = []
+        ind = 1
 
-            ind = 1
-            cond = True
+        while not gdf_subcatchmpriority.empty:
 
-            while cond:
+            first_geom = gdf_subcatchmpriority.geometry.iloc[0]
 
-                # identify intersects
-                gdf_subcatchmpriority["cond"] = [
-                    gdf_subcatchmpriority["geometry"]
-                    .iloc[0]
-                    .intersects(gdf_subcatchmpriority["geometry"].iloc[j])
-                    for j in range(len(gdf_subcatchmpriority))
-                ]
+            # identify intersects
+            gdf_subcatchmpriority["cond"] = [
+                first_geom.intersects(geom) for geom in gdf_subcatchmpriority.geometry
+            ]
 
-                # get union of these intersecting polygons and their
-                # priority id
-                gdf_polygons = gdf_subcatchmpriority.loc[
-                    gdf_subcatchmpriority["cond"], "geometry"
-                ].tolist()
-                gdf_sediout_intersect = gdf_subcatchmpriority.loc[
-                    gdf_subcatchmpriority["cond"], "sediout"
-                ].tolist()
+            subset = gdf_subcatchmpriority.loc[gdf_subcatchmpriority["cond"]]
 
-                l_polygons.append(shapely.ops.cascaded_union(gdf_polygons))
-                l_sediout_low.append(np.min(gdf_sediout_intersect))
-                l_sediout_high.append(np.max(gdf_sediout_intersect))
-                l_priorities.append(ind)
-                ind += 1
+            # get union of these intersecting polygons and their priority id
+            l_polygons.append(shapely.union_all(subset.geometry))
+            l_sedi_out_low.append(subset["sedi_out"].min())
+            l_sedi_out_high.append(subset["sedi_out"].max())
+            l_priorities.append(ind)
 
-                # remove records from dataframe so no duplicates are analyzed
-                gdf_subcatchmpriority = gdf_subcatchmpriority.loc[
-                    not gdf_subcatchmpriority["cond"]
-                ]
+            ind += 1
 
-                if len(gdf_subcatchmpriority) == 0:
-                    break
+            # remove records from dataframe so no duplicates are analyzed
+            gdf_subcatchmpriority = gdf_subcatchmpriority.loc[
+                ~gdf_subcatchmpriority["cond"]
+            ].copy()
 
-            # generate new dataframe with
-            gpd_priorities = gpd.GeoDataFrame(
-                np.transpose(np.array([l_priorities, l_sediout_low, l_sediout_high])),
-                geometry=l_polygons,
-                columns=["priority", "sediout_min", "sediout_max"],
-                index=range(len(l_priorities)),
-            )
+        # generate new dataframe
+        gpd_priorities = gpd.GeoDataFrame(
+            {
+                "priority": l_priorities,
+                "sedi_out_min": l_sedi_out_low,
+                "sedi_out_max": l_sedi_out_high,
+                "geometry": l_polygons,
+            },
+            crs=gdf_subcatchmpriority.crs,
+        )
 
-            gpd_priorities = gpd_priorities.to_crs(self.rp["epsg"], allow_override=True)
-            vct_out = self.sfolder.postprocess_folder / "priority_catchments_merged.shp"
-            gpd_priorities.to_file(vct_out, spatial_index="YES")
+        gpd_priorities = gpd_priorities.to_crs(
+            self.rp["epsg"],
+        )
+
+        vct_out = self.sfolder.postprocessing_folder / "priority_catchments_merged.shp"
+        gpd_priorities.to_file(vct_out, spatial_index="YES")
 
     def convert_rst_sediexport_to_vct(self):
         """Convert the sediexport raster to a vector file."""
@@ -685,9 +679,9 @@ class PostProcess(Factory):
 
         """
         # couple sediment out to routing file
-        valid_routing_sediout_vector(self)
-        gdf_routing_sediout = gpd.read_file(self.vct_routing_sediout)
-        gdf_routing_out_of_parcel = select_routing_out_of_parcel(gdf_routing_sediout)
+        valid_routing_sedi_out_vector(self)
+        gdf_routing_sedi_out = gpd.read_file(self.vct_routing_sedi_out)
+        gdf_routing_out_of_parcel = select_routing_out_of_parcel(gdf_routing_sedi_out)
         out_shp = self.sfolder.postprocess_folder / "routing_out_of_parcel.shp"
         gdf_routing_out_of_parcel.to_file(out_shp, spatial_index="YES")
         df_prckrt = self.aggregate_sedout_parcel(gdf_routing_out_of_parcel)
@@ -706,7 +700,7 @@ class PostProcess(Factory):
         Returns
         -------
         df_prckrt: pandas.DataFrame
-            prckrt added with sediout for every pixel defined per parcel
+            prckrt added with sedi_out for every pixel defined per parcel
         """
 
         # load perceelskaart in dataframe format
@@ -716,62 +710,62 @@ class PostProcess(Factory):
         for i in ["col", "row"]:
             df_prckrt[i] = df_prckrt[i].astype(np.float64)
 
-        # aggregate sediout of routing to parcel scale
+        # aggregate sedi_out of routing to parcel scale
         gdf_routing = (
             gdf_routing.groupby(["lnduSource"])
-            .aggregate({"sediout": np.sum})
+            .aggregate({"sedi_out": np.sum})
             .reset_index()
         )
         # merge routing to 'perceelskaart'
         gdf_routing["lnduSource"] = gdf_routing["lnduSource"].astype(np.float64)
         df_prckrt = df_prckrt.merge(
-            gdf_routing[["sediout", "lnduSource"]],
+            gdf_routing[["sedi_out", "lnduSource"]],
             left_on="val",
             right_on="lnduSource",
             how="left",
         )
-        df_prckrt.loc[df_prckrt["sediout"].isnull(), "sediout"] = profile["nodata"]
+        df_prckrt.loc[df_prckrt["sedi_out"].isnull(), "sedi_out"] = profile["nodata"]
         df_prckrt = df_prckrt.drop(["val"], axis=1)
 
         return df_prckrt
 
-    def couple_sediout_routing(self, cols_out=None):
-        """Couple sediout of raster map values to routing file.
+    def couple_sedi_out_routing(self, cols_out=None):
+        """Couple sedi_out of raster map values to routing file.
 
-        See :func:`pywatemsedem.postprocess.couple_sediout_routing`
+        See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
 
         Returns
         -------
-        gdf_routing_sediout: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.postprocess.couple_sediout_routing`
+        gdf_routing_sedi_out: geopandas.GeoDataFrame
+            See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
         """
         logger.info("Coupling amount of sediment to routing vectors...")
         valid_routing_vector(self)
-        gdf_routing_sediout = couple_sediout_routing(
-            self.vct_routing, self.files["rst_sediout"], self.epsg, cols_out
+        gdf_routing_sedi_out = couple_sedi_out_routing(
+            self.vct_routing, self.files["rst_sedi_out"], self.epsg, cols_out
         )
-        self.vct_routing_sediout = self.vct_routing.parent / Path(
-            self.vct_routing.stem + "_sediout.shp"
+        self.vct_routing_sedi_out = self.vct_routing.parent / Path(
+            self.vct_routing.stem + "_sedi_out.shp"
         )
-        gdf_routing_sediout.to_file(self.vct_routing_sediout, spatial_index="YES")
+        gdf_routing_sedi_out.to_file(self.vct_routing_sedi_out, spatial_index="YES")
 
-        return gdf_routing_sediout
+        return gdf_routing_sedi_out
 
-    def intersect_sedioutparcels_with_subcatchments(
-        self, rst_subcatchment_sinks, df_sediout_parcel
+    def intersect_sedi_outparcels_with_subcatchments(
+        self, rst_subcatchment_sinks, df_sedi_out_parcel
     ):
         """Find the intersection between the subcatchments of the sinks and the
         parcels that lie within these subcatchments.
 
-        The sediout_parcel map is used to identify the sediment exported out
+        The sedi_out_parcel map is used to identify the sediment exported out
         of a parcel.
 
         Parameters
         ----------
         rst_subcatchment_sinks: str or pathlib.Path
             File path of the subcatcmsinks raster
-        df_sediout_parcel: pandas.DataFrame
-            DataFrame of the sediout parcel map. This map holds
+        df_sedi_out_parcel: pandas.DataFrame
+            DataFrame of the sedi_out parcel map. This map holds
             for every pixel the total amount of sediment
             that is transported outside the parcel in which the parcel lies.
         """
@@ -783,9 +777,9 @@ class PostProcess(Factory):
             df_subcatchments["val"] != 0
         )
         df_subcatchments = df_subcatchments[cond]
-        # merge with sediout defined per parcel
+        # merge with sedi_out defined per parcel
         df_subcatchments = df_subcatchments.merge(
-            df_sediout_parcel[["col", "row", "lnduSource"]],
+            df_sedi_out_parcel[["col", "row", "lnduSource"]],
             on=["col", "row"],
             how="left",
         )
@@ -795,19 +789,19 @@ class PostProcess(Factory):
 
         #  set pixels that have no parcel_id (lnduSource) wihtin the
         #  unique_ids list to nodata
-        cond = df_sediout_parcel["lnduSource"].isin(unique_ids)
-        df_sediout_parcel.loc[~cond, "SediOut"] = profile["nodata"]
+        cond = df_sedi_out_parcel["lnduSource"].isin(unique_ids)
+        df_sedi_out_parcel.loc[~cond, "SediOut"] = profile["nodata"]
 
         # write to disk
         self.sfolder.postprocess_folder / "SedoutSinks.tif"
         profile["driver"] = "GTiff"
 
-        arr_sediout = raster_dataframe_to_arr(
-            df_sediout_parcel, profile, "SediOut", np.float32
+        arr_sedi_out = raster_dataframe_to_arr(
+            df_sedi_out_parcel, profile, "SediOut", np.float32
         )
 
         write_arr_as_rst(
-            arr_sediout,
+            arr_sedi_out,
             self.rst_sinks,
             "float32",
             profile,
@@ -815,7 +809,7 @@ class PostProcess(Factory):
 
     def select_routing_to_outsidecatchment(self):
         """Exports all routing vectors to the outside of the catchment"""
-        valid_routing_sediout_vector(self)
+        valid_routing_sedi_out_vector(self)
 
         logger.info("Determining routing out of the catchment...")
 
@@ -824,9 +818,11 @@ class PostProcess(Factory):
             / f"routing_to_outside_{self.catchment_name}.shp"
         )
         if not vct_out.exists():
-            gdf_routingsediout = gpd.read_file(self.vct_routingsediout)
-            gdf_routingsediout = gdf_routingsediout[gdf_routingsediout["lnduTarg"] == 0]
-            gdf_routingsediout.to_file(vct_out, spatial_index="YES")
+            gdf_routingsedi_out = gpd.read_file(self.vct_routingsedi_out)
+            gdf_routingsedi_out = gdf_routingsedi_out[
+                gdf_routingsedi_out["lnduTarg"] == 0
+            ]
+            gdf_routingsedi_out.to_file(vct_out, spatial_index="YES")
 
     def get_total_sediment(self):
         """Make nice output table
@@ -933,8 +929,8 @@ class PostProcess(Factory):
 
             df_out = compute_efficiency_buffers(
                 self.files["rst_buffers"],
-                self.files["rst_sediin"],
-                self.files["rst_sediout"],
+                self.files["rst_sedi_in"],
+                self.files["rst_sedi_out"],
             )
 
             gdf_buffer = gpd.read_file(self.files["vct_buffers"])
@@ -1000,8 +996,8 @@ class PostProcess(Factory):
                 - *gras_id_target* (float): grass_id
                 - *gras_id_source* (float): grass_id
                 - *npixels_t* (float: number of pixels of target grass strip
-                - *sediin* (float): total incoming sediment in grass strip (kg)
-                - *sediout* (float): total outgoing sediment out of grass strip (kg)
+                - *sedi_in* (float): total incoming sediment in grass strip (kg)
+                - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
                 - *eSTE* (float): estimated sediment trapping efficiency, see
                   :func:`pywatemsedem.grasstrips.estimate_ste` (%)
                 - sed (float): amount of sedimentation (kg)
@@ -1016,7 +1012,7 @@ class PostProcess(Factory):
                 self.files["txt_routing"],
                 self.files["rst_grass_strips_id"],
                 self.files["rst_prckrt"],
-                self.files["rst_sediout"],
+                self.files["rst_sedi_out"],
             )
 
             gdf_grass_strips = gpd.read_file(self.files["vct_grass_strips"])
@@ -1039,7 +1035,7 @@ class PostProcess(Factory):
             gdf_grass_strips = gpd.GeoDataFrame()
         return gdf_grass_strips
 
-    def merge_sediout_and_cumulative(self, segments_to_retain=None):
+    def merge_sedi_out_and_cumulative(self, segments_to_retain=None):
         """Merge SediOut.rst (sediment output on every land pixel) and
         Cumulative.rst (sediment output in every
         river pixel).
@@ -1055,16 +1051,16 @@ class PostProcess(Factory):
         segments_to_retain: list
             list of ids of segments one wishes to retain in analysis
         """
-        arr_sediout_nonriver, profile = load_raster(self.files["rst_sediout"])
-        arr_sediout_nonriver = np.where(
-            arr_sediout_nonriver != profile["nodata"], arr_sediout_nonriver, 0
+        arr_sedi_out_nonriver, profile = load_raster(self.files["rst_sedi_out"])
+        arr_sedi_out_nonriver = np.where(
+            arr_sedi_out_nonriver != profile["nodata"], arr_sedi_out_nonriver, 0
         )
 
-        arr_sediout_river, profile = load_raster(self.files["rst_cumulative"])
+        arr_sedi_out_river, profile = load_raster(self.files["rst_cumulative"])
         if segments_to_retain is None:
             # take all river segments, i.e. everything not nodata
-            arr_sediout_river = np.where(
-                arr_sediout_river != profile["nodata"], arr_sediout_river, 0
+            arr_sedi_out_river = np.where(
+                arr_sedi_out_river != profile["nodata"], arr_sedi_out_river, 0
             )
         else:
             # take only river segments in list
@@ -1072,25 +1068,25 @@ class PostProcess(Factory):
             mask = np.in1d(arr_riversegm, segments_to_retain).reshape(
                 arr_riversegm.shape
             )
-            arr_sediout_river = np.where(mask, arr_sediout_river, 0)
-        arr_sediout_total = np.where(
+            arr_sedi_out_river = np.where(mask, arr_sedi_out_river, 0)
+        arr_sedi_out_total = np.where(
             self.arr_bindomain == 1,
-            arr_sediout_river + arr_sediout_nonriver,
+            arr_sedi_out_river + arr_sedi_out_nonriver,
             profile["nodata"],
         )
         rst_out = (
             self.sfolder.postprocess_folder
             / f"SediOut_merged_{self.catchment_name}.tif"
         )
-        write_arr_as_rst(arr_sediout_total, rst_out, "float32", self.rstparams)
+        write_arr_as_rst(arr_sedi_out_total, rst_out, "float32", self.rstparams)
 
     def convert_output_rsts_to_ton(self):
-        """Convert the units for rasters sediout, sediin, sediexport and
+        """Convert the units for rasters sedi_out, sedi_in, sediexport and
         watereros from kg to ton.
         """
         rsts = [
-            self.files["rst_sediout"],
-            self.files["rst_sediin"],
+            self.files["rst_sedi_out"],
+            self.files["rst_sedi_in"],
             self.files["rst_watereros"],
             self.files["rst_sediexport"],
         ]
@@ -1619,6 +1615,7 @@ class PostProcess(Factory):
 def identify_individual_priority_catchments(
     arr_sedi_out,
     rst_profile,
+    rstparams,
     txt_routing_non_river,
     nmax,
     resmap=Path.cwd(),
@@ -1634,6 +1631,8 @@ def identify_individual_priority_catchments(
         numpy array format of sedout raster
     rst_profile: rasterio profile
         rasterio profile of the sedout raster
+    rstparams: dict
+        dictionary with raster parameters (e.g. nodata value)
     txt_routing_nonriver: str or pathlib.Path | str
         File path of the WaTEM/SEDEM routing table
     nmax: int
@@ -1646,23 +1645,25 @@ def identify_individual_priority_catchments(
     """
 
     n = 1
-    id_ = 0
+    id_ = 1
     # loop until break is encountered (no more pixels to cluster,
     # or a maximum number of clusters is reached)
     while True:
 
         # identify point with highest sediment load
-        id_, max_sedi_out = create_id_raster_for_highest_value_arr(
-            arr_sedi_out, id_, rst_profile, resmap=resmap / "priority_catchments"
+        rst_id, max_sedi_out = create_id_raster_for_highest_value_arr(
+            arr_sedi_out, id_, rstparams, resmap=resmap
         )
 
         # identify subcatchment/cluster coupled to this point
-        template_name = (
-            resmap / "priority_catchments" / f"subcatchments_priority_{n}.shp"
-        )
+        tag = n
+        template_name = resmap / f"subcatchments_{tag}.shp"
+        #        (
+        #            resmap / "priority_catchments" / f"subcatchments_priority_{n}.shp"
+        #        )
         if not template_name.exists():
             rst_subcatch, vct_subcatch = define_subcatchments_saga(
-                id_, txt_routing_non_river, tag=template_name
+                rst_id, txt_routing_non_river, resmap, rst_profile, tag=tag
             )
             # assign sedi_out value to self.subcatchmprioritSHP
             gdf = gpd.read_file(vct_subcatch)
@@ -1684,12 +1685,12 @@ def identify_individual_priority_catchments(
 
     # merge different subcatchments to one file
     lst_gdf = []
-    for i in Path("priority_catchments").iterdir():
+    for i in resmap.iterdir():
         if i.suffix == ".shp":
             lst_gdf.append(gpd.read_file(i))
     gdf_subcatchmpriority = pd.concat(lst_gdf)
 
-    gdf_subcatchmpriority.crs = {"init": epsg}
+    gdf_subcatchmpriority.crs = epsg  # {"init": epsg}
     dst = resmap / "priority_catchments.shp"
     gdf_subcatchmpriority.to_file(dst, spatial_index="YES")
 
@@ -1824,7 +1825,7 @@ def split_endpoints_in_raster(
 
 
 def compute_efficiency_grass_strips(
-    txt_routing, rst_grass_strips, rst_prckrt, rst_sediout
+    txt_routing, rst_grass_strips, rst_prckrt, rst_sedi_out
 ):
     """Compute statistics for grass strips:
 
@@ -1841,7 +1842,7 @@ def compute_efficiency_grass_strips(
         raster grass strips with id's filename
     rst_prckrt: str or pathlib.Path
         raster WaTEM/SEDEM perceelskaart
-    rst_sediout: str or pathlib.Path
+    rst_sedi_out: str or pathlib.Path
         File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
 
     Returns
@@ -1857,8 +1858,8 @@ def compute_efficiency_grass_strips(
         - *gras_id_target* (float): grass_id
         - *gras_id_source* (float): grass_id
         - *npixels_t* (float: number of pixels of target grass strip
-        - *sediin* (float): total incoming sediment in grass strip (kg)
-        - *sediout* (float): total outgoing sediment out of grass strip (kg)
+        - *sedi_in* (float): total incoming sediment in grass strip (kg)
+        - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
         - *eSTE* (float): estimated sediment trapping efficiency, see
           :func:`pywatemsedem.grasstrips.estimate_ste` (%)
         - sed (float): amount of sedimentation (kg)
@@ -1873,8 +1874,8 @@ def compute_efficiency_grass_strips(
     arr_grass_strips_id, profile = load_raster(rst_grass_strips)
     df_grass_strips = raster_array_to_pandas_dataframe(arr_grass_strips_id, profile)
 
-    arr_sediout, profile_sediout = load_raster(rst_sediout)
-    df_sediout = raster_array_to_pandas_dataframe(arr_sediout, profile_sediout)
+    arr_sedi_out, profile_sedi_out = load_raster(rst_sedi_out)
+    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile_sedi_out)
     df_routing = open_txt_routing_file(txt_routing)
 
     # filter grass strips that are actually modelled as grass strips in
@@ -1884,16 +1885,16 @@ def compute_efficiency_grass_strips(
     )
     df_grass_strips["val"] = df_grass_strips["val"].astype(np.float64)
 
-    # merge grass strips with sediout raster
-    df_routing_grasid = merge_grass_strip_id_and_sediout_to_routing(
-        df_grass_strips, df_sediout, df_routing
+    # merge grass strips with sedi_out raster
+    df_routing_grasid = merge_grass_strip_id_and_sedi_out_to_routing(
+        df_grass_strips, df_sedi_out, df_routing
     )
 
     # format df_routing_grass to a list format
     df_routing_grass_T = reformat_routing_grass(df_routing_grasid)
 
     # aggregate per grass strip
-    df_efficiency = aggregate_sediin_and_sediout_grass_strips(df_routing_grass_T)
+    df_efficiency = aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass_T)
 
     # compute counts
     arr_id, arr_npixels_t = np.unique(arr_grass_strips_id, return_counts=True)
@@ -1901,13 +1902,13 @@ def compute_efficiency_grass_strips(
     df_counts["gras_id_target"] = arr_id
     df_counts["npixels_t"] = arr_npixels_t
     df_efficiency = df_efficiency.merge(df_counts)
-    sediment_load_grass_strips_in = np.sum(df_efficiency["sediin"])
-    sediment_load_grass_strips_out = np.sum(df_efficiency["sediout"])
+    sediment_load_grass_strips_in = np.sum(df_efficiency["sedi_in"])
+    sediment_load_grass_strips_out = np.sum(df_efficiency["sedi_out"])
 
     return sediment_load_grass_strips_in, sediment_load_grass_strips_out, df_efficiency
 
 
-def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
+def aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass):
     """
     Compute the load in and out of a grass strips, so efficiencies can be
     computed.
@@ -1919,8 +1920,8 @@ def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
 
         - *targetrow* (float): target row of pixel
         - *targetcol* (float) target column of pixel
-        - *sediin* (float): incoming sediment pixel
-        - *sediout* (float): outgoing sediment pixel
+        - *sedi_in* (float): incoming sediment pixel
+        - *sedi_out* (float): outgoing sediment pixel
         - *gras_id_source* (float): grass strip id for source, -9999 if not a grass
           strip.
         - *gras_id_target* (float): grass strip id for target, -9999 if not a grass
@@ -1933,8 +1934,8 @@ def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
 
         - *gras_id_target* (float): target grass_id
         - *gras_id_source* (float): target grass_id
-        - *sediin* (float): incoming sediment in grass strip
-        - *sediout* (float): outgoing sediment out of grass strip
+        - *sedi_in* (float): incoming sediment in grass strip
+        - *sedi_out* (float): outgoing sediment out of grass strip
         - *eSTE* (float): estimated sediment trapping efficiency, see
           :func:`pywatemsedem.grasstrips.estimate_ste`
         - *sed* (float): amount of sedimentation
@@ -1945,19 +1946,19 @@ def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
     """
 
     condition = df_routing_grass["gras_id_source"] != df_routing_grass["gras_id_target"]
-    df_sediout_grass = (
+    df_sedi_out_grass = (
         df_routing_grass.loc[condition]
         .groupby("gras_id_source")
-        .aggregate({"sediout": np.sum})
+        .aggregate({"sedi_out": np.sum})
         .reset_index()
     )
-    df_sediin_grass = (
+    df_sedi_in_grass = (
         df_routing_grass.loc[condition]
         .groupby("gras_id_target")
-        .aggregate({"sediout": np.sum})
+        .aggregate({"sedi_out": np.sum})
         .reset_index()
     )
-    df_sediin_grass = df_sediin_grass.rename(columns={"sediout": "sediin"})
+    df_sedi_in_grass = df_sedi_in_grass.rename(columns={"sedi_out": "sedi_in"})
     df_npixels = (
         df_routing_grass[["targetrow", "targetcol", "gras_id_target"]]
         .drop_duplicates()
@@ -1965,26 +1966,26 @@ def aggregate_sediin_and_sediout_grass_strips(df_routing_grass):
         .size()
         .reset_index()
     )
-    df_efficiency = df_sediin_grass[["gras_id_target", "sediin"]].merge(
-        df_sediout_grass, left_on="gras_id_target", right_on="gras_id_source"
+    df_efficiency = df_sedi_in_grass[["gras_id_target", "sedi_in"]].merge(
+        df_sedi_out_grass, left_on="gras_id_target", right_on="gras_id_source"
     )
     df_npixels.columns = ["gras_id_target", "npixels_r"]
     df_efficiency = df_efficiency.merge(df_npixels)
     df_efficiency["eSTE"] = estimate_ste(
-        df_efficiency["sediin"], df_efficiency["sediout"]
+        df_efficiency["sedi_in"], df_efficiency["sedi_out"]
     )
-    df_efficiency["sed"] = df_efficiency["sediin"] - df_efficiency["sediout"]
+    df_efficiency["sed"] = df_efficiency["sedi_in"] - df_efficiency["sedi_out"]
     df_efficiency = df_efficiency[df_efficiency["gras_id_target"] != -9999]
 
     return df_efficiency
 
 
-def merge_grass_strip_id_and_sediout_to_routing(
+def merge_grass_strip_id_and_sedi_out_to_routing(
     df_grass_strips,
-    df_sediout,
+    df_sedi_out,
     df_routing,
 ):
-    """Merge the id of the grass strips and the sediout (also pd list-format)
+    """Merge the id of the grass strips and the sedi_out (also pd list-format)
      to routing df.
 
     Filter grass strips which are not of landuse type -6 ('weide') with 'WaTEM/SEDEM
@@ -1997,7 +1998,7 @@ def merge_grass_strip_id_and_sediout_to_routing(
         - *row* (int): row
         - *val* (int): gras_id
 
-    df_sediout: pandas.DataFrame
+    df_sedi_out: pandas.DataFrame
         - *col* (int): col
         - *row* (int): row
         - *val* (fload): outgoing sediment
@@ -2025,17 +2026,17 @@ def merge_grass_strip_id_and_sediout_to_routing(
         )
 
     # define sedout and index cols to join on
-    df_sediout["sediout"] = df_sediout["val"]
-    df_sediout = df_sediout.set_index(["col", "row"])
+    df_sedi_out["sedi_out"] = df_sedi_out["val"]
+    df_sedi_out = df_sedi_out.set_index(["col", "row"])
 
     # join gras_id sources
     df_routing_grass_id = merge_grass_id_to_routing(
         df_routing, df_grass_strips, ["col", "row"], ["gras_id_source"]
     )
 
-    # join sediout
+    # join sedi_out
     df_routing_grass_id = df_routing_grass_id.join(
-        df_sediout[["sediout"]], how="left"
+        df_sedi_out[["sedi_out"]], how="left"
     ).reset_index()
     df_routing_grass_id = merge_grass_id_to_routing(
         df_routing_grass_id,
@@ -2072,13 +2073,13 @@ def reformat_routing_grass(df_routing_grass):
         See :func:`pywatemsedem.process_output.open_txt_routing_file`
 
         - *gras_id_target* (float): id of the routing target
-        - *sediout* (float): sediment output pixel
+        - *sedi_out* (float): sediment output pixel
 
     """
-    df_routing_grass["sediout1"] = (
-        df_routing_grass["sediout"] * df_routing_grass["part1"]
+    df_routing_grass["sedi_out1"] = (
+        df_routing_grass["sedi_out"] * df_routing_grass["part1"]
     )
-    df_routing_grass["sediout2"] = df_routing_grass["sediout"] * (
+    df_routing_grass["sedi_out2"] = df_routing_grass["sedi_out"] * (
         1 - df_routing_grass["part1"]
     )
 
@@ -2110,7 +2111,7 @@ def select_and_rename_cols_grass_routing(df_routing_grass, target_id):
     cols = {
         f"target{target_id}row": "targetrow",
         f"target{target_id}col": "targetcol",
-        f"sediout{target_id}": "sediout",
+        f"sedi_out{target_id}": "sedi_out",
         f"gras_id_target{target_id}": "gras_id_target",
     }
     cond = df_routing_grass[f"part{target_id}"] != 0
@@ -2130,7 +2131,7 @@ def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_st
     ----------
     df_grass_strips: pandas.DataFrame
         see
-        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
+        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sedi_out_to_routing`
     df_prckrt: pandas.DataFrame
 
         - *col* (int): col
@@ -2144,7 +2145,7 @@ def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_st
     -------
     df_grass_strips: pandas.DataFrame
         filtered data, see
-        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
+        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sedi_out_to_routing`
     """
 
     df_grass_strips.loc[df_prckrt["val"] != -6, "val"] = profile_grass_strips["nodata"]
@@ -2161,7 +2162,8 @@ def merge_grass_id_to_routing(df_routing, df_grass_strips, cols, field):
     df_routing: pandas.DataFrame
         See :func:`pywatemsedem.process_output.open_txt_routing_file`
     df_grass_strips: pandas.DataFrame
-        See :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sediout_to_routing`
+        See :func:
+        `pywatemsedem.postprocess.merge_grass_strip_id_and_sedi_out_to_routing`
     cols: list
         Cols to consider for join
     field: str
@@ -2635,15 +2637,15 @@ def compute_cdf_sediment_load(
     return df
 
 
-def couple_sediout_routing(vct_routing, rst_sediout, epsg, cols_out=None):
-    """Couple the sediout raster values to the vector routing file
+def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
+    """Couple the sedi_out raster values to the vector routing file
 
     Parameters
     ----------
     vct_routing: str or pathlib.Path
         File path of vector routing, see
         :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-    rst_sediout: str or pathlib.Path
+    rst_sedi_out: str or pathlib.Path
         File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
     epsg: str
         Format "EPSG:XXXXX"
@@ -2657,35 +2659,35 @@ def couple_sediout_routing(vct_routing, rst_sediout, epsg, cols_out=None):
         see :func:`pywatemsedem.io.modeloutput.make_routing_vct`. Columns
         added:
 
-        - *sediout* (float): Total Sediment output (scale:parcel) from pixel
-        - *sediout1* (float): Sediment output coupled to arrow current pixel
-        - *sediout2* (float): Sedimout output coupled to other output arrow current
+        - *sedi_out* (float): Total Sediment output (scale:parcel) from pixel
+        - *sedi_out1* (float): Sediment output coupled to arrow current pixel
+        - *sedi_out2* (float): Sedimout output coupled to other output arrow current
           pixel
-        - *cum_sum* (float): Cumulative sediment output based on sediout1
+        - *cum_sum* (float): Cumulative sediment output based on sedi_out1
         - *cum_perc* (float): Cumulative percentage (%)
     """
     gdf_routing = gpd.read_file(vct_routing)
 
     # load sedOut
-    arr_sediout, profile = load_raster(rst_sediout)
-    df_sediout = raster_array_to_pandas_dataframe(arr_sediout, profile)
-    df_sediout["sediout"] = df_sediout["val"].values
+    arr_sedi_out, profile = load_raster(rst_sedi_out)
+    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
+    df_sedi_out["sedi_out"] = df_sedi_out["val"].values
 
-    # merge sediout to routing
+    # merge sedi_out to routing
     gdf_routing = gdf_routing.merge(
-        df_sediout[["col", "row", "sediout"]], on=["col", "row"], how="left"
+        df_sedi_out[["col", "row", "sedi_out"]], on=["col", "row"], how="left"
     )
 
-    # (DR) sediout correction with part (%): sediout is total amount that goes out a
+    # (DR) sedi_out correction with part (%): sedi_out is total amount that goes out a
     # pixel (derived over two pixels).
-    gdf_routing["sediout1"] = gdf_routing["sediout"] * gdf_routing["part"]
-    gdf_routing["sediout2"] = gdf_routing["sediout"] * (1 - gdf_routing["part"])
+    gdf_routing["sedi_out1"] = gdf_routing["sedi_out"] * gdf_routing["part"]
+    gdf_routing["sedi_out2"] = gdf_routing["sedi_out"] * (1 - gdf_routing["part"])
 
     # (DR) Write cumulative percentage (descending)
-    gdf_routing = gdf_routing.sort_values("sediout1", ascending=False)
-    gdf_routing["cum_sum"] = gdf_routing["sediout1"].cumsum().astype(int)
+    gdf_routing = gdf_routing.sort_values("sedi_out1", ascending=False)
+    gdf_routing["cum_sum"] = gdf_routing["sedi_out1"].cumsum().astype(int)
     gdf_routing["cum_perc"] = (
-        gdf_routing.cum_sum / gdf_routing["sediout1"].sum()
+        gdf_routing.cum_sum / gdf_routing["sedi_out1"].sum()
     ) * 100
     gdf_routing = gdf_routing.set_crs(epsg, allow_override=True)
 
@@ -2703,13 +2705,13 @@ def select_routing_out_of_parcel(gdf_routing):
     Parameters
     ----------
     gdf_routing: geopandas.GeoDataFrame
-        Loaded routing vector file (with or without sediout coupled to it).
+        Loaded routing vector file (with or without sedi_out coupled to it).
         See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
 
     Returns
     -------
     gdf_routing: geopandas.GeoDataFrame
-        Selected routing vector file (with or without sediout coupled to it).
+        Selected routing vector file (with or without sedi_out coupled to it).
         See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
     """
     cond = gdf_routing["lnduSource"] != gdf_routing["lnduTarg"]
@@ -2785,15 +2787,17 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out.to_file(vct_out, spatial_index="YES")
 
 
-def compute_statistics_sediout_outside_domain(arr_sediout, arr_id, df_routing, profile):
-    """Compute amount of sediout routing outside domain.
+def compute_statistics_sedi_out_outside_domain(
+    arr_sedi_out, arr_id, df_routing, profile
+):
+    """Compute amount of sedi_out routing outside domain.
 
     Parameters
     ----------
-    arr_sediout: numpy.ndarray
-        WaTEM/SEDEM sediout raster.
+    arr_sedi_out: numpy.ndarray
+        WaTEM/SEDEM sedi_out raster.
     arr_id: numpy.ndarray
-        An unique array id array, sediout outside domain is grouped by these id's.
+        An unique array id array, sedi_out outside domain is grouped by these id's.
         Should be integers or floats!
     df_routing: pandas.DataFrame
         Loaded WaTEM/SEDEM routing dataframe
@@ -2802,7 +2806,7 @@ def compute_statistics_sediout_outside_domain(arr_sediout, arr_id, df_routing, p
     Returns
     -------
     pandas.Series
-        Series holding sediout outside domain per id.
+        Series holding sedi_out outside domain per id.
     """
     df_id = raster_array_to_pandas_dataframe(arr_id, profile)
     df_id["sid"] = df_id["val"]
@@ -2814,7 +2818,7 @@ def compute_statistics_sediout_outside_domain(arr_sediout, arr_id, df_routing, p
     df_id["target2row"] = df_id["row"]
 
     # couple rows and cols
-    df_sediout = raster_array_to_pandas_dataframe(arr_sediout, profile)
+    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
     col = ["col", "row"]
     df_routing = df_routing.merge(df_id[col + ["sid"]], on=col, how="left")
     col = ["target1col", "target1row"]
@@ -2826,7 +2830,7 @@ def compute_statistics_sediout_outside_domain(arr_sediout, arr_id, df_routing, p
         (df_routing["sid"] != df_routing["tid1"])
         & (df_routing["sid"] != df_routing["tid2"])
     ]
-    df_routing = df_routing.merge(df_sediout, on=["col", "row"], how="left")
+    df_routing = df_routing.merge(df_sedi_out, on=["col", "row"], how="left")
     df_routing["val1"] = df_routing["part1"] * df_routing["val"]
     df_routing["val2"] = df_routing["part2"] * df_routing["val"]
     # compute stats
