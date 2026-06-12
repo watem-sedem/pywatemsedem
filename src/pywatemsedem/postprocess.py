@@ -330,32 +330,6 @@ class PostProcess(Factory):
         # merge overlapping catchments into joint catchments
         self.merge_overlapping_catchments(gdf_subcatchmpriority, merge=flag_merge)
 
-    def identify_priority_catchments_based_on_highest_loads(self, nmax=10):
-        """Identify the priority catchments.
-
-        Identify the pixels with the highest loads in the sedi_out raster,
-        sort them from high too low, and delineate the subcatchment for these
-        pixels up until nmax catchments. See
-        :func:`pywatemsedem.postprocess.identify_individual_priority_catchments`.
-
-        Parameters
-        ----------
-        nmax: int
-            Maximum number of catchment to identify
-        """
-        arr_sedi_out, profile = load_raster(self.files["rst_sedi_out"])
-        temp_routing_wide = create_filename(".txt")
-        self.routing_non_river_wide.to_csv(temp_routing_wide, sep="\t", index=False)
-        identify_individual_priority_catchments(
-            arr_sedi_out,
-            profile,
-            temp_routing_wide,
-            nmax,
-            resmap=self.sfolder.postprocess_folder,
-            epsg=self.epsg,
-        )
-        clean_up_tempfiles(temp_routing_wide, "txt")
-
     def merge_overlapping_catchments(self, gdf_subcatchmpriority, merge=True):
         """Merge overlapping catchments and reassign priorities for
         overlapping catchments.
