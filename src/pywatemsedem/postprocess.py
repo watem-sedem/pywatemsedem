@@ -142,6 +142,9 @@ class PostProcess(Factory):
 
     def __init__(self, home_folder, resolution, scenario_label, year, epsg):
 
+        # DATA
+        self._routing_non_river = None
+
         # general
         self.home_folder = Path(home_folder)
         self.resolution = resolution
@@ -173,9 +176,15 @@ class PostProcess(Factory):
         """Zip output folder of scenario_x"""
         zip_folder(self.sfolder.scenario_folder)
 
+    @property
+    def routing_non_river(self):
+        """Return the routing table without river routing."""
+        if self._routing_non_river is None:
+            self.remove_river_routing()
+        return self._routing_non_river
+
     def remove_river_routing(self):
-        """Remove river routing from routing file to identify subcatchments to
-        buffers."""
+        """Remove river routing from routing file."""
 
         # Identify the rows and columns of the routing file
         # that are river routing (lnduSource == -1)
@@ -189,9 +198,14 @@ class PostProcess(Factory):
         to_remove = set(river_coords)
         df_filtered = df[~df[["row", "col"]].apply(tuple, axis=1).isin(to_remove)]
 
+        self._routing_non_river = df_filtered.copy()
+
         # Save the filtered routing file
-        df_filtered.to_csv(
-            self.sfolder.postprocessing_folder / "routing_nonriver.txt",
+        self._routing_non_river.file = (
+            self.sfolder.postprocessing_folder / "routing_non_river.txt"
+        )
+        self._routing_non_river.to_csv(
+            self._routing_non_river.file,
             sep="\t",
             index=False,
         )
@@ -210,7 +224,7 @@ class PostProcess(Factory):
                 "subcatchments to buffers."
             ) from exc
 
-        routing_nonriver = self.sfolder.postprocessing_folder / "routing_nonriver.txt"
+        routing_nonriver = self.routing_non_river.file
 
         # Create routing file without river routing if needed
         if not routing_nonriver.exists():
@@ -313,60 +327,6 @@ class PostProcess(Factory):
         )
         # merge overlapping catchments into joint catchments
         self.merge_overlapping_catchments(gdf_subcatchmpriority, merge=flag_merge)
-
-    @property
-    def routing(self):
-        """Set modeloutput routing
-
-        Parameters
-        ----------
-        routing_file: pathlib.Path
-            See :ref:`here <watemsedem:routingtxt>`
-
-        Returns
-        -------
-        pandas.DataFrame:
-            with columns:
-
-            - *row* (float)
-            - *col* (float)
-            - *targetcol1* (float): target 1 col
-            - *targetrow1* (float): target 1 row
-            - *targetcol2* (float): target 2 col
-            - *targetrow2* (float): target 2 row
-            - *part1*: share (in [0,1])
-            - *part2*: share (in [0,1])
-        """
-        return self._routing
-
-    @property
-    def routing_non_river(self):
-        """Getter routing (no river routing) long format
-
-        River routing is removed from the routing table
-
-        Returns
-        -------
-        pandas.DataFrame:
-            with columns:
-
-            - *row* (float)
-            - *col* (float)
-            - *targetcol* (float): target col
-            - *targetrow* (float): target row
-            - *part*: share (in [0,1])
-        """
-        valid_routing_vector(self)
-        df = gpd.read_file(
-            self.vct_routing, include_fields=["col", "row", "lnduSource"]
-        )
-        df = df.loc[(df["lnduSource"] != -1), ["col", "row"]]
-        cond = (df["col"].astype(str) + "-" + df["row"].astype(str)).tolist()
-        return self.routing[
-            (
-                self.routing["col"].astype(str) + "-" + self.routing["row"].astype(str)
-            ).isin(cond)
-        ]
 
     def identify_priority_catchments_based_on_highest_loads(self, nmax=10):
         """Identify the priority catchments.
