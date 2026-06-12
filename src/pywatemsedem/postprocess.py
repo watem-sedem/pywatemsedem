@@ -31,7 +31,6 @@ from pywatemsedem.io.modeloutput import (
     create_deposition_raster,
     create_erosion_raster,
     define_subcatchments_saga,
-    identify_individual_priority_catchments,
     load_total_sediment_file,
     make_routing_vct_saga,
     open_txt_routing_file,
@@ -237,14 +236,14 @@ class PostProcess(Factory):
             tag to add to filename
         """
 
-        vct_routing = self.sfolder.postprocessing_folder / (
+        self.vct_routing = self.sfolder.postprocessing_folder / (
             self.modeloutput.routing.file.stem + tag + ".shp"
         )
 
         make_routing_vct_saga(
             self.modeloutput.routing.file,
             self.modelinput.compositelanduse.file,
-            vct_routing,
+            self.vct_routing,
             self.rstparams,
             extent=extent,
             tile_number=tile_number,
@@ -263,14 +262,14 @@ class PostProcess(Factory):
             tag to add to filename
         """
 
-        vct_routing_missing = self.sfolder.postprocessing_folder / (
+        self.vct_routing_missing = self.sfolder.postprocessing_folder / (
             self.modeloutput.routing_missing.file.stem + tag + ".shp"
         )
 
         make_routing_vct_saga(
             self.modeloutput.routing_missing.file,
             self.modelinput.compositelanduse.file,
-            vct_routing_missing,
+            self.vct_routing_missing,
             self.rstparams,
             extent=extent,
             tile_number=tile_number,
@@ -302,11 +301,11 @@ class PostProcess(Factory):
             os.makedirs(tempfolder)
 
         # load SediOut_kg file
-        arr_sediout = self.modeloutput.sedi_out.arr
+        arr_sedi_out = self.modeloutput.sedi_out.arr
 
         # delineate individual catchments based on highest values in sediout
-        gdf_subcatchmpriority = self.identify_individual_priority_catchments(
-            arr_sediout, self.rp, self.vct_routing, nmax
+        gdf_subcatchmpriority = identify_individual_priority_catchments(
+            arr_sedi_out, self.rp, self.vct_routing, nmax
         )
         # merge overlapping catchments into joint catchments
         self.merge_overlapping_catchments(gdf_subcatchmpriority, merge=flag_merge)
@@ -1651,6 +1650,124 @@ class PostProcess(Factory):
             normalize=True,
             ton=False,
         )
+
+
+def identify_individual_priority_catchments(
+    arr_sedi_out,
+    rst_profile,
+    txt_routing_non_river,
+    nmax,
+    resmap=Path.cwd(),
+    epsg="",
+):
+    """
+    identify the individual priority catchments and add them to a raster
+    and shapes dictionary
+
+    Parameters
+    ----------
+    arr_sedi_out: numpy.ndarray
+        numpy array format of sedout raster
+    rst_profile: rasterio profile
+        rasterio profile of the sedout raster
+    txt_routing_nonriver: str or pathlib.Path | str
+        File path of the WaTEM/SEDEM routing table
+    nmax: int
+        maximum number of catchment
+
+    Returns
+    -------
+    subcatchmentpriority: geopandas.GeoDataFrame
+        catchment shapes with number of catchment
+    """
+
+    n = 1
+    id_ = 0
+    # loop until break is encountered (no more pixels to cluster,
+    # or a maximum number of clusters is reached)
+    while True:
+
+        # identify point with highest sediment load
+        id_, max_sedi_out = create_id_raster_for_highest_value_arr(
+            arr_sedi_out, id_, rst_profile, resmap=resmap / "priority_catchments"
+        )
+
+        # identify subcatchment/cluster coupled to this point
+        template_name = (
+            resmap / "priority_catchments" / f"subcatchments_priority_{n}.shp"
+        )
+        if not template_name.exists():
+            rst_subcatch, vct_subcatch = define_subcatchments_saga(
+                id_, txt_routing_non_river, tag=template_name
+            )
+            # assign sedi_out value to self.subcatchmprioritSHP
+            gdf = gpd.read_file(vct_subcatch)
+            gdf["sedi_out"] = max_sedi_out
+            gdf.to_file(vct_subcatch, spatial_index="YES")
+        else:
+            vct_subcatch = template_name
+            rst_subcatch = vct_subcatch.with_suffix(".sdat")
+
+        # condition: if a max number of clusters is identified
+        # OR all pixels are classified: stop
+        if (n >= nmax) | (np.sum(arr_sedi_out != rst_profile["nodata"]) == 0):
+            nmax = n
+            break
+        else:
+            arr_subcatch, _ = load_raster(rst_subcatch)
+            arr_sedi_out[arr_subcatch != -99999.0] = rst_profile["nodata"]
+            n += 1
+
+    # merge different subcatchments to one file
+    lst_gdf = []
+    for i in Path("priority_catchments").iterdir():
+        if i.suffix == ".shp":
+            lst_gdf.append(gpd.read_file(i))
+    gdf_subcatchmpriority = pd.concat(lst_gdf)
+
+    gdf_subcatchmpriority.crs = {"init": epsg}
+    dst = resmap / "priority_catchments.shp"
+    gdf_subcatchmpriority.to_file(dst, spatial_index="YES")
+
+    return gdf_subcatchmpriority
+
+
+def create_id_raster_for_highest_value_arr(arr, id_, profile, resmap):
+    """Create a raster with an id value assigned to the highest value in the raster"
+
+    Parameters
+    ----------
+    arr: str or pathlib.Path | str
+        with floats
+    id_: int
+        Sequential number of the catchment
+    profile: rasterio profile
+        Rasterio profile of the sedout raster
+    resmap: str or pathlib.Path | str, optional
+        Folder path to write results to
+
+    Returns
+    -------
+    rst_id: str
+        File path of the raster with id for highest value in raster
+    val: float
+        Maximum value in raster
+    """
+    resmap = Path(resmap)
+    if not resmap.exists():
+        (resmap).mkdir(parents=True, exist_ok=True)
+
+    arr_id = arr.copy()
+    max_val = np.max(arr)
+    cond = arr == max_val
+    arr_id[cond] = id_
+    arr_id[~cond] = profile["nodata"]
+
+    # write to disk
+    rst_id = resmap / f"id_{id_}.rst"
+    write_arr_as_rst(arr_id, rst_id, np.int32, profile)
+
+    return rst_id, max_val
 
 
 def check_if_file_exists(full_filename, mandatory):
