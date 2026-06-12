@@ -289,19 +289,19 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-    def identify_priority_areas(self, nmax=10, flag_merge=True):
-        """Identify priority areas
+    def identify_priority_catchments(self, nmax=10, flag_merge=True):
+        """Identify priority catchments
 
         Parameters
         ----------
         nmax: str
-            Maximum number of priority areas.
+            Maximum number of priority catchments.
         flag_merge: bool
-            Merge the separate priority areas to one shapefile.
+            Merge the separate priority catchments to one shapefile.
 
         Note
         ----
-        Algorithm to identify priority areas:
+        Algorithm to identify priority catchments:
 
         1. Load sedi_out raster as an array
         2. Identify pixel with highest sedi_out value i.
