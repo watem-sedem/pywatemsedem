@@ -303,6 +303,10 @@ class PostProcess(Factory):
         # load SediOut_kg file
         arr_sedi_out = self.modeloutput.sedi_out.arr
 
+        # make a routing vector file if not available yet
+        if getattr(self, "vct_routing", None) is None:
+            self.make_routing_vct()
+
         # delineate individual catchments based on highest values in sediout
         gdf_subcatchmpriority = identify_individual_priority_catchments(
             arr_sedi_out, self.rp, self.vct_routing, nmax
