@@ -267,25 +267,49 @@ class Factory:
     def vector_factory(
         self, vector_input, geometry_type, allow_empty=False, flag_clip=True
     ):
-        """Vector factory to load vectors in memory
+        """Create and load a vector dataset into memory.
 
         Parameters
         ----------
-        vector_input: str, pathlib.Path or geopandas.GeoDataFrame
-            Input vector file or geopandas dataframe
-        mask: bool, default True
-            Mask vector (True), nodata value will be that one of
-            `pywatemsedem.geo.factory.Factory.rp`.
-        allow_empty: bool, default False
-            Allow vector to be empty, see
-            :class:`pywatemsedem.geo.vectors.AbstractVector`
-        flag_clip: bool, default True
-            Clip vector to mask
+        vector_input : str, pathlib.Path, or geopandas.GeoDataFrame
+            Input vector source. Can be:
+
+            * Path to a vector file (e.g. ESRI Shapefile, GeoPackage).
+            * A ``geopandas.GeoDataFrame`` already loaded in memory.
+
+        geometry_type : str
+            Expected geometry type for the vector dataset. Passed to
+            :class:`pywatemsedem.geo.vectors.VectorFile` or
+            :class:`pywatemsedem.geo.vectors.VectorMemory` for validation.
+
+        allow_empty : bool, default=False
+            If ``True``, allow the resulting vector dataset to contain no
+            geometries. See
+            :class:`pywatemsedem.geo.vectors.AbstractVector`.
+
+        flag_clip : bool, default=True
+            If ``True``, clip the input vector to the factory mask
+            (``self.vct_mask``). If ``False``, no clipping is applied.
 
         Returns
         -------
-        vector: pywatemsedem.geo.rasters.AbstractVector
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        pywatemsedem.geo.vectors.AbstractVector
+            A vector object loaded from disk
+            (:class:`pywatemsedem.geo.vectors.VectorFile`) or memory
+            (:class:`pywatemsedem.geo.vectors.VectorMemory`).
+
+        Raises
+        ------
+        IOError
+            If ``vector_input`` is not a valid vector file, cannot be read,
+            or is not a ``pathlib.Path``, ``str``, or
+            ``geopandas.GeoDataFrame`` instance.
+
+        Notes
+        -----
+        Input vector files are validated using ``pyogrio.read_info`` before
+        loading. The resulting vector is reprojected or validated against
+        the factory EPSG code (``self.rp.epsg``).
         """
 
         if isinstance(vector_input, str):
