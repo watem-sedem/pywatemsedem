@@ -144,6 +144,8 @@ class PostProcess(Factory):
 
         # DATA
         self._routing_non_river = None
+        self.vct_sedi_export = None
+        self.vct_sewer_in = None
 
         # general
         self.home_folder = Path(home_folder)
@@ -406,38 +408,73 @@ class PostProcess(Factory):
             self.sfolder.postprocessing_folder
             / f"{self.modeloutput.sedi_export.file.stem}.shp"
         )
-        self.vct_sediexport = convert_rst_sinks_to_vct(
+        convert_rst_sinks_to_vct(
             self.modeloutput.sedi_export.file, vct_out, "river", self.rp["epsg"]
         )
+        self.vct_sedi_export = vct_out
 
-    def convert_rst_sewerin_to_vct(self):
-        """Convert the sewerin raster to a vector file."""
+    def convert_rst_sewer_in_to_vct(self):
+        """Convert the sewer_in raster to a vector file."""
         vct_out = (
             self.sfolder.postprocessing_folder
             / f"{self.modeloutput.sewer_in.file.stem}.shp"
         )
-        self.vct_sewerin = convert_rst_sinks_to_vct(
+        convert_rst_sinks_to_vct(
             self.modeloutput.sewer_in.file, vct_out, "sewer", self.rp["epsg"]
         )
+        self.vct_sewer_in = vct_out
 
     def merge_vct_sinks(self):
-        """Merge vct_sewerin and vct_sediexport to one sinks shapefile."""
-        if self.vct_sewerin is not None and self.vct_sediexport is not None:
-            gdf_sewerin = gpd.read_file(self.vct_sewerin)
-            gdf_sewerin = gdf_sewerin.append(
-                gpd.read_file(self.files["vct_sediexport"]), ignore_index=True
+        """
+        Merge sewer and river sink shapefiles into a single output shapefile.
+
+        This method combines the features from ``vct_sewer_in`` and
+        ``vct_sedi_export`` into one GeoDataFrame. The merged dataset is then:
+
+        1. Sorted by the ``sediment`` field in descending order.
+        2. Enriched with a cumulative sediment load column (``cumsum``).
+        3. Enriched with a cumulative percentage column (``cumperc``).
+        4. Written to a new shapefile in the post-processing folder.
+
+        The output file is named:
+
+        ``sinks.shp``
+
+        Notes
+        -----
+        If either ``vct_sewer_in`` or ``vct_sedi_export`` is not available,
+        no output file is created and a warning is logged.
+        """
+        if self.vct_sewer_in is None or self.vct_sedi_export is None:
+            logger.error(
+                "Cannot merge sinks: vct_sewer_in (%s) or "
+                "vct_sedi_export (%s) is missing.",
+                self.vct_sewer_in,
+                self.vct_sedi_export,
             )
-            gdf_sewerin = gdf_sewerin.sort_values("sediment", ascending=False)
-            gdf_sewerin["cumsum"] = gdf_sewerin["sediment"].cumsum()
-            gdf_sewerin["cumperc"] = (
-                gdf_sewerin["cumsum"] / (gdf_sewerin["sediment"].sum())
-            ) * 100
-            gdf_sewerin = gdf_sewerin.reset_index()
-            vct_out = (
-                f"sewer_and_riversinks_{self.catchment_name}_s{self.scenario_label}.shp"
-            )
-            vct_out = self.sfolder.postprocess_folder / vct_out
-            gdf_sewerin.to_file(vct_out, spatial_index="YES")
+            return
+
+        gdf_sewer_in = gpd.read_file(self.vct_sewer_in)
+        gdf_sedi_export = gpd.read_file(self.vct_sedi_export)
+        gdf_sinks = pd.concat(
+            [
+                gdf_sewer_in,
+                gdf_sedi_export,
+            ],
+            ignore_index=True,
+        )
+
+        gdf_sinks = gdf_sinks.sort_values("sediment", ascending=False)
+        gdf_sinks["cumsum"] = gdf_sinks["sediment"].cumsum()
+        gdf_sinks["cumperc"] = (gdf_sinks["cumsum"] / gdf_sinks["sediment"].sum()) * 100
+
+        gdf_sinks = gdf_sinks.reset_index(drop=True)
+
+        vct_out = self.sfolder.postprocessing_folder / "sinks.shp"
+
+        gdf_sinks.to_file(vct_out, spatial_index="YES")
+
+        self.vct_sinks = vct_out
 
     def compute_source_sinks(self, percentage=50):
         """Source-sink algorithm to identify sources of erosion
@@ -2724,7 +2761,7 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     """Convert a sinks raster to a vector file.
 
     A sinks raster is defined as a raster holding captured sediment loads
-    (i.e. rst_sewerin, rst_sediexport).
+    (i.e. rst_sewer_in, rst_sedi_export).
 
     Parameters
     ----------
@@ -2732,11 +2769,6 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
         Input raster subject to convert to shape
     kind: str
         'sewer' or 'river'
-
-    Returns
-    -------
-    vct_out: pathlib.Path
-        Filename of the shapefile of the sinks
 
     """
     if kind not in ["river", "sewer"]:
