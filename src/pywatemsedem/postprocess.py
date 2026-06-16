@@ -203,11 +203,11 @@ class PostProcess(Factory):
         self._routing_non_river = df_filtered.copy()
 
         # Save the filtered routing file
-        self._routing_non_river.file = (
+        self._routing_non_river.file_path = (
             self.sfolder.postprocessing_folder / "routing_non_river.txt"
         )
         self._routing_non_river.to_csv(
-            self._routing_non_river.file,
+            self._routing_non_river.file_path,
             sep="\t",
             index=False,
         )
@@ -226,14 +226,14 @@ class PostProcess(Factory):
                 "subcatchments to buffers."
             ) from exc
 
-        routing_nonriver = self.routing_non_river.file
+        routing_nonriver = self.routing_non_river.file_path
 
         # Create routing file without river routing if needed
         if not routing_nonriver.exists():
             self.remove_river_routing()
 
         identify_subcatchments_to_buffers(
-            buffers.file,
+            buffers.file_path,
             routing_nonriver,
             self.sfolder.postprocessing_folder,
             self.rp,
@@ -253,12 +253,12 @@ class PostProcess(Factory):
         """
 
         self.vct_routing = self.sfolder.postprocessing_folder / (
-            self.modeloutput.routing.file.stem + tag + ".shp"
+            self.modeloutput.routing.file_path.stem + tag + ".shp"
         )
 
         make_routing_vct_saga(
-            self.modeloutput.routing.file,
-            self.modelinput.compositelanduse.file,
+            self.modeloutput.routing.file_path,
+            self.modelinput.compositelanduse.file_path,
             self.vct_routing,
             self.rstparams,
             extent=extent,
@@ -279,12 +279,12 @@ class PostProcess(Factory):
         """
 
         self.vct_routing_missing = self.sfolder.postprocessing_folder / (
-            self.modeloutput.routing_missing.file.stem + tag + ".shp"
+            self.modeloutput.routing_missing.file_path.stem + tag + ".shp"
         )
 
         make_routing_vct_saga(
-            self.modeloutput.routing_missing.file,
-            self.modelinput.compositelanduse.file,
+            self.modeloutput.routing_missing.file_path,
+            self.modelinput.compositelanduse.file_path,
             self.vct_routing_missing,
             self.rstparams,
             extent=extent,
@@ -324,7 +324,7 @@ class PostProcess(Factory):
             arr_sedi_out,
             self.rp,
             self.rstparams,
-            self.routing_non_river.file,
+            self.routing_non_river.file_path,
             nmax,
             resmap=tempfolder,
             epsg=self.epsg,
@@ -406,10 +406,10 @@ class PostProcess(Factory):
         """Convert the sediexport raster to a vector file."""
         vct_out = (
             self.sfolder.postprocessing_folder
-            / f"{self.modeloutput.sedi_export.file.stem}.shp"
+            / f"{self.modeloutput.sedi_export.file_path.stem}.shp"
         )
         convert_rst_sinks_to_vct(
-            self.modeloutput.sedi_export.file, vct_out, "river", self.rp["epsg"]
+            self.modeloutput.sedi_export.file_path, vct_out, "river", self.rp["epsg"]
         )
         self.vct_sedi_export = vct_out
 
@@ -417,10 +417,10 @@ class PostProcess(Factory):
         """Convert the sewer_in raster to a vector file."""
         vct_out = (
             self.sfolder.postprocessing_folder
-            / f"{self.modeloutput.sewer_in.file.stem}.shp"
+            / f"{self.modeloutput.sewer_in.file_path.stem}.shp"
         )
         convert_rst_sinks_to_vct(
-            self.modeloutput.sewer_in.file, vct_out, "sewer", self.rp["epsg"]
+            self.modeloutput.sewer_in.file_path, vct_out, "sewer", self.rp["epsg"]
         )
         self.vct_sewer_in = vct_out
 
@@ -1599,14 +1599,16 @@ class PostProcess(Factory):
         vct_out = self.sfolder.postprocessing_folder / Path(
             f"{vct.stem}_statistics.shp"
         )
-        rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file)
-        rst_deposition = create_deposition_raster(self.modeloutput.watereros_kg.file)
+        rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file_path)
+        rst_deposition = create_deposition_raster(
+            self.modeloutput.watereros_kg.file_path
+        )
         lst_rasters = [
             rst_erosion.absolute(),
             rst_deposition.absolute(),
-            self.modeloutput.sedi_export.file.absolute(),
-            # self.modeloutput.sewers_in.file.absolute(),
-            # self.modeloutput.ditches_in.file.absolute(),
+            self.modeloutput.sedi_export.file_path.absolute(),
+            # self.modeloutput.sewers_in.file_path.absolute(),
+            # self.modeloutput.ditches_in.file_path.absolute(),
         ]
         lst_names = [
             "Erosion (kg)",
