@@ -161,7 +161,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._aspect.plot = plot
-        self._aspect.file = raster
+        self._aspect.file_path = raster
 
     @property
     def routing(self):
@@ -227,7 +227,7 @@ class Modeloutput(Factory):
             # Future implementation: try to draw arrow in correct direction
 
         self._routing.plot = plot
-        self._routing.file = text
+        self._routing.file_path = text
 
     @property
     def routing_missing(self):
@@ -304,7 +304,7 @@ class Modeloutput(Factory):
                     return self.gdf_routing_missing.explore()
 
         self._routing_missing.plot = plot
-        self._routing_missing.file = text
+        self._routing_missing.file_path = text
 
     @property
     def ls(self):
@@ -377,7 +377,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._ls.plot = plot
-        self._ls.file = raster
+        self._ls.file_path = raster
 
     @property
     def slope(self):
@@ -442,7 +442,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._slope.plot = plot
-        self._slope.file = raster
+        self._slope.file_path = raster
 
     @property
     def uparea(self):
@@ -512,7 +512,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._uparea.plot = plot
-        self._uparea.file = raster
+        self._uparea.file_path = raster
 
     @property
     def total_sediment(self):
@@ -536,7 +536,7 @@ class Modeloutput(Factory):
         """
         dict = load_total_sediment_file(text)
         self._total_sediment = pd.DataFrame(dict, index=[0])
-        self._total_sediment.file = text
+        self._total_sediment.file_path = text
 
     @property
     def total_sediment_segments(self):
@@ -562,7 +562,7 @@ class Modeloutput(Factory):
         """
         df_total_sediment_segments = load_sediment_segments_file(text)
         self._total_sediment_segments = df_total_sediment_segments
-        self._total_sediment_segments.file = text
+        self._total_sediment_segments.file_path = text
 
         segment_ids = df_total_sediment_segments.index.values
         sediment_values = df_total_sediment_segments["Sediment"].values
@@ -597,7 +597,7 @@ class Modeloutput(Factory):
         """
         df_cumulative_sediment_segments = load_sediment_segments_file(text)
         self._cumulative_sediment_segments = df_cumulative_sediment_segments
-        self._cumulative_sediment_segments.file = text
+        self._cumulative_sediment_segments.file_path = text
 
         segment_ids = df_cumulative_sediment_segments.index.values
         sediment_values = df_cumulative_sediment_segments["Sediment"].values
@@ -680,7 +680,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._sewer_in.plot = plot
-        self._sewer_in.file = raster
+        self._sewer_in.file_path = raster
 
     @property
     def sedi_export(self):
@@ -768,7 +768,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._sedi_export.plot = plot
-        self._sedi_export.file = raster
+        self._sedi_export.file_path = raster
 
     @property
     def sedi_in(self):
@@ -837,7 +837,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedi_in.plot = plot
-        self._sedi_in.file = raster
+        self._sedi_in.file_path = raster
 
     @property
     def sedi_out(self):
@@ -906,7 +906,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedi_out.plot = plot
-        self._sedi_out.file = raster
+        self._sedi_out.file_path = raster
 
     @property
     def sedtil_in(self):
@@ -972,7 +972,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedtil_in.plot = plot
-        self._sedtil_in.file = raster
+        self._sedtil_in.file_path = raster
 
     @property
     def sedtil_out(self):
@@ -1038,7 +1038,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedtil_out.plot = plot
-        self._sedtil_out.file = raster
+        self._sedtil_out.file_path = raster
 
     @property
     def cumulative(self):
@@ -1106,7 +1106,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._cumulative.plot = plot
-        self._cumulative.file = raster
+        self._cumulative.file_path = raster
 
     @property
     def watereros_kg(self):
@@ -1171,7 +1171,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._watereros_kg.plot = plot
-        self._watereros_kg.file = raster
+        self._watereros_kg.file_path = raster
 
     @property
     def watereros_mm(self):
@@ -1234,7 +1234,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._watereros_mm.plot = plot
-        self._watereros_mm.file = raster
+        self._watereros_mm.file_path = raster
 
     @property
     def tileros_kg(self):
@@ -1297,7 +1297,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._tileros_kg.plot = plot
-        self._tileros_kg.file = raster
+        self._tileros_kg.file_path = raster
 
     @property
     def tileros_mm(self):
@@ -1358,7 +1358,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._tileros_mm.plot = plot
-        self._tileros_mm.file = raster
+        self._tileros_mm.file_path = raster
 
     @property
     def capacity(self):
@@ -1427,7 +1427,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._capacity.plot = plot
-        self._capacity.file = raster
+        self._capacity.file_path = raster
 
     @property
     def rusle(self):
@@ -1492,7 +1492,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._rusle.plot = plot
-        self._rusle.file = raster
+        self._rusle.file_path = raster
 
     def make_routing_vector(self, modelinput, percentile=90, routing_missing=False):
         """Converts pandas dataframe of routing or routing_missing to a geopandas

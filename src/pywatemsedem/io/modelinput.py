@@ -122,7 +122,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._mask.plot = plot
-        self._mask.file = mask
+        self._mask.file_path = mask
 
     @property
     def rivermask(self):
@@ -196,7 +196,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._rivermask.plot = plot
-        self._rivermask.file = raster
+        self._rivermask.file_path = raster
 
     @property
     def cfactor(self):
@@ -258,7 +258,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._cfactor.plot = plot
-        self._cfactor.file = raster
+        self._cfactor.file_path = raster
 
     @property
     def buffers(self):
@@ -318,7 +318,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._buffers.plot = plot
-        self._buffers.file = raster
+        self._buffers.file_path = raster
 
     @property
     def dtm(self):
@@ -378,7 +378,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._dtm.plot = plot
-        self._dtm.file = raster
+        self._dtm.file_path = raster
 
     @property
     def kfactor(self):
@@ -438,7 +438,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._kfactor.plot = plot
-        self._kfactor.file = raster
+        self._kfactor.file_path = raster
 
     @property
     def ktc(self):
@@ -506,7 +506,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._ktc.plot = plot
-        self._ktc.file = raster
+        self._ktc.file_path = raster
 
     @property
     def outlet(self):
@@ -572,7 +572,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._outlet.plot = plot
-        self._outlet.file = raster
+        self._outlet.file_path = raster
 
     @property
     def pfactor(self):
@@ -632,7 +632,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._pfactor.plot = plot
-        self._pfactor.file = raster
+        self._pfactor.file_path = raster
 
     @property
     def compositelanduse(self):
@@ -668,7 +668,7 @@ class Modelinput(Factory):
             plot_landuse(self._compositelanduse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
-        self._compositelanduse.file = raster
+        self._compositelanduse.file_path = raster
 
     @property
     def ptef(self):
@@ -727,7 +727,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._ptef.plot = plot
-        self._ptef.file = raster
+        self._ptef.file_path = raster
 
     @property
     def riversegments(self):
@@ -798,7 +798,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._riversegments.plot = plot
-        self._riversegments.file = raster
+        self._riversegments.file_path = raster
 
     @property
     def riverrouting(self):
@@ -878,7 +878,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._riverrouting.plot = plot
-        self._riverrouting.file = raster
+        self._riverrouting.file_path = raster
 
     @property
     def sewers(self):
@@ -937,7 +937,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._sewers.plot = plot
-        self._sewers.file = raster
+        self._sewers.file_path = raster
 
     @property
     def upstream_segments(self):
@@ -961,7 +961,7 @@ class Modelinput(Factory):
         text: pathlib.Path | str
         """
         self._upstream_segments = pd.read_table(text)
-        self._upstream_segments.file = text
+        self._upstream_segments.file_path = text
         # checks
         array = self.upstream_segments[["line_id", "upstream_line"]].values
         valid_non_nan(array)
@@ -991,7 +991,7 @@ class Modelinput(Factory):
         """
 
         self._adjacent_segments = pd.read_table(text)
-        self._adjacent_segments.file = text
+        self._adjacent_segments.file_path = text
         # checks
         array = self.adjacent_segments.values
         valid_non_nan(array)
@@ -1032,7 +1032,7 @@ class Modelinput(Factory):
         valid_non_nan(self._ktil.arr)
         valid_array_type(self._ktil.arr, required_type=np.int16)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        self._ktil.file = raster
+        self._ktil.file_path = raster
 
     @property
     def tillagedirection(self):
@@ -1076,7 +1076,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._tillagedirection.plot = plot
-        self._tillagedirection.file = raster
+        self._tillagedirection.file_path = raster
 
     @property
     def orientedroughness(self):
@@ -1121,7 +1121,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._orientedroughness.plot = plot
-        self._orientedroughness.file = raster
+        self._orientedroughness.file_path = raster
 
     @property
     def ditches(self):
@@ -1198,7 +1198,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._ditches.plot = plot
-        self._ditches.file = raster
+        self._ditches.file_path = raster
 
     @property
     def dams(self):
@@ -1275,7 +1275,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._dams.plot = plot
-        self._dams.file = raster
+        self._dams.file_path = raster
 
     @property
     def cn(self):
@@ -1318,7 +1318,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._cn.plot = plot
-        self._cn.file = raster
+        self._cn.file_path = raster
 
     @property
     def rainfall(self):
@@ -1353,7 +1353,7 @@ class Modelinput(Factory):
                     "with both tab and space delimiters."
                 )
 
-        self._rainfall.file = text
+        self._rainfall.file_path = text
 
         # checks
         array = self.rainfall.values
