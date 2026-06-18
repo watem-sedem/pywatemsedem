@@ -148,6 +148,7 @@ class PostProcess(Factory):
         self._vct_routing_missing = None
         self._vct_sedi_export = None
         self._vct_sewer_in = None
+        self._vct_sinks = None
 
         # general
         self.home_folder = Path(home_folder)
@@ -609,6 +610,41 @@ class PostProcess(Factory):
         )
         return vct_out
 
+    @property
+    def vct_sinks(self):
+        """Return the sinks vector object.
+
+        If the sinks vector does not exist yet, it is created via
+        :meth:`merge_vct_sinks`.
+        """
+        if self._vct_sinks is None:
+            self.merge_vct_sinks()
+        return self._vct_sinks
+
+    @vct_sinks.setter
+    def vct_sinks(self, vector_input):
+        """Set the sinks vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing sinks vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata``.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = "'vct_sinks' must be set with a path (str or pathlib.Path)."
+            raise TypeError(msg)
+
+        self._vct_sinks = self.vector_factory(
+            Path(vector_input),
+            "Point",
+            flag_clip=False,
+        )
+
     def merge_vct_sinks(self):
         """
         Merge sewer and river sink shapefiles into a single output shapefile.
@@ -639,12 +675,10 @@ class PostProcess(Factory):
             )
             return
 
-        gdf_sewer_in = gpd.read_file(self.vct_sewer_in)
-        gdf_sedi_export = gpd.read_file(self.vct_sedi_export)
         gdf_sinks = pd.concat(
             [
-                gdf_sewer_in,
-                gdf_sedi_export,
+                self.vct_sewer_in.geodata,
+                self.vct_sedi_export.geodata,
             ],
             ignore_index=True,
         )
