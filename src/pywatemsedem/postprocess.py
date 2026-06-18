@@ -149,6 +149,7 @@ class PostProcess(Factory):
         self._vct_sedi_export = None
         self._vct_sewer_in = None
         self._vct_sinks = None
+        self._vct_grass_strips = None
 
         # general
         self.home_folder = Path(home_folder)
@@ -695,6 +696,41 @@ class PostProcess(Factory):
 
         self.vct_sinks = vct_out
 
+    @property
+    def vct_grass_strips(self):
+        """Return the grass strips vector object."""
+        return self._vct_grass_strips
+
+    @vct_grass_strips.setter
+    def vct_grass_strips(self, vector_input):
+        """Set the grass strips vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path, str or vector object
+            Path to an existing grass strips vector shapefile, or an already
+            initialized vector object exposing ``.file_path`` and ``.geodata``.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if hasattr(vector_input, "file_path") and hasattr(vector_input, "geodata"):
+            self._vct_grass_strips = vector_input
+            return
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = (
+                "'vct_grass_strips' must be set with a path "
+                "(str or pathlib.Path) or a vector object."
+            )
+            raise TypeError(msg)
+
+        self._vct_grass_strips = self.vector_factory(
+            Path(vector_input),
+            "Polygon",
+            flag_clip=False,
+        )
+
     def _process_grass_strips(self, compute_priority=True):
         """Compute graass strips efficiency and compute priority
 
@@ -730,7 +766,14 @@ class PostProcess(Factory):
                 self.files["rst_sedi_out"],
             )
 
-            gdf_grass_strips = gpd.read_file(self.files["vct_grass_strips"])
+            if self.vct_grass_strips is None:
+                msg = (
+                    "No grass strips vector available. Set 'vct_grass_strips' "
+                    "first with a path or vector object."
+                )
+                raise ValueError(msg)
+
+            gdf_grass_strips = self.vct_grass_strips.geodata.copy()
             gdf_grass_strips = gdf_grass_strips.merge(
                 df_grass_strips_eff, left_on="NR", right_on="gras_id_target", how="left"
             )
