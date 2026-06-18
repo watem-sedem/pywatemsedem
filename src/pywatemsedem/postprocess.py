@@ -710,12 +710,17 @@ class PostProcess(Factory):
         vector_input: pathlib.Path, str or vector object
             Path to an existing grass strips vector shapefile, or an already
             initialized vector object exposing ``.file_path`` and ``.geodata``.
+
+        Notes
+        -----
+        Validation is applied after setting via :meth:`valid_grass_strips`.
         """
         if self.mask is None:
             self.mask = self.modelinput.mask.file_path
 
         if hasattr(vector_input, "file_path") and hasattr(vector_input, "geodata"):
             self._vct_grass_strips = vector_input
+            self.valid_grass_strips()
             return
 
         if not isinstance(vector_input, (str, Path)):
@@ -730,6 +735,135 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
+        self.valid_grass_strips()
+
+    def valid_grass_strips(self):
+        """Validate the grass strips vector against compositelanduse.
+
+        The vector is valid when:
+
+        1. Polygon overlap only occurs on compositelanduse pixels with value
+           -1 (water), -2 (roads) or -6 (grass strips).
+        2. Every compositelanduse pixel with value -6 has polygon overlap.
+        """
+        if self._vct_grass_strips is None:
+            return
+
+        arr_compositelanduse = self.modelinput.compositelanduse.arr
+        rows_grass, cols_grass = np.where(arr_compositelanduse == -6)
+
+        gdf_grass = self._vct_grass_strips.geodata
+        if gdf_grass is None or gdf_grass.empty:
+            if len(rows_grass) == 0:
+                return
+            msg = (
+                "Grass strips vector is empty, but compositelanduse contains "
+                f"{len(rows_grass)} pixel(s) with value -6."
+            )
+            raise ValueError(msg)
+
+        gdf_grass = gdf_grass[gdf_grass.geometry.notnull()].copy()
+        gdf_grass = gdf_grass[~gdf_grass.geometry.is_empty]
+        if gdf_grass.empty:
+            if len(rows_grass) == 0:
+                return
+            msg = (
+                "Grass strips vector has no valid geometries, but "
+                "compositelanduse contains -6 pixels."
+            )
+            raise ValueError(msg)
+
+        target_crs = f"EPSG:{self.epsg}"
+        if gdf_grass.crs is not None and str(gdf_grass.crs) != target_crs:
+            gdf_grass = gdf_grass.to_crs(target_crs)
+
+        minx, miny, _, _ = self.rp["minmax"]
+        res = self.rp["res"]
+        nrows = self.rp["nrows"]
+
+        def _build_pixel_geometries(rows, cols):
+            return np.array(
+                [
+                    shapely.box(
+                        minx + col * res,
+                        miny + (nrows - row - 1) * res,
+                        minx + (col + 1) * res,
+                        miny + (nrows - row) * res,
+                    )
+                    for row, col in zip(rows, cols)
+                ],
+                dtype=object,
+            )
+
+        grass_union = shapely.union_all(gdf_grass.geometry.to_numpy())
+        if grass_union.is_empty:
+            if len(rows_grass) == 0:
+                return
+            msg = (
+                "Grass strips vector has empty union geometry, but "
+                "compositelanduse contains -6 pixels."
+            )
+            raise ValueError(msg)
+
+        # Rule 1: polygon overlap is only allowed on -1, -2 or -6 pixels.
+        allowed_values = np.array([-1, -2, -6])
+        allowed_mask = np.isin(arr_compositelanduse, allowed_values)
+        rows_disallowed, cols_disallowed = np.where(~allowed_mask)
+        if len(rows_disallowed) > 0:
+            disallowed_geometries = _build_pixel_geometries(
+                rows_disallowed, cols_disallowed
+            )
+            disallowed_overlap = (
+                shapely.area(shapely.intersection(disallowed_geometries, grass_union))
+                > 0
+            )
+            invalid_idx = np.where(disallowed_overlap)[0]
+
+            if invalid_idx.size > 0:
+                preview = ", ".join(
+                    [
+                        (
+                            f"(row={int(rows_disallowed[i]) + 1}, "
+                            f"col={int(cols_disallowed[i]) + 1}, "
+                            f"""value={int(arr_compositelanduse[
+                                rows_disallowed[i],
+                                cols_disallowed[i]
+                          ])})"""
+                        )
+                        for i in invalid_idx[:10]
+                    ]
+                )
+                msg = (
+                    "Invalid grass strips vector: polygon overlap is only allowed "
+                    "on compositelanduse values -1, -2 and -6. "
+                    f"Found overlap in {invalid_idx.size} disallowed pixel(s). "
+                    f"Examples: {preview}."
+                )
+                raise ValueError(msg)
+
+        # Rule 2: every -6 pixel must have overlap with a grass strip polygon.
+        if len(rows_grass) > 0:
+            grass_pixel_geometries = _build_pixel_geometries(rows_grass, cols_grass)
+            grass_overlap = (
+                shapely.area(shapely.intersection(grass_pixel_geometries, grass_union))
+                > 0
+            )
+            missing_idx = np.where(~grass_overlap)[0]
+
+            if missing_idx.size > 0:
+                preview = ", ".join(
+                    [
+                        f"(row={int(rows_grass[i]) + 1}, col={int(cols_grass[i]) + 1})"
+                        for i in missing_idx[:10]
+                    ]
+                )
+                msg = (
+                    "Invalid grass strips vector: every compositelanduse pixel "
+                    "with value -6 must have polygon overlap. "
+                    f"Missing coverage for {missing_idx.size} pixel(s). "
+                    f"Examples: {preview}."
+                )
+                raise ValueError(msg)
 
     def _process_grass_strips(self, compute_priority=True):
         """Compute graass strips efficiency and compute priority
