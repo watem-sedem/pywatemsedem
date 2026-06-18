@@ -144,6 +144,8 @@ class PostProcess(Factory):
 
         # DATA
         self._routing_non_river = None
+        self._vct_routing = None
+        self._vct_routing_missing = None
         self.vct_sedi_export = None
         self.vct_sewer_in = None
 
@@ -168,6 +170,13 @@ class PostProcess(Factory):
         self.ini = self.home_folder / self.scenario / "modelinput" / "inifile.ini"
         self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
         self.nodata = self.rp["nodata"]
+
+        super().__init__(
+            self.resolution,
+            self.epsg,
+            self.nodata,
+            self.sfolder.postprocessing_folder,
+        )
 
         self.modelinput = Modelinput(self.ini, self.resolution, self.epsg, self.nodata)
         self.modeloutput = Modeloutput(
@@ -239,6 +248,42 @@ class PostProcess(Factory):
             self.rp,
         )
 
+    @property
+    def vct_routing(self):
+        """Return the routing vector object.
+
+        If the routing vector does not exist yet, it is created with default
+        settings (full extent, no tile selection, no tag) via
+        :meth:`make_routing_vct`.
+        """
+        if self._vct_routing is None:
+            self.vct_routing = self.make_routing_vct()
+        return self._vct_routing
+
+    @vct_routing.setter
+    def vct_routing(self, vector_input):
+        """Set the routing vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing routing vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata``.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = "'vct_routing' must be set with a path (str or pathlib.Path)."
+            raise TypeError(msg)
+
+        self._vct_routing = self.vector_factory(
+            Path(vector_input),
+            "LineString",
+            flag_clip=False,
+        )
+
     def make_routing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing vector file based on routingfile
 
@@ -246,23 +291,70 @@ class PostProcess(Factory):
         ----------
         extent: list
             list holding value of extent to consider, xmin,ymin,xmax,ymax
-        tilenumber: int
+        tile_number: int
             id of tile
         tag: str
             tag to add to filename
-        """
 
-        self.vct_routing = self.sfolder.postprocessing_folder / (
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing vector shapefile.
+        """
+        file_path = self.sfolder.postprocessing_folder / (
             self.modeloutput.routing.file_path.stem + tag + ".shp"
         )
 
         make_routing_vct_saga(
             self.modeloutput.routing.file_path,
             self.modelinput.compositelanduse.file_path,
-            self.vct_routing,
+            file_path,
             self.rstparams,
             extent=extent,
             tile_number=tile_number,
+        )
+
+        # Set EPSG code to the shapefile
+        gdf = gpd.read_file(file_path)
+        gdf = gdf.set_crs(self.epsg)
+        gdf.to_file(file_path)
+
+        return file_path
+
+    @property
+    def vct_routing_missing(self):
+        """Return the routing missing vector object.
+
+        If the routing missing vector does not exist yet, it is created with default
+        settings (full extent, no tile selection, no tag) via
+        :meth:`make_routing_missing_vct`.
+        """
+        if self._vct_routing_missing is None:
+            self.vct_routing_missing = self.make_routing_missing_vct()
+        return self._vct_routing_missing
+
+    @vct_routing_missing.setter
+    def vct_routing_missing(self, vector_input):
+        """Set the routing missing vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing routing missing vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata`.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = "'vct_routing_missing' must be set with a path (str or pathlib.Path)."
+            raise TypeError(msg)
+
+        self._vct_routing_missing = self.vector_factory(
+            Path(vector_input),
+            "LineString",
+            flag_clip=False,
         )
 
     def make_routing_missing_vct(self, extent=None, tile_number=None, tag=""):
@@ -272,24 +364,35 @@ class PostProcess(Factory):
         ----------
         extent: list
             list holding value of extent to consider, xmin,ymin,xmax,ymax
-        tilenumber: int
+        tile_number: int
             id of tile
         tag: str
             tag to add to filename
-        """
 
-        self.vct_routing_missing = self.sfolder.postprocessing_folder / (
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing missing vector shapefile.
+        """
+        file_path = self.sfolder.postprocessing_folder / (
             self.modeloutput.routing_missing.file_path.stem + tag + ".shp"
         )
 
         make_routing_vct_saga(
             self.modeloutput.routing_missing.file_path,
             self.modelinput.compositelanduse.file_path,
-            self.vct_routing_missing,
+            file_path,
             self.rstparams,
             extent=extent,
             tile_number=tile_number,
         )
+
+        # Set EPSG code to the shapefile
+        gdf = gpd.read_file(file_path)
+        gdf = gdf.set_crs(self.epsg)
+        gdf.to_file(file_path)
+
+        return file_path
 
     def identify_priority_catchments(self, nmax=10, flag_merge=True):
         """Identify priority catchments
@@ -475,6 +578,61 @@ class PostProcess(Factory):
         gdf_sinks.to_file(vct_out, spatial_index="YES")
 
         self.vct_sinks = vct_out
+
+    def _process_grass_strips(self, compute_priority=True):
+        """Compute graass strips efficiency and compute priority
+
+        Parameters
+        ----------
+        compute_priority: bool, optional
+            Compute priorities for grass strips based on deposition in grass strip.
+
+        Returns
+        -------
+        gdf_grass_strips: geopandas.GeoDataFrame
+            See :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips` added
+            with columns (if compute_priority=True)
+                - *gras_id_target* (float): grass_id
+                - *gras_id_source* (float): grass_id
+                - *npixels_t* (float: number of pixels of target grass strip
+                - *sedi_in* (float): total incoming sediment in grass strip (kg)
+                - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
+                - *eSTE* (float): estimated sediment trapping efficiency, see
+                  :func:`pywatemsedem.grasstrips.estimate_ste` (%)
+                - sed (float): amount of sedimentation (kg)
+                - *column_value* (float): deposition in grass strip.
+                - *cum_sum* (float): cumulative sum of deposition in grass strips
+                - *cdf* (float): cumulative distribution estimate.
+        """
+        logger.info("Calculating in- and output of sediment for every grass strip...")
+        if self.dict_ecm_options["UseGras"] == 1:
+
+            _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
+                self.files["txt_routing"],
+                self.files["rst_grass_strips_id"],
+                self.files["rst_prckrt"],
+                self.files["rst_sedi_out"],
+            )
+
+            gdf_grass_strips = gpd.read_file(self.files["vct_grass_strips"])
+            gdf_grass_strips = gdf_grass_strips.merge(
+                df_grass_strips_eff, left_on="NR", right_on="gras_id_target", how="left"
+            )
+            if compute_priority:
+                gdf_grass_strips = compute_cdf_sediment_load(
+                    gdf_grass_strips,
+                    "sed",
+                    self.sfolder.postprocess_folder,
+                    ignore_negative_values=True,
+                    tag="grass_strips",
+                    plot=True,
+                )
+
+        else:
+            msg = "Can not process grass strips, 'UseGras'-option is set off."
+            logger.warning(msg)
+            gdf_grass_strips = gpd.GeoDataFrame()
+        return gdf_grass_strips
 
     def compute_source_sinks(self, percentage=50):
         """Source-sink algorithm to identify sources of erosion
@@ -994,61 +1152,6 @@ class PostProcess(Factory):
             flag_write=True,
             flag_join_vct_parcels=join,
         )
-
-    def _process_grass_strips(self, compute_priority=True):
-        """Compute graass strips efficiency and compute priority
-
-        Parameters
-        ----------
-        compute_priority: bool, optional
-            Compute priorities for grass strips based on deposition in grass strip.
-
-        Returns
-        -------
-        gdf_grass_strips: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips` added
-            with columns (if compute_priority=True)
-                - *gras_id_target* (float): grass_id
-                - *gras_id_source* (float): grass_id
-                - *npixels_t* (float: number of pixels of target grass strip
-                - *sedi_in* (float): total incoming sediment in grass strip (kg)
-                - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
-                - *eSTE* (float): estimated sediment trapping efficiency, see
-                  :func:`pywatemsedem.grasstrips.estimate_ste` (%)
-                - sed (float): amount of sedimentation (kg)
-                - *column_value* (float): deposition in grass strip.
-                - *cum_sum* (float): cumulative sum of deposition in grass strips
-                - *cdf* (float): cumulative distribution estimate.
-        """
-        logger.info("Calculating in- and output of sediment for every grass strip...")
-        if self.dict_ecm_options["UseGras"] == 1:
-
-            _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
-                self.files["txt_routing"],
-                self.files["rst_grass_strips_id"],
-                self.files["rst_prckrt"],
-                self.files["rst_sedi_out"],
-            )
-
-            gdf_grass_strips = gpd.read_file(self.files["vct_grass_strips"])
-            gdf_grass_strips = gdf_grass_strips.merge(
-                df_grass_strips_eff, left_on="NR", right_on="gras_id_target", how="left"
-            )
-            if compute_priority:
-                gdf_grass_strips = compute_cdf_sediment_load(
-                    gdf_grass_strips,
-                    "sed",
-                    self.sfolder.postprocess_folder,
-                    ignore_negative_values=True,
-                    tag="grass_strips",
-                    plot=True,
-                )
-
-        else:
-            msg = "Can not process grass strips, 'UseGras'-option is set off."
-            logger.warning(msg)
-            gdf_grass_strips = gpd.GeoDataFrame()
-        return gdf_grass_strips
 
     def merge_sedi_out_and_cumulative(self, segments_to_retain=None):
         """Merge SediOut.rst (sediment output on every land pixel) and

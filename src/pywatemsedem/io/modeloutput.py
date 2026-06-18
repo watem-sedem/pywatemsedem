@@ -1713,8 +1713,13 @@ def make_routing_vct_saga(
         # if condition True, run, if False (no routing segments available in
         # routing table) don't run
         if condition:
-            run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out)
-            return vct_out
+            run_saga_make_routing_shp_cmd(
+                txt_routing,
+                rst_prckrt,
+                vct_temp,
+                rstparams=rstparams,
+            )
+            return vct_temp
         else:
             msg = "No valid extent to clip routing "
             raise Warning(msg)
@@ -1836,7 +1841,64 @@ def condition_routing_dataframe_on_extent(df_routing, rstparams, extent):
     return df_routing
 
 
-def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out):
+def _parse_epsg_from_value(crs_value):
+    """Extract EPSG code as int from multiple CRS representations."""
+    if crs_value is None:
+        return None
+
+    if isinstance(crs_value, int):
+        return crs_value
+
+    if hasattr(crs_value, "to_epsg"):
+        epsg = crs_value.to_epsg()
+        if epsg is not None:
+            return int(epsg)
+
+    if isinstance(crs_value, str):
+        value = crs_value.upper().strip()
+        if "EPSG:" in value:
+            value = value.split(":")[-1]
+        if value.isdigit():
+            return int(value)
+
+    return None
+
+
+def _get_epsg_for_routing_vector(rstparams=None, rst_prckrt=None):
+    """Resolve the EPSG code for routing vectors."""
+    if isinstance(rstparams, dict):
+        epsg = _parse_epsg_from_value(rstparams.get("crs"))
+        if epsg is not None:
+            return epsg
+        epsg = _parse_epsg_from_value(rstparams.get("epsg"))
+        if epsg is not None:
+            return epsg
+
+    if rst_prckrt is not None:
+        _, profile = load_raster(rst_prckrt)
+        return _parse_epsg_from_value(profile.get("crs"))
+
+    return None
+
+
+def _set_vector_epsg(vct_out, epsg):
+    """Set CRS on a vector file and overwrite with explicit EPSG metadata."""
+    if epsg is None:
+        warnings.warn(f"Could not determine EPSG for routing vector '{vct_out}'.")
+        return
+
+    gdf_out = gpd.read_file(vct_out)
+    current_epsg = (
+        gdf_out.crs.to_epsg()
+        if (gdf_out.crs is not None and hasattr(gdf_out.crs, "to_epsg"))
+        else None
+    )
+    if current_epsg != epsg:
+        gdf_out = gdf_out.set_crs(epsg=epsg, allow_override=True)
+        gdf_out.to_file(vct_out, spatial_index="YES")
+
+
+def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out, rstparams=None):
     """
     Run the saga make routing shape command. This command makes from a pywatemsedem
     routing table and a pywatemsedem 'perceelskaart' a routing shapfile
@@ -1877,6 +1939,10 @@ def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out):
     ]
     cmd_args += ["-OUTPUTLINES", str(vct_out)]
     execute_saga(cmd_args)
+
+    epsg = _get_epsg_for_routing_vector(rstparams=rstparams, rst_prckrt=rst_prckrt)
+    _set_vector_epsg(vct_out, epsg)
+
     create_spatial_index(vct_out)
 
 
