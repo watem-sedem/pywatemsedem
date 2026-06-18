@@ -146,8 +146,8 @@ class PostProcess(Factory):
         self._routing_non_river = None
         self._vct_routing = None
         self._vct_routing_missing = None
-        self.vct_sedi_export = None
-        self.vct_sewer_in = None
+        self._vct_sedi_export = None
+        self._vct_sewer_in = None
 
         # general
         self.home_folder = Path(home_folder)
@@ -505,27 +505,109 @@ class PostProcess(Factory):
         vct_out = self.sfolder.postprocessing_folder / "priority_catchments_merged.shp"
         gpd_priorities.to_file(vct_out, spatial_index="YES")
 
-    def convert_rst_sedi_export_to_vct(self):
-        """Convert the sediexport raster to a vector file."""
+    @property
+    def vct_sedi_export(self):
+        """Return the sedi_export vector file path.
+
+        If the sedi_export vector does not exist yet, it is created via
+        :meth:`make_sedi_export_vct`.
+        """
+        if self._vct_sedi_export is None:
+            self.vct_sedi_export = self.make_sedi_export_vct()
+        return self._vct_sedi_export
+
+    @vct_sedi_export.setter
+    def vct_sedi_export(self, vector_input):
+        """Set the sedi_export vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing sedi_export vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata``.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = "'vct_sedi_export' must be set with a path (str or pathlib.Path)."
+            raise TypeError(msg)
+
+        self._vct_sedi_export = self.vector_factory(
+            Path(vector_input),
+            "Point",
+            flag_clip=False,
+        )
+
+    def make_sedi_export_vct(self):
+        """Make a sedi_export vector file from the raster.
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created sedi_export vector shapefile.
+        """
         vct_out = (
             self.sfolder.postprocessing_folder
             / f"{self.modeloutput.sedi_export.file_path.stem}.shp"
         )
         convert_rst_sinks_to_vct(
-            self.modeloutput.sedi_export.file_path, vct_out, "river", self.rp["epsg"]
+            self.modeloutput.sedi_export.file_path, vct_out, "river", self.epsg
         )
-        self.vct_sedi_export = vct_out
+        return vct_out
 
-    def convert_rst_sewer_in_to_vct(self):
-        """Convert the sewer_in raster to a vector file."""
+    @property
+    def vct_sewer_in(self):
+        """Return the sewer_in vector file path.
+
+        If the sewer_in vector does not exist yet, it is created via
+        :meth:`make_sewer_in_vct`.
+        """
+        if self._vct_sewer_in is None:
+            self.vct_sewer_in = self.make_sewer_in_vct()
+        return self._vct_sewer_in
+
+    @vct_sewer_in.setter
+    def vct_sewer_in(self, vector_input):
+        """Set the sewer_in vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing sewer_in vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata``.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = "'vct_sewer_in' must be set with a path (str or pathlib.Path)."
+            raise TypeError(msg)
+
+        self._vct_sewer_in = self.vector_factory(
+            Path(vector_input),
+            "Point",
+            flag_clip=False,
+        )
+
+    def make_sewer_in_vct(self):
+        """Make a sewer_in vector file from the raster.
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created sewer_in vector shapefile.
+        """
         vct_out = (
             self.sfolder.postprocessing_folder
             / f"{self.modeloutput.sewer_in.file_path.stem}.shp"
         )
         convert_rst_sinks_to_vct(
-            self.modeloutput.sewer_in.file_path, vct_out, "sewer", self.rp["epsg"]
+            self.modeloutput.sewer_in.file_path, vct_out, "sewer", self.epsg
         )
-        self.vct_sewer_in = vct_out
+        return vct_out
 
     def merge_vct_sinks(self):
         """
