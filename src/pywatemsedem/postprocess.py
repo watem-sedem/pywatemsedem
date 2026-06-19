@@ -33,6 +33,7 @@ from pywatemsedem.io.modeloutput import (
     define_subcatchments_saga,
     load_total_sediment_file,
     make_routing_vct_saga,
+    map_rank_sediment_loads,
     open_txt_routing_file,
 )
 from pywatemsedem.io.plots import plot_cumulative_sedimentload
@@ -150,6 +151,7 @@ class PostProcess(Factory):
         self._vct_sewer_in = None
         self._vct_sinks = None
         self._vct_grass_strips = None
+        self._vct_rank_sediment_load = None
 
         # general
         self.home_folder = Path(home_folder)
@@ -864,6 +866,71 @@ class PostProcess(Factory):
                     f"Examples: {preview}."
                 )
                 raise ValueError(msg)
+
+    @property
+    def vct_rank_sediment_load(self):
+        """Return the ranked sediment load vector object.
+
+        If it does not exist yet, it is created via
+        :meth:`make_rank_sediment_load_vct` with default settings.
+        """
+        if self._vct_rank_sediment_load is None:
+            self.vct_rank_sediment_load = self.make_rank_sediment_load_vct()
+        return self._vct_rank_sediment_load
+
+    @vct_rank_sediment_load.setter
+    def vct_rank_sediment_load(self, vector_input):
+        """Set the ranked sediment load vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing ranked sediment load vector shapefile.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = (
+                "'vct_rank_sediment_load' must be set with a path "
+                "(str or pathlib.Path)."
+            )
+            raise TypeError(msg)
+
+        self._vct_rank_sediment_load = self.vector_factory(
+            Path(vector_input),
+            "Point",
+            flag_clip=False,
+        )
+
+    def make_rank_sediment_load_vct(
+        self,
+        threshold=50,
+        filename="rank_sediment_load.shp",
+    ):
+        """Create a point vector with ranked and cumulative sediment load.
+
+        Parameters
+        ----------
+        threshold: float
+            See :func:`pywatemsedem.io.modeloutput.map_rank_sediment_loads`
+        filename: str, default "sediment_load_ranked.shp"
+            Output filename in the postprocessing folder.
+
+        Returns
+        -------
+        pathlib.Path
+            Path to the created ranked sediment load vector file.
+        """
+        fname = self.sfolder.postprocessing_folder / filename
+        map_rank_sediment_loads(
+            self.modeloutput.sedi_export.file_path,
+            threshold,
+            self.epsg,
+            vct_out=fname,
+            rst_endpoints=self.modeloutput.sewer_in.file_path,
+        )
+        return fname
 
     def _process_grass_strips(self, compute_priority=True):
         """Compute graass strips efficiency and compute priority

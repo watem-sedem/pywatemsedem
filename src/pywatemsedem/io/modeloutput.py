@@ -2192,7 +2192,7 @@ def create_deposition_raster(rst_watereros):
 
 
 def map_rank_sediment_loads(
-    rst_sedi_export, threshold, vct_out="rank.shp", rst_endpoints=None, unit="kg"
+    rst_sedi_export, threshold, epsg, vct_out="rank.shp", rst_endpoints=None, unit="kg"
 ):
     """Rank the sediment loads in sedi_export (and sewer_in) from high to low
 
@@ -2209,6 +2209,8 @@ def map_rank_sediment_loads(
         File path of WaTEM/SEDEM sedi_export raster.
     threshold: float
         See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`
+    epsg: int
+        EPSG code
     vct_out: str or pathlib.Path | str
         File path of output vector.
     rst_endpoints: str or pathlib.Path | str, default None
@@ -2230,13 +2232,15 @@ def map_rank_sediment_loads(
     )
     rst_to_vct_points(rst_out, vct_out)
     gdf_out = gpd.read_file(vct_out)
-    gdf_out["rank"] = gdf_out[Path(rst_out).stem]
+    gdf_out["rank"] = gdf_out[gdf_out.columns[0]]
     gdf_out = gdf_out.merge(df_sedi_export, on="rank")
     if unit == "ton":
         gdf_out["sedi_export"] = gdf_out["sedi_export"] / 1000
-    clean_up_tempfiles(Path(rst_out), "rst")
 
-    return gdf_out
+    gdf_out = gdf_out.dropna()
+    gdf_out = gdf_out.set_crs(epsg=epsg)
+    gdf_out.to_file(vct_out)
+    clean_up_tempfiles(Path(rst_out), "rst")
 
 
 def identify_rank_sediment_loads(
