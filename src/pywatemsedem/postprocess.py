@@ -871,37 +871,14 @@ class PostProcess(Factory):
     def vct_rank_sediment_load(self):
         """Return the ranked sediment load vector object.
 
-        If it does not exist yet, it is created via
-        :meth:`make_rank_sediment_load_vct` with default settings.
+        If it does not exist yet, an error is raised.
         """
         if self._vct_rank_sediment_load is None:
-            self.vct_rank_sediment_load = self.make_rank_sediment_load_vct()
-        return self._vct_rank_sediment_load
-
-    @vct_rank_sediment_load.setter
-    def vct_rank_sediment_load(self, vector_input):
-        """Set the ranked sediment load vector object from a file path.
-
-        Parameters
-        ----------
-        vector_input: pathlib.Path or str
-            Path to an existing ranked sediment load vector shapefile.
-        """
-        if self.mask is None:
-            self.mask = self.modelinput.mask.file_path
-
-        if not isinstance(vector_input, (str, Path)):
-            msg = (
-                "'vct_rank_sediment_load' must be set with a path "
-                "(str or pathlib.Path)."
+            raise IOError(
+                "No ranked sediment load vector created, run "
+                "'make_rank_sediment_load_vct' first."
             )
-            raise TypeError(msg)
-
-        self._vct_rank_sediment_load = self.vector_factory(
-            Path(vector_input),
-            "Point",
-            flag_clip=False,
-        )
+        return self._vct_rank_sediment_load
 
     def make_rank_sediment_load_vct(
         self,
@@ -922,15 +899,30 @@ class PostProcess(Factory):
         pathlib.Path
             Path to the created ranked sediment load vector file.
         """
-        fname = self.sfolder.postprocessing_folder / filename
+        vector_input = self.sfolder.postprocessing_folder / filename
         map_rank_sediment_loads(
             self.modeloutput.sedi_export.file_path,
             threshold,
             self.epsg,
-            vct_out=fname,
+            vct_out=vector_input,
             rst_endpoints=self.modeloutput.sewer_in.file_path,
         )
-        return fname
+
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        if not isinstance(vector_input, (str, Path)):
+            msg = (
+                "'vct_rank_sediment_load' must be set with a path "
+                "(str or pathlib.Path)."
+            )
+            raise TypeError(msg)
+
+        self._vct_rank_sediment_load = self.vector_factory(
+            Path(vector_input),
+            "Point",
+            flag_clip=False,
+        )
 
     def _process_grass_strips(self, compute_priority=True):
         """Compute graass strips efficiency and compute priority
