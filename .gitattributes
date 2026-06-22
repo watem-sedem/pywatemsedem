@@ -57,3 +57,18 @@ tests/**/data/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.csv filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.ini filter=lfs diff=lfs merge=lfs -text
+
+tests/postprocess/**/*.rst filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.rdc filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.tif filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.shp filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.shx filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.dbf filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.prj filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.cpg filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.txt filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.sdat filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.csv filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.ini filter=lfs diff=lfs merge=lfs -text
