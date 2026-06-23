@@ -18,6 +18,7 @@ from pywatemsedem.geo.utils import (
     create_filename,
     create_spatial_index,
     execute_saga,
+    get_rstparams,
     load_raster,
     mask_array_with_val,
     raster_array_to_pandas_dataframe,
@@ -63,8 +64,14 @@ class Modeloutput(Factory):
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
+        # arguments
+        self.resolution = resolution
+        self.epsg = epsg
+        self.nodata = nodata
+
         # inifile and modeloutput folder
         self.ini = ini
+        self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
         self.modelinputfolder = Path(
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
@@ -101,6 +108,7 @@ class Modeloutput(Factory):
         self._tileros_mm = None
         self._capacity = None
         self._rusle = None
+        self._sinks = None
 
     @property
     def aspect(self):
@@ -144,7 +152,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, self.nodata)
             ticks = [0, np.pi / 2, np.pi, 3 / 2 * np.pi, 2 * np.pi]
             fig, ax = plot_output_raster(
                 fig,
@@ -334,7 +342,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.ls.arr, required_type=np.float32)
         valid_boundaries(
-            self.ls.arr[(self.mask.arr != self._nodata) & (segments.arr < 1)],
+            self.ls.arr[(self.mask.arr != self.nodata) & (segments.arr < 1)],
             lower=0,
             upper=None,
         )
@@ -361,7 +369,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.ls.arr, self.ls.arr, self._nodata)
+            arr = mask_array_with_val(self.ls.arr, self.ls.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -401,7 +409,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.slope.arr, required_type=np.float32)
         valid_boundaries(
-            self.slope.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.slope.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -426,7 +434,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.slope.arr, self.slope.arr, self._nodata)
+            arr = mask_array_with_val(self.slope.arr, self.slope.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -466,7 +474,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.uparea.arr, required_type=np.float32)
         valid_boundaries(
-            self.uparea.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.uparea.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -496,7 +504,7 @@ class Modeloutput(Factory):
                 msg = "Assign ls to Modeloutput before plotting uparea"
                 raise NotImplementedError(msg)
             else:
-                arr = mask_array_with_val(self.uparea.arr, self.ls.arr, self._nodata)
+                arr = mask_array_with_val(self.uparea.arr, self.ls.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -630,7 +638,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sewer_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sewer_in.arr[self.mask.arr != self._nodata],
+            self.sewer_in.arr[self.mask.arr != self.nodata],
             lower=0,
             upper=None,
             tolerance=0.001,
@@ -660,9 +668,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(
-                self.sewer_in.arr, self.sewer_in.arr, self._nodata
-            )
+            arr = mask_array_with_val(self.sewer_in.arr, self.sewer_in.arr, self.nodata)
             arr = mask_array_with_val(arr, self.sewer_in.arr, 0)
             fig, ax = plot_output_raster(
                 fig,
@@ -704,7 +710,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_export.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_export.arr[self.mask.arr != self._nodata],
+            self.sedi_export.arr[self.mask.arr != self.nodata],
             lower=0,
             upper=None,
             tolerance=0.001,
@@ -737,14 +743,14 @@ class Modeloutput(Factory):
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.sedi_export.arr, self.mask.arr, 0)
             arr = mask_array_with_val(
-                self.sedi_export.arr, self.sedi_export.arr, self._nodata
+                self.sedi_export.arr, self.sedi_export.arr, self.nodata
             )
             # mask where the river is not present
             if not self.ls:
                 msg = "Assign ls to Modeloutput before plotting sedi_export"
                 raise NotImplementedError(msg)
             else:
-                arr = np.ma.masked_where(self.ls.arr != self._nodata, arr)
+                arr = np.ma.masked_where(self.ls.arr != self.nodata, arr)
             if not ticks:
                 arr_nozeros = mask_array_with_val(arr, arr, 0)
                 arr_nozeros = np.ma.filled(arr_nozeros, np.nan)
@@ -771,6 +777,109 @@ class Modeloutput(Factory):
         self._sedi_export.file_path = raster
 
     @property
+    def sinks(self):
+        """Return the sinks raster.
+
+        Sinks is computed as the sum of sewer_in and sedi_export.
+        This represents the total sediment load reaching sink points.
+        """
+        if self._sinks is None:
+            self.sinks = None
+        return self._sinks
+
+    @sinks.setter
+    def sinks(self, raster):
+        """Set the sinks raster.
+
+        If raster is None, sinks is computed from sewer_in and sedi_export,
+        written to a temporary GeoTIFF, and loaded as a raster factory object.
+        Otherwise, sinks is loaded from the provided raster path.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str | None
+            Path to a sinks raster file, or None to compute from sewer_in +
+            sedi_export.
+        """
+
+        if raster is None:
+            # Sum endpoints (for now only sewer_in) and sedi_export
+            arr_sewer_in = np.where(
+                self.sewer_in.arr == self.nodata, 0, self.sewer_in.arr
+            )
+            arr_sedi_export = np.where(
+                self.sedi_export.arr == self.nodata, 0, self.sedi_export.arr
+            )
+            arr_sinks = arr_sewer_in + arr_sedi_export
+            arr_sinks[self.mask.arr == self.nodata] = self.nodata
+
+            rst_sinks = self.modeloutputfolder / "sinks.rst"
+            write_arr_as_rst(arr_sinks, rst_sinks, np.float32, self.rstparams)
+            self._sinks = self.raster_factory(rst_sinks, flag_mask=False)
+            raster_used = rst_sinks
+        else:
+            self._sinks = self.raster_factory(raster, flag_mask=False)
+            raster_used = raster
+
+        valid_array_type(self.sinks.arr, required_type=np.float32)
+        valid_boundaries(
+            self.sinks.arr[self.mask.arr != self.nodata],
+            lower=0,
+            upper=None,
+            tolerance=0.001,
+        )
+        check_raster_properties_raster_with_template(
+            self.rp, raster_used, epsg=self.rp.epsg
+        )
+
+        title = "sinks [kg/year]"
+
+        def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
+            """Plot the sinks raster with a non-linear colormap.
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = None
+                Possibility to supply a list of 5 values for ticks of colorscale.
+                Default is 0th, 25th, 50th, 75th and 100th percentile
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.sinks.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.sinks.arr, self.sinks.arr, self.nodata)
+            if not ticks:
+                arr_nozeros = mask_array_with_val(arr, arr, 0)
+                arr_nozeros = np.ma.filled(arr_nozeros, np.nan)
+                ticks = np.nanpercentile(arr_nozeros, [0, 25, 50, 75, 100])
+                ticks = np.round(ticks).tolist()
+            fig, ax = plot_output_raster(
+                fig,
+                ax,
+                arr,
+                self.mask.arr,
+                self.rp.bounds,
+                title,
+                ticks,
+                cmap=COLORMAP_SEDI_OUT,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+            return fig, ax
+
+        self._sinks.plot = plot
+        self._sinks.file_path = raster_used
+
+    @property
     def sedi_in(self):
         """Return the sedi_in raster.
 
@@ -792,7 +901,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_in.arr[self.mask.arr != self._nodata],
+            self.sedi_in.arr[self.mask.arr != self.nodata],
             lower=0,
             upper=None,
             tolerance=1e-3,
@@ -861,7 +970,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_out.arr[self.mask.arr != self._nodata],
+            self.sedi_out.arr[self.mask.arr != self.nodata],
             lower=0,
             upper=None,
             tolerance=1e-3,
@@ -930,7 +1039,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedtil_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedtil_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedtil_in.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedtil_in [kg/year]"
@@ -996,7 +1105,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedtil_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedtil_out.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedtil_out.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedtil_out [kg/year]"
@@ -1062,7 +1171,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.cumulative.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.cumulative.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "cumulative [kg/year]"
@@ -1087,7 +1196,7 @@ class Modeloutput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, self.nodata)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
@@ -1382,7 +1491,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
         valid_boundaries(
-            self.capacity.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.capacity.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -1408,7 +1517,7 @@ class Modeloutput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, self.nodata)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
@@ -1451,7 +1560,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
         valid_boundaries(
-            self.rusle.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.rusle.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -1477,7 +1586,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig=fig,
                 ax=ax,
