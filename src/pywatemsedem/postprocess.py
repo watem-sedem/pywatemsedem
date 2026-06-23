@@ -709,27 +709,16 @@ class PostProcess(Factory):
 
         Parameters
         ----------
-        vector_input: pathlib.Path, str or vector object
-            Path to an existing grass strips vector shapefile, or an already
-            initialized vector object exposing ``.file_path`` and ``.geodata``.
-
-        Notes
-        -----
-        Validation is applied after setting via :meth:`valid_grass_strips`.
+        vector_input: pathlib.Path or str
+            Path to an existing grass strips vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata``.
         """
         if self.mask is None:
             self.mask = self.modelinput.mask.file_path
 
-        if hasattr(vector_input, "file_path") and hasattr(vector_input, "geodata"):
-            self._vct_grass_strips = vector_input
-            self.valid_grass_strips()
-            return
-
         if not isinstance(vector_input, (str, Path)):
-            msg = (
-                "'vct_grass_strips' must be set with a path "
-                "(str or pathlib.Path) or a vector object."
-            )
+            msg = "'vct_grass_strips' must be set with a path (str or pathlib.Path)."
             raise TypeError(msg)
 
         self._vct_grass_strips = self.vector_factory(
@@ -737,7 +726,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self.valid_grass_strips()
 
     def valid_grass_strips(self):
         """Validate the grass strips vector against compositelanduse.
@@ -924,8 +912,8 @@ class PostProcess(Factory):
             flag_clip=False,
         )
 
-    def _process_grass_strips(self, compute_priority=True):
-        """Compute graass strips efficiency and compute priority
+    def process_grass_strips(self, compute_priority=True):
+        """Compute grass strips efficiency and compute priority
 
         Parameters
         ----------
@@ -950,40 +938,53 @@ class PostProcess(Factory):
                 - *cdf* (float): cumulative distribution estimate.
         """
         logger.info("Calculating in- and output of sediment for every grass strip...")
-        if self.dict_ecm_options["UseGras"] == 1:
 
-            _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
-                self.files["txt_routing"],
-                self.files["rst_grass_strips_id"],
-                self.files["rst_prckrt"],
-                self.files["rst_sedi_out"],
+        if self.vct_grass_strips is None:
+            msg = (
+                "No grass strips vector available. Set 'vct_grass_strips' "
+                "first with a path."
+            )
+            raise ValueError(msg)
+
+        rst_grass_strips_id = self.sfolder.postprocessing_folder / "grass_strips_id.rst"
+
+        arr_grass_strips_id = self.vct_grass_strips.rasterize(
+            self.modelinput.compositelanduse.file_path,
+            self.epsg,
+            col="NR",
+            dtype_raster="integer",
+            nodata=-9999,
+            gdal=False,
+        )
+
+        write_arr_as_rst(
+            arr_grass_strips_id,
+            rst_grass_strips_id,
+            np.int32,
+            self.rstparams,
+        )
+
+        _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
+            self.modeloutput.routing.file_path,
+            rst_grass_strips_id,
+            self.modelinput.compositelanduse.file_path,
+            self.modeloutput.sedi_out.file_path,
+        )
+
+        gdf_grass_strips = self.vct_grass_strips.geodata.copy()
+        gdf_grass_strips = gdf_grass_strips.merge(
+            df_grass_strips_eff, left_on="NR", right_on="gras_id_target", how="left"
+        )
+        if compute_priority:
+            gdf_grass_strips = compute_cdf_sediment_load(
+                gdf_grass_strips,
+                "sed",
+                self.sfolder.postprocessing_folder,
+                ignore_negative_values=True,
+                tag="grass_strips",
+                plot=True,
             )
 
-            if self.vct_grass_strips is None:
-                msg = (
-                    "No grass strips vector available. Set 'vct_grass_strips' "
-                    "first with a path or vector object."
-                )
-                raise ValueError(msg)
-
-            gdf_grass_strips = self.vct_grass_strips.geodata.copy()
-            gdf_grass_strips = gdf_grass_strips.merge(
-                df_grass_strips_eff, left_on="NR", right_on="gras_id_target", how="left"
-            )
-            if compute_priority:
-                gdf_grass_strips = compute_cdf_sediment_load(
-                    gdf_grass_strips,
-                    "sed",
-                    self.sfolder.postprocess_folder,
-                    ignore_negative_values=True,
-                    tag="grass_strips",
-                    plot=True,
-                )
-
-        else:
-            msg = "Can not process grass strips, 'UseGras'-option is set off."
-            logger.warning(msg)
-            gdf_grass_strips = gpd.GeoDataFrame()
         return gdf_grass_strips
 
     def compute_source_sinks(self, percentage=50):
