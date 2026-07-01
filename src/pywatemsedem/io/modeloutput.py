@@ -2474,19 +2474,23 @@ def compute_cumulative_loads_in_sinks(
             "cumulative_sedi_export.png",
         )
 
-    # hotfix on percentage: if the first percentage is higher than the
-    # user-predefined percentage, adjust it (small catchments)!
-    threshold = verify_highest_load_with_threshold(df_sedi_export, threshold)
-
     # prepare ids for subcatchment delineation
     df_sedi_export["rank"] = profile["nodata"]
     df_sedi_export["class"] = profile["nodata"]
 
-    # assign unique id's - in order of importance - to records
-    cond = (df_sedi_export["cum_perc"] <= threshold) & (
-        ~df_sedi_export["cum_perc"].isnull()
-    )
-    df_sedi_export.loc[cond, "rank"] = np.arange(np.sum(cond)) + 1
+    # assign unique ids using "net over threshold" logic:
+    # all rows below threshold + first row reaching/exceeding threshold
+    cond_valid = ~df_sedi_export["cum_perc"].isnull()
+    cond_below_threshold = cond_valid & (df_sedi_export["cum_perc"] < threshold)
+    cond_at_or_above_threshold = cond_valid & (df_sedi_export["cum_perc"] >= threshold)
+    if cond_at_or_above_threshold.any():
+        first_exceeding_idx = df_sedi_export.loc[cond_at_or_above_threshold].index[0]
+        cond_selected = cond_below_threshold.copy()
+        cond_selected.loc[first_exceeding_idx] = True
+    else:
+        cond_selected = cond_valid.copy()
+
+    df_sedi_export.loc[cond_selected, "rank"] = np.arange(np.sum(cond_selected)) + 1
 
     # calculate percentage
     df_sedi_export["perc"] = [
@@ -2498,19 +2502,31 @@ def compute_cumulative_loads_in_sinks(
         for i in range(0, len(df_sedi_export))
     ]
 
-    # chekc if begin percentage is below delta_perc
+    # check if begin percentage is below delta_perc
     bperc = delta
     eperc = int(threshold + 1)
     if df_sedi_export["cum_perc"].iloc[0] > bperc:
         bperc = int(np.ceil(df_sedi_export["cum_perc"].iloc[0] / 10) * 10)
 
+    # make sure classing includes the selected sink that crosses threshold
+    if cond_selected.any():
+        max_selected_cum_perc = df_sedi_export.loc[cond_selected, "cum_perc"].max()
+        eperc = max(eperc, int(np.ceil(max_selected_cum_perc)) + 1)
+
     for i in range(bperc, eperc, delta):
         cond = (
             (df_sedi_export["cum_perc"] > i - delta)
             & (df_sedi_export["cum_perc"] <= i)
-            & (~df_sedi_export["cum_perc"].isnull())
+            & cond_selected
         )
         df_sedi_export.loc[cond, "class"] = i
+
+    # Fallback: ensure every selected sink receives a class.
+    cond_missing_class = cond_selected & (df_sedi_export["class"] == profile["nodata"])
+    if cond_missing_class.any():
+        df_sedi_export.loc[cond_missing_class, "class"] = (
+            np.ceil(df_sedi_export.loc[cond_missing_class, "cum_perc"] / delta) * delta
+        )
 
     return (
         df_sedi_export[

@@ -10,9 +10,7 @@ import shapely
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
-    clean_up_tempfiles,
     compute_statistics_rasters_per_polygon_vector,
-    create_filename,
     execute_saga,
     get_rstparams,
     load_raster,
@@ -33,7 +31,6 @@ from pywatemsedem.io.modeloutput import (
     define_subcatchments_saga,
     load_total_sediment_file,
     make_routing_vct_saga,
-    map_rank_sediment_loads,
     open_txt_routing_file,
 )
 from pywatemsedem.io.plots import plot_cumulative_sedimentload
@@ -105,15 +102,6 @@ def valid_rivers(self):
         raise IOError(msg)
 
 
-def valid_sinks(self):
-    """Check if any sinks present in catchment"""
-    if (self.files["rst_endpoints"] is None) and (
-        self.files["rst_riverrouting"] is None
-    ):
-        msg = "No sinks (rivers and endpoints) in catchments."
-        raise IOError(msg)
-
-
 class PostProcess(Factory):
     """Initialisation of the postprocess class.
 
@@ -151,7 +139,8 @@ class PostProcess(Factory):
         self._vct_sewer_in = None
         self._vct_sinks = None
         self._vct_grass_strips = None
-        self._vct_rank_sediment_load = None
+        self._vct_priority_sinks = None
+        self._sinks = None
 
         # general
         self.home_folder = Path(home_folder)
@@ -228,7 +217,7 @@ class PostProcess(Factory):
     def identify_subcatchments_to_buffers(self):
         """Define the separate subcatchments to the buffer outlets.
 
-        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_buffers`
+        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_target_ids`
         """
 
         try:
@@ -245,11 +234,12 @@ class PostProcess(Factory):
         if not routing_nonriver.exists():
             self.remove_river_routing()
 
-        identify_subcatchments_to_buffers(
+        identify_subcatchments_to_target_ids(
             buffers.file_path,
             routing_nonriver,
             self.sfolder.postprocessing_folder,
             self.rp,
+            tag="catchments_to_buffers",
         )
 
     @property
@@ -855,63 +845,6 @@ class PostProcess(Factory):
                 )
                 raise ValueError(msg)
 
-    @property
-    def vct_rank_sediment_load(self):
-        """Return the ranked sediment load vector object.
-
-        If it does not exist yet, an error is raised.
-        """
-        if self._vct_rank_sediment_load is None:
-            raise IOError(
-                "No ranked sediment load vector created, run "
-                "'make_rank_sediment_load_vct' first."
-            )
-        return self._vct_rank_sediment_load
-
-    def make_rank_sediment_load_vct(
-        self,
-        threshold=50,
-        filename="rank_sediment_load.shp",
-    ):
-        """Create a point vector with ranked and cumulative sediment load.
-
-        Parameters
-        ----------
-        threshold: float
-            See :func:`pywatemsedem.io.modeloutput.map_rank_sediment_loads`
-        filename: str, default "sediment_load_ranked.shp"
-            Output filename in the postprocessing folder.
-
-        Returns
-        -------
-        pathlib.Path
-            Path to the created ranked sediment load vector file.
-        """
-        vector_input = self.sfolder.postprocessing_folder / filename
-        map_rank_sediment_loads(
-            self.modeloutput.sedi_export.file_path,
-            threshold,
-            self.epsg,
-            vct_out=vector_input,
-            rst_endpoints=self.modeloutput.sewer_in.file_path,
-        )
-
-        if self.mask is None:
-            self.mask = self.modelinput.mask.file_path
-
-        if not isinstance(vector_input, (str, Path)):
-            msg = (
-                "'vct_rank_sediment_load' must be set with a path "
-                "(str or pathlib.Path)."
-            )
-            raise TypeError(msg)
-
-        self._vct_rank_sediment_load = self.vector_factory(
-            Path(vector_input),
-            "Point",
-            flag_clip=False,
-        )
-
     def process_grass_strips(self, compute_priority=True):
         """Compute grass strips efficiency and compute priority
 
@@ -987,211 +920,100 @@ class PostProcess(Factory):
 
         return gdf_grass_strips
 
-    def compute_source_sinks(self, percentage=50):
-        """Source-sink algorithm to identify sources of erosion
-        (parcels or subcatchments) that lead to sediment sinks in the river
-        (or sewer).
+    @property
+    def vct_priority_sinks(self):
+        """Return the priority sinks vector object.
 
-        Parameters
-        ----------
-        percentage: int
-            X % highest load that the user wants to analyse
+        If it does not exist yet, an error is raised.
         """
-        valid_sinks(self)
-        df_sediexport, percentage = self.identify_sinks(percentage)
-        dict_rst_subcatchmsinks = {}
-        dict_vct_subcatchmsinks = {}
-        temp = create_filename(".txt")
-        self.routing_non_river.to_csv(temp, sep="\t", index=False)
-        (
-            dict_rst_subcatchmsinks[percentage],
-            dict_vct_subcatchmsinks[percentage],
-        ) = define_subcatchments_saga(
-            self.rst_sinks,
-            temp,
-            self.sfolder.postprocess_folder,
-            self.rp,
-            f"sourcesink_perc_{percentage}",
-        )
-        # assign cumulative percentage, percentage and class
-        df_subcatchments = gpd.read_file(dict_vct_subcatchmsinks[percentage])
-        df_subcatchments = df_subcatchments.merge(
-            df_sediexport, left_on="VALUE", right_on="id", how="left"
-        )
-        df_subcatchments.drop(columns=["id"], inplace=True)
-        df_subcatchments = df_subcatchments.set_crs(
-            self.rp["epsg"], allow_override=True
-        )
-        # check lijn hieronder
-        df_subcatchments.to_file(
-            dict_vct_subcatchmsinks[percentage], spatial_index="YES"
-        )
-        clean_up_tempfiles(temp, "txt")
+        if self._vct_priority_sinks is None:
+            raise IOError(
+                "No priority sinks vector created, run "
+                "'select_priority_sinks' first."
+            )
+        return self._vct_priority_sinks
 
-    def identify_sinks(self, percentage):
-        """Identify X % highest sinks of sediment.
-
-        Analyse cumulative sediment load by sorting SediExport
-        from high to low, and identify sediment sinks.
-
-        Parameters
-        ----------
-        percentage: int
-            x percentage highest load that the user wants to analyse
-        rst_sinks: str
-            filename of raster that contains sink point (values in raster
-            should be between 0 and 100 %)
-
-        Returns
-        -------
-        df_sediexport: pandas.DataFrame
-            Data Frame format of SediExport raster (format: see
-            :func:`pywatemsedem.utils.raster_array_to_pandas_dataframe`)
-        percentage: int
-            Updated x percentage highest load that the user want to analyse
-        """
-        arr_sediexport, profile = load_raster(self.files["rst_sediexport"])
-        arr_sediexport = np.where(
-            arr_sediexport == profile["nodata"], 0, arr_sediexport
-        )
-
-        # if self.dict_model_options["Include sewers"]:
-        #    arr_endpoints, _ = load_raster(self.files["rst_endpoints"])
-        #    arr_endpoints = np.where(arr_endpoints == -9999, 0, arr_endpoints)
-        #    arr_sediexport += arr_endpoints
-
-        df_sediexport = raster_array_to_pandas_dataframe(
-            arr_sediexport, self.rp.rasterio_profile
-        )
-        profile["driver"] = "GTiff"
-
-        # sort and select points
-        df_sediexport, percentage = self.analyse_cumulative_sediexport(
-            df_sediexport, profile, percentage, plot=False
-        )
-        arr_sediexport = raster_dataframe_to_arr(
-            df_sediexport, self.rp.rasterio_profile, "id", np.float32
-        )
-        self.rst_sinks = self.sfolder.postprocess_folder / "sinks.tif"
-        self.sinks = arr_sediexport
-        self.sinks.write(self.rst_sinks, "tiff", nodata=-9999)
-
-        return df_sediexport, percentage
-
-    def analyse_cumulative_sediexport(
-        self, df_sediexport, profile, percentage, delta_perc=10, plot=False
+    def select_priority_sinks(
+        self,
+        threshold=50,
+        filename="priority_sinks.shp",
     ):
-        """Analyse cumulative sediment load by sorting SediExport values
-        from high to low
+        """Select priority sinks using minimum subset to reach threshold load.
+
+        This method identifies the minimum number of sinks (starting from the
+        highest-ranked) needed to collectively reach at least the specified
+        cumulative sediment load percentage.
 
         Parameters
         ----------
-        df_sediexport: pandas.DataFrame
-            Data Frame format of SediExport raster (format: see
-            :func:`pywatemsedem.utils.raster_array_to_pandas_dataframe`)
-        profile: rasterio.profiles
-            see :func:`rasterio.open`
-        percentage: int
-            x percentage highest load that the user wants to analyse
-        delta_perc: int
-            delta used to iterate percentage
-        plot: bool, default False
-            True if you want a cumulative SediExport plot
+        threshold: float, default 50
+            Target cumulative percentage of total sink sediment load to reach.
+            For example, threshold=50 selects the fewest sinks needed to
+            account for at least 50% of total sediment.
+        filename: str, default "priority_sinks.shp"
+            Output filename in the postprocessing folder.
 
         Returns
         -------
-        df_sediexport: pandas.DataFrame
-            Data Frame format of SediExport raster (format: see
-            :func:`pywatemsedem.utils.raster_array_to_pandas_dataframe`) added
-            with:
+        tuple
+            Tuple with:
 
-            - *cum_perc* (float): cumulative highest load
-            - *perc* (float): percentage highest load
-            - *class* (int): class as defined by `delta_perc`
+            - geopandas.GeoDataFrame: Selected sinks sorted by sediment
+              descending, with sediment, cumsum, cumperc and NR columns.
+            - pathlib.Path: Path to the created priority sinks shapefile.
+        """
+        gdf_sinks = self.vct_sinks.geodata.copy(deep=True)
 
-        percentage: str
-            updated percentage
+        # Find minimum number of sinks needed to reach at least the threshold percentage
+        # idxmax() returns the index of the first True value in the boolean mask
+        idx_threshold = (gdf_sinks["cumperc"] >= threshold).idxmax()
+        gdf_priority_sinks = gdf_sinks.loc[:idx_threshold].copy()
+        gdf_priority_sinks = gdf_priority_sinks.reset_index(drop=True)
+        gdf_priority_sinks.insert(0, "NR", np.arange(1, len(gdf_priority_sinks) + 1))
+
+        # Save to shapefile in postprocessing folder with given filename
+        vct_out = self.sfolder.postprocessing_folder / filename
+        gdf_priority_sinks.to_file(vct_out, spatial_index="YES")
+
+        self._vct_priority_sinks = self.vector_factory(
+            vct_out,
+            "Point",
+            flag_clip=False,
+        )
+
+        return gdf_priority_sinks
+
+    def identify_subcatchments_to_priority_sinks(self):
+        """Define subcatchments that drain to selected priority sinks.
+
+        This method rasterizes ``self.vct_priority_sinks`` using the ``NR``
+        field and delineates subcatchments for each resulting sink id.
+
+        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_target_ids`
         """
 
-        # sort according to values of sediment load into river
-        df_sediexport["sediexport"] = df_sediexport["val"]
-        df_sediexport = df_sediexport.sort_values("sediexport", ascending=False)
+        routing_nonriver = self.routing_non_river.file_path
 
-        # calculate cumulative sum, in percentage
-        cond = (df_sediexport["sediexport"] != profile["nodata"]) & (
-            df_sediexport["val"] != 0.0
-        )
-        df_sediexport.loc[cond, "cum_sum"] = df_sediexport.loc[
-            cond, "sediexport"
-        ].cumsum()
-        df_sediexport.loc[cond, "cum_perc"] = (
-            100
-            * df_sediexport.loc[cond, "cum_sum"]
-            / df_sediexport.loc[cond, "sediexport"].sum()
-        )
+        # Create routing file without river routing if needed
+        if not routing_nonriver.exists():
+            self.remove_river_routing()
 
-        if plot:
-            plot_cumulative_sedimentload(
-                df_sediexport.loc[cond],
-                percentage,
-                self.sfolder.postprocess_folder / "cumulative_sediexport.png",
-            )
+        rst_priority_sinks = self.sfolder.postprocessing_folder / "priority_sinks.rst"
+        # arr_priority_sinks = self.vct_priority_sinks.rasterize(
+        #    self.modelinput.compositelanduse.file_path,
+        #    self.epsg,
+        #    col="NR",
+        #    dtype_raster="integer",
+        #    nodata=self.rstparams["nodata"],
+        #    gdal=False,
+        # )
 
-        # hotfix on percentage: if the first percentage is higher than the
-        # user-predefined percentage, adjust it (small catchments)!
-        cum_sum_sinks0 = df_sediexport["cum_perc"].iloc[0]
-        if cum_sum_sinks0 > percentage:
-            msg = (
-                f"Sinks receiving most sediment has a cumulative relative "
-                f"sediment load higher than {percentage}%, "
-            )
-            msg += (
-                f"changing percentage {percentage}% " f"to {np.ceil(cum_sum_sinks0)}%"
-            )
-
-            logger.warning(msg)
-            percentage = np.ceil(cum_sum_sinks0)
-
-        # prepare ids for subcatchment delineation
-        df_sediexport["id"] = profile["nodata"]
-        df_sediexport["class"] = profile["nodata"]
-
-        # assign unique id's - in order of importance - to records
-        cond = (df_sediexport["cum_perc"] <= percentage) & (
-            ~df_sediexport["cum_perc"].isnull()
-        )
-        df_sediexport.loc[cond, "id"] = np.arange(np.sum(cond)) + 1
-
-        # calculate percentage
-        df_sediexport["perc"] = [
-            (
-                df_sediexport["cum_perc"].iloc[i]
-                - df_sediexport["cum_perc"].iloc[i - 1]
-                if i != 0
-                else df_sediexport["cum_perc"].iloc[i]
-            )
-            for i in range(0, len(df_sediexport))
-        ]
-
-        # chekc if begin percentage is below delta_perc
-        bperc = delta_perc
-        eperc = int(percentage + 1)
-        if df_sediexport["cum_perc"].iloc[0] > bperc:
-            bperc = int(np.ceil(df_sediexport["cum_perc"].iloc[0] / 10) * 10)
-
-        for i in range(bperc, eperc, delta_perc):
-            cond = (
-                (df_sediexport["cum_perc"] > i - delta_perc)
-                & (df_sediexport["cum_perc"] <= i)
-                & (~df_sediexport["cum_perc"].isnull())
-            )
-            df_sediexport.loc[cond, "class"] = i
-
-        return (
-            df_sediexport[
-                ["col", "row", "id", "perc", "cum_perc", "class", "sediexport"]
-            ],
-            int(percentage),
+        identify_subcatchments_to_target_ids(
+            rst_priority_sinks,
+            routing_nonriver,
+            self.sfolder.postprocessing_folder,
+            self.rp,
+            tag="catchments_to_priority_sinks",
         )
 
     def identify_export_parcel(self):
@@ -1208,7 +1030,7 @@ class PostProcess(Factory):
         valid_routing_sedi_out_vector(self)
         gdf_routing_sedi_out = gpd.read_file(self.vct_routing_sedi_out)
         gdf_routing_out_of_parcel = select_routing_out_of_parcel(gdf_routing_sedi_out)
-        out_shp = self.sfolder.postprocess_folder / "routing_out_of_parcel.shp"
+        out_shp = self.sfolder.postprocessing_folder / "routing_out_of_parcel.shp"
         gdf_routing_out_of_parcel.to_file(out_shp, spatial_index="YES")
         df_prckrt = self.aggregate_sedout_parcel(gdf_routing_out_of_parcel)
 
@@ -1319,7 +1141,7 @@ class PostProcess(Factory):
         df_sedi_out_parcel.loc[~cond, "SediOut"] = profile["nodata"]
 
         # write to disk
-        self.sfolder.postprocess_folder / "SedoutSinks.tif"
+        self.sfolder.postprocessing_folder / "SedoutSinks.tif"
         profile["driver"] = "GTiff"
 
         arr_sedi_out = raster_dataframe_to_arr(
@@ -1340,7 +1162,7 @@ class PostProcess(Factory):
         logger.info("Determining routing out of the catchment...")
 
         vct_out = (
-            self.sfolder.postprocess_folder
+            self.sfolder.postprocessing_folder
             / f"routing_to_outside_{self.catchment_name}.shp"
         )
         if not vct_out.exists():
@@ -1468,13 +1290,13 @@ class PostProcess(Factory):
                 gdf_buffer = compute_cdf_sediment_load(
                     gdf_buffer,
                     "buff_sed",
-                    self.sfolder.postprocess_folder,
+                    self.sfolder.postprocessing_folder,
                     tag="buffers",
                     plot=True,
                 )
             if vct_out is None:
                 vct_out = (
-                    self.sfolder.postprocess_folder / self.files["vct_buffers"].name
+                    self.sfolder.postprocessing_folder / self.files["vct_buffers"].name
                 )
 
             if cols:
@@ -1501,7 +1323,7 @@ class PostProcess(Factory):
             self.files["rst_watereros"],
             self.files["rst_percelen_prcid"],
             resolution=self.resolution,
-            fmap=self.sfolder.postprocess_folder,
+            fmap=self.sfolder.postprocessing_folder,
             flag_write=True,
             flag_join_vct_parcels=join,
         )
@@ -1546,7 +1368,7 @@ class PostProcess(Factory):
             profile["nodata"],
         )
         rst_out = (
-            self.sfolder.postprocess_folder
+            self.sfolder.postprocessing_folder
             / f"SediOut_merged_{self.catchment_name}.tif"
         )
         write_arr_as_rst(arr_sedi_out_total, rst_out, "float32", self.rstparams)
@@ -1642,7 +1464,7 @@ class PostProcess(Factory):
             df_waterline["sedlen"] = df_waterline["Sediment"] / df_waterline.length
 
             self.vct_riversegment = (
-                self.sfolder.postprocess_folder
+                self.sfolder.postprocessing_folder
                 / f"Sedimentexport2Segments_{self.catchment_name}_"
                 f"s{self.scenario_label}.shp"
             )
@@ -1741,7 +1563,7 @@ class PostProcess(Factory):
                     f"sinks_in_routing_{self.catchment_name}_s{self.scenario_label}.shp"
                 )
 
-                vct_out = self.sfolder.postprocess_folder / vct_out
+                vct_out = self.sfolder.postprocessing_folder / vct_out
                 gpd_bindomain.to_file(vct_out, spatial_index="YES")
                 msg = f"{gpd_bindomain.shape[0]} sinks in routing!"
                 logger.info(msg)
@@ -1801,7 +1623,7 @@ class PostProcess(Factory):
         df["lnduse_class"] = vals
         df["area"] = areas
         df["rel_area"] = rel_areas * 100
-        f = self.sfolder.postprocess_folder / (
+        f = self.sfolder.postprocessing_folder / (
             f"opp_perceelskaart_{self.year}_{self.catchment_name}_"
             f"s{self.scenario_label}.csv"
         )
@@ -1809,7 +1631,7 @@ class PostProcess(Factory):
 
     def make_facts(self):
         """Make a textfile with a number of stats about the simulation"""
-        factsfile = self.sfolder.postprocess_folder / (
+        factsfile = self.sfolder.postprocessing_folder / (
             f"facts_{self.catchment_name}_s{self.scenario_label}.csv"
         )
         with open(factsfile, "w") as f:
@@ -1851,11 +1673,11 @@ class PostProcess(Factory):
         """
 
         rst_sewers = (
-            Path(self.sfolder.postprocess_folder)
+            Path(self.sfolder.postprocessing_folder)
             / f"endpoints_in_sewers_s{self.scenario_label}.rst"
         )
         rst_ditches = (
-            Path(self.sfolder.postprocess_folder)
+            Path(self.sfolder.postprocessing_folder)
             / f"endpoints_in_ditches_s{self.scenario_label}.rst"
         )
 
@@ -3012,41 +2834,57 @@ def transform_dict_netto_erosion_to_df(dict_netto_ero):
     return df_netto_erosion
 
 
-def identify_subcatchments_to_buffers(
-    rst_buffers,
+def identify_subcatchments_to_target_ids(
+    rst_target_ids,
     txt_routing_nonriver,
     resmap,
     profile,
+    tag="catchments_to_targets",
 ):
-    """Identify subcatchment to each one of the buffers
+    """Identify subcatchments draining to positive target ids.
 
     Parameters
     ----------
-    rst_buffers: str or pathlib.Path
-        File path of WaTEM/SEDEM buffer raster
+    rst_target_ids: str or pathlib.Path
+        File path of a raster holding positive target id values
+        (e.g. buffers, sinks). Non-target cells must be nodata or <= 0.
     txt_routing_nonriver: str or pathlib.Path
         File path of the WaTEM/SEDEM routing table without river routing included
     resmap: str or pathlib.Path
         Folder path of results folder
     profile: rasterio.profiles
-            see :func:`rasterio.open`
+        See :func:`rasterio.open`.
+    tag: str, default "catchments_to_targets"
+        Tag used by :func:`define_subcatchments_saga` for output naming.
     """
-    arr_buffer, _ = load_raster(rst_buffers)
-    outlet_ids = np.unique(arr_buffer[(arr_buffer > 0) & (arr_buffer < 2**14 + 1)])
-    mask = np.isin(arr_buffer, outlet_ids)
-    arr_outlet = np.where(mask, arr_buffer, profile["nodata"]).astype(np.float32)
+    rst_target_ids = Path(rst_target_ids)
+    arr_target_ids, _ = load_raster(rst_target_ids)
 
-    rst_outlet = resmap / (str(rst_buffers.stem) + "_outlet.rst")
+    cond_valid = arr_target_ids > 0
+    if pd.isna(profile["nodata"]):
+        cond_valid = cond_valid & (~np.isnan(arr_target_ids))
+    else:
+        cond_valid = cond_valid & (arr_target_ids != profile["nodata"])
+
+    target_ids = np.unique(arr_target_ids[cond_valid])
+    if target_ids.size == 0:
+        msg = f"No positive target ids found in raster '{rst_target_ids}'."
+        raise ValueError(msg)
+
+    mask = np.isin(arr_target_ids, target_ids)
+    arr_targets = np.where(mask, arr_target_ids, profile["nodata"]).astype(np.float32)
+
+    rst_targets = resmap / (str(rst_target_ids.stem) + "_targets.rst")
     rstparams = rasterprofile_to_rstparams(profile)
 
-    write_arr_as_rst(arr_outlet, rst_outlet, arr_outlet.dtype, rstparams)
+    write_arr_as_rst(arr_targets, rst_targets, arr_targets.dtype, rstparams)
 
     define_subcatchments_saga(
-        rst_outlet,
+        rst_targets,
         txt_routing_nonriver,
         resmap,
         profile,
-        tag="catchments_to_buffers",
+        tag=tag,
     )
 
 
@@ -3234,6 +3072,8 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
 
     rst_in = Path(rst_in)
     basename = rst_in.stem
+    _, profile = load_raster(rst_in)
+    nodata = profile["nodata"]
 
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "3"]
     cmd_args += ["-GRIDS", str(rst_in)]
@@ -3241,6 +3081,17 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     execute_saga(cmd_args)
 
     gdf_out = gpd.read_file(vct_out)
+    value_col = basename[:11]
+    if pd.isna(nodata):
+        cond_valid = (~gdf_out[value_col].isna()) & (gdf_out[value_col] != 0)
+    else:
+        cond_valid = (
+            (gdf_out[value_col] != nodata)
+            & (~gdf_out[value_col].isna())
+            & (gdf_out[value_col] != 0)
+        )
+    gdf_out = gdf_out.loc[cond_valid].copy()
+
     gdf_out = gdf_out.set_crs(epsg, allow_override=True)
     gdf_out["type"] = kind
     gdf_out.rename(columns={basename[:11]: "sediment"}, inplace=True)
