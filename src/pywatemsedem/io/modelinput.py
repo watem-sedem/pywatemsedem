@@ -821,7 +821,7 @@ class Modelinput(Factory):
             unique_values=np.arange(0, 9).tolist(),
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        colormap_start = mpl.cm.get_cmap("tab10")
+        colormap_start = mpl.colormaps["tab10"]
         colorlist = []
         for i in range(0, 9):
             color = mpl.colors.rgb2hex(colormap_start(i))
@@ -1136,7 +1136,7 @@ class Modelinput(Factory):
             unique_values=np.arange(0, 9).tolist(),
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        colormap_start = mpl.cm.get_cmap("tab10")
+        colormap_start = mpl.colormaps["tab10"]
         colorlist = []
         for i in range(0, 9):
             color = mpl.colors.rgb2hex(colormap_start(i))
@@ -1212,7 +1212,7 @@ class Modelinput(Factory):
             unique_values=np.arange(0, 9).tolist(),
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        colormap_start = mpl.cm.get_cmap("tab10")
+        colormap_start = mpl.colormaps["tab10"]
         colorlist = []
         for i in range(0, 9):
             color = mpl.colors.rgb2hex(colormap_start(i))
