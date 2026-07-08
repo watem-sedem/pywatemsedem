@@ -12,7 +12,6 @@ pycnws/tests/**/data/*.sdat filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.sgrd filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.ini filter=lfs diff=lfs merge=lfs -text
-
 pycnws/tests/**/data/**/*.rst filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.rdc filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.tif filter=lfs diff=lfs merge=lfs -text
@@ -27,7 +26,6 @@ pycnws/tests/**/data/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.csv filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.ini filter=lfs diff=lfs merge=lfs -text
-
 tests/**/data/*.rst filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.rdc filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.tif filter=lfs diff=lfs merge=lfs -text
@@ -42,7 +40,6 @@ tests/**/data/*.sdat filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.sgrd filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.ini filter=lfs diff=lfs merge=lfs -text
-
 tests/**/data/**/*.rst filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.rdc filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.tif filter=lfs diff=lfs merge=lfs -text
@@ -57,7 +54,6 @@ tests/**/data/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.csv filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.ini filter=lfs diff=lfs merge=lfs -text
-
 tests/postprocess/**/*.rst filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.rdc filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.tif filter=lfs diff=lfs merge=lfs -text
@@ -72,3 +68,4 @@ tests/postprocess/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.sg-grd-z filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.csv filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.ini filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/langegracht/** filter=lfs diff=lfs merge=lfs -text
