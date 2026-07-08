@@ -1,0 +1,54 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.13'] # same version as used for generating requirements.txt
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        lfs: 'true'
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install tox
+        sudo apt-get update
+        sudo apt-get install -y gdal-bin saga wget pandoc
+        gdal_translate --version # echo version for debugging
+        saga_cmd --version # echo version for debugging
+        wget https://github.com/DOV-Vlaanderen/saga-watem/releases/download/2025.6.11/saga-vpo_2025.6.11-1-ge95f136.noble_amd64.deb
+        sudo dpkg -i saga-vpo*.deb
+        wget https://github.com/watem-sedem/watem-sedem/releases/download/5.0.3/watem-sedem_5.0.3.330.gbp3f65b4_amd64.deb
+        sudo dpkg -i watem-sedem*.deb
+        watem_sedem || true # report the version, but don't fail because there is no ini file
+    - name: Test with tox (pinned dependencies)
+      run: |
+        tox -e pinned
+    - name: Test doctests
+      # this is new and still needs fixes to be succesful
+      continue-on-error: true
+      run: |
+        tox -e doctests
+    - name: Build documentation
+      run: |
+        tox -e docs
+    - name: Test package build
+      run: |
+        tox -e build
