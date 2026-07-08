@@ -30,13 +30,13 @@ cycler==0.12.1
     # via matplotlib
 fonttools==4.63.0
     # via matplotlib
-geopandas==1.1.1
+geopandas==1.1.4
     # via pywatemsedem (setup.py)
 joblib==1.5.3
     # via scikit-learn
 kiwisolver==1.5.0
     # via matplotlib
-matplotlib==3.10.8
+matplotlib==3.11.0
     # via pywatemsedem (setup.py)
 numpy==2.3.5
     # via
@@ -54,7 +54,7 @@ packaging==26.2
     #   geopandas
     #   matplotlib
     #   pyogrio
-pandas==2.3.3
+pandas==3.0.0
     # via geopandas
 pillow==12.3.0
     # via matplotlib
