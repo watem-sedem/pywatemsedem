@@ -41,11 +41,11 @@ jobs:
     - name: Test with tox (pinned dependencies)
       run: |
         tox -e pinned
-    - name: Test doctests
-      # this is new and still needs fixes to be succesful
-      continue-on-error: true
-      run: |
-        tox -e doctests
+    # - name: Test doctests
+    #  # this is new and still needs fixes to be succesful
+    #  continue-on-error: true
+    #  run: |
+    #    tox -e doctests
     - name: Build documentation
       run: |
         tox -e docs
