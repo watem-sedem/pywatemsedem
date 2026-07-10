@@ -2,13 +2,13 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "%load_ext autoreload\n",
     "%autoreload 2"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -43,13 +43,13 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "import os\n",
     "from pathlib import Path"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -60,21 +60,21 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "inputdata_folder = Path(r\"..\") / \"..\" / \"tests\" /  \"data\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "inputdata_folder.exists()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -86,32 +86,32 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "from dotenv import load_dotenv, find_dotenv\n",
     "load_dotenv(find_dotenv())"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "watem_sedem_folder = Path(os.environ.get(\"WATEMSEDEM\"))\n",
     "watem_sedem_binary = \"watem_sedem\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "(watem_sedem_folder / watem_sedem_binary).exists()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -122,12 +122,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "from pywatemsedem.catchment import Catchment"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -138,12 +138,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "name_catchment = 'langegracht'"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -154,39 +154,39 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "rst_dtm = inputdata_folder  / \"dtm.tif\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "vct_catchment = inputdata_folder / \"catchm_langegracht.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "vct_catchment.exists()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "str(vct_catchment.resolve())"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -197,12 +197,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment = Catchment(name_catchment, vct_catchment, rst_dtm, 20, 31370, -9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -213,12 +213,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.mask.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -229,12 +229,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.dtm.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -252,50 +252,50 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "rst_kfactor = inputdata_folder / \"K3.tif\"\n",
     "rst_landuse = inputdata_folder / \"basemap_landuse.tif\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.kfactor = rst_kfactor"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.kfactor.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.landuse = rst_landuse\n",
     "catchment.landuse.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.landuse.write(\"landuse.rst\")"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -307,15 +307,15 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "vct_river = inputdata_folder / \"river.shp\"\n",
     "vct_infra_poly = inputdata_folder / \"infrastructure.shp\"\n",
     "vct_infra_line = inputdata_folder / \"roads.shp\"\n",
     "vct_water = inputdata_folder / \"water.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -328,21 +328,21 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.vct_river = vct_river"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.vct_river.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -353,12 +353,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.river.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -369,12 +369,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.segments.plot(nodata=0)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -385,42 +385,42 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.vct_infrastructure_buildings = vct_infra_poly\n",
     "catchment.infrastructure_buildings.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.vct_infrastructure_roads = vct_infra_line\n",
     "catchment.infrastructure_roads.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.infrastructure.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "catchment.vct_water = vct_water\n",
     "catchment.water.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -440,12 +440,12 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "from pywatemsedem.choices import Choices, Options, Parameters, Extensions, ExtensionsParameters, Output"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -456,83 +456,83 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "default_choices = inputdata_folder / \"userchoices.ini\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "default_choices.exists()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "options = Options()\n",
     "options.read_values_from_ini(default_choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "parameters = Parameters()\n",
     "parameters.read_values_from_ini(default_choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "extensions = Extensions()\n",
     "extensions.read_values_from_ini(default_choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "output = Output()\n",
     "output.read_values_from_ini(default_choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "extensionparameters = ExtensionsParameters(extensions)\n",
     "extensionparameters.apply_defaults()\n",
     "extensionparameters.ktc_low.read_value_from_ini(default_choices)\n",
     "extensionparameters.ktc_high.read_value_from_ini(default_choices)\n",
     "extensionparameters.ktc_limit.read_value_from_ini(default_choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "choices = Choices(options, parameters, extensions, extensionparameters, output)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -547,22 +547,22 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "from pywatemsedem.scenario import Scenario"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 1\n",
     "scenario = Scenario(catchment, 2019, scenario_nr, choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -573,30 +573,30 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_parcels = inputdata_folder / r\"parcels.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_parcels.geodata"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.parcels.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -607,87 +607,87 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.cfactor = scenario.create_cfactor()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.cfactor.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.ktc = scenario.create_ktc(choices.extensionparameters.ktc_low.value,\n",
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.ktc.plot(nodata=-9999)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.create_ini_file()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -698,14 +698,14 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 2\n",
     "scenario = Scenario(catchment, 2019, scenario_nr, choices)\n",
     "scenario.vct_parcels = inputdata_folder / r\"parcels.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -716,60 +716,60 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_grass_strips = inputdata_folder / r\"grass_strips.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_grass_strips.plot(column=\"width\")"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.cfactor = scenario.create_cfactor()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.ktc = scenario.create_ktc(choices.extensionparameters.ktc_low.value,\n",
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -780,14 +780,14 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()\n",
     "scenario.create_ini_file()\n",
     "scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -798,38 +798,36 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 3\n",
     "scenario = Scenario(catchment, 2019, scenario_nr, choices)\n",
     "scenario.vct_parcels = inputdata_folder / r\"parcels.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.choices.extensions.include_buffers = True"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_buffers = inputdata_folder / r\"buffers.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()\n",
     "scenario.cfactor = scenario.create_cfactor()\n",
@@ -837,27 +835,29 @@
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()\n",
     "scenario.create_ini_file()\n",
     "# scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.buffers.plot(nodata=0)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -868,14 +868,13 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 4\n",
-    "scenario = Scenario(catchment, 2019, scenario_nr, choices)\n",
-    "scenario.vct_parcels = inputdata_folder / r\"parcels.shp\""
-   ]
+    "scenario = Scenario(catchment, 2019, scenario_nr, choices)"
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -883,33 +882,51 @@
    "source": [
     "Technical tillage measures are implemented at the level of a parcel, for which we can define a \"reduction\". The column 'C_reduct' is used to reduce the final C-factor:\n",
     "\n",
-    "$$C_{factor,reduced}=C_{factor}∗(1-C_{reduction})$$\n",
+    "$$C_{factor,reduced}=C_{factor}﷿﷿﷿(1-C_{reduction})$$\n",
+    "\n",
+    "Therefore, we adjust the source data of the parcels vector before assigning it to\n",
+    "scenario.vct_parcels\n",
     "\n",
     "In this example we add a reduction of 80% to all parcels with LANDUSE code -9999."
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
+   "cell_type": "code",
    "source": [
-    "# We take all parcels with a crop code of 311 to reduce with 80 %.\n",
-    "scenario.vct_parcels.geodata.loc[scenario.vct_parcels.geodata[\"LANDUSE\"]==-9999, \"C_reduct\"] = 0.8"
+    "import geopandas as gpd\n",
+    "\n",
+    "f_parcels = inputdata_folder / r\"parcels.shp\"\n",
+    "gdf_parcels = gpd.read_file(f_parcels)\n",
+    "\n",
+    "gdf_parcels.loc[gdf_parcels[\"LANDUSE\"]==-9999, \"C_reduct\"] = 0.8"
+   ],
+   "outputs": [],
+   "execution_count": null
+  },
+  {
+   "metadata": {},
+   "cell_type": "markdown",
+   "source": [
+    "Once the polygon file with parcels contains a C_reduct column, we can assign it to\n",
+    "the vct_parcels property of the scenario-object"
    ]
+  },
+  {
+   "cell_type": "code",
+   "metadata": {},
+   "source": "scenario.vct_parcels = gdf_parcels",
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
    "metadata": {},
-   "source": [
-    "Enable source-oriented measures by setting 'UseTeelttechn' to one."
-   ]
+   "source": "Enable source-oriented measures by setting 'UseTeelttechn' to True."
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()\n",
     "scenario.cfactor = scenario.create_cfactor(use_source_oriented_measures=True)\n",
@@ -917,18 +934,20 @@
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()\n",
     "scenario.create_ini_file()\n",
     "# scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -939,38 +958,36 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 5\n",
     "scenario = Scenario(catchment, 2019, scenario_nr, choices)\n",
     "scenario.vct_parcels = inputdata_folder / r\"parcels.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.choices.extensions.force_routing = True"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_force_routing = inputdata_folder / \"force_routing.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()\n",
     "scenario.cfactor = scenario.create_cfactor()\n",
@@ -978,18 +995,20 @@
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()\n",
     "scenario.create_ini_file()\n",
     "scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -1000,38 +1019,36 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 6\n",
     "scenario = Scenario(catchment, 2019, scenario_nr, choices)\n",
     "scenario.vct_parcels = inputdata_folder / r\"parcels.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.choices.extensions.manual_outlet_selection = True"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.vct_outlets = inputdata_folder / \"outlets.shp\""
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()\n",
     "scenario.cfactor = scenario.create_cfactor()\n",
@@ -1039,18 +1056,20 @@
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()\n",
     "scenario.create_ini_file()\n",
     "# scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "markdown",
@@ -1061,19 +1080,17 @@
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario_nr = 7\n",
     "scenario = Scenario(catchment, 2019, scenario_nr, choices)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse = scenario.create_composite_landuse()\n",
     "scenario.cfactor = scenario.create_cfactor()\n",
@@ -1081,27 +1098,29 @@
     "                                   choices.extensionparameters.ktc_high.value,\n",
     "                                   choices.extensionparameters.ktc_limit.value,\n",
     "                                   not choices.extensions.create_ktc_map.value)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.prepare_input_files()\n",
     "scenario.create_ini_file()\n",
     "# scenario.run_model(watem_sedem_binary)"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   },
   {
    "cell_type": "code",
-   "execution_count": null,
    "metadata": {},
-   "outputs": [],
    "source": [
     "scenario.composite_landuse.plot()"
-   ]
+   ],
+   "outputs": [],
+   "execution_count": null
   }
  ],
  "metadata": {

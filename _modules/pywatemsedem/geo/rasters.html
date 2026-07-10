@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.rasters &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.geo.rasters &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -117,22 +118,19 @@
 <div class="viewcode-block" id="AbstractRaster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AbstractRaster</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract raster class based on numpy arrays and raster properties</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract raster class based on numpy arrays and raster properties.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
-<span class="sd">    arr: numpy.ndarray</span>
-<span class="sd">        Raster array</span>
-<span class="sd">    rp: RasterProperties</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">    arr_mask: numpy.ndarray, default None</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
-<span class="sd">    allow_nodata_array: boolean, default False</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Raster array.</span>
+<span class="sd">    rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">        Raster properties instance.</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    If an array mask is provided, the array is automatically masked.</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If an array mask is provided to the initialize method, the array is</span>
+<span class="sd">    automatically masked.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -143,7 +141,19 @@
 <div class="viewcode-block" id="AbstractRaster.initialize">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.initialize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize array and rasterproperties&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize array and raster properties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arr : numpy.ndarray</span>
+<span class="sd">            Raster array.</span>
+<span class="sd">        rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">            Raster properties instance.</span>
+<span class="sd">        arr_mask : numpy.ndarray, default None</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        allow_nodata_array : bool, default False</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Dimensionality of input raster array should be larger than 1.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -155,43 +165,46 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return array</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return array.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        numpy.ndarray</span>
+<span class="sd">            Raster array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span>
 
     <span class="nd">@arr</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set array.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        input: numpy.ndarray</span>
+<span class="sd">        input : numpy.ndarray</span>
+<span class="sd">            Raster array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">=</span> <span class="nb">input</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return raster properties</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return raster properties.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
+<span class="sd">        pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">            Raster properties instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span>
 
 <div class="viewcode-block" id="AbstractRaster.update_nodata_value">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.update_nodata_value">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_nodata_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the nodata value</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the nodata value.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        to: float</span>
-<span class="sd">            New nodata value</span>
+<span class="sd">        to : float</span>
+<span class="sd">            New nodata value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rp</span><span class="o">.</span><span class="n">_nodata</span> <span class="o">=</span> <span class="n">to</span></div>
@@ -200,21 +213,27 @@
 <div class="viewcode-block" id="AbstractRaster.clip">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.clip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;NotImplemented clip function&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip function (not implemented).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            This method is not implemented in the abstract class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="AbstractRaster.mask">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mask function.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mask the raster array.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        arr_mask: numpy.ndarray</span>
-<span class="sd">            Array mask (1, nodata). Note that array mask should have same nodata value</span>
-<span class="sd">            as raster array.</span>
-<span class="sd">        allow_nodata_array: bool</span>
+<span class="sd">        arr_mask : numpy.ndarray</span>
+<span class="sd">            Array mask (1, nodata). Note that array mask should have same nodata</span>
+<span class="sd">            value as raster array.</span>
+<span class="sd">        allow_nodata_array : bool, default False</span>
 <span class="sd">            Allow to return a nodata-array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -233,13 +252,27 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        outfile_path: pathlib.Path or str</span>
-<span class="sd">            File path output</span>
-<span class="sd">        format: &quot;idrisi&quot; or &quot;tiff&quot;, default &quot;idrisi&quot;</span>
-<span class="sd">        dtype: numpy.dtype, default None</span>
+<span class="sd">        outfile_path : pathlib.Path or str</span>
+<span class="sd">            File path output.</span>
+<span class="sd">        format : str, default &quot;idrisi&quot;</span>
+<span class="sd">            Output format, either &quot;idrisi&quot; or &quot;tiff&quot;.</span>
+<span class="sd">        dtype : numpy.dtype, default None</span>
 <span class="sd">            Output raster type. If None, dtype of array is used.</span>
-<span class="sd">        nodata: float, default None</span>
-<span class="sd">            Nodata value for output raster. If None, nodata of rasterproperties is used.</span>
+<span class="sd">        nodata : float, default None</span>
+<span class="sd">            Nodata value for output raster. If None, nodata of rasterproperties</span>
+<span class="sd">            is used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if write was successful.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If format is not supported.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If file extension does not match format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">outfile_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">)</span>
 
@@ -293,23 +326,28 @@
 <div class="viewcode-block" id="AbstractRaster.plot">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot raster array with imshow</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot raster array with imshow.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        fig: matplotlib.figure.Figure, default = None</span>
-<span class="sd">            if not given, defaults to generating new figure</span>
-<span class="sd">        ax: matplotlib.axes.Axes, default = None</span>
-<span class="sd">            if not given, defaults to generating new axis</span>
-<span class="sd">        nodata: float, default = None</span>
+<span class="sd">        fig : matplotlib.figure.Figure, default None</span>
+<span class="sd">            If not given, defaults to generating new figure.</span>
+<span class="sd">        ax : matplotlib.axes.Axes, default None</span>
+<span class="sd">            If not given, defaults to generating new axis.</span>
+<span class="sd">        nodata : float, default None</span>
 <span class="sd">            Used to mask certain values present in arr which represent</span>
-<span class="sd">            nodata (e.g. -9999)</span>
+<span class="sd">            nodata (e.g. -9999).</span>
+<span class="sd">        *args</span>
+<span class="sd">            Additional positional arguments passed to imshow.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments passed to imshow.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig: matplotlib.figure.Figure</span>
-
-<span class="sd">        ax: matplotlib.axes.Axes</span>
+<span class="sd">        fig : matplotlib.figure.Figure</span>
+<span class="sd">            Figure object.</span>
+<span class="sd">        ax : matplotlib.axes.Axes</span>
+<span class="sd">            Axes object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
@@ -326,25 +364,31 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">histogram</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylogscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot density histogram of raster data values with 25th, 50th and 75th</span>
-<span class="sd">        percentiles</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot density histogram of raster data values.</span>
+
+<span class="sd">        Plots histogram with 25th, 50th and 75th percentiles.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        fig: matplotlib.figure.Figure, default = None</span>
-<span class="sd">            if not given, defaults to generating new figure</span>
-<span class="sd">        ax: matplotlib.axes.Axes, default = None</span>
-<span class="sd">            if not given, defaults to generating new axis</span>
-<span class="sd">        nodata: float</span>
-<span class="sd">            Used to mask no data values</span>
-<span class="sd">        ylogscale: bool, default = False</span>
-<span class="sd">                Log transformation on density axis if True</span>
+<span class="sd">        fig : matplotlib.figure.Figure, default None</span>
+<span class="sd">            If not given, defaults to generating new figure.</span>
+<span class="sd">        ax : matplotlib.axes.Axes, default None</span>
+<span class="sd">            If not given, defaults to generating new axis.</span>
+<span class="sd">        nodata : float, default None</span>
+<span class="sd">            Used to mask no data values.</span>
+<span class="sd">        ylogscale : bool, default False</span>
+<span class="sd">            Log transformation on density axis if True.</span>
+<span class="sd">        *args</span>
+<span class="sd">            Additional positional arguments passed to hist.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments passed to hist.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fig: matplotlib.figure.Figure</span>
-
-<span class="sd">        ax: matplotlib.axes.Axes</span>
+<span class="sd">        fig : matplotlib.figure.Figure</span>
+<span class="sd">            Figure object.</span>
+<span class="sd">        ax : matplotlib.axes.Axes</span>
+<span class="sd">            Axes object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
@@ -373,11 +417,12 @@
 <div class="viewcode-block" id="AbstractRaster.is_empty">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.is_empty">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;check if array (raster) is None (empty)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if array (raster) is None (empty).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        True/False</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if array is None, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span> <span class="ow">is</span> <span class="kc">None</span></div>
 </div>
@@ -388,22 +433,34 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RasterMemory</span><span class="p">(</span><span class="n">AbstractRaster</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Array raster</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raster stored in memory from a numpy array.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    arr: numpy.ndarray</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasters.AbstractRaster`</span>
-<span class="sd">    rp: RasterProperties</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">    arr_mask: numpy.ndarray, default None</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
-<span class="sd">    allow_nodata_array: bool, default False</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Raster array.</span>
+<span class="sd">    rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">        Raster properties instance.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Inherits from :class:`pywatemsedem.geo.rasters.AbstractRaster`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterMemory&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterMemory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arr : numpy.ndarray</span>
+<span class="sd">            Raster array.</span>
+<span class="sd">        rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">            Raster properties instance.</span>
+<span class="sd">        arr_mask : numpy.ndarray, default None</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        allow_nodata_array : bool, default False</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
             <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="n">arr_mask</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="n">allow_nodata_array</span>
         <span class="p">)</span>
@@ -411,7 +468,13 @@
 <div class="viewcode-block" id="RasterMemory.clip">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory.clip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;NotImplemented&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip function (not implemented for RasterMemory).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            Clipping is not implemented for RasterMemory class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Clipping not implemented for RasterMemory class&quot;</span><span class="p">)</span></div>
 </div>
 
@@ -420,30 +483,41 @@
 <div class="viewcode-block" id="RasterFile">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RasterFile</span><span class="p">(</span><span class="n">AbstractRaster</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Array based on a input raster file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raster loaded from an input raster file.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    file_path: pathlib.Path</span>
-<span class="sd">        File path to user input raster.</span>
-<span class="sd">    rp: RasterProperties, default None</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`. If None,</span>
-<span class="sd">        rasterproperties from inputfile are used.</span>
-<span class="sd">    arr_mask: numpy.ndarray, default None</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
-<span class="sd">    allow_nodata_array: bool, default False</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Raster array.</span>
+<span class="sd">    rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">        Raster properties instance.</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    If rasterproperties are inputted by the user, clipping is automatically done.</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If rasterproperties are provided by the user, clipping is automatically done.</span>
+<span class="sd">    Inherits from :class:`pywatemsedem.geo.rasters.AbstractRaster`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">rp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_nodata_array</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterFile class&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RasterFile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path : pathlib.Path</span>
+<span class="sd">            File path to user input raster.</span>
+<span class="sd">        rp : pywatemsedem.geo.rasterproperties.RasterProperties, default None</span>
+<span class="sd">            Raster properties instance. If None, rasterproperties from input</span>
+<span class="sd">            file are used.</span>
+<span class="sd">        arr_mask : numpy.ndarray, default None</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        allow_nodata_array : bool, default False</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">rp</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
                 <span class="n">rst_profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
+            <span class="k">if</span> <span class="n">rst_profile</span><span class="p">[</span><span class="s2">&quot;driver&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;RST&quot;</span><span class="p">:</span>
+                <span class="n">rst_profile</span><span class="p">[</span><span class="s2">&quot;crs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">rst_profile</span><span class="p">[</span><span class="s2">&quot;crs&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">rst_profile</span><span class="p">[</span><span class="s2">&quot;crs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()</span> <span class="o">!=</span> <span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -464,27 +538,32 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile.clip">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">resample</span><span class="o">=</span><span class="s2">&quot;mode&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip function</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip raster to specified extent.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        file_path: pathlib.Path</span>
+<span class="sd">        file_path : pathlib.Path</span>
 <span class="sd">            File path to user input raster.</span>
-<span class="sd">        rp: RasterProperties</span>
-<span class="sd">            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">        resample: str, default &quot;mode&quot;</span>
-<span class="sd">            Either &quot;near&quot; or &quot;mode&quot;, see :func:`pywatemsedem.geo.utils.clip_rst`</span>
+<span class="sd">        rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">            Raster properties instance defining the clip extent.</span>
+<span class="sd">        resample : str, default &quot;mode&quot;</span>
+<span class="sd">            Resampling method, either &quot;near&quot; or &quot;mode&quot;.</span>
+<span class="sd">            See :func:`pywatemsedem.geo.utils.clip_rst`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        arr: numpy.ndarray</span>
-<span class="sd">            Clipped array</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Clipped array.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IOError</span>
+<span class="sd">            If clipped output raster is empty.</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        Clipping also provides resampling to another resolution. See</span>
-<span class="sd">        :func:`pywatemsedem.geo.utils.clip_rst`.</span>
-
+<span class="sd">        Clipping also provides resampling to another resolution.</span>
+<span class="sd">        See :func:`pywatemsedem.geo.utils.clip_rst`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rst_temp</span> <span class="o">=</span> <span class="n">create_filename</span><span class="p">(</span><span class="s2">&quot;.rst&quot;</span><span class="p">)</span>
         <span class="n">clip_rst</span><span class="p">(</span>
@@ -513,25 +592,35 @@
 <div class="viewcode-block" id="TemporalRaster">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.TemporalRaster">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TemporalRaster</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;3-D raster with first two dimension spatial x and y dimension, with the third</span>
-<span class="sd">    dimension being temporal.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;3-D raster with spatial x and y dimensions and a temporal dimension.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    The first two dimensions are spatial (x, y), and the third dimension is</span>
+<span class="sd">    temporal.</span>
+
+<span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    arr: numpy.ndarray</span>
-<span class="sd">        3D Raster array</span>
-<span class="sd">    rp: RasterProperties</span>
-<span class="sd">        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`</span>
-<span class="sd">    arr_mask: np.ndarray, default None</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        3D raster array.</span>
+<span class="sd">    rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">        Raster properties instance.</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    This class only works with array inputs!</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This class only works with array inputs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">arr_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize array and rasterproperties&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize TemporalRaster.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arr : numpy.ndarray</span>
+<span class="sd">            3D raster array.</span>
+<span class="sd">        rp : pywatemsedem.geo.rasterproperties.RasterProperties</span>
+<span class="sd">            Raster properties instance.</span>
+<span class="sd">        arr_mask : numpy.ndarray, default None</span>
+<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Dimensionality of temporal raster array should be equal to 3.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -541,27 +630,39 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return array</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return array.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        numpy.ndarray</span>
+<span class="sd">            3D raster array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span>
 
 <div class="viewcode-block" id="TemporalRaster.write">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.TemporalRaster.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfiles</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;idrisi&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write function.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write temporal raster data to disk.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        outfiles: list or tuple of pathlib.Path or str</span>
-<span class="sd">            List of output files</span>
-<span class="sd">        format: basestring</span>
-<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.write`</span>
-<span class="sd">        dtype: numpy.dtype</span>
-<span class="sd">            See :func:`pywatemsedem.geo.rasters.AbstractRaster.write`</span>
+<span class="sd">        outfiles : list or tuple of pathlib.Path or str</span>
+<span class="sd">            List of output files, one for each temporal slice.</span>
+<span class="sd">        format : str, default &quot;idrisi&quot;</span>
+<span class="sd">            Output format. See :func:`pywatemsedem.geo.rasters.AbstractRaster.write`.</span>
+<span class="sd">        dtype : numpy.dtype, default None</span>
+<span class="sd">            Output raster type. See</span>
+<span class="sd">            :func:`pywatemsedem.geo.rasters.AbstractRaster.write`.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if write was successful.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If number of output files does not match temporal dimension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outfiles</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -580,11 +681,16 @@
 <div class="viewcode-block" id="TemporalRaster.plot">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.TemporalRaster.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sequential plot raster in cols</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot raster sequentially in columns.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        nodata: float</span>
+<span class="sd">        nodata : float, default None</span>
+<span class="sd">            Used to mask no data values.</span>
+<span class="sd">        *args</span>
+<span class="sd">            Additional positional arguments passed to plot.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments passed to plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">shape</span><span class="p">])</span>

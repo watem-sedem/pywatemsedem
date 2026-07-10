@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem modelinput and modeloutput &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=3fabc56e"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">Module Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Data processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geo.html">Processing rasters and vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userchoices.html">User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="choices.html">How to apply the user choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">IO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pywatemsedem modelinput and modeloutput</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/watem-sedem/pywatemsedem/blob/master/docs/getting-started/modelinput_modeloutput.ipynb" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+</pre></div>
+</div>
+</div>
+<section id="pywatemsedem-modelinput-and-modeloutput">
+<h1>pywatemsedem modelinput and modeloutput<a class="headerlink" href="#pywatemsedem-modelinput-and-modeloutput" title="Link to this heading"></a></h1>
+<section id="1.-Introduction">
+<h2>1. Introduction<a class="headerlink" href="#1.-Introduction" title="Link to this heading"></a></h2>
+<p>This tutorial describes the use of Modelinput and Modeloutput class of the pywatemsedem Python package. Via these classes the input and output of a WaTEM-SEDEM model run can be dynamically loaded into memory for e.g. analysis or plotting. Pywatemsedem also contains a postprocessing module, but this module is explained in another tutorial. The postprocessing module makes use of the modelinput and modeloutput classes, described in this tutorial.</p>
+</section>
+<section id="2.-Imports-and-example-data">
+<h2>2. Imports and example data<a class="headerlink" href="#2.-Imports-and-example-data" title="Link to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
+<span class="n">load_dotenv</span><span class="p">(</span><span class="n">find_dotenv</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Go to project root</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../..&quot;</span><span class="p">)</span>
+
+<span class="c1"># Example results folder</span>
+<span class="n">results_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;tests/io/data&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.-Modelinput-and-Modeloutput-objects">
+<h2>3. Modelinput and Modeloutput objects<a class="headerlink" href="#3.-Modelinput-and-Modeloutput-objects" title="Link to this heading"></a></h2>
+<section id="3.1.-Initialisation">
+<h3>3.1. Initialisation<a class="headerlink" href="#3.1.-Initialisation" title="Link to this heading"></a></h3>
+<p>The object initialisation arguments can be fetched based on ini file and the epsg code</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ini</span> <span class="o">=</span> <span class="n">results_folder</span> <span class="o">/</span> <span class="s2">&quot;modelinput/inifile.ini&quot;</span>
+<span class="n">epsg</span> <span class="o">=</span> <span class="mi">31370</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_rstparams</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">rp</span> <span class="o">=</span> <span class="n">get_rstparams</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">)</span>
+<span class="n">resolution</span> <span class="o">=</span> <span class="n">rp</span><span class="p">[</span><span class="s2">&quot;res&quot;</span><span class="p">]</span>
+<span class="n">nodata</span> <span class="o">=</span> <span class="n">rp</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>The Modelinput and Modeloutput objects can be initialised with the following commands</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.modelinput</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modelinput</span>
+<span class="n">modelinput</span> <span class="o">=</span> <span class="n">Modelinput</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.modeloutput</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modeloutput</span>
+<span class="n">modeloutput</span> <span class="o">=</span> <span class="n">Modeloutput</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.2.-Map-variables">
+<h3>3.2. Map variables<a class="headerlink" href="#3.2.-Map-variables" title="Link to this heading"></a></h3>
+<p>The modelinput and modeloutput objects contain several properties that are RasterMemory objects (see documentation of RasterMemory for more information). These properties can be accessed by their name, which is the same as the variable name in the modelinput and modeloutput. The variable names are listed below.</p>
+<ul>
+<li><p>Properties of the modelinput object:</p>
+<p>“mask”,”rivermask”, “buffers”, “cfactor”, “dtm”, “kfactor”, “ktc”, “outlet”, “pfactor”, “compositelanduse”, “ptef”, “riversegments”, “riverrouting”</p>
+</li>
+<li><p>Properties of the modeloutput object:</p>
+<p>“aspect”, “capacity”, “cumulative”, “ls”, “rusle”, “sedi_export”, “sedi_in”, “sedi_out”, “slope”, “uparea”, “watereros_kg”, “watereros_mm”</p>
+</li>
+</ul>
+<p>As you can see in the lists above, the modelinput object also contains a mask and a rivermask, derived from the model input files.</p>
+<p>We will use the rivermask as an example</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rivermask</span> <span class="o">=</span> <span class="n">modelinput</span><span class="o">.</span><span class="n">rivermask</span>
+</pre></div>
+</div>
+</div>
+<p>To see what datatype rivermask is, we symply print it</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rivermask</span>
+</pre></div>
+</div>
+</div>
+<p>As you can see, it is a RasterFile-object. A RasterFile-object has some properties, such as the rasterproperies, a plot function, and an arr property that contains the raster values as a numpy array. We can check these properties for the rivermask.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rivermask</span><span class="o">.</span><span class="n">arr</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rivermask</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">rasterio_profile</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rivermask</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rivermask</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can also write the rivermask to a new file, the write function of the RasterFile-object can be used for this.</p>
+<p>The above steps can also be done for the other RasterMemory properties of the modelinput and modeloutput objects, such as the buffers property of the modelinput object.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modelinput</span><span class="o">.</span><span class="n">buffers</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Or for the sedi_out property of the modeloutput object.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeloutput</span><span class="o">.</span><span class="n">sedi_out</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.3-Table-variables">
+<h3>3.3 Table variables<a class="headerlink" href="#3.3-Table-variables" title="Link to this heading"></a></h3>
+<p>The modelinput and modeloutput objects can also contain tables. Following tables are available as pandas dataframes:</p>
+<ul>
+<li><p>Modelinput:</p>
+<p>“adjacent_segments”, “upstream_segments”</p>
+</li>
+<li><p>Modeloutput:</p>
+<p>“cumulative_sediment_segments”, “routing_missing”, “routing”, “total_sediment_segments”, “total_sediment”,</p>
+</li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeloutput</span><span class="o">.</span><span class="n">routing</span>
+</pre></div>
+</div>
+</div>
+<p>As mentioned above, these objects are only used for io-operations. For analysis and derivivng information from these objects, the postprocessing module should be used.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

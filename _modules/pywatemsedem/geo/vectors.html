@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.vectors &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.geo.vectors &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -116,9 +117,16 @@
 <div class="viewcode-block" id="AbstractVector">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AbstractVector</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract Vector class based on geopandas GeoDataFrame&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract vector class based on geopandas GeoDataFrame.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geodata : geopandas.GeoDataFrame</span>
+<span class="sd">        Vector data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize AbstractVector.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_geometry_type</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -132,19 +140,21 @@
         <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">req_epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Abstract vector class</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize vector with geodata and geometry type.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        geodata: geopandas.GeoDataFrame</span>
+<span class="sd">        geodata : geopandas.GeoDataFrame</span>
 <span class="sd">            Input data set.</span>
-<span class="sd">        geometry_type: str</span>
-<span class="sd">            Geometry type of input dataset</span>
-<span class="sd">        req_geometry_type: str, default None</span>
+<span class="sd">        geometry_type : str</span>
+<span class="sd">            Geometry type of input dataset.</span>
+<span class="sd">        req_geometry_type : str, default None</span>
 <span class="sd">            Geometry type, for implemented types, see</span>
-<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`</span>
-<span class="sd">        allow_empty: bool, default False</span>
-<span class="sd">            Allow an empty geodataframe</span>
+<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`.</span>
+<span class="sd">        allow_empty : bool, default False</span>
+<span class="sd">            Allow an empty geodataframe.</span>
+<span class="sd">        req_epsg : int, default None</span>
+<span class="sd">            Required EPSG code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="n">geodata</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_geometry_type</span> <span class="o">=</span> <span class="n">geometry_type</span>
@@ -169,16 +179,21 @@
         <span class="n">req_geometry</span><span class="p">,</span>
         <span class="n">implemented_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;LineString&quot;</span><span class="p">,</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;Point&quot;</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check geometry types of vector to the required type</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check geometry types of vector to the required type.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        geometry_type: str</span>
+<span class="sd">        geometry_type : str</span>
 <span class="sd">            Geometry type of input dataset.</span>
-<span class="sd">        req_geometry: str</span>
-<span class="sd">            The required geometry types</span>
-<span class="sd">        implemented_types: list, default &quot;LineString&quot;, &quot;Polygon&quot;, &quot;Point&quot;</span>
+<span class="sd">        req_geometry : str</span>
+<span class="sd">            The required geometry type.</span>
+<span class="sd">        implemented_types : list, default [&quot;LineString&quot;, &quot;Polygon&quot;, &quot;Point&quot;]</span>
 <span class="sd">            List of implemented geometry types.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If required geometry type is not implemented or does not match.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">req_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">req_geometry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">implemented_types</span><span class="p">:</span>
@@ -198,7 +213,13 @@
 <div class="viewcode-block" id="AbstractVector.check_crs">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_crs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_crs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_epsg</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if crs is the required crs&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if CRS matches the required EPSG code.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        req_epsg : int</span>
+<span class="sd">            Required EPSG code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">req_epsg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()</span> <span class="o">!=</span> <span class="n">req_epsg</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -210,7 +231,13 @@
 <div class="viewcode-block" id="AbstractVector.check_if_empty">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.check_if_empty">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_if_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if input is empty&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if input geodataframe is empty.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the geodataframe is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Input vector cannot be empty!&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
@@ -219,15 +246,19 @@
 <div class="viewcode-block" id="AbstractVector.plot">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot shape vector with geopandas plot</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot vector with geopandas plot.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        color</span>
+<span class="sd">        color : str, default None</span>
+<span class="sd">            Color for plotting.</span>
+<span class="sd">        column : str, default None</span>
+<span class="sd">            Column name for color mapping.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        ax: matplotlib.pyplot.axis</span>
+<span class="sd">        matplotlib.axes.Axes</span>
+<span class="sd">            Axes object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -242,12 +273,24 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">geodata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property to override&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return geodata.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Vector data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span>
 
     <span class="nd">@geodata</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">geodata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set geodata.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input : geopandas.GeoDataFrame</span>
+<span class="sd">            Vector data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="nb">input</span>
 
 <div class="viewcode-block" id="AbstractVector.write">
@@ -257,8 +300,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        outfile_path: pathlib.Path or str, default None</span>
-<span class="sd">            File path output</span>
+<span class="sd">        outfile_path : pathlib.Path or str</span>
+<span class="sd">            File path output.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if write was successful.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If file extension is not supported.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">outfile_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">outfile_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile_path</span><span class="p">)</span>
@@ -288,31 +341,30 @@
         <span class="n">convert_lines_to_direction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">gdal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rasterize function for shape file</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rasterize vector to array.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rst_reference: str or  pathlib.Path</span>
+<span class="sd">        rst_reference : str or pathlib.Path</span>
 <span class="sd">            File path to reference file for raster output.</span>
-<span class="sd">        epsg: int</span>
-<span class="sd">            EPSG code should be a numeric value, see https://epsg.io/.</span>
-<span class="sd">        col: str, default &quot;NR&quot;</span>
-<span class="sd">            Column name to map</span>
-<span class="sd">        nodata: float, default None</span>
-<span class="sd">            Values within dataframe &#39;col&#39; that have to be considered as nodata in</span>
-<span class="sd">            raster.</span>
-<span class="sd">        dtype_raster: str, default &quot;float&quot;</span>
-<span class="sd">            Output raster type</span>
-<span class="sd">            convert_lines_to_direction:</span>
-<span class="sd">        convert_lines_to_direction: bool, default &quot;False&quot;</span>
-<span class="sd">            Convert lines to directions</span>
-<span class="sd">        gdal: bool, default False</span>
-<span class="sd">            Use gdal(true) / saga (false)-enige for mapping.</span>
+<span class="sd">        epsg : int</span>
+<span class="sd">            EPSG code, should be a numeric value. See https://epsg.io/.</span>
+<span class="sd">        col : str, default &quot;NR&quot;</span>
+<span class="sd">            Column name to map.</span>
+<span class="sd">        nodata : float, default None</span>
+<span class="sd">            Values within dataframe &#39;col&#39; that have to be considered as nodata</span>
+<span class="sd">            in raster.</span>
+<span class="sd">        dtype_raster : str, default &quot;float&quot;</span>
+<span class="sd">            Output raster type.</span>
+<span class="sd">        convert_lines_to_direction : bool, default False</span>
+<span class="sd">            Convert lines to directions.</span>
+<span class="sd">        gdal : bool, default False</span>
+<span class="sd">            Use gdal (True) or saga (False) engine for mapping.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        arr: numpy.ndarray</span>
-<span class="sd">            Return numpy array</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Rasterized array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># convert lines to directions only be done with saga</span>
         <span class="k">if</span> <span class="n">gdal</span> <span class="o">&amp;</span> <span class="n">convert_lines_to_direction</span><span class="p">:</span>
@@ -369,11 +421,12 @@
 <div class="viewcode-block" id="AbstractVector.is_empty">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.is_empty">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;check if geodata (vector) is None (empty)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if geodata (vector) is None (empty).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        True/False</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if geodata is None, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="ow">is</span> <span class="kc">None</span></div>
 </div>
@@ -383,18 +436,16 @@
 <div class="viewcode-block" id="VectorMemory">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorMemory">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorMemory</span><span class="p">(</span><span class="n">AbstractVector</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Geopandas vector</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vector stored in memory from a geopandas GeoDataFrame.</span>
 
-<span class="sd">    Parameters</span>
+<span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    geodata: geopandas.GeoDataFrame</span>
-<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">    geometry_type: str</span>
-<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">    req_geometry_type: str, default None</span>
-<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">    allow_empty: bool, default False</span>
-<span class="sd">        See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">    geodata : geopandas.GeoDataFrame</span>
+<span class="sd">        Vector data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Inherits from :class:`pywatemsedem.geo.vectors.AbstractVector`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -406,19 +457,22 @@
         <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize VectorMemory class</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize VectorMemory.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        geodata: geopandas.GeoDataFrame</span>
-<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">        geometry_type: str</span>
-<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">        req_geometry_type: str, default None</span>
-<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">        clip_mask: geopandas.GeoDataFrame, default None</span>
-<span class="sd">        allow_empty: bool, default False</span>
-<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">        geodata : geopandas.GeoDataFrame</span>
+<span class="sd">            Input geodataframe.</span>
+<span class="sd">        geometry_type : str</span>
+<span class="sd">            Geometry type of input dataset.</span>
+<span class="sd">        req_geometry_type : str, default None</span>
+<span class="sd">            Required geometry type.</span>
+<span class="sd">        clip_mask : geopandas.GeoDataFrame, default None</span>
+<span class="sd">            Mask vector for clipping.</span>
+<span class="sd">        allow_empty : bool, default False</span>
+<span class="sd">            Allow an empty geodataframe.</span>
+<span class="sd">        epsg : int, default None</span>
+<span class="sd">            Required EPSG code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">clip_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">geodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">geodata</span><span class="p">,</span> <span class="n">clip_mask</span><span class="p">)</span>
@@ -434,18 +488,20 @@
 <div class="viewcode-block" id="VectorMemory.clip">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorMemory.clip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geodata</span><span class="p">,</span> <span class="n">clip_mask</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip input geodata with clip_mask</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip input geodata with clip_mask.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        geodata: geopandas.GeoDataFrame</span>
-<span class="sd">            geodataframe of input data</span>
-<span class="sd">        clip_mask: geopandas.GeoDataFrame</span>
-<span class="sd">            Mask vector</span>
+<span class="sd">        geodata : geopandas.GeoDataFrame</span>
+<span class="sd">            Geodataframe of input data.</span>
+<span class="sd">        clip_mask : geopandas.GeoDataFrame</span>
+<span class="sd">            Mask vector.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        geopandas.GeoDataFrame&quot;&quot;&quot;</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Clipped geodataframe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">geodata</span><span class="p">,</span> <span class="n">clip_mask</span><span class="p">,</span> <span class="n">keep_geom_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gdf</span></div>
 </div>
@@ -455,7 +511,19 @@
 <div class="viewcode-block" id="VectorFile">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorFile</span><span class="p">(</span><span class="n">AbstractVector</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;clipped Vector based on input vector file&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vector loaded from an input vector file.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geodata : geopandas.GeoDataFrame</span>
+<span class="sd">        Vector data.</span>
+<span class="sd">    file_path : pathlib.Path</span>
+<span class="sd">        File path to input vector file.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Inherits from :class:`pywatemsedem.geo.vectors.AbstractVector`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -465,19 +533,21 @@
         <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize VectorFile class</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize VectorFile.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        file_path: pathlib.Path</span>
-<span class="sd">            File path to user input raster.</span>
-<span class="sd">        req_geometry_type: str</span>
+<span class="sd">        file_path : pathlib.Path</span>
+<span class="sd">            File path to user input vector.</span>
+<span class="sd">        req_geometry_type : str, default None</span>
 <span class="sd">            Required type of geometry, see implemented geometries in</span>
-<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`</span>
-<span class="sd">        vct_clip: pathlib.Path</span>
-<span class="sd">            Mask vector</span>
-<span class="sd">        allow_empty: bool, default False</span>
-<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`.</span>
+<span class="sd">        vct_clip : pathlib.Path, default None</span>
+<span class="sd">            Mask vector for clipping.</span>
+<span class="sd">        allow_empty : bool, default False</span>
+<span class="sd">            Allow an empty geodataframe.</span>
+<span class="sd">        epsg : int, default None</span>
+<span class="sd">            Required EPSG code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span>
 
@@ -499,16 +569,17 @@
 <div class="viewcode-block" id="VectorFile.clip">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile.clip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vct_clip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip input file path with vct_clip</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clip input file path with vct_clip.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vct_clip: pathlib.Path</span>
-<span class="sd">            Mask vector</span>
+<span class="sd">        vct_clip : pathlib.Path</span>
+<span class="sd">            Mask vector.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Clipped geodataframe.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">gdf_mask</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_clip</span><span class="p">)</span>
         <span class="n">gdf_mask</span> <span class="o">=</span> <span class="n">gdf_mask</span><span class="o">.</span><span class="n">dissolve</span><span class="p">()</span>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.scenario &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.scenario &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -104,7 +105,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas.api.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_float_dtype</span><span class="p">,</span> <span class="n">is_integer_dtype</span>
@@ -121,7 +121,7 @@
     <span class="n">missing_attribute_error_in_vct</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasters</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractRaster</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">nearly_identical</span><span class="p">,</span> <span class="n">saga_intersection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">nearly_identical</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractVector</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.grasstrips</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_grass_strips</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.folders</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScenarioFolders</span>
@@ -420,9 +420,33 @@
 <div class="viewcode-block" id="Scenario">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Scenario</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a new Scenario instance</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a new Scenario instance.</span>
 
 <span class="sd">    The scenario class holds all dynamic information for a scenario.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct_parcels : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Parcels polygon vector with landuse and C-factor attributes.</span>
+<span class="sd">    vct_grass_strips : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Grass strips polygon vector with width and scale_ktc attributes.</span>
+<span class="sd">    vct_buffers : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Buffers polygon vector with buffer properties (buffercap, hdam, hknijp,</span>
+<span class="sd">        dknijp, qcoef, boverl, eff).</span>
+<span class="sd">    vct_bufferoutlets : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Buffer outlets polygon vector.</span>
+<span class="sd">    vct_ditches : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Ditches line vector.</span>
+<span class="sd">    vct_conductive_dams : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Conductive dams line vector.</span>
+<span class="sd">    vct_outlets : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Outlets point vector.</span>
+<span class="sd">    vct_endpoints : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Endpoints line vector (sewers, ditches) with efficiency attribute.</span>
+<span class="sd">    force_routing : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Forced routing line vector.</span>
+<span class="sd">    grass_strips : pathlib.Path, str or numpy.ndarray</span>
+<span class="sd">        Grass strips raster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catchm</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">userchoices</span><span class="p">):</span>
@@ -446,7 +470,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">catchm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">rp</span>
 
-        <span class="c1"># Initalize</span>
+        <span class="c1"># Initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vector_factory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">vector_factory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchm</span><span class="o">.</span><span class="n">raster_factory</span>
 
@@ -472,7 +496,7 @@
         <span class="c1"># WaTEM/SEDEM input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ktc</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cn</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cn_table</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rainfall</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cfactor</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
 
@@ -542,7 +566,7 @@
 <span class="sd">            - *[0,1]*: C-factor for crop.</span>
 <span class="sd">            - *NULL*: no C-factor defined.</span>
 
-<span class="sd">        Should contain a defiction of the C-reduction (column &#39;C_reduct&#39;), used</span>
+<span class="sd">        Should contain a definition of the C-reduction (column &#39;C_reduct&#39;), used</span>
 <span class="sd">        in case of source-oriented measures.</span>
 
 <span class="sd">        Can contain a &#39;NR&#39; column which is the identification ID of the</span>
@@ -1272,50 +1296,6 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cn_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set/getter CN-table</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        pandas.DataFrame</span>
-<span class="sd">            with columns:</span>
-
-<span class="sd">            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,</span>
-<span class="sd">              associated to crop), contour plowing measures (0/1/2), hydrological</span>
-<span class="sd">              conditions ({0,1-&gt;3}, {unknown, poor to good}), contour_id (0/1).</span>
-<span class="sd">            - CNmax_1 (int): CNmax for soil class 1</span>
-<span class="sd">            - CNmax_2 (int): CNmax for soil class 2</span>
-<span class="sd">            - CNmax_3 (int): CNmax for soil class 3</span>
-<span class="sd">            - CNmax_4 (int): CNmax for soil class 4</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cn_table</span>
-
-    <span class="nd">@cn_table</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cn_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set/getter CN-table</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        pandas.DataFrame</span>
-<span class="sd">            with columns:</span>
-
-<span class="sd">            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,</span>
-<span class="sd">              associated to crop), contour plowing measures (0/1/2), hydrological</span>
-<span class="sd">              conditions ({0,1-&gt;3}, {unknown, poor to good}), contour_id (0/1).</span>
-<span class="sd">            - CNmax_1 (int): CNmax for soil class 1</span>
-<span class="sd">            - CNmax_2 (int): CNmax for soil class 2</span>
-<span class="sd">            - CNmax_3 (int): CNmax for soil class 3</span>
-<span class="sd">            - CNmax_4 (int): CNmax for soil class 4</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;CNmaxID&quot;</span><span class="p">,</span> <span class="s2">&quot;CNmax_1&quot;</span><span class="p">,</span> <span class="s2">&quot;CNmax_2&quot;</span><span class="p">,</span> <span class="s2">&quot;CNmax_3&quot;</span><span class="p">,</span> <span class="s2">&quot;CNmax_4&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Dataframe should have columns &#39;CNmaxID&#39;, &#39;CNmax_1&#39;, &#39;CNmax_2&#39;, &quot;</span>
-                <span class="s2">&quot;&#39;CNmax_3&#39;, &#39;CNmax_4&#39;.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cn_table</span> <span class="o">=</span> <span class="n">df</span>
-
-    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">composite_landuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter infrastructure polygon vector&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composite_landuse</span>
@@ -1389,6 +1369,34 @@
 <span class="sd">            3-D raster: x,y raster for every season.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster_input</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rainfall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Getter rainfall file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rainfall</span>
+
+    <span class="nd">@rainfall</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rainfall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rainfall_filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setter rainfall file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: str or pathlib.Path</span>
+<span class="sd">            rainfall time series, for documentation, see</span>
+<span class="sd">            :ref:`here &lt;watemsedem:rainfallfile&gt;`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">rainfall_filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rainfall_filename</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Rainfall filename is not of type `str` or `pathlib.Path`.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">rainfall_filename</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Rainfall filename </span><span class="si">{</span><span class="n">rainfall_filename</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rainfall</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rainfall_filename</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Scenario.create_composite_landuse">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.Scenario.create_composite_landuse">[docs]</a>
@@ -1617,11 +1625,21 @@
             <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">curve_number</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cn</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cn</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">wsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">cn_file</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Model version in &#39;CN-WS&#39;, define a CN raster to run CN.&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;CN extension is enabled, define a CN raster to run CN.&quot;</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rainfall</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">rainfall</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">wsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">rainfall_file</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;CN extension is enabled, define a rainfall file to run CN.&quot;</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">create_ktc_map</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ktc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">wsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">ktc_file</span><span class="p">)</span>
@@ -1758,135 +1776,6 @@
 
         <span class="n">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfolder</span><span class="o">.</span><span class="n">scenario_folder</span><span class="p">)</span></div>
 </div>
-
-
-
-<div class="viewcode-block" id="remove_known_grass_strips_from_parcels_vct_saga">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.remove_known_grass_strips_from_parcels_vct_saga">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">remove_known_grass_strips_from_parcels_vct_saga</span><span class="p">(</span><span class="n">parcels</span><span class="p">,</span> <span class="n">vct_grass_strips</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove parcels with overlap above 75%</span>
-
-<span class="sd">    Remove the parcels in vct_parcels that overlap with grass strips</span>
-<span class="sd">    in vct_grass_strips if the overlap for both features is at least 75%.</span>
-
-<span class="sd">    The function updates the vct_parcels input layer</span>
-
-<span class="sd">    The amount of intersection or overlap between a parcel is caluclated as</span>
-<span class="sd">    area_intersect(grass strips, parcel)/area(parcel).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    parcels: geopandas.GeoDataFrame</span>
-<span class="sd">        Can have any column, should have geometries</span>
-<span class="sd">    vct_grass_strips: str or pathlib.Path</span>
-<span class="sd">        File path of parcel shapefile</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">vct_grass_strips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">fname_temp</span> <span class="o">=</span> <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;temp_intersect.shp&quot;</span>
-    <span class="n">fname_parcels</span> <span class="o">=</span> <span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;temp_parcels.shp&quot;</span>
-
-    <span class="k">if</span> <span class="n">cond</span><span class="p">:</span>
-        <span class="c1"># check if NR is in vct_parcels</span>
-        <span class="k">if</span> <span class="s2">&quot;NR&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parcels</span><span class="p">:</span>
-            <span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;NR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">parcels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">parcels</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">fname_parcels</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
-        <span class="n">saga_intersection</span><span class="p">(</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">fname_parcels</span><span class="p">),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">vct_grass_strips</span><span class="p">),</span>
-            <span class="n">fname_temp</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="c1"># intersect</span>
-        <span class="n">parcels_intersection</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">fname_temp</span><span class="p">)</span>
-
-        <span class="c1"># couple considered parcels from this year and prior year (only consider</span>
-        <span class="c1"># largest intersect)</span>
-        <span class="n">parcels_intersection</span><span class="p">[</span><span class="s2">&quot;area_inter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parcels_intersection</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">area</span>
-
-        <span class="c1"># find largest interesecting parcel and select only those</span>
-        <span class="n">parcels_intersection</span><span class="p">[</span><span class="s2">&quot;area_inter_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parcels_intersection</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;NR&quot;</span><span class="p">)[</span>
-            <span class="s2">&quot;area_inter&quot;</span>
-        <span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
-        <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">parcels_intersection</span><span class="p">[</span><span class="s2">&quot;area_inter_max&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">parcels_intersection</span><span class="p">[</span><span class="s2">&quot;area_inter&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">parcels_intersection</span> <span class="o">=</span> <span class="n">parcels_intersection</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span>
-
-        <span class="c1"># load parcels</span>
-        <span class="n">parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="n">parcels</span> <span class="o">=</span> <span class="n">parcels</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-            <span class="n">parcels_intersection</span><span class="p">[[</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="s2">&quot;area_inter&quot;</span><span class="p">]],</span>
-            <span class="n">on</span><span class="o">=</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span>
-            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="c1"># normalize area intersction  with area of parcel of considered year</span>
-        <span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;norm_over&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;area_inter&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
-
-        <span class="c1"># define condition</span>
-        <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;norm_over&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span> <span class="o">|</span> <span class="p">(</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;norm_over&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">75</span><span class="p">)</span>
-        <span class="n">parcels</span> <span class="o">=</span> <span class="n">parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span>
-        <span class="n">parcels</span> <span class="o">=</span> <span class="n">parcels</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
-            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;area_inter_max&quot;</span><span class="p">,</span> <span class="s2">&quot;norm_over&quot;</span><span class="p">,</span> <span class="s2">&quot;area_inter&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">parcels</span></div>
-
-
-
-<div class="viewcode-block" id="convert_grass_strips_to_agricultural_fields">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.scenario.convert_grass_strips_to_agricultural_fields">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_grass_strips_to_agricultural_fields</span><span class="p">(</span><span class="n">parcels</span><span class="p">,</span> <span class="n">vct_grass_strips</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert known grass strips to agricultural fields in the parcels shape file.</span>
-
-<span class="sd">    If a parcel in vct_parcels intersects for 75% or more with a grass strip in</span>
-<span class="sd">    vct_grass_strips, the attributes of the parcel are changed: &quot;LANDUSE&quot; is set</span>
-<span class="sd">    to -9999 (agriculture), &quot;GWSCOD_H&quot; is set to &quot;9999&quot; (unknown crop) and</span>
-<span class="sd">    &quot;C-factor&quot; is set to 0.37. This function updates the input vct_parcels.</span>
-
-<span class="sd">    The amount of intersection or overlap between a parcel is caluclated as</span>
-<span class="sd">    area_intersect(grasstri, parcel)/area(parcel).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    parcels: geopandas.GeoDataFrame</span>
-<span class="sd">        Can have any column, should have geometries</span>
-
-<span class="sd">    vct_grass_strips: str or pathlib.Path</span>
-<span class="sd">        File path of parcel shapefiles</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    parcels: geopandas.GeoDataFrame</span>
-<span class="sd">        With added column:</span>
-
-<span class="sd">        - *default_cfactor* (bool): convert to default C-factor (and landuse).</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">vct_grass_strips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;C_factor&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parcels</span><span class="p">:</span>
-            <span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;C_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">gdf_grass</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_grass_strips</span><span class="p">)</span>
-        <span class="n">matches</span> <span class="o">=</span> <span class="n">parcels</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">nearly_identical</span><span class="p">(</span><span class="n">gdf_grass</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
-        <span class="n">matches</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-        <span class="n">gdf_grass_matched</span> <span class="o">=</span> <span class="n">gdf_grass</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">matches</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">gdf_grass_matched</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">index</span>
-        <span class="n">gdf_grass_matched</span><span class="p">[</span><span class="s2">&quot;grasstrip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">gdf_grass_matched</span> <span class="o">=</span> <span class="n">gdf_grass_matched</span><span class="p">[[</span><span class="s2">&quot;grasstrip&quot;</span><span class="p">]]</span>
-        <span class="n">parcels</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-            <span class="n">parcels</span><span class="p">,</span>
-            <span class="n">gdf_grass_matched</span><span class="p">,</span>
-            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
-            <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;grasstrip&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;LANDUSE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
-        <span class="n">parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;grasstrip&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;GWSCOD_H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9999</span>
-        <span class="n">parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;grasstrip&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;C_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.37</span>
-
-    <span class="k">return</span> <span class="n">parcels</span></div>
 
 
 

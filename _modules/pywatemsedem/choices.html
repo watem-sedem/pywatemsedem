@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.choices &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.choices &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -103,10 +104,36 @@
 <div class="viewcode-block" id="UserChoice">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.choices.UserChoice">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UserChoice</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent a single user-configurable choice/option.</span>
+
+<span class="sd">    This class encapsulates a configuration option with validation,</span>
+<span class="sd">    type checking, and default value handling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    key : str</span>
+<span class="sd">        The name/identifier of the choice.</span>
+<span class="sd">    section : str</span>
+<span class="sd">        The INI file section this choice belongs to.</span>
+<span class="sd">    dtype : type</span>
+<span class="sd">        The expected data type (e.g., str, int, float, bool).</span>
+<span class="sd">    mandatory : bool</span>
+<span class="sd">        Whether this choice must have a value set.</span>
+<span class="sd">    default_value : any, default None</span>
+<span class="sd">        The default value if none is provided.</span>
+<span class="sd">    allowed_values : list, default None</span>
+<span class="sd">        List of allowed values. If None, any value of correct dtype is allowed.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : any</span>
+<span class="sd">        The current value of the choice.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">mandatory</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allowed_values</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize choice&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the UserChoice instance.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">section</span> <span class="o">=</span> <span class="n">section</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
@@ -323,12 +350,12 @@
 
     <span class="nd">@l_model</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">l_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the l_model</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the l_model.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
-<span class="sd">        input_value: str</span>
-<span class="sd">            name of the L model</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_value : str</span>
+<span class="sd">            Name of the L model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_l_model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">input_value</span>
 
@@ -345,12 +372,12 @@
 
     <span class="nd">@s_model</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">s_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the s_model</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the s_model.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
-<span class="sd">        input_value: str</span>
-<span class="sd">            name of the S model</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_value : str</span>
+<span class="sd">            Name of the S model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s_model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">input_value</span>
 
@@ -367,12 +394,12 @@
 
     <span class="nd">@tc_model</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tc_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the tc_model</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the tc_model.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
-<span class="sd">        input_value: str</span>
-<span class="sd">            name of the TC model</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_value : str</span>
+<span class="sd">            Name of the TC model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tc_model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">input_value</span>
 
@@ -389,11 +416,12 @@
 
     <span class="nd">@only_routing</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">only_routing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the only_routing option</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the only_routing option.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
-<span class="sd">        input_value: bool</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_value : bool</span>
+<span class="sd">            Whether to only perform routing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_only_routing</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">input_value</span>
 
@@ -410,11 +438,12 @@
 
     <span class="nd">@calculate_tillage_erosion</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_tillage_erosion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the calculate_tillage_erosion option</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign the calculate_tillage_erosion option.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
-<span class="sd">        input_value: bool</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_value : bool</span>
+<span class="sd">            Whether to calculate tillage erosion.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_tillage_erosion</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">input_value</span></div>
 

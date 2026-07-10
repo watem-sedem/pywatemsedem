@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -104,7 +105,7 @@
 <div class="viewcode-block" id="RasterProperties">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RasterProperties</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raster properties class</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raster properties class.</span>
 
 <span class="sd">    Pywatemsedem makes use of rasterio and gdal for loading, writing and processing</span>
 <span class="sd">    rasters/vectors. A small class is implemented to easily switch between raster</span>
@@ -154,15 +155,40 @@
 <span class="sd">        epsg = 31370</span>
 <span class="sd">        rp = RasterProperties(bounds, resolution, nodata, epsg)</span>
 
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bounds : list of float</span>
+<span class="sd">        Raster boundary coordinates [x_left, y_lower, x_right, y_upper].</span>
+<span class="sd">    resolution : int</span>
+<span class="sd">        Spatial resolution.</span>
+<span class="sd">    nodata : float</span>
+<span class="sd">        No data value used in raster.</span>
+<span class="sd">    epsg : int</span>
+<span class="sd">        EPSG code of the raster projection.</span>
+<span class="sd">    driver : str</span>
+<span class="sd">        Name of GDAL driver (GTiff, RST, or SAGA).</span>
+<span class="sd">    nrows : int</span>
+<span class="sd">        Number of rows in the raster.</span>
+<span class="sd">    ncols : int</span>
+<span class="sd">        Number of columns in the raster.</span>
+<span class="sd">    xcoord : numpy.ndarray</span>
+<span class="sd">        1D-vector array of x-coordinates.</span>
+<span class="sd">    ycoord : numpy.ndarray</span>
+<span class="sd">        1D-vector array of y-coordinates.</span>
+<span class="sd">    gdal_profile : dict</span>
+<span class="sd">        GDAL profile dictionary.</span>
+<span class="sd">    rasterio_profile : dict</span>
+<span class="sd">        Rasterio profile dictionary.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    1. Current implementation support storing of raster properties, yet is does not aim</span>
-<span class="sd">       to provide functionalities to adapt raster properties (as these functionalities</span>
-<span class="sd">       are present in rasterio).</span>
+<span class="sd">    1. Current implementation supports storing of raster properties, yet it does not</span>
+<span class="sd">       aim to provide functionalities to adapt raster properties (as these</span>
+<span class="sd">       functionalities are present in rasterio).</span>
 <span class="sd">    2. Current implementation does not support tiled rasters. In addition,</span>
-<span class="sd">       it only support bands-interleaving as only single-band raster are used.</span>
+<span class="sd">       it only supports bands-interleaving as only single-band rasters are used.</span>
 <span class="sd">    3. Definition interleaving: the way multiple bands of a raster are saved to the</span>
-<span class="sd">       raster (e.g. pixel-based, line-based, band-based)</span>
+<span class="sd">       raster (e.g. pixel-based, line-based, band-based).</span>
 <span class="sd">    4. The coordinate reference system (crs) is defined in EPSG.</span>
 <span class="sd">    5. Note that dtype in gdal operation is typically derived from input raster</span>
 <span class="sd">       dtype that is used to execute the gdal operation. As such dtype is not</span>

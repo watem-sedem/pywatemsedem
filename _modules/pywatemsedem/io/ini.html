@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.ini &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.io.ini &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -93,7 +94,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.io.ini</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span></span><span class="sd">&quot;&quot;&quot;ini.py</span>
+
+<span class="sd">This module contains the IniFile class, which is used to create the WaTEM/SEDEM</span>
+<span class="sd">ini-file, together with some useful functions to handle ini-files.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -137,7 +144,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputfolder</span><span class="p">,</span> <span class="n">outputfolder</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an ini-file for the scenario&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an ini-file for the scenario</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inputfolder: pathlib.Path or str</span>
+<span class="sd">            file path of the folder with input data</span>
+<span class="sd">        outputfolder: pathlib.Path or str</span>
+<span class="sd">            file path of the folder where the output files will be stored</span>
+<span class="sd">        choices: pywatemsedem.choices.Choices</span>
+<span class="sd">            instance of the class containing the user choices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wsinput_folder</span> <span class="o">=</span> <span class="n">inputfolder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wsoutput_folder</span> <span class="o">=</span> <span class="n">outputfolder</span>
@@ -156,6 +173,7 @@
 <div class="viewcode-block" id="IniFile.add_sections">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_sections">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adding all watem-sedem sections to the config file&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Model information&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Working directories&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s2">&quot;Files&quot;</span><span class="p">)</span>
@@ -193,7 +211,7 @@
 <div class="viewcode-block" id="IniFile.add_files">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_files">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section files to config file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add all Files to config file&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
             <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
             <span class="s2">&quot;DTM filename&quot;</span><span class="p">,</span>
@@ -236,7 +254,7 @@
 <div class="viewcode-block" id="IniFile.add_parameters">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_parameters">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section parameters to config file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add parameters to config file&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -246,7 +264,7 @@
 <div class="viewcode-block" id="IniFile.add_output">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_output">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add section outputs config file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add outputs to config file&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">attribute</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">attribute</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -733,7 +751,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Rainfall filename&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Rainfall.txt&quot;</span><span class="p">,</span>  <span class="c1"># TODO: define in templates</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wsinput_folder</span> <span class="o">/</span> <span class="n">inputfilename</span><span class="o">.</span><span class="n">rainfall_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
                 <span class="s2">&quot;Parameters Extensions&quot;</span><span class="p">,</span>
@@ -772,7 +790,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ini: pathlib.Path</span>
+<span class="sd">    ini: pathlib.Path or str</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>

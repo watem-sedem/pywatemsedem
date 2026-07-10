@@ -53,14 +53,6 @@ pywatemsedem.choices module
    :show-inheritance:
    :undoc-members:
 
-pywatemsedem.cn module
-----------------------
-
-.. automodule:: pywatemsedem.cn
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 pywatemsedem.compare\_scenario module
 -------------------------------------
 
@@ -145,14 +137,6 @@ pywatemsedem.tools module
 -------------------------
 
 .. automodule:: pywatemsedem.tools
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-pywatemsedem.userchoices\_cn module
------------------------------------
-
-.. automodule:: pywatemsedem.userchoices_cn
    :members:
    :show-inheritance:
    :undoc-members:

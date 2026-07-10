@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.calibrate &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.calibrate &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -178,7 +179,7 @@
 <div class="viewcode-block" id="Calibration.define_parameter_grid">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.Calibration.define_parameter_grid">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">define_parameter_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defne parameter grid for ktc low and high&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define parameter grid for ktc low and high.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arr_ktc_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_min</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ktc_low_max</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">stepresolution_low</span><span class="p">,</span>
@@ -194,16 +195,19 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_make_template_df</span><span class="p">(</span><span class="n">arr_ktc_low</span><span class="p">,</span> <span class="n">arr_ktc_high</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a pandas.DataFrame with all combinations of ktc_low and ktc_high</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a pandas.DataFrame with all combinations of ktc_low and ktc_high.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    arr_ktc_low: numpy.array</span>
-<span class="sd">    arr_ktc_high: numpy.array</span>
+<span class="sd">    arr_ktc_low : numpy.ndarray</span>
+<span class="sd">        Array of ktc low values.</span>
+<span class="sd">    arr_ktc_high : numpy.ndarray</span>
+<span class="sd">        Array of ktc high values.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    df_cal_template: pandas.DataFrame. The DataFrame contains following columns:</span>
+<span class="sd">    df_cal_template : pandas.DataFrame</span>
+<span class="sd">        The DataFrame contains following columns:</span>
 
 <span class="sd">        - *ktc_high* (float): high transport capacity coefficient</span>
 <span class="sd">        - *ktc_low* (float); low transport capacity coefficient</span>
@@ -228,9 +232,9 @@
     <span class="n">catchment_area</span><span class="p">,</span>
     <span class="n">endpoint_coefficient</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processes the output-file of a calibration run for a given catchment</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processes the output-file of a calibration run for a given catchment.</span>
 
-<span class="sd">    This function reads the calibration output file for a given catchement and</span>
+<span class="sd">    This function reads the calibration output file for a given catchment and</span>
 <span class="sd">    calculates for every combination of ktc values the predicted specific</span>
 <span class="sd">    sediment yield (P ssy) and calculates the squared difference between the</span>
 <span class="sd">    observed and predicted (specific) sediment yield.</span>
@@ -510,10 +514,10 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">denominator_sy</span> <span class="o">=</span> <span class="n">compute_denomitor_nash_sutcliffe</span><span class="p">(</span>
+    <span class="n">denominator_sy</span> <span class="o">=</span> <span class="n">compute_denominator_nash_sutcliffe</span><span class="p">(</span>
         <span class="n">df_calibration_data</span><span class="p">,</span> <span class="s2">&quot;sy&quot;</span><span class="p">,</span> <span class="n">squared_error</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
-    <span class="n">denominator_ssy</span> <span class="o">=</span> <span class="n">compute_denomitor_nash_sutcliffe</span><span class="p">(</span>
+    <span class="n">denominator_ssy</span> <span class="o">=</span> <span class="n">compute_denominator_nash_sutcliffe</span><span class="p">(</span>
         <span class="n">df_calibration_data</span><span class="p">,</span> <span class="s2">&quot;ssy&quot;</span><span class="p">,</span> <span class="n">squared_error</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 
@@ -545,7 +549,7 @@
 <span class="sd">    df_calibration_results: pandas.DataFrame</span>
 <span class="sd">        See :func:`pywatemsedem.calibrate.calculate_model_efficiency`.</span>
 <span class="sd">    denominator: float</span>
-<span class="sd">        See :func:`pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe`.</span>
+<span class="sd">        See :func:`pywatemsedem.calibrate.compute_denominator_nash_sutcliffe`.</span>
 <span class="sd">    variable: str</span>
 <span class="sd">        Name of output variable &#39;sy&#39; or &#39;ssy&#39;.</span>
 <span class="sd">    squared_error: bool, default True</span>
@@ -588,10 +592,10 @@
 
 
 
-<div class="viewcode-block" id="compute_denomitor_nash_sutcliffe">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">compute_denomitor_nash_sutcliffe</span><span class="p">(</span><span class="n">df_calibration_data</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">squared_error</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the denomitor for the Nash-Sutcliffe model efficiency.</span>
+<div class="viewcode-block" id="compute_denominator_nash_sutcliffe">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.calibrate.compute_denominator_nash_sutcliffe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_denominator_nash_sutcliffe</span><span class="p">(</span><span class="n">df_calibration_data</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">squared_error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the denominator for the Nash-Sutcliffe model efficiency.</span>
 
 <span class="sd">    You can make use of squared or absolute errors to compute the denominator.</span>
 

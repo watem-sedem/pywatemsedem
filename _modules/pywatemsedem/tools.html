@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.tools &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.tools &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -93,11 +94,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.tools</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span></span><span class="sd">&quot;&quot;&quot;tools.py</span>
+
+<span class="sd">This module contains some general purpose functions.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -221,62 +226,6 @@
 
 
 
-<div class="viewcode-block" id="extract_tags_from_template_file">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.extract_tags_from_template_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">extract_tags_from_template_file</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract tags (scenario, catchment, year from the WaTEM/SEDEM perceelskaart</span>
-<span class="sd">    template file.</span>
-
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    template: pathlib.Path or str</span>
-<span class="sd">        File path to CN-WS perceelskaart template file.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    catchment_name: str</span>
-<span class="sd">        Catchment name</span>
-<span class="sd">    scenario: str</span>
-<span class="sd">        Scenario number (in string!)</span>
-<span class="sd">    year: int</span>
-<span class="sd">        Simulation year.</span>
-<span class="sd">    valid: bool</span>
-<span class="sd">        Tag that indicate whether template format agrees with defined template format.</span>
-
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    The template format should be</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># take first template file and drop extension</span>
-    <span class="n">template_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-
-    <span class="c1"># split template name on &quot;_&quot;</span>
-    <span class="n">template_</span> <span class="o">=</span> <span class="n">template_</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-
-    <span class="c1"># valid if template conveys with define template format</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">template_</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Template </span><span class="si">{</span><span class="n">template</span><span class="si">}</span><span class="s2"> does not convey with defined template format &quot;</span>
-            <span class="s2">&quot;`fname_%year_</span><span class="si">%c</span><span class="s2">atchmentname_s</span><span class="si">%s</span><span class="s2">cenariolabel.rst`.&quot;</span>
-        <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="c1"># get catchment name which is on the third position (index 2)</span>
-    <span class="n">catchment_name</span> <span class="o">=</span> <span class="n">template_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="c1"># get scenario number (str) from last position and drop &quot;s&quot;</span>
-    <span class="n">scenario</span> <span class="o">=</span> <span class="n">template_</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="c1"># get year (int) from second position (index 1)</span>
-    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">template_</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">catchment_name</span><span class="p">,</span> <span class="n">scenario</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">valid</span></div>
-
-
-
 <div class="viewcode-block" id="get_df_area_unique_values_array">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.get_df_area_unique_values_array">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_df_area_unique_values_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
@@ -307,55 +256,6 @@
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">areas</span>
     <span class="k">return</span> <span class="n">df</span></div>
-
-
-
-<div class="viewcode-block" id="check_cn_ws_binary">
-<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.check_cn_ws_binary">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_cn_ws_binary</span><span class="p">(</span><span class="n">cn_ws_binary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fixed_name_cmd</span><span class="o">=</span><span class="s2">&quot;cn_ws&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if the compiled CN_WS program is known in the environment,</span>
-<span class="sd">    or if the path reference exists</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    cn_ws_binary: str, default None</span>
-<span class="sd">        File Path of compiled cn_ws Pascal code. If None, check environment.</span>
-<span class="sd">    fixed_name_cmd: str, default &#39;cn_ws&#39;</span>
-<span class="sd">        Name of exe/program.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    cn_ws_exe: str</span>
-<span class="sd">        File path of compiled cn_ws Pascal code.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">cn_ws_binary</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cn_ws_defined_in_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="n">fixed_name_cmd</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">cn_ws_defined_in_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">try_location</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;GitHub&quot;</span> <span class="o">/</span> <span class="s2">&quot;cn_ws&quot;</span> <span class="o">/</span> <span class="s2">&quot;cn_ws&quot;</span> <span class="o">/</span> <span class="s2">&quot;cn_ws&quot;</span>
-            <span class="k">if</span> <span class="n">try_location</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">cn_ws_binary</span> <span class="o">=</span> <span class="n">try_location</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;CN_WSmodel exe/program not found in environment, make sure you &quot;</span>
-                    <span class="s2">&quot;have defined a compiled version of cn_ws in your &quot;</span>
-                    <span class="s2">&quot;environment correctly!&quot;</span>
-                <span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">cn_ws_binary</span> <span class="o">=</span> <span class="n">fixed_name_cmd</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">cn_ws_binary</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">cn_ws_binary</span> <span class="o">=</span> <span class="n">cn_ws_binary</span> <span class="o">+</span> <span class="s2">&quot;.exe&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">cn_ws_binary</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The custom-path defined for the CN_WSmodel exe/program &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cn_ws_binary</span><span class="si">}</span><span class="s2"> is incorrect, please check you refer &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;to a compiled CN_WSmodel.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">cn_ws_binary</span></div>
 
 
 

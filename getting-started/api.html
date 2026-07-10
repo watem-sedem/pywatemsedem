@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem API &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem API &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -89,6 +89,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -765,24 +766,37 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">catchment</span><span class="p">,</span> <span class="mi">2019</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">choices</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
 </pre></div>
 </div>
 </div>
 <p>Technical tillage measures are implemented at the level of a parcel, for which we can define a “reduction”. The column ‘C_reduct’ is used to reduce the final C-factor:</p>
 <div class="math notranslate nohighlight">
-\[C_{factor,reduced}=C_{factor}∗(1-C_{reduction})\]</div>
+\[C_{factor,reduced}=C_{factor}﷿﷿﷿(1-C_{reduction})\]</div>
+<p>Therefore, we adjust the source data of the parcels vector before assigning it to scenario.vct_parcels</p>
 <p>In this example we add a reduction of 80% to all parcels with LANDUSE code -9999.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We take all parcels with a crop code of 311 to reduce with 80 %.</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span><span class="o">.</span><span class="n">geodata</span><span class="p">[</span><span class="s2">&quot;LANDUSE&quot;</span><span class="p">]</span><span class="o">==-</span><span class="mi">9999</span><span class="p">,</span> <span class="s2">&quot;C_reduct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="n">f_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<span class="n">gdf_parcels</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">f_parcels</span><span class="p">)</span>
+
+<span class="n">gdf_parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf_parcels</span><span class="p">[</span><span class="s2">&quot;LANDUSE&quot;</span><span class="p">]</span><span class="o">==-</span><span class="mi">9999</span><span class="p">,</span> <span class="s2">&quot;C_reduct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>
 </pre></div>
 </div>
 </div>
-<p>Enable source-oriented measures by setting ‘UseTeelttechn’ to one.</p>
+<p>Once the polygon file with parcels contains a C_reduct column, we can assign it to the vct_parcels property of the scenario-object</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">gdf_parcels</span>
+</pre></div>
+</div>
+</div>
+<p>Enable source-oriented measures by setting ‘UseTeelttechn’ to True.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>

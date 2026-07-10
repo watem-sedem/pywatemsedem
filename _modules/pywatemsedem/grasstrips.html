@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.grasstrips &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.grasstrips &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -161,8 +162,8 @@
     <span class="n">upper_cfactor</span><span class="o">=</span><span class="mf">0.37</span><span class="p">,</span>
     <span class="n">lower_cfactor</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a lineair interpolation between the defined lower</span>
-<span class="sd">    and upper boundary condtion, and the resolution.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a linear interpolation between the defined lower</span>
+<span class="sd">    and upper boundary condition, and the resolution.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -189,7 +190,7 @@
 
 <span class="sd">        C = 0.01*\\frac{w}{r}+0.37*\\frac{r-w}{r}</span>
 
-<span class="sd">    Considering an lower and upper C-factor of 0.01 and 0.37, widths are capped to</span>
+<span class="sd">    Considering a lower and upper C-factor of 0.01 and 0.37, widths are capped to</span>
 <span class="sd">    model resolution.</span>
 
 <span class="sd">    References</span>
@@ -219,8 +220,8 @@
     <span class="n">ktc_low</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
     <span class="n">ktc_high</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a lineair interpolation between the defined lower</span>
-<span class="sd">    and upper boundary condtion, and the resolution.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale function for ktc based on a linear interpolation between the defined lower</span>
+<span class="sd">    and upper boundary condition, and the resolution.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -302,7 +303,7 @@
 <span class="sd">    ktc_high: float</span>
 <span class="sd">        The upper boundary to which scale the ktc value.</span>
 <span class="sd">    k: float</span>
-<span class="sd">        Maximum sediment trappping efficiency (K in Zhang et al., 2010)</span>
+<span class="sd">        Maximum sediment trapping efficiency (K in Zhang et al., 2010)</span>
 <span class="sd">    b: float</span>
 <span class="sd">        Slope coefficient (see Zhang et al., 2010).</span>
 
@@ -315,7 +316,7 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    1. The ktc valeus for grass strips are determined by using emperical sediment</span>
+<span class="sd">    1. The ktc values for grass strips are determined by using empirical sediment</span>
 <span class="sd">    trapping efficiency (STE) values in the equation of Verstraete et al. (2006):</span>
 
 <span class="sd">    .. math::</span>
@@ -327,7 +328,7 @@
 
 <span class="sd">        :math:`ktc_{var}` (1/m): the ktc values for the grass strips;</span>
 
-<span class="sd">    The STE can be determined by using the emperical findings of Zhang et al. (2010):</span>
+<span class="sd">    The STE can be determined by using the empirical findings of Zhang et al. (2010):</span>
 
 <span class="sd">    .. math::s</span>
 
@@ -367,7 +368,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">scale_ktc_with_grass_strip_width</span><span class="p">(</span>
     <span class="n">arr_width</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">scaling_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale ktc value for grass stripts according to the width of the grass strip.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale ktc value for grass strips according to the width of the grass strip.</span>
 
 <span class="sd">    The ktc parameters (which determines the amount of sediment which is routed</span>
 <span class="sd">    downstream) for a grass strip varies as a function of the width of the grass strip.</span>
@@ -392,7 +393,7 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The theoretical &#39;sediment trapping efficiency&#39; (STE) is interpreted as the</span>
-<span class="sd">    trapping efficiency of a grass strips on a homogenous lineair slope. In other</span>
+<span class="sd">    trapping efficiency of a grass strip on a homogeneous linear slope. In other</span>
 <span class="sd">    words, the slope plane can be defined as a flat plane (as in: can be defined in</span>
 <span class="sd">    by two dimensions). This is also sometimes referred to as a linear slope (see</span>
 <span class="sd">    Verstraete et al. (2006))</span>
@@ -887,6 +888,32 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_neighbour_grass_strips_ids_array</span><span class="p">(</span>
     <span class="n">vct_grass_strips</span><span class="p">,</span> <span class="n">rst_params</span><span class="p">,</span> <span class="n">width_polygon</span><span class="o">=</span><span class="mi">20</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a raster array of buffered grass strip IDs.</span>
+
+<span class="sd">    This function creates a buffer around each grass strip polygon and rasterizes</span>
+<span class="sd">    the result to identify neighboring grass strip pixels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct_grass_strips : str or pathlib.Path</span>
+<span class="sd">        File path to the grass strips vector file. Must contain a &#39;NR&#39; column</span>
+<span class="sd">        with unique grass strip identifiers.</span>
+<span class="sd">    rst_params : dict</span>
+<span class="sd">        Raster parameters for output raster creation, including resolution,</span>
+<span class="sd">        extent, and coordinate reference system.</span>
+<span class="sd">    width_polygon : int, default 20</span>
+<span class="sd">        Buffer width in meters to expand grass strip polygons.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        Writes the rasterized buffered grass strips to disk.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The function creates an intermediate buffered shapefile and a raster output</span>
+<span class="sd">    file named &#39;neighbour_grass_strips_ids_array.tiff&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_grass_strips</span><span class="p">)</span>
     <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;buffer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">width_polygon</span><span class="p">)</span>
     <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[[</span><span class="s2">&quot;NR&quot;</span><span class="p">,</span> <span class="s2">&quot;buffer&quot;</span><span class="p">]]</span>

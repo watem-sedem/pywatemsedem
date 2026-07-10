@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -68,6 +68,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -152,7 +153,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.calculate_ratio_ktc"><code class="docutils literal notranslate"><span class="pre">calculate_ratio_ktc()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.calculate_regressions"><code class="docutils literal notranslate"><span class="pre">calculate_regressions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.check_endpoint_throughput_coefficient"><code class="docutils literal notranslate"><span class="pre">check_endpoint_throughput_coefficient()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe"><code class="docutils literal notranslate"><span class="pre">compute_denomitor_nash_sutcliffe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.compute_denominator_nash_sutcliffe"><code class="docutils literal notranslate"><span class="pre">compute_denominator_nash_sutcliffe()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.compute_model_errors_sy"><code class="docutils literal notranslate"><span class="pre">compute_model_errors_sy()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.compute_nash_sutcliffe"><code class="docutils literal notranslate"><span class="pre">compute_nash_sutcliffe()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.calibrate.linear_regression_evaluation_calibration"><code class="docutils literal notranslate"><span class="pre">linear_regression_evaluation_calibration()</span></code></a></li>
@@ -164,17 +165,24 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.catchment">pywatemsedem.catchment module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment"><code class="docutils literal notranslate"><span class="pre">Catchment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.kfactor"><code class="docutils literal notranslate"><span class="pre">Catchment.kfactor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.landuse"><code class="docutils literal notranslate"><span class="pre">Catchment.landuse</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_river"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_river</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_water"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_water</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_buildings"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_infrastructure_buildings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_roads"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_infrastructure_roads</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.hydrological_soil_group"><code class="docutils literal notranslate"><span class="pre">Catchment.hydrological_soil_group</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.adjacent_edges"><code class="docutils literal notranslate"><span class="pre">Catchment.adjacent_edges</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.catchment_area"><code class="docutils literal notranslate"><span class="pre">Catchment.catchment_area</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.create_folder_structure"><code class="docutils literal notranslate"><span class="pre">Catchment.create_folder_structure()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.create_height_contours"><code class="docutils literal notranslate"><span class="pre">Catchment.create_height_contours()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.dtm"><code class="docutils literal notranslate"><span class="pre">Catchment.dtm</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.hydrological_soil_group"><code class="docutils literal notranslate"><span class="pre">Catchment.hydrological_soil_group</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id0"><code class="docutils literal notranslate"><span class="pre">Catchment.hydrological_soil_group</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.infrastructure"><code class="docutils literal notranslate"><span class="pre">Catchment.infrastructure</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.infrastructure_buildings"><code class="docutils literal notranslate"><span class="pre">Catchment.infrastructure_buildings</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.infrastructure_roads"><code class="docutils literal notranslate"><span class="pre">Catchment.infrastructure_roads</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.kfactor"><code class="docutils literal notranslate"><span class="pre">Catchment.kfactor</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.landuse"><code class="docutils literal notranslate"><span class="pre">Catchment.landuse</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id2"><code class="docutils literal notranslate"><span class="pre">Catchment.kfactor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id3"><code class="docutils literal notranslate"><span class="pre">Catchment.landuse</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.pfactor"><code class="docutils literal notranslate"><span class="pre">Catchment.pfactor</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.river"><code class="docutils literal notranslate"><span class="pre">Catchment.river</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.river_segment_length"><code class="docutils literal notranslate"><span class="pre">Catchment.river_segment_length</span></code></a></li>
@@ -183,10 +191,10 @@
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.topologize_river"><code class="docutils literal notranslate"><span class="pre">Catchment.topologize_river()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.tubed_river"><code class="docutils literal notranslate"><span class="pre">Catchment.tubed_river</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.up_edges"><code class="docutils literal notranslate"><span class="pre">Catchment.up_edges</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_buildings"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_infrastructure_buildings</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_roads"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_infrastructure_roads</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_river"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_river</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_water"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_water</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id4"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_infrastructure_buildings</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id5"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_infrastructure_roads</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id6"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_river</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id7"><code class="docutils literal notranslate"><span class="pre">Catchment.vct_water</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.water"><code class="docutils literal notranslate"><span class="pre">Catchment.water</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.catchment.Catchment.zip"><code class="docutils literal notranslate"><span class="pre">Catchment.zip()</span></code></a></li>
 </ul>
@@ -286,12 +294,13 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice"><code class="docutils literal notranslate"><span class="pre">UserChoice</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.value"><code class="docutils literal notranslate"><span class="pre">UserChoice.value</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.apply_default_value"><code class="docutils literal notranslate"><span class="pre">UserChoice.apply_default_value()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.read_default_value_from_ini"><code class="docutils literal notranslate"><span class="pre">UserChoice.read_default_value_from_ini()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.read_value_from_ini"><code class="docutils literal notranslate"><span class="pre">UserChoice.read_value_from_ini()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.validate_type"><code class="docutils literal notranslate"><span class="pre">UserChoice.validate_type()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.validate_value"><code class="docutils literal notranslate"><span class="pre">UserChoice.validate_value()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.UserChoice.value"><code class="docutils literal notranslate"><span class="pre">UserChoice.value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id8"><code class="docutils literal notranslate"><span class="pre">UserChoice.value</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.WSMixin"><code class="docutils literal notranslate"><span class="pre">WSMixin</span></code></a><ul>
@@ -300,10 +309,6 @@
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.WSMixin.read_values_from_ini"><code class="docutils literal notranslate"><span class="pre">WSMixin.read_values_from_ini()</span></code></a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.cn">pywatemsedem.cn module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.cn.process_cn_raster"><code class="docutils literal notranslate"><span class="pre">process_cn_raster()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.compare_scenario">pywatemsedem.compare_scenario module</a><ul>
@@ -455,12 +460,21 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.scenario">pywatemsedem.scenario module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario"><code class="docutils literal notranslate"><span class="pre">Scenario</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_parcels"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_parcels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_grass_strips"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_grass_strips</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_buffers"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_buffers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_bufferoutlets"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_bufferoutlets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_ditches"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_ditches</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_conductive_dams"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_conductive_dams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_outlets"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_outlets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_endpoints"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_endpoints</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.force_routing"><code class="docutils literal notranslate"><span class="pre">Scenario.force_routing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.grass_strips"><code class="docutils literal notranslate"><span class="pre">Scenario.grass_strips</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.bufferoutlet"><code class="docutils literal notranslate"><span class="pre">Scenario.bufferoutlet</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.buffers"><code class="docutils literal notranslate"><span class="pre">Scenario.buffers</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.buffers_exid"><code class="docutils literal notranslate"><span class="pre">Scenario.buffers_exid</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.cfactor"><code class="docutils literal notranslate"><span class="pre">Scenario.cfactor</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.cn"><code class="docutils literal notranslate"><span class="pre">Scenario.cn</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.cn_table"><code class="docutils literal notranslate"><span class="pre">Scenario.cn_table</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.composite_landuse"><code class="docutils literal notranslate"><span class="pre">Scenario.composite_landuse</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.conductive_dams"><code class="docutils literal notranslate"><span class="pre">Scenario.conductive_dams</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.create_cfactor"><code class="docutils literal notranslate"><span class="pre">Scenario.create_cfactor()</span></code></a></li>
@@ -470,33 +484,32 @@
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.ditches"><code class="docutils literal notranslate"><span class="pre">Scenario.ditches</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.endpoints"><code class="docutils literal notranslate"><span class="pre">Scenario.endpoints</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.endpoints_id"><code class="docutils literal notranslate"><span class="pre">Scenario.endpoints_id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.force_routing"><code class="docutils literal notranslate"><span class="pre">Scenario.force_routing</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.grass_strips"><code class="docutils literal notranslate"><span class="pre">Scenario.grass_strips</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id9"><code class="docutils literal notranslate"><span class="pre">Scenario.force_routing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id10"><code class="docutils literal notranslate"><span class="pre">Scenario.grass_strips</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.ktc"><code class="docutils literal notranslate"><span class="pre">Scenario.ktc</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.outlets"><code class="docutils literal notranslate"><span class="pre">Scenario.outlets</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.parcels"><code class="docutils literal notranslate"><span class="pre">Scenario.parcels</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.parcels_ids"><code class="docutils literal notranslate"><span class="pre">Scenario.parcels_ids</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.parcels_landuse"><code class="docutils literal notranslate"><span class="pre">Scenario.parcels_landuse</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.prepare_input_files"><code class="docutils literal notranslate"><span class="pre">Scenario.prepare_input_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.rainfall"><code class="docutils literal notranslate"><span class="pre">Scenario.rainfall</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.remove_endpoints_not_under_infrastructure"><code class="docutils literal notranslate"><span class="pre">Scenario.remove_endpoints_not_under_infrastructure()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.run_model"><code class="docutils literal notranslate"><span class="pre">Scenario.run_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.temporal_resolution"><code class="docutils literal notranslate"><span class="pre">Scenario.temporal_resolution()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_bufferoutlets"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_bufferoutlets</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_buffers"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_buffers</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_conductive_dams"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_conductive_dams</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_ditches"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_ditches</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_endpoints"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_endpoints</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_grass_strips"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_grass_strips</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_outlets"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_outlets</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_parcels"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_parcels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id11"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_bufferoutlets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id12"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_buffers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id13"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_conductive_dams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id14"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_ditches</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id15"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_endpoints</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id16"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_grass_strips</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id17"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_outlets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#id18"><code class="docutils literal notranslate"><span class="pre">Scenario.vct_parcels</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.Scenario.zip"><code class="docutils literal notranslate"><span class="pre">Scenario.zip()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.WSException"><code class="docutils literal notranslate"><span class="pre">WSException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.add_tillage_technical_measures_to_parcels"><code class="docutils literal notranslate"><span class="pre">add_tillage_technical_measures_to_parcels()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.assign_buffer_id_to_df_buffer"><code class="docutils literal notranslate"><span class="pre">assign_buffer_id_to_df_buffer()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.convert_grass_strips_to_agricultural_fields"><code class="docutils literal notranslate"><span class="pre">convert_grass_strips_to_agricultural_fields()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.remove_known_grass_strips_from_parcels_vct_saga"><code class="docutils literal notranslate"><span class="pre">remove_known_grass_strips_from_parcels_vct_saga()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.valid_cfactor"><code class="docutils literal notranslate"><span class="pre">valid_cfactor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.valid_composite_landuse"><code class="docutils literal notranslate"><span class="pre">valid_composite_landuse()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.scenario.valid_dtm"><code class="docutils literal notranslate"><span class="pre">valid_dtm()</span></code></a></li>
@@ -532,24 +545,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.tools">pywatemsedem.tools module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.check_cn_ws_binary"><code class="docutils literal notranslate"><span class="pre">check_cn_ws_binary()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.check_courant_criterium"><code class="docutils literal notranslate"><span class="pre">check_courant_criterium()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.extract_tags_from_template_file"><code class="docutils literal notranslate"><span class="pre">extract_tags_from_template_file()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.format_forced_routing"><code class="docutils literal notranslate"><span class="pre">format_forced_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.get_df_area_unique_values_array"><code class="docutils literal notranslate"><span class="pre">get_df_area_unique_values_array()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.package_resource"><code class="docutils literal notranslate"><span class="pre">package_resource()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.reformat_LineString_to_source_targetf"><code class="docutils literal notranslate"><span class="pre">reformat_LineString_to_source_targetf()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.tools.zip_folder"><code class="docutils literal notranslate"><span class="pre">zip_folder()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.userchoices_cn">pywatemsedem.userchoices_cn module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber"><code class="docutils literal notranslate"><span class="pre">UserChoicesCurveNumber</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check"><code class="docutils literal notranslate"><span class="pre">UserChoicesCurveNumber.check()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check_choices_cn_databasestorage"><code class="docutils literal notranslate"><span class="pre">UserChoicesCurveNumber.check_choices_cn_databasestorage()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check_choices_cn_filestorage"><code class="docutils literal notranslate"><span class="pre">UserChoicesCurveNumber.check_choices_cn_filestorage()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pywatemsedem.html#pywatemsedem.userchoices_cn.set_userchoices_curvenumber"><code class="docutils literal notranslate"><span class="pre">set_userchoices_curvenumber()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pywatemsedem.html#module-pywatemsedem.valid">pywatemsedem.valid module</a><ul>

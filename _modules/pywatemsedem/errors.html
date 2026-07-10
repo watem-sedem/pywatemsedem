@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.errors &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.errors &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -93,7 +94,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.errors</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;errors.py</span>
+
+<span class="sd">This module defines custom error classes and functions to raise errors</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.valid</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_boundaries</span>
 
@@ -109,7 +115,7 @@
 <div class="viewcode-block" id="PywatemsedemVectorAttributeValueError">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.errors.PywatemsedemVectorAttributeValueError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PywatemsedemVectorAttributeValueError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise error when input data attribute values don&#39;t conform required attributes</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise error when input data attribute values don&#39;t conform required attribute</span>
 <span class="sd">    values&quot;&quot;&quot;</span></div>
 
 
@@ -117,7 +123,7 @@
 <div class="viewcode-block" id="PywatemsedemRasterValueError">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.errors.PywatemsedemRasterValueError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PywatemsedemRasterValueError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise error when input data attribute values don&#39;t conform required attributes</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise error when input data attribute values don&#39;t conform required attribute</span>
 <span class="sd">    values&quot;&quot;&quot;</span></div>
 
 

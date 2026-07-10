@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.ktc &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.ktc &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -93,7 +94,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.ktc</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;ktc.py</span>
+
+<span class="sd">This module contains functions for creating the ktc raster.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">clean_up_tempfiles</span><span class="p">,</span> <span class="n">create_filename</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.grasstrips</span><span class="w"> </span><span class="kn">import</span> <span class="n">scale_ktc_with_grass_strip_width</span><span class="p">,</span> <span class="n">scale_ktc_zhang</span>
@@ -120,8 +126,9 @@
 <span class="sd">    The ktc value for landuse rivers, infrastructure and ponds is set to 9999</span>
 <span class="sd">    (all sediment is routed downwards).</span>
 
-<span class="sd">    The ktc values for grass strips are scaled according to their width (see</span>
-<span class="sd">    :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`).</span>
+<span class="sd">    The ktc values for grass strips can be scaled according to their width (see</span>
+<span class="sd">    :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`) if correction_width is set to</span>
+<span class="sd">    True.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -219,7 +226,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;width&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gdf_grass_strips</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="s2">&quot;scale_ktc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gdf_grass_strips</span><span class="o">.</span><span class="n">columns</span>
     <span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Columns &#39;BREEDTE&#39; and &#39;scale_ktc&#39; should be in grass strips dataframe&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Columns &#39;width&#39; and &#39;scale_ktc&#39; should be in grass strips dataframe&quot;</span>
         <span class="k">return</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">arr_ktc_grass</span><span class="p">,</span> <span class="n">arr_ste</span> <span class="o">=</span> <span class="n">scale_ktc_with_grass_strip_width</span><span class="p">(</span>

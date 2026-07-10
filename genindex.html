@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>Index &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=fc837d61"></script>
+      <script src="_static/documentation_options.js?v=3fabc56e"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
@@ -171,8 +172,6 @@
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_sections">add_sections() (pywatemsedem.io.ini.IniFile method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.add_sediment_to_subcatchments">add_sediment_to_subcatchments() (pywatemsedem.postprocess.PostProcess method)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.add_segment_results_to_vct">add_segment_results_to_vct() (pywatemsedem.postprocess.PostProcess method)</a>
@@ -181,12 +180,18 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.add_tillage_technical_measures_to_parcels">add_tillage_technical_measures_to_parcels() (in module pywatemsedem.scenario)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.ini.IniFile.add_working_directories">add_working_directories() (pywatemsedem.io.ini.IniFile method)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.adjacent_edges">adjacent_edges (pywatemsedem.catchment.Catchment property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.adjacentsegments">adjacentsegments (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.adjacent_segments">adjacent_segments (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id0">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.adjusted_slope">adjusted_slope (pywatemsedem.choices.Extensions property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.aggregate_sediin_and_sediout_grass_strips">aggregate_sediin_and_sediout_grass_strips() (in module pywatemsedem.postprocess)</a>
@@ -205,10 +210,24 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.WSMixin.apply_defaults">apply_defaults() (pywatemsedem.choices.WSMixin method)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.arr">arr (pywatemsedem.geo.rasters.AbstractRaster property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.arr">arr (pywatemsedem.geo.rasters.AbstractRaster attribute)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.TemporalRaster.arr">(pywatemsedem.geo.rasters.TemporalRaster property)</a>
+        <li><a href="api/pywatemsedem.geo.html#id13">(pywatemsedem.geo.rasters.AbstractRaster property)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile.arr">(pywatemsedem.geo.rasters.RasterFile attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory.arr">(pywatemsedem.geo.rasters.RasterMemory attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.TemporalRaster.arr">(pywatemsedem.geo.rasters.TemporalRaster attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#id15">(pywatemsedem.geo.rasters.TemporalRaster property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.aspect">aspect (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id23">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
       </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.assign_buffer_id_to_df_buffer">assign_buffer_id_to_df_buffer() (in module pywatemsedem.scenario)</a>
@@ -231,17 +250,23 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.beta">beta (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.bounds">bounds (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.bounds">bounds (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id2">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.buffer_reduce_area">buffer_reduce_area (pywatemsedem.choices.Extensions property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.bufferoutlet">bufferoutlet (pywatemsedem.scenario.Scenario property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.buffers">buffers (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.buffers">buffers (pywatemsedem.io.modelinput.Modelinput attribute)</a>
 
       <ul>
+        <li><a href="api/pywatemsedem.io.html#id1">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
         <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.buffers">(pywatemsedem.scenario.Scenario property)</a>
 </li>
       </ul></li>
@@ -269,25 +294,31 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.calibrate.Calibration">Calibration (class in pywatemsedem.calibrate)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.capacity">capacity (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.capacity">capacity (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id24">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.cardinal_routing_river">cardinal_routing_river (pywatemsedem.choices.Extensions property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment">Catchment (class in pywatemsedem.catchment)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.catchment_area">catchment_area (pywatemsedem.catchment.Catchment property)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.catchment_folder">catchment_folder (pywatemsedem.io.folders.CatchmentFolder attribute)</a>
+</li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder">CatchmentFolder (class in pywatemsedem.io.folders)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.cfactor">cfactor (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.cfactor">cfactor (pywatemsedem.io.modelinput.Modelinput attribute)</a>
 
       <ul>
+        <li><a href="api/pywatemsedem.io.html#id2">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
         <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.cfactor">(pywatemsedem.scenario.Scenario property)</a>
 </li>
       </ul></li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.cfolder">cfolder (pywatemsedem.io.folders.ScenarioFolders attribute)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check">check() (pywatemsedem.userchoices_cn.UserChoicesCurveNumber method)</a>
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_catchment_folder">check_and_create_catchment_folder() (in module pywatemsedem.io.folders)</a>
 </li>
@@ -312,12 +343,6 @@
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.check_and_create_years_folder">check_and_create_years_folder() (in module pywatemsedem.io.folders)</a>
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.check_catchment_folder">check_catchment_folder() (pywatemsedem.io.folders.CatchmentFolder method)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check_choices_cn_databasestorage">check_choices_cn_databasestorage() (pywatemsedem.userchoices_cn.UserChoicesCurveNumber method)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber.check_choices_cn_filestorage">check_choices_cn_filestorage() (pywatemsedem.userchoices_cn.UserChoicesCurveNumber method)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.tools.check_cn_ws_binary">check_cn_ws_binary() (in module pywatemsedem.tools)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.check_condition_files">check_condition_files() (pywatemsedem.postprocess.PostProcess method)</a>
 </li>
@@ -387,27 +412,33 @@
         <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorMemory.clip">(pywatemsedem.geo.vectors.VectorMemory method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.clip_rst">clip_rst() (in module pywatemsedem.geo.utils)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.clip_vct">clip_vct() (in module pywatemsedem.geo.utils)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.cn">cn (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id3">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.cn">cn (pywatemsedem.scenario.Scenario property)</a>
+        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.cn">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.cn_table">cn_table (pywatemsedem.scenario.Scenario property)</a>
-</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.comparison_total_sediment_file">comparison_total_sediment_file() (pywatemsedem.compare_scenario.DeltaScenario method)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.composite_landuse">composite_landuse (pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.compositelanduse">compositelanduse (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.compositelanduse">compositelanduse (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id4">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.compute_cdf_sediment_load">compute_cdf_sediment_load() (in module pywatemsedem.postprocess)</a>
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks">compute_cumulative_loads_in_sinks() (in module pywatemsedem.io.modeloutput)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe">compute_denomitor_nash_sutcliffe() (in module pywatemsedem.calibrate)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.calibrate.compute_denominator_nash_sutcliffe">compute_denominator_nash_sutcliffe() (in module pywatemsedem.calibrate)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.testing.compute_difference_table_ws_buffers">compute_difference_table_ws_buffers() (in module pywatemsedem.testing)</a>
 </li>
@@ -452,8 +483,6 @@
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.conductive_dams">conductive_dams (pywatemsedem.scenario.Scenario property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.convert_arr_from_kg_to_ton">convert_arr_from_kg_to_ton() (in module pywatemsedem.postprocess)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.convert_grass_strips_to_agricultural_fields">convert_grass_strips_to_agricultural_fields() (in module pywatemsedem.scenario)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.convert_output">convert_output (pywatemsedem.choices.Extensions property)</a>
 </li>
@@ -519,6 +548,18 @@
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.create_spatial_index">create_spatial_index() (in module pywatemsedem.geo.utils)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.cumulative">cumulative (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id25">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.cumulative_sediment_segments">cumulative_sediment_segments (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id26">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.curve_number">curve_number (pywatemsedem.choices.Extensions property)</a>
 </li>
   </ul></td>
@@ -527,6 +568,12 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.dams">dams (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id5">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.define_extent_from_vct">define_extent_from_vct() (in module pywatemsedem.geo.utils)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.calibrate.Calibration.define_parameter_grid">define_parameter_grid() (pywatemsedem.calibrate.Calibration method)</a>
@@ -539,20 +586,32 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario">DeltaScenario (class in pywatemsedem.compare_scenario)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.desired_timestep">desired_timestep (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.difference_grids">difference_grids() (pywatemsedem.compare_scenario.DeltaScenario method)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.ditches">ditches (pywatemsedem.scenario.Scenario property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.ditches">ditches (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id6">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.driver">driver (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.ditches">(pywatemsedem.scenario.Scenario property)</a>
 </li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.driver">driver (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id3">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.dtm">dtm (pywatemsedem.catchment.Catchment property)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.dtm">(pywatemsedem.io.modelinput.Modelinput property)</a>
+        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.dtm">(pywatemsedem.io.modelinput.Modelinput attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#id7">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -567,8 +626,12 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.endtime_model">endtime_model (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.epsg">epsg (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.epsg">epsg (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id4">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.testing.equal_ini">equal_ini() (in module pywatemsedem.testing)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.testing.equal_rst">equal_rst() (in module pywatemsedem.testing)</a>
@@ -577,10 +640,10 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.testing.equal_total_sediment">equal_total_sediment() (in module pywatemsedem.testing)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.estimate_clay_content">estimate_clay_content (pywatemsedem.choices.Extensions property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.estimate_clay_content">estimate_clay_content (pywatemsedem.choices.Extensions property)</a>
+</li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.grasstrips.estimate_ste">estimate_ste() (in module pywatemsedem.grasstrips)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.estimate_width_of_polygon">estimate_width_of_polygon() (in module pywatemsedem.geo.utils)</a>
@@ -599,8 +662,6 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.grasstrips.extract_grass_strips_from_parcels">extract_grass_strips_from_parcels() (in module pywatemsedem.grasstrips)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.tools.extract_tags_from_template_file">extract_tags_from_template_file() (in module pywatemsedem.tools)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -608,6 +669,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory">Factory (class in pywatemsedem.geo.factory)</a>
+</li>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile.file_path">file_path (pywatemsedem.geo.vectors.VectorFile attribute)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.filter_grass_strips_with_prckrt">filter_grass_strips_with_prckrt() (in module pywatemsedem.postprocess)</a>
 </li>
@@ -620,7 +683,9 @@
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Extensions.force_routing">force_routing (pywatemsedem.choices.Extensions property)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.force_routing">(pywatemsedem.scenario.Scenario property)</a>
+        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.force_routing">(pywatemsedem.scenario.Scenario attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.html#id9">(pywatemsedem.scenario.Scenario property)</a>
 </li>
       </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.tools.format_forced_routing">format_forced_routing() (in module pywatemsedem.tools)</a>
@@ -635,12 +700,24 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.gdal_profile">gdal_profile (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.gdal_profile">gdal_profile (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id5">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.generate_vct_mask_from_raster_mask">generate_vct_mask_from_raster_mask() (in module pywatemsedem.geo.utils)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.geodata">geodata (pywatemsedem.geo.vectors.AbstractVector property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.geodata">geodata (pywatemsedem.geo.vectors.AbstractVector attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id16">(pywatemsedem.geo.vectors.AbstractVector property)</a>
 </li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile.geodata">(pywatemsedem.geo.vectors.VectorFile attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorMemory.geodata">(pywatemsedem.geo.vectors.VectorMemory attribute)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.tools.get_df_area_unique_values_array">get_df_area_unique_values_array() (in module pywatemsedem.tools)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_extent_vct">get_extent_vct() (in module pywatemsedem.geo.utils)</a>
@@ -657,10 +734,10 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.grasstrips.get_neighbour_grass_strips_ids_array">get_neighbour_grass_strips_ids_array() (in module pywatemsedem.grasstrips)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.ini.get_options_from_ini">get_options_from_ini() (in module pywatemsedem.io.ini)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.ini.get_options_from_ini">get_options_from_ini() (in module pywatemsedem.io.ini)</a>
+</li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.get_prckrt_statistics">get_prckrt_statistics() (in module pywatemsedem.io.modeloutput)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_rstparams">get_rstparams() (in module pywatemsedem.geo.utils)</a>
@@ -682,7 +759,9 @@
       <li><a href="api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.grass_strips">grass_strips (pywatemsedem.parcelslanduse.ParcelsLanduse attribute)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.grass_strips">(pywatemsedem.scenario.Scenario property)</a>
+        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.grass_strips">(pywatemsedem.scenario.Scenario attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.html#id10">(pywatemsedem.scenario.Scenario property)</a>
 </li>
       </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.grid_difference">grid_difference() (in module pywatemsedem.geo.utils)</a>
@@ -697,12 +776,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.histogram">histogram() (pywatemsedem.geo.rasters.AbstractRaster method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.home_folder">home_folder (pywatemsedem.io.folders.CatchmentFolder attribute)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.hydrological_soil_group">hydrological_soil_group (pywatemsedem.catchment.Catchment property)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.hydrological_soil_group">hydrological_soil_group (pywatemsedem.catchment.Catchment attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id0">(pywatemsedem.catchment.Catchment property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -775,15 +858,21 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.kfactor">kfactor (pywatemsedem.catchment.Catchment property)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.kfactor">kfactor (pywatemsedem.catchment.Catchment attribute)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.kfactor">(pywatemsedem.io.modelinput.Modelinput property)</a>
+        <li><a href="api/pywatemsedem.html#id2">(pywatemsedem.catchment.Catchment property)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.kfactor">(pywatemsedem.io.modelinput.Modelinput attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#id8">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
       </ul></li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.ktc">ktc (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.ktc">ktc (pywatemsedem.io.modelinput.Modelinput attribute)</a>
 
       <ul>
+        <li><a href="api/pywatemsedem.io.html#id9">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
         <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.ktc">(pywatemsedem.scenario.Scenario property)</a>
 </li>
       </ul></li>
@@ -811,6 +900,12 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.ktc_low_upper">ktc_low_upper (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.ktil">ktil (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id10">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.ktil_default">ktil_default (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.ktil_threshold">ktil_threshold (pywatemsedem.choices.ExtensionsParameters property)</a>
@@ -823,8 +918,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Options.l_model">l_model (pywatemsedem.choices.Options property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.landuse">landuse (pywatemsedem.catchment.Catchment property)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.landuse">landuse (pywatemsedem.catchment.Catchment attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id3">(pywatemsedem.catchment.Catchment property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.landuse_core">landuse_core (pywatemsedem.parcelslanduse.ParcelsLanduse attribute)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.landuse_parcels">landuse_parcels (pywatemsedem.parcelslanduse.ParcelsLanduse attribute)</a>
@@ -839,12 +938,18 @@
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.load_raster">load_raster() (in module pywatemsedem.geo.utils)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.load_sediment_segments_file">load_sediment_segments_file() (in module pywatemsedem.io.modeloutput)</a>
+</li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.load_total_sediment_file">load_total_sediment_file() (in module pywatemsedem.io.modeloutput)</a>
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.plots.log_scale_enabler">log_scale_enabler() (in module pywatemsedem.io.plots)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.ls">ls (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.ls">ls (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id27">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.ls_correction">ls_correction (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
   </ul></td>
@@ -869,9 +974,15 @@
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.map_rank_sediment_loads">map_rank_sediment_loads() (in module pywatemsedem.io.modeloutput)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.mask">mask (pywatemsedem.geo.factory.Factory property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.mask">mask (pywatemsedem.geo.factory.Factory attribute)</a>
 
       <ul>
+        <li><a href="api/pywatemsedem.geo.html#id0">(pywatemsedem.geo.factory.Factory property)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.mask">(pywatemsedem.io.modelinput.Modelinput attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#id11">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
         <li><a href="api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.mask">(pywatemsedem.parcelslanduse.ParcelsLanduse attribute)</a>
 </li>
       </ul></li>
@@ -918,8 +1029,6 @@
         <li><a href="api/pywatemsedem.html#module-pywatemsedem.cfactor">pywatemsedem.cfactor</a>
 </li>
         <li><a href="api/pywatemsedem.html#module-pywatemsedem.choices">pywatemsedem.choices</a>
-</li>
-        <li><a href="api/pywatemsedem.html#module-pywatemsedem.cn">pywatemsedem.cn</a>
 </li>
         <li><a href="api/pywatemsedem.html#module-pywatemsedem.compare_scenario">pywatemsedem.compare_scenario</a>
 </li>
@@ -971,8 +1080,6 @@
 </li>
         <li><a href="api/pywatemsedem.html#module-pywatemsedem.tools">pywatemsedem.tools</a>
 </li>
-        <li><a href="api/pywatemsedem.html#module-pywatemsedem.userchoices_cn">pywatemsedem.userchoices_cn</a>
-</li>
         <li><a href="api/pywatemsedem.html#module-pywatemsedem.valid">pywatemsedem.valid</a>
 </li>
       </ul></li>
@@ -982,13 +1089,19 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.ncols">ncols (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
-</li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.nearly_identical">nearly_identical() (in module pywatemsedem.geo.utils)</a>
-</li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.nodata">nodata (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.ncols">ncols (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
 
       <ul>
+        <li><a href="api/pywatemsedem.geo.html#id6">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.nearly_identical">nearly_identical() (in module pywatemsedem.geo.utils)</a>
+</li>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.nodata">nodata (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id7">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+</li>
         <li><a href="api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.nodata">(pywatemsedem.parcelslanduse.ParcelsLanduse attribute)</a>
 </li>
       </ul></li>
@@ -996,8 +1109,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.plots.normalising_function">normalising_function() (in module pywatemsedem.io.plots)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.nrows">nrows (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.nrows">nrows (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id8">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1012,10 +1129,20 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Options">Options (class in pywatemsedem.choices)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.orientedroughness">orientedroughness (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id12">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.outlet">outlet (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.outlet">outlet (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id13">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.outlets">outlets (pywatemsedem.scenario.Scenario property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Output">Output (class in pywatemsedem.choices)</a>
@@ -1059,7 +1186,9 @@
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.pfactor">pfactor (pywatemsedem.catchment.Catchment property)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.pfactor">(pywatemsedem.io.modelinput.Modelinput property)</a>
+        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.pfactor">(pywatemsedem.io.modelinput.Modelinput attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#id14">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
       </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.plot">plot() (pywatemsedem.geo.rasters.AbstractRaster method)</a>
@@ -1108,16 +1237,18 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.calibrate.process_calibrationrun_output">process_calibrationrun_output() (in module pywatemsedem.calibrate)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.cn.process_cn_raster">process_cn_raster() (in module pywatemsedem.cn)</a>
-</li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.process_filename">process_filename() (in module pywatemsedem.postprocess)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.grasstrips.process_grass_strips">process_grass_strips() (in module pywatemsedem.grasstrips)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.process_mask_shape_from_raster_file">process_mask_shape_from_raster_file() (in module pywatemsedem.geo.utils)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.ptef">ptef (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.ptef">ptef (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id15">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
+      </ul></li>
       <li>
     pywatemsedem
 
@@ -1158,13 +1289,6 @@
 
       <ul>
         <li><a href="api/pywatemsedem.html#module-pywatemsedem.choices">module</a>
-</li>
-      </ul></li>
-      <li>
-    pywatemsedem.cn
-
-      <ul>
-        <li><a href="api/pywatemsedem.html#module-pywatemsedem.cn">module</a>
 </li>
       </ul></li>
       <li>
@@ -1345,13 +1469,6 @@
 </li>
       </ul></li>
       <li>
-    pywatemsedem.userchoices_cn
-
-      <ul>
-        <li><a href="api/pywatemsedem.html#module-pywatemsedem.userchoices_cn">module</a>
-</li>
-      </ul></li>
-      <li>
     pywatemsedem.valid
 
       <ul>
@@ -1376,6 +1493,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Parameters.r_factor">r_factor (pywatemsedem.choices.Parameters property)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.rainfall">rainfall (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id16">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+        <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.rainfall">(pywatemsedem.scenario.Scenario property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.raster_array_to_pandas_dataframe">raster_array_to_pandas_dataframe() (in module pywatemsedem.geo.utils)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.raster_dataframe_to_arr">raster_dataframe_to_arr() (in module pywatemsedem.geo.utils)</a>
@@ -1388,8 +1513,12 @@
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile">RasterFile (class in pywatemsedem.geo.rasters)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile">rasterio_profile (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile">rasterio_profile (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id9">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.AbstractVector.rasterize">rasterize() (pywatemsedem.geo.vectors.AbstractVector method)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory">RasterMemory (class in pywatemsedem.geo.rasters)</a>
@@ -1418,20 +1547,20 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.reformat_routing_grass">reformat_routing_grass() (in module pywatemsedem.postprocess)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.remove_endpoints_not_under_infrastructure">remove_endpoints_not_under_infrastructure() (pywatemsedem.scenario.Scenario method)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.remove_known_grass_strips_from_parcels_vct_saga">remove_known_grass_strips_from_parcels_vct_saga() (in module pywatemsedem.scenario)</a>
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.remove_river_routing">remove_river_routing() (in module pywatemsedem.io.modeloutput)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.resolution">resolution (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.resolution">resolution (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
 
       <ul>
+        <li><a href="api/pywatemsedem.geo.html#id10">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+</li>
         <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.resolution">(pywatemsedem.io.folders.CatchmentFolder attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.river">river (pywatemsedem.catchment.Catchment property)</a>
 
       <ul>
@@ -1442,28 +1571,60 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.river_segment_length">river_segment_length (pywatemsedem.catchment.Catchment property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.riverrouting">riverrouting (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.rivermask">rivermask (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id17">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.riversegments">riversegments (pywatemsedem.io.modelinput.Modelinput property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.riverrouting">riverrouting (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id18">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.riversegments">riversegments (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id19">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.routing">routing (pywatemsedem.catchment.Catchment property)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.routing">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+        <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.routing">(pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.io.html#id28">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
         <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.routing">(pywatemsedem.postprocess.PostProcess property)</a>
 </li>
       </ul></li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.routing_missing">routing_missing (pywatemsedem.io.modeloutput.Modeloutput property)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.routing_non_river">routing_non_river (pywatemsedem.postprocess.PostProcess property)</a>
-</li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.rp">rp (pywatemsedem.geo.factory.Factory property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.routing_missing">routing_missing (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
 
       <ul>
-        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.rp">(pywatemsedem.geo.rasters.AbstractRaster property)</a>
+        <li><a href="api/pywatemsedem.io.html#id29">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
       </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.routing_non_river">routing_non_river (pywatemsedem.postprocess.PostProcess property)</a>
+</li>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.rp">rp (pywatemsedem.geo.factory.Factory attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id1">(pywatemsedem.geo.factory.Factory property)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.rp">(pywatemsedem.geo.rasters.AbstractRaster attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#id14">(pywatemsedem.geo.rasters.AbstractRaster property)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile.rp">(pywatemsedem.geo.rasters.RasterFile attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterMemory.rp">(pywatemsedem.geo.rasters.RasterMemory attribute)</a>
+</li>
+        <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.TemporalRaster.rp">(pywatemsedem.geo.rasters.TemporalRaster attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.rst_folder">rst_folder (pywatemsedem.io.folders.CatchmentFolder attribute)</a>
+</li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.rst_to_vct_points">rst_to_vct_points() (in module pywatemsedem.geo.utils)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.rstparams_to_rasterprofile">rstparams_to_rasterprofile() (in module pywatemsedem.geo.utils)</a>
@@ -1472,8 +1633,12 @@
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.run_saga_make_routing_shp_cmd">run_saga_make_routing_shp_cmd() (in module pywatemsedem.io.modeloutput)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.rusle">rusle (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.rusle">rusle (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id30">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1504,18 +1669,42 @@
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders">ScenarioFolders (class in pywatemsedem.io.folders)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedi_export">sedi_export (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedi_export">sedi_export (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id31">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedi_in">sedi_in (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedi_in">sedi_in (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id32">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sediout">sediout (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedi_out">sedi_out (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id33">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedtil_in">sedtil_in (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id34">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sedtil_out">sedtil_out (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id35">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.segments">segments (pywatemsedem.catchment.Catchment property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.select_and_rename_cols_grass_routing">select_and_rename_cols_grass_routing() (in module pywatemsedem.postprocess)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.select_routing_out_of_parcel">select_routing_out_of_parcel() (in module pywatemsedem.postprocess)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.select_routing_to_outsidecatchment">select_routing_to_outsidecatchment() (pywatemsedem.postprocess.PostProcess method)</a>
@@ -1530,18 +1719,28 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.set_prckrt_nodata">set_prckrt_nodata() (pywatemsedem.postprocess.PostProcess method)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.userchoices_cn.set_userchoices_curvenumber">set_userchoices_curvenumber() (in module pywatemsedem.userchoices_cn)</a>
-</li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.ExtensionsParameters.sewer_exit">sewer_exit (pywatemsedem.choices.ExtensionsParameters property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sewer_in">sewer_in (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.sewer_in">sewer_in (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id36">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.sewers">sewers (pywatemsedem.io.modelinput.Modelinput property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.sewers">sewers (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id20">(pywatemsedem.io.modelinput.Modelinput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.sinks">sinks (pywatemsedem.postprocess.PostProcess property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.slope">slope (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.slope">slope (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id37">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.split_endpoints_in_raster">split_endpoints_in_raster() (in module pywatemsedem.postprocess)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.split_sewerin">split_sewerin() (pywatemsedem.postprocess.PostProcess method)</a>
@@ -1570,14 +1769,42 @@
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.tiff_to_geopandas_df">tiff_to_geopandas_df() (in module pywatemsedem.geo.utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.tiff_to_idrisi">tiff_to_idrisi() (in module pywatemsedem.geo.utils)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.tileros_kg">tileros_kg (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id38">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.tileros_mm">tileros_mm (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id39">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.tillagedirection">tillagedirection (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id21">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.topologize_river">topologize_river() (pywatemsedem.catchment.Catchment static method)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.total_sediment">total_sediment (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.total_sediment">total_sediment (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id40">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.total_sediment_segments">total_sediment_segments (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id41">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.transform_dict_netto_erosion_to_df">transform_dict_netto_erosion_to_df() (in module pywatemsedem.postprocess)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.tubed_river">tubed_river (pywatemsedem.catchment.Catchment property)</a>
@@ -1590,17 +1817,23 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.up_edges">up_edges (pywatemsedem.catchment.Catchment property)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.uparea">uparea (pywatemsedem.io.modeloutput.Modeloutput property)</a>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.uparea">uparea (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id42">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
 </li>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.update_nodata_value">update_nodata_value() (pywatemsedem.geo.rasters.AbstractRaster method)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.upstreamsegments">upstreamsegments (pywatemsedem.io.modelinput.Modelinput property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.update_nodata_value">update_nodata_value() (pywatemsedem.geo.rasters.AbstractRaster method)</a>
 </li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.Modelinput.upstream_segments">upstream_segments (pywatemsedem.io.modelinput.Modelinput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id22">(pywatemsedem.io.modelinput.Modelinput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.UserChoice">UserChoice (class in pywatemsedem.choices)</a>
-</li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.userchoices_cn.UserChoicesCurveNumber">UserChoicesCurveNumber (class in pywatemsedem.userchoices_cn)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1680,10 +1913,6 @@
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.valid.valid_rp">valid_rp() (in module pywatemsedem.geo.valid)</a>
 </li>
-      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modelinput.valid_segments">valid_segments() (in module pywatemsedem.io.modelinput)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.valid_sinks">valid_sinks() (in module pywatemsedem.postprocess)</a>
 </li>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_values">valid_values() (in module pywatemsedem.io.valid)</a>
@@ -1700,6 +1929,8 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.valid_vct_outlets">valid_vct_outlets() (in module pywatemsedem.scenario)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_parcels">valid_vct_parcels() (in module pywatemsedem.catchment)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_river">valid_vct_river() (in module pywatemsedem.catchment)</a>
@@ -1712,32 +1943,82 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.UserChoice.validate_value">validate_value() (pywatemsedem.choices.UserChoice method)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.choices.UserChoice.value">value (pywatemsedem.choices.UserChoice property)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.choices.UserChoice.value">value (pywatemsedem.choices.UserChoice attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id8">(pywatemsedem.choices.UserChoice property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_bufferoutlets">vct_bufferoutlets (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_bufferoutlets">vct_bufferoutlets (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id11">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_buffers">vct_buffers (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_buffers">vct_buffers (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id12">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_conductive_dams">vct_conductive_dams (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_conductive_dams">vct_conductive_dams (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id13">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_ditches">vct_ditches (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_ditches">vct_ditches (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id14">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_endpoints">vct_endpoints (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_endpoints">vct_endpoints (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id15">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_grass_strips">vct_grass_strips (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.vct_folder">vct_folder (pywatemsedem.io.folders.CatchmentFolder attribute)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_buildings">vct_infrastructure_buildings (pywatemsedem.catchment.Catchment property)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_grass_strips">vct_grass_strips (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id16">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_roads">vct_infrastructure_roads (pywatemsedem.catchment.Catchment property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_buildings">vct_infrastructure_buildings (pywatemsedem.catchment.Catchment attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id4">(pywatemsedem.catchment.Catchment property)</a>
 </li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_infrastructure_roads">vct_infrastructure_roads (pywatemsedem.catchment.Catchment attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id5">(pywatemsedem.catchment.Catchment property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.vct_mask">vct_mask (pywatemsedem.geo.factory.Factory property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_outlets">vct_outlets (pywatemsedem.scenario.Scenario property)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_outlets">vct_outlets (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id17">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_parcels">vct_parcels (pywatemsedem.scenario.Scenario property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.scenario.Scenario.vct_parcels">vct_parcels (pywatemsedem.scenario.Scenario attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id18">(pywatemsedem.scenario.Scenario property)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_river">vct_river (pywatemsedem.catchment.Catchment property)</a>
+      </ul></li>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_river">vct_river (pywatemsedem.catchment.Catchment attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id6">(pywatemsedem.catchment.Catchment property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.vct_to_rst_field">vct_to_rst_field() (in module pywatemsedem.geo.utils)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.vct_to_rst_value">vct_to_rst_value() (in module pywatemsedem.geo.utils)</a>
@@ -1746,8 +2027,12 @@
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.utils.vct_to_rst_value_saga">vct_to_rst_value_saga() (in module pywatemsedem.geo.utils)</a>
 </li>
-      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_water">vct_water (pywatemsedem.catchment.Catchment property)</a>
+      <li><a href="api/pywatemsedem.html#pywatemsedem.catchment.Catchment.vct_water">vct_water (pywatemsedem.catchment.Catchment attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.html#id7">(pywatemsedem.catchment.Catchment property)</a>
 </li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory.vector_factory">vector_factory() (pywatemsedem.geo.factory.Factory method)</a>
 </li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile">VectorFile (class in pywatemsedem.geo.vectors)</a>
@@ -1768,6 +2053,18 @@
         <li><a href="api/pywatemsedem.html#pywatemsedem.parcelslanduse.ParcelsLanduse.water">(pywatemsedem.parcelslanduse.ParcelsLanduse attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.watereros_kg">watereros_kg (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id43">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.watereros_mm">watereros_mm (pywatemsedem.io.modeloutput.Modeloutput attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.io.html#id44">(pywatemsedem.io.modeloutput.Modeloutput property)</a>
+</li>
+      </ul></li>
       <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.AbstractRaster.write">write() (pywatemsedem.geo.rasters.AbstractRaster method)</a>
 
       <ul>
@@ -1782,12 +2079,12 @@
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Output.write_aspect">write_aspect (pywatemsedem.choices.Output property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.postprocess.PostProcess.write_erosion_deposition_raster">write_erosion_deposition_raster() (pywatemsedem.postprocess.PostProcess method)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Output.write_ls_factor">write_ls_factor (pywatemsedem.choices.Output property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Output.write_rainfall_excess">write_rainfall_excess (pywatemsedem.choices.Output property)</a>
 </li>
       <li><a href="api/pywatemsedem.html#pywatemsedem.choices.Output.write_routing_column_row">write_routing_column_row (pywatemsedem.choices.Output property)</a>
@@ -1816,16 +2113,24 @@
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.xcoord">xcoord (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.xcoord">xcoord (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id11">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="Y">Y</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.ycoord">ycoord (pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
+      <li><a href="api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.ycoord">ycoord (pywatemsedem.geo.rasterproperties.RasterProperties attribute)</a>
+
+      <ul>
+        <li><a href="api/pywatemsedem.geo.html#id12">(pywatemsedem.geo.rasterproperties.RasterProperties property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.year">year (pywatemsedem.io.folders.ScenarioFolders attribute)</a>

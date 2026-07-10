@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.folders &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.io.folders &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -101,10 +102,33 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CatchmentFolder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data class for managing catchment folder structure.</span>
+
+<span class="sd">    This class defines and manages the folder structure for catchment data,</span>
+<span class="sd">    including paths for vector and raster files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    home_folder : Path</span>
+<span class="sd">        Root folder path for the catchment.</span>
+<span class="sd">    resolution : int</span>
+<span class="sd">        Spatial resolution in meters, used to name the raster folder.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    catchment_folder : Path</span>
+<span class="sd">        Path to the &#39;Data_Bekken&#39; subfolder.</span>
+<span class="sd">    vct_folder : Path</span>
+<span class="sd">        Path to the vector files folder (&#39;Shps&#39;).</span>
+<span class="sd">    rst_folder : Path</span>
+<span class="sd">        Path to the raster files folder (&#39;Rst_{resolution}m&#39;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">home_folder</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize derived folder paths from home_folder and resolution.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catchment_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">/</span> <span class="s2">&quot;Data_Bekken&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vct_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catchment_folder</span> <span class="o">/</span> <span class="s2">&quot;Shps&quot;</span>
@@ -113,6 +137,7 @@
 <div class="viewcode-block" id="CatchmentFolder.create_all">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.CatchmentFolder.create_all">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create all folders in the catchment folder structure.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_home_folder</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_catchment_folder</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_vct_folder</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -168,7 +193,7 @@
     <span class="n">year</span><span class="p">:</span> <span class="nb">int</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign folder names to self&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize derived scenario folder paths.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scenario_folder</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cfolder</span><span class="o">.</span><span class="n">home_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;scenario_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario_label</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
@@ -180,6 +205,7 @@
 <div class="viewcode-block" id="ScenarioFolders.create_all">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.folders.ScenarioFolders.create_all">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create all folders in the scenario folder structure.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cfolder</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_scenario</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_wsinput</span><span class="p">(</span><span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

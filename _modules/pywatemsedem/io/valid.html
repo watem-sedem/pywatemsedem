@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.valid &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.io.valid &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -100,39 +101,66 @@
 
 <div class="viewcode-block" id="valid_boundaries">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_boundaries">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">valid_boundaries</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if values are within specified boundaries</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_boundaries</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if values are within specified boundaries.</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ---------</span>
-<span class="sd">    arr: numpy.ndarray</span>
-<span class="sd">        Input array</span>
-<span class="sd">    lower: int, float, default None</span>
-<span class="sd">        Lower boundary</span>
-<span class="sd">    upper: int, float, default None</span>
-<span class="sd">        Upper boundary</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Input array.</span>
+<span class="sd">    lower : int or float, default None</span>
+<span class="sd">        Lower boundary.</span>
+<span class="sd">    upper : int or float, default None</span>
+<span class="sd">        Upper boundary.</span>
+<span class="sd">    tolerance : float, default None</span>
+<span class="sd">        Allowed tolerance outside the boundaries.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        - upper=10, tolerance=0.5  -&gt; values up to 10.5 allowed</span>
+<span class="sd">        - lower=0, tolerance=0.5   -&gt; values down to -0.5 allowed</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    True</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if all values are within allowed boundaries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">lower</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">upper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No lower or upper boundaries are defined, omitting boundary check&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tolerance</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Tolerance should be numeric.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tolerance</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Tolerance should be &gt;= 0.&quot;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">upper</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Upper boundary should be numeric.&quot;</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="n">upper</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values are higher than upper bound (&#39;</span><span class="si">{</span><span class="n">upper</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Upper boundary should be numeric.&quot;</span><span class="p">)</span>
+
+        <span class="n">effective_upper</span> <span class="o">=</span> <span class="n">upper</span> <span class="o">+</span> <span class="n">tolerance</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="n">effective_upper</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Values are higher than upper bound &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="n">upper</span><span class="si">}</span><span class="s2">&#39;) with tolerance (&#39;</span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+            <span class="p">)</span>
+
     <span class="k">if</span> <span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Lower boundary should be numeric.&quot;</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&lt;</span> <span class="n">lower</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values are lower than lower bound (&#39;</span><span class="si">{</span><span class="n">lower</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Lower boundary should be numeric.&quot;</span><span class="p">)</span>
+
+        <span class="n">effective_lower</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">-</span> <span class="n">tolerance</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&lt;</span> <span class="n">effective_lower</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Values are lower than lower bound &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="n">lower</span><span class="si">}</span><span class="s2">&#39;) with tolerance (&#39;</span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
 

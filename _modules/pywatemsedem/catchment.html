@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.catchment &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.catchment &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
@@ -139,10 +140,27 @@
 <div class="viewcode-block" id="valid_dtm">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_dtm">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_dtm</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a DTM.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if a DTM is defined before executing the function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        The function to wrap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Wrapped function that checks for DTM definition.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If the DTM is empty or not defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the wrapped function after validating DTM is defined.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtm</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please first define non-empty DTM!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -156,10 +174,27 @@
 <div class="viewcode-block" id="valid_vct_river">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_river">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_river</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if you have defined a river vector.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if a river vector is defined before executing the function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        The function to wrap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Wrapped function that checks for river vector definition.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If the river vector is empty or not defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the wrapped function after validating river vector is defined.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_river</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non-empty river vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -172,10 +207,27 @@
 <div class="viewcode-block" id="valid_vct_infra_line">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_infra_line">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_infra_line</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure vectors are defined&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if infrastructure line vectors are defined.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        The function to wrap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Wrapped function that checks for infrastructure line vector definition.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If the infrastructure roads vector is empty or not defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the wrapped function after validating infrastructure line vector.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_roads</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define infrastructure line vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -188,10 +240,27 @@
 <div class="viewcode-block" id="valid_vct_infra_poly">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_infra_poly">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_infra_poly</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure vectors are defined&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if infrastructure polygon vectors are defined.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        The function to wrap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Wrapped function that checks for infrastructure polygon vector definition.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If the infrastructure buildings vector is empty or not defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute wrapped function after validating infrastructure polygon vector.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_infrastructure_buildings</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non-empty infrastructure polygon vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -204,10 +273,27 @@
 <div class="viewcode-block" id="valid_vct_parcels">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.valid_vct_parcels">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_vct_parcels</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if infrastructure vectors are defined&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check if parcel vectors are defined.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        The function to wrap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Wrapped function that checks for parcel vector definition.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If the parcels vector is empty or not defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the wrapped function after validating parcels vector is defined.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vct_parcels</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Please define non_empty parcels polygon vector!&quot;</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -220,23 +306,28 @@
 <div class="viewcode-block" id="Catchment">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.catchment.Catchment">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Catchment</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a new Catchment instance</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a new Catchment instance.</span>
 
 <span class="sd">    The catchment class holds all static information for a catchment.</span>
 <span class="sd">    The class considers all data of which the content is user-option-independent (i.e.</span>
-<span class="sd">    :class:`pywatemsedem.choices.Choices`.</span>
+<span class="sd">    :class:`pywatemsedem.choices.Choices`).</span>
 
-<span class="sd">    Following properties can be set:</span>
-
-<span class="sd">        - *kfactor*: K-factor raster.</span>
-<span class="sd">        - *landuse*: base landuse raster.</span>
-<span class="sd">        - *river*: river line vector.</span>
-<span class="sd">        - *water*: water polygon vector</span>
-<span class="sd">        - *vct_infrastructure_buildings*: polygon vector of infrastructure</span>
-<span class="sd">          (typically buildings).</span>
-<span class="sd">        - *vct_infrastructure_roads*: roads line vector (with optional attribute</span>
-<span class="sd">          &#39;paved&#39;).</span>
-<span class="sd">        - *cnsoil*: cn soil raster (CN-only).</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kfactor : pathlib.Path, str or numpy.ndarray</span>
+<span class="sd">        K-factor raster.</span>
+<span class="sd">    landuse : pathlib.Path, str or numpy.ndarray</span>
+<span class="sd">        Base landuse raster.</span>
+<span class="sd">    vct_river : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        River line vector.</span>
+<span class="sd">    vct_water : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Water polygon vector.</span>
+<span class="sd">    vct_infrastructure_buildings : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Polygon vector of infrastructure (typically buildings).</span>
+<span class="sd">    vct_infrastructure_roads : pathlib.Path, str or geopandas.GeoDataFrame</span>
+<span class="sd">        Roads line vector (with optional attribute &#39;paved&#39;).</span>
+<span class="sd">    hydrological_soil_group : pathlib.Path, str or numpy.ndarray</span>
+<span class="sd">        CN soil raster (CN-only).</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -254,23 +345,25 @@
         <span class="n">nodata</span><span class="p">,</span>
         <span class="n">results_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Catchment instance.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name: str</span>
+<span class="sd">        name : str</span>
 <span class="sd">            Name of the catchment.</span>
-<span class="sd">        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame</span>
+<span class="sd">        vct_catchment : str or pathlib.Path or geopandas.GeoDataFrame</span>
 <span class="sd">            Vector file of catchment outline (mask). This should be a single polygon</span>
 <span class="sd">            vector.</span>
-<span class="sd">        resolution: int</span>
-<span class="sd">            Spatial resolution (m)</span>
-<span class="sd">        epsg_code: int</span>
-<span class="sd">            EPSG-code</span>
-<span class="sd">        nodata: float</span>
-<span class="sd">            Nodata-value</span>
-<span class="sd">        results_folder: str | pathlib.Path, default None</span>
-<span class="sd">            Folder path to write results to. If None, write to current folder</span>
+<span class="sd">        rst_dtm : str or pathlib.Path</span>
+<span class="sd">            File path to the digital terrain model raster.</span>
+<span class="sd">        resolution : int</span>
+<span class="sd">            Spatial resolution (m).</span>
+<span class="sd">        epsg_code : int</span>
+<span class="sd">            EPSG-code.</span>
+<span class="sd">        nodata : float</span>
+<span class="sd">            Nodata-value.</span>
+<span class="sd">        results_folder : str or pathlib.Path, default None</span>
+<span class="sd">            Folder path to write results to. If None, write to current folder.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># prepare catchment</span>
         <span class="k">if</span> <span class="n">results_folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -310,7 +403,7 @@
         <span class="c1"># set dtm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtm</span> <span class="o">=</span> <span class="n">rst_dtm</span>
 
-        <span class="c1"># API atttributes</span>
+        <span class="c1"># API attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hydrosoilgroup</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_landuse</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_water</span> <span class="o">=</span> <span class="n">AbstractRaster</span><span class="p">()</span>

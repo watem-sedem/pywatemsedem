@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.1.0 documentation</title>
+  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=fc837d61"></script>
+      <script src="../../../_static/documentation_options.js?v=3fabc56e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -62,6 +62,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Development guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html#dependencies">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
@@ -93,7 +94,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.geo.utils</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Standard libraries</span>
+<span></span><span class="sd">&quot;&quot;&quot;utils.py</span>
+
+<span class="sd">This module provides utility functions for geospatial data processing,</span>
+<span class="sd">including raster and vector data manipulation, rasterization, polygonization,</span>
+<span class="sd">and statistical analysis of raster data within polygon features.</span>
+
+<span class="sd">The functions rely on libraries such as rasterio, geopandas, pyogrio, and subprocess</span>
+<span class="sd">to perform various geospatial operations. The module also includes decorators for input</span>
+<span class="sd">validation and type checking to ensure that the functions are used correctly.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard libraries</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
@@ -129,6 +141,7 @@
     <span class="n">valid_rasterlist</span><span class="p">,</span>
     <span class="n">valid_vector</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.ini</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_item_from_ini</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -137,23 +150,23 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.read_rst_params">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_rst_params</span><span class="p">(</span><span class="n">rst_in</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read all spatial dimensions of a raster</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read all spatial dimensions of a raster.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in: pathlib.Path or str</span>
-<span class="sd">        File path to the input raster</span>
+<span class="sd">    rst_in : pathlib.Path or str</span>
+<span class="sd">        File path to the input raster.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    minmax: list</span>
-<span class="sd">        A list with the extreme coordinate values (xmin, ymin, xmax and ymax)</span>
-<span class="sd">    transform: rasterio.transform</span>
+<span class="sd">    minmax : list</span>
+<span class="sd">        A list with the extreme coordinate values (xmin, ymin, xmax and ymax).</span>
+<span class="sd">    transform : rasterio.transform.Affine</span>
 <span class="sd">        Transformation as defined in Rasterio.</span>
-<span class="sd">    cols: int</span>
-<span class="sd">        The number of columns in the raster</span>
-<span class="sd">    rows: int</span>
-<span class="sd">        The number of rows in the raster</span>
+<span class="sd">    cols : int</span>
+<span class="sd">        The number of columns in the raster.</span>
+<span class="sd">    rows : int</span>
+<span class="sd">        The number of rows in the raster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span>
@@ -172,17 +185,17 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.read_rasterio_profile">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_rasterio_profile</span><span class="p">(</span><span class="n">rst_in</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read all spatial dimensions of a raster</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read all spatial dimensions of a raster as a rasterio profile.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in: pathlib.Path</span>
-<span class="sd">        File path to the input raster</span>
+<span class="sd">    rst_in : pathlib.Path</span>
+<span class="sd">        File path to the input raster.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    profile: dict</span>
-<span class="sd">        See :func:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`</span>
+<span class="sd">    profile : dict</span>
+<span class="sd">        See :func:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
         <span class="n">profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
@@ -194,17 +207,25 @@
 <div class="viewcode-block" id="write_arr_as_rst">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.write_arr_as_rst">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">write_arr_as_rst</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">profile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write numpy.ndarray as a raster-file</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write numpy.ndarray as a raster file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    arr: numpy.ndarray</span>
-<span class="sd">        2D numpy array to be written as a raster file</span>
-<span class="sd">    rst_out: pathlib.Path or str</span>
-<span class="sd">        File path to the output raster</span>
-<span class="sd">    dtype: numpy.dtype</span>
-<span class="sd">    profile: rasterio.profiles</span>
-<span class="sd">        See :class:`rasterio.profiles.Profile`</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        2D numpy array to be written as a raster file.</span>
+<span class="sd">    rst_out : pathlib.Path or str</span>
+<span class="sd">        File path to the output raster.</span>
+<span class="sd">    dtype : numpy.dtype</span>
+<span class="sd">        Data type for the output raster.</span>
+<span class="sd">    profile : dict</span>
+<span class="sd">        Rasterio profile. See :class:`rasterio.profiles.Profile`.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If mandatory keys are missing from profile or dimensions don&#39;t match.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If dtype is not valid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mandatorykeys</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;driver&quot;</span><span class="p">,</span>
@@ -242,16 +263,21 @@
 <div class="viewcode-block" id="check_raster_properties_raster_with_template">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.check_raster_properties_raster_with_template">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="n">path_check</span><span class="p">,</span> <span class="n">path_template</span><span class="p">,</span> <span class="n">epsg</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if extent and resolution of new raster and template raster align</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if extent and resolution of new raster and template raster align.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    path_check: pathlib.Path | RasterProperties</span>
-<span class="sd">                Incoming, new raster</span>
-<span class="sd">    path_template: pathlib.Path</span>
-<span class="sd">                    Template raster</span>
-<span class="sd">    epsg: int</span>
-<span class="sd">            EPSG code of the cartographic projection</span>
+<span class="sd">    path_check : pathlib.Path or RasterProperties</span>
+<span class="sd">        Incoming, new raster.</span>
+<span class="sd">    path_template : pathlib.Path</span>
+<span class="sd">        Template raster.</span>
+<span class="sd">    epsg : int</span>
+<span class="sd">        EPSG code of the cartographic projection.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If extent or resolution does not match.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_check</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">rp_check</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span>
@@ -276,16 +302,20 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.grid_difference">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in1&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">,</span> <span class="s2">&quot;rst_in2&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">grid_difference</span><span class="p">(</span><span class="n">rst_in1</span><span class="p">,</span> <span class="n">rst_in2</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make the difference between two grids</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make the difference between two grids.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in1: str</span>
-<span class="sd">        File path to inputraster 1</span>
-<span class="sd">    rst_in2: str</span>
-<span class="sd">        File path to inputraster 2</span>
-<span class="sd">    rst_out: str</span>
-<span class="sd">        File path to outputraster</span>
+<span class="sd">    rst_in1 : str</span>
+<span class="sd">        File path to input raster 1.</span>
+<span class="sd">    rst_in2 : str</span>
+<span class="sd">        File path to input raster 2.</span>
+<span class="sd">    rst_out : str</span>
+<span class="sd">        File path to output raster.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses the SAGA CLI command &quot;grid_calculus&quot; with the option &quot;3&quot; (difference).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;grid_calculus&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-A&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in1</span><span class="p">),</span> <span class="s2">&quot;-B&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in2</span><span class="p">),</span> <span class="s2">&quot;-C&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)]</span>
@@ -298,12 +328,12 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_fields_vct">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vct&quot;</span><span class="p">:</span> <span class="n">valid_vector</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_fields_vct</span><span class="p">(</span><span class="n">vct</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of all fields in a shapefile</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of all fields in a shapefile.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct: str</span>
-<span class="sd">        File path to shapefile</span>
+<span class="sd">    vct : str</span>
+<span class="sd">        File path to shapefile.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -319,17 +349,17 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_geometry_type">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vct&quot;</span><span class="p">:</span> <span class="n">valid_vector</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_geometry_type</span><span class="p">(</span><span class="n">vct</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the geometry type of a shapefile</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the geometry type of a shapefile.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct: str or pathlib.Path</span>
-<span class="sd">        File path to shapefile</span>
+<span class="sd">    vct : str or pathlib.Path</span>
+<span class="sd">        File path to shapefile.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
-<span class="sd">        Geometry type (see gdal documentation for all possibilities)</span>
+<span class="sd">        Geometry type (see GDAL documentation for all possibilities).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">geom</span> <span class="o">=</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_info</span><span class="p">(</span><span class="n">vct</span><span class="p">)[</span><span class="s2">&quot;geometry_type&quot;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">geom</span></div>
@@ -340,17 +370,17 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.tiff_to_geopandas_df">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tiff_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">tiff_to_geopandas_df</span><span class="p">(</span><span class="n">tiff_in</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform a tiff file to a geopandas dataframe</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform a tiff file to a geopandas dataframe.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    tiff_in: str or pathlib.Path</span>
-<span class="sd">        File path of tiff raster file</span>
+<span class="sd">    tiff_in : str or pathlib.Path</span>
+<span class="sd">        File path of tiff raster file.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    gdf: geopandas.GeoDataFrame</span>
-<span class="sd">        Geopandas representation of tiff raster</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        Geopandas representation of tiff raster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">tiff_in</span><span class="p">))</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -372,19 +402,32 @@
 <div class="viewcode-block" id="valid_gdal_type">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.valid_gdal_type">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_gdal_type</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if your input array mask is valid. Use as decorator&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if input array mask is valid.</span>
+
+<span class="sd">    Use this function as a decorator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        Function to wrap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    callable</span>
+<span class="sd">        Wrapped function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper function</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute function after validating GDAL dtype.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        *args:</span>
-<span class="sd">            non keyword arguments</span>
-<span class="sd">        dtype: numpy.dtype or str</span>
-<span class="sd">            allowed types are &quot;Float32&quot;, &quot;Float64&quot;, &quot;Int16&quot;, &quot;Int32&quot;, &quot;Int64&quot;</span>
-<span class="sd">            integer is Int16, float is Float32</span>
+<span class="sd">        *args</span>
+<span class="sd">            Non keyword arguments.</span>
+<span class="sd">        dtype : numpy.dtype or str</span>
+<span class="sd">            Allowed types are &quot;Float32&quot;, &quot;Float64&quot;, &quot;Int16&quot;, &quot;Int32&quot;, &quot;Int64&quot;.</span>
+<span class="sd">            &quot;integer&quot; maps to Int16, &quot;float&quot; maps to Float32.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;integer&quot;</span><span class="p">:</span>
             <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;Int16&quot;</span>
@@ -414,20 +457,20 @@
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tiff_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="nd">@valid_gdal_type</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">tiff_to_idrisi</span><span class="p">(</span><span class="n">tiff_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a GeoTiff to an Idrisi RST</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a GeoTiff to an Idrisi RST.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    tiff_in: pathlib.Path or str</span>
-<span class="sd">        File path of the input tiff file</span>
-<span class="sd">    rst_out: pathlib.Path or str</span>
-<span class="sd">        File path of the destination rst</span>
-<span class="sd">    dtype: str, default Float64</span>
-<span class="sd">        Raster type</span>
+<span class="sd">    tiff_in : pathlib.Path or str</span>
+<span class="sd">        File path of the input tiff file.</span>
+<span class="sd">    rst_out : pathlib.Path or str</span>
+<span class="sd">        File path of the destination rst.</span>
+<span class="sd">    dtype : str</span>
+<span class="sd">        Raster type (e.g. &quot;Float32&quot;, &quot;Int16&quot;, &quot;Int32&quot;, &quot;Int64&quot;).</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    Uses and relies on gdal_translate CLI</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses and relies on gdal_translate CLI.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;gdal_translate&quot;</span><span class="p">,</span>
@@ -447,13 +490,12 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.delete_rst">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_rst</span><span class="p">(</span><span class="n">rst_in</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a raster dataset</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a raster dataset.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in: str or  pathlib.Path</span>
-<span class="sd">        File path of the raster dataset to be deleted</span>
-
+<span class="sd">    rst_in : str or pathlib.Path</span>
+<span class="sd">        File path of the raster dataset to be deleted.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gdalmanage&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)]</span>
     <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
@@ -465,28 +507,30 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.clip_rst">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">clip_rst</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">cnst</span><span class="p">,</span> <span class="n">resampling</span><span class="o">=</span><span class="s2">&quot;near&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clips a raster to a certain bounding box with a given resolution</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clip a raster to a certain bounding box with a given resolution.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in: pathlib.Path or str</span>
-<span class="sd">        File path to in input raster.</span>
-<span class="sd">    rst_out: pathlib.Path or str</span>
+<span class="sd">    rst_in : pathlib.Path or str</span>
+<span class="sd">        File path to the input raster.</span>
+<span class="sd">    rst_out : pathlib.Path or str</span>
 <span class="sd">        File path to the destination raster.</span>
-<span class="sd">    cnst: dict</span>
+<span class="sd">    cnst : dict</span>
 <span class="sd">        Dictionary with following keys:</span>
 
-<span class="sd">        - *epsg* (str): the EPSG-code of the rst_in</span>
-<span class="sd">        - *res* (int): resolution</span>
-<span class="sd">        - *nodata* (int): nodata flag</span>
-<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax</span>
-<span class="sd">    resampling: str, default &#39;near&#39;</span>
-<span class="sd">        Either &quot;mode&quot; or &quot;near&quot;</span>
+<span class="sd">        - *epsg* (str): the EPSG-code of the rst_in.</span>
+<span class="sd">        - *res* (int): resolution.</span>
+<span class="sd">        - *nodata* (int): nodata flag.</span>
+<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax.</span>
+<span class="sd">    resampling : str, default &quot;near&quot;</span>
+<span class="sd">        Either &quot;mode&quot; or &quot;near&quot;.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    1. &quot;mode&quot; and &quot;near&quot; have been tested, see</span>
-<span class="sd">        https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r</span>
+<span class="sd">    1. This function uses the gdalwarp CLI, see</span>
+<span class="sd">       https://gdal.org/en/stable/programs/gdalwarp.html for more information.</span>
+<span class="sd">    2. &quot;mode&quot; and &quot;near&quot; have been tested, see</span>
+<span class="sd">       https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">rst_in</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)</span>
@@ -509,73 +553,20 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_extent_vct">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vct&quot;</span><span class="p">:</span> <span class="n">valid_vector</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_extent_vct</span><span class="p">(</span><span class="n">vct</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the bounding box coordinates of a shapefile</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the bounding box coordinates of a shapefile.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct: str or pathlib.Path</span>
+<span class="sd">    vct : str or pathlib.Path</span>
 <span class="sd">        File path of the input shapefile.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
-<span class="sd">        xmin, ymin, xmax, ymax</span>
+<span class="sd">        xmin, ymin, xmax, ymax.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">extent</span> <span class="o">=</span> <span class="n">pyogrio</span><span class="o">.</span><span class="n">read_info</span><span class="p">(</span><span class="n">vct</span><span class="p">)[</span><span class="s2">&quot;total_bounds&quot;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">extent</span>  <span class="c1"># xmin, ymin, xmax, ymax</span></div>
-
-
-
-<div class="viewcode-block" id="clip_vct">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.clip_vct">[docs]</a>
-<span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vct&quot;</span><span class="p">:</span> <span class="n">valid_vector</span><span class="p">,</span> <span class="s2">&quot;vct_clip&quot;</span><span class="p">:</span> <span class="n">valid_vector</span><span class="p">})</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">clip_vct</span><span class="p">(</span><span class="n">vct_in</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">vct_clip</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lst_ignore_field</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clip a shapefile by another shapefile</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    vct_in: str or pathlib.Path</span>
-<span class="sd">        File path of shapefile to be clipped.</span>
-<span class="sd">    vct_out: str or pathlib.Path</span>
-<span class="sd">        File path of the destination shapefile</span>
-<span class="sd">    vct_clip: str or pathlib.Path</span>
-<span class="sd">        File path of the clip boundary vector</span>
-<span class="sd">    overwrite: bool, default False</span>
-<span class="sd">        If True, overwrite existing file</span>
-<span class="sd">    lst_ignore_field: list, optional</span>
-<span class="sd">        Ignore a specific field from input in output.</span>
-
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    Uses and relies on ogr2ogr CLI</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cond</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">vct_out</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">cond</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">cond</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clipping </span><span class="si">{</span><span class="n">vct_in</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="n">get_extent_vct</span><span class="p">(</span><span class="n">vct_clip</span><span class="p">)</span>
-        <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;ogr2ogr&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;-spat&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">ext</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">ext</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">ext</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
-        <span class="p">]</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-skipfailures&quot;</span><span class="p">]</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-clipsrc&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_clip</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="n">lst_ignore_field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="n">get_fields_vct</span><span class="p">(</span><span class="n">vct_in</span><span class="p">)</span>
-            <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span>
-                <span class="s2">&quot;-select&quot;</span><span class="p">,</span>
-                <span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lst_ignore_field</span><span class="p">]</span>
-                <span class="p">),</span>
-            <span class="p">]</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">vct_out</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_in</span><span class="p">)]</span>
-        <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span></div>
 
 
 
@@ -591,49 +582,55 @@
     <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">ton</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute statistics</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute statistics of a raster per polygon feature.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    lst_rasters: list</span>
-<span class="sd">        File path rasters (pathlib.Path)</span>
-<span class="sd">    vct_polygon: str</span>
+<span class="sd">    lst_rasters : list</span>
+<span class="sd">        File path rasters (pathlib.Path).</span>
+<span class="sd">    vct_polygon : str</span>
 <span class="sd">        File path to input polygon vector.</span>
-<span class="sd">    vct_out: str</span>
+<span class="sd">    vct_out : str</span>
 <span class="sd">        File path to output polygon vector.</span>
-<span class="sd">    lst_names: dict</span>
+<span class="sd">    lst_names : list</span>
 <span class="sd">        List of output names in output vector for files in lst_rasters.</span>
-<span class="sd">    dict_operators: dict</span>
+<span class="sd">    dict_operators : dict</span>
 <span class="sd">        Operators. For a description of the dictionary of statistics, see</span>
 <span class="sd">        inputs in :func:`pywatemsedem.geo.utils.grid_statistics`. See example for use.</span>
-<span class="sd">    normalize: bool, default False</span>
-<span class="sd">        Normalize with shape area (True)</span>
-<span class="sd">    ton: bool, default False</span>
-<span class="sd">        Use ton (true)</span>
+<span class="sd">    normalize : bool, default True</span>
+<span class="sd">        Normalize with shape area.</span>
+<span class="sd">    ton : bool, default False</span>
+<span class="sd">        Use ton.</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame with computed statistics.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
 <span class="sd">    The desired statistics are inputted after the file reference of the raster, and are</span>
 <span class="sd">    formatted as a dictionary, e.g.:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        dict_operators = {&quot;COUNT&quot;:True,&quot;SUM&quot;:True}</span>
+<span class="sd">        dict_operators = {&quot;COUNT&quot;: True, &quot;SUM&quot;: True}</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-
 <span class="sd">    &gt;&gt;&gt; from pywatemsedem.geo.utils import compute_statistics_rasters_per_polygon_vector</span>
 <span class="sd">    &gt;&gt;&gt; vct_aho = &quot;AHO.shp&quot;</span>
 <span class="sd">    &gt;&gt;&gt; vct_out = &quot;statistics_aho.shp&quot;</span>
-<span class="sd">    &gt;&gt;&gt; rst_sewerin =&quot;sewerin.rst&quot;</span>
-<span class="sd">    &gt;&gt;&gt; rst_sediexport =&quot;SediExport.rst&quot;</span>
-<span class="sd">    &gt;&gt;&gt; compute_statistics_rasters_per_polygon_vector([rst_sewerin, rst_sediexport],</span>
-<span class="sd">    ...                                               vct_polygon,</span>
-<span class="sd">    ...                                               vct_out,</span>
-<span class="sd">    ...                                               [&quot;River&quot;,&quot;Sewers&quot;],</span>
-<span class="sd">    ...                                               {&quot;COUNT&quot;:True,&quot;SUM&quot;:True},</span>
-<span class="sd">    ...                                               ton = True)</span>
+<span class="sd">    &gt;&gt;&gt; rst_sewerin = &quot;sewerin.rst&quot;</span>
+<span class="sd">    &gt;&gt;&gt; rst_sediexport = &quot;SediExport.rst&quot;</span>
+<span class="sd">    &gt;&gt;&gt; compute_statistics_rasters_per_polygon_vector(</span>
+<span class="sd">    ...     [rst_sewerin, rst_sediexport],</span>
+<span class="sd">    ...     vct_polygon,</span>
+<span class="sd">    ...     vct_out,</span>
+<span class="sd">    ...     [&quot;River&quot;, &quot;Sewers&quot;],</span>
+<span class="sd">    ...     {&quot;COUNT&quot;: True, &quot;SUM&quot;: True},</span>
+<span class="sd">    ...     ton=True,</span>
+<span class="sd">    ... )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">grid_statistics</span><span class="p">(</span><span class="n">lst_rasters</span><span class="p">,</span> <span class="n">vct_polygon</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="o">**</span><span class="n">dict_operators</span><span class="p">)</span>
 
@@ -661,14 +658,14 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.rst_to_vct_points">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">rst_to_vct_points</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert all no nodata values in a raster to a vector point file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert all non-nodata values in a raster to a vector point file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in: str or pathlib.Path</span>
+<span class="sd">    rst_in : str or pathlib.Path</span>
 <span class="sd">        File path of the raster file that should be converted to a shapefile.</span>
-<span class="sd">    vct_out: pathlib.Path</span>
-<span class="sd">        File path of the destination vct.</span>
+<span class="sd">    vct_out : pathlib.Path</span>
+<span class="sd">        File path of the destination vector.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;shapes_grid&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-GRIDS&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)]</span>
@@ -683,29 +680,31 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">vct_to_rst_value_gdal</span><span class="p">(</span>
     <span class="n">vct_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">raster_properties</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">alltouched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterizes a shapefile as data/no-data</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterize a shapefile as data/no-data.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct_in: str or pathlib.Path</span>
+<span class="sd">    vct_in : str or pathlib.Path</span>
 <span class="sd">        File path of the shapefile to be rasterized.</span>
-<span class="sd">    rst_out: pathlib.Path</span>
-<span class="sd">        File path of the destination rst</span>
-<span class="sd">    raster_properties: dict</span>
+<span class="sd">    rst_out : pathlib.Path</span>
+<span class="sd">        File path of the destination rst.</span>
+<span class="sd">    raster_properties : dict</span>
 <span class="sd">        Dictionary with following keys:</span>
 
-<span class="sd">        - *res* (int): resolution</span>
-<span class="sd">        - *nodata* (int): nodata flag</span>
-<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax</span>
-<span class="sd">    alltouched: bool, default true</span>
+<span class="sd">        - *res* (int): resolution.</span>
+<span class="sd">        - *nodata* (int): nodata flag.</span>
+<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax.</span>
+<span class="sd">    nodata : int, default -9999</span>
+<span class="sd">        Nodata value.</span>
+<span class="sd">    alltouched : bool, default True</span>
 <span class="sd">        Enables the ALL_TOUCHED rasterization option so that all pixels</span>
 <span class="sd">        touched by lines or polygons will be updated.</span>
-<span class="sd">    dtype: str, default None</span>
-<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...</span>
+<span class="sd">    dtype : str, default None</span>
+<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.</span>
 
-<span class="sd">    Note</span>
+<span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on gdal_rasterize CLI</span>
+<span class="sd">    Uses and relies on gdal_rasterize CLI.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gdal_rasterize&quot;</span><span class="p">,</span> <span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="s2">&quot;-a_nodata&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nodata</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">alltouched</span><span class="p">:</span>
@@ -735,29 +734,29 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">vct_to_rst_value_saga</span><span class="p">(</span>
     <span class="n">vct_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">raster_properties</span><span class="p">,</span> <span class="n">alltouched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterizes a shapefile as data/no-data</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterize a shapefile as data/no-data.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct_in: str or pathlib.Path</span>
+<span class="sd">    vct_in : str or pathlib.Path</span>
 <span class="sd">        File path of the shapefile to be rasterized.</span>
-<span class="sd">    rst_out: pathlib.Path</span>
-<span class="sd">        File path of the destination rst</span>
-<span class="sd">    raster_properties: dict</span>
+<span class="sd">    rst_out : pathlib.Path</span>
+<span class="sd">        File path of the destination rst.</span>
+<span class="sd">    raster_properties : dict</span>
 <span class="sd">        Dictionary with following keys:</span>
 
-<span class="sd">        - *res* (int): resolution</span>
-<span class="sd">        - *nodata* (int): nodata flag</span>
-<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax</span>
-<span class="sd">    alltouched: bool, default true</span>
+<span class="sd">        - *res* (int): resolution.</span>
+<span class="sd">        - *nodata* (int): nodata flag.</span>
+<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax.</span>
+<span class="sd">    alltouched : bool, default True</span>
 <span class="sd">        Enables the ALL_TOUCHED rasterization option so that all pixels</span>
 <span class="sd">        touched by lines or polygons will be updated.</span>
-<span class="sd">    dtype: str, default None</span>
-<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...</span>
+<span class="sd">    dtype : str, default None</span>
+<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.</span>
 
-<span class="sd">    Note</span>
+<span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on saga_cmd CLI</span>
+<span class="sd">    Uses and relies on saga_cmd CLI.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;grid_gridding&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]</span>
@@ -803,28 +802,27 @@
     <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">gdal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterizes a shapefile by a given constant value</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterize a shapefile by a given constant value.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct_in: str or pathlib.Path</span>
+<span class="sd">    vct_in : str or pathlib.Path</span>
 <span class="sd">        File path of the shapefile to be rasterized.</span>
-<span class="sd">    rst_out: pathlib.Path</span>
-<span class="sd">        File path of the destination rst</span>
-<span class="sd">    raster_properties: dict</span>
+<span class="sd">    rst_out : pathlib.Path</span>
+<span class="sd">        File path of the destination rst.</span>
+<span class="sd">    raster_properties : dict</span>
 <span class="sd">        Dictionary with following keys:</span>
 
-<span class="sd">        - *res* (int): resolution</span>
-<span class="sd">        - *nodata* (int): nodata flag</span>
-<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax</span>
-<span class="sd">    alltouched: bool, default true</span>
+<span class="sd">        - *res* (int): resolution.</span>
+<span class="sd">        - *nodata* (int): nodata flag.</span>
+<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax.</span>
+<span class="sd">    alltouched : bool, default True</span>
 <span class="sd">        Enables the ALL_TOUCHED rasterization option so that all pixels</span>
 <span class="sd">        touched by lines or polygons will be updated.</span>
-<span class="sd">    dtype: str, default None</span>
-<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...</span>
-<span class="sd">    gdal: bool, default True</span>
-<span class="sd">        rasterize using gdal_rasterize or via saga CLI</span>
-
+<span class="sd">    dtype : str, default None</span>
+<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.</span>
+<span class="sd">    gdal : bool, default True</span>
+<span class="sd">        Rasterize using gdal_rasterize (True) or via saga CLI (False).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">gdal</span><span class="p">:</span>
@@ -833,16 +831,16 @@
             <span class="n">rst_out</span><span class="p">,</span>
             <span class="n">raster_properties</span><span class="p">,</span>
             <span class="n">nodata</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
-            <span class="n">alltouched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">alltouched</span><span class="o">=</span><span class="n">alltouched</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">vct_to_rst_value_saga</span><span class="p">(</span>
             <span class="n">vct_in</span><span class="p">,</span>
             <span class="n">rst_out</span><span class="p">,</span>
             <span class="n">raster_properties</span><span class="p">,</span>
-            <span class="n">alltouched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">alltouched</span><span class="o">=</span><span class="n">alltouched</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -851,20 +849,20 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.raster_to_polygon">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst_in&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">raster_to_polygon</span><span class="p">(</span><span class="n">rst_in</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Polygonize a raster</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Polygonize a raster.</span>
 
-<span class="sd">    This function converts rastercells to polygons</span>
+<span class="sd">    This function converts raster cells to polygons.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rst_in: str or pathlib.Path</span>
-<span class="sd">        File path of theinput raster</span>
-<span class="sd">    vct_out: str or pathlib.Path</span>
-<span class="sd">        File path of the destination shapefile</span>
+<span class="sd">    rst_in : str or pathlib.Path</span>
+<span class="sd">        File path of the input raster.</span>
+<span class="sd">    vct_out : str or pathlib.Path</span>
+<span class="sd">        File path of the destination shapefile.</span>
 
-<span class="sd">    Note</span>
+<span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on saga_cmd CLI</span>
+<span class="sd">    Uses and relies on saga_cmd CLI shapes_grid -6.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;shapes_grid&quot;</span><span class="p">,</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;-GRID&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-POLYGONS&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_out</span><span class="p">),</span> <span class="s2">&quot;-CLASS_ALL&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;-SPLIT&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]</span>
@@ -876,25 +874,24 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.lines_to_direction">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vct_line&quot;</span><span class="p">:</span> <span class="n">valid_linesvector</span><span class="p">,</span> <span class="s2">&quot;rst_template&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">lines_to_direction</span><span class="p">(</span><span class="n">vct_line</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">rst_template</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts line features to a direction raster</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert line features to a direction raster.</span>
 
 <span class="sd">    This function converts the direction of line features to a raster. See the</span>
 <span class="sd">    :ref:`docs of WaTEM/SEDEM for more information &lt;watemsedem:routingmap&gt;` about this</span>
-<span class="sd">    raster</span>
+<span class="sd">    raster.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct_line: str or pathlib.Path</span>
-<span class="sd">        File path to the input line shapefile</span>
-<span class="sd">    rst_out: pathlib.Path</span>
-<span class="sd">        File path to the output raster</span>
-<span class="sd">    rst_template: str or pathlib.Path</span>
-<span class="sd">        File path to a template raster</span>
+<span class="sd">    vct_line : str or pathlib.Path</span>
+<span class="sd">        File path to the input line shapefile.</span>
+<span class="sd">    rst_out : pathlib.Path</span>
+<span class="sd">        File path to the output raster.</span>
+<span class="sd">    rst_template : str or pathlib.Path</span>
+<span class="sd">        File path to a template raster.</span>
 
-<span class="sd">    Note</span>
+<span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on saga_cmd CLI</span>
-
+<span class="sd">    Uses and relies on saga_cmd CLI.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;line_direction&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span>
@@ -927,32 +924,31 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">vct_to_rst_field</span><span class="p">(</span>
     <span class="n">vct_in</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">Cnst</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alltouched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;Float64&quot;</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterizes a shapefile by a given attribute field</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rasterize a shapefile by a given attribute field.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct_in: str or pathlib.Path</span>
+<span class="sd">    vct_in : str or pathlib.Path</span>
 <span class="sd">        File path of the shapefile to be rasterized.</span>
-<span class="sd">    rst_out: pathlib.Path</span>
-<span class="sd">        File path of the destination rst</span>
-<span class="sd">    Cnst: dict</span>
+<span class="sd">    rst_out : pathlib.Path</span>
+<span class="sd">        File path of the destination rst.</span>
+<span class="sd">    Cnst : dict</span>
 <span class="sd">        Dictionary with following keys:</span>
 
-<span class="sd">        - *res* (int): resolution</span>
-<span class="sd">        - *nodata* (int): nodata flag</span>
-<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax</span>
-
-<span class="sd">    field: str</span>
-<span class="sd">        The field of the shapefile containing the values for the raster</span>
-<span class="sd">    alltouched: bool, default True</span>
+<span class="sd">        - *res* (int): resolution.</span>
+<span class="sd">        - *nodata* (int): nodata flag.</span>
+<span class="sd">        - *minmax* (list): list with xmin, ymin, xmax, ymax.</span>
+<span class="sd">    field : str, default None</span>
+<span class="sd">        The field of the shapefile containing the values for the raster.</span>
+<span class="sd">    alltouched : bool, default True</span>
 <span class="sd">        Enables the ALL_TOUCHED rasterization option so that all pixels</span>
 <span class="sd">        touched by lines or polygons will be updated.</span>
-<span class="sd">    dtype: str, default None</span>
-<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...</span>
+<span class="sd">    dtype : str, default &quot;Float64&quot;</span>
+<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    Uses and relies on gdal_rasterize CLI</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses and relies on gdal_rasterize CLI.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if rst_out.exists():</span>
     <span class="c1">#    delete_rst(rst_out)</span>
@@ -1001,15 +997,20 @@
 <div class="viewcode-block" id="execute_saga">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.execute_saga">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">execute_saga</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run saga executable and catch non-informative error</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run saga executable and catch non-informative error.</span>
 
 <span class="sd">    This function catches saga error command and ignores &#39;corrupted size vs. prev_size</span>
 <span class="sd">    in fastbins&#39; error in case output runs from saga are okay.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    cmd_args: list</span>
-<span class="sd">        Saga command</span>
+<span class="sd">    cmd_args : list</span>
+<span class="sd">        Saga command.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IOError</span>
+<span class="sd">        If command is not a saga command.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;saga_cmd&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cmd_args</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not a saga command.&quot;</span>
@@ -1030,25 +1031,24 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.points_to_raster">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;vct_point&quot;</span><span class="p">:</span> <span class="n">valid_pointvector</span><span class="p">,</span> <span class="s2">&quot;rst_template&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">points_to_raster</span><span class="p">(</span><span class="n">vct_point</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">,</span> <span class="n">rst_template</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a polygon shapefile to a raster</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a point shapefile to a raster.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vct_point: str or pathlib.Path</span>
-<span class="sd">        File path of input point shapefile</span>
-<span class="sd">    rst_out: str or pathlib.Path</span>
-<span class="sd">        File path of output rasterfile</span>
-<span class="sd">    rst_template: str or pathlib.Path</span>
-<span class="sd">        File path to a template raster</span>
-<span class="sd">    field: str</span>
-<span class="sd">        The field of the shapefile containing the values for the raster</span>
-<span class="sd">    dtype: str, default None</span>
-<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...</span>
+<span class="sd">    vct_point : str or pathlib.Path</span>
+<span class="sd">        File path of input point shapefile.</span>
+<span class="sd">    rst_out : str or pathlib.Path</span>
+<span class="sd">        File path of output rasterfile.</span>
+<span class="sd">    rst_template : str or pathlib.Path</span>
+<span class="sd">        File path to a template raster.</span>
+<span class="sd">    field : str</span>
+<span class="sd">        The field of the shapefile containing the values for the raster.</span>
+<span class="sd">    dtype : str</span>
+<span class="sd">        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.</span>
 
-<span class="sd">    Note</span>
+<span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on saga_cmd CLI</span>
-
+<span class="sd">    Uses and relies on saga_cmd CLI.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;saga_cmd&quot;</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">&quot;grid_gridding&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-INPUT&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_point</span><span class="p">),</span> <span class="s2">&quot;-FIELD&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">field</span><span class="p">)]</span>
@@ -1186,23 +1186,23 @@
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.load_raster">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;rst&quot;</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">return_bounds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;load raster with rasterio</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;read raster with rasterio as a numpy array.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    rst: str or pathlib.Path</span>
 <span class="sd">        File path of the file, .rst arr.</span>
 <span class="sd">    return_bounds: bool, default False</span>
-<span class="sd">        Flag to indicate whether a bounds of the arr should be returned.</span>
+<span class="sd">        Flag to indicate whether the bounds of the arr should be returned.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    arr: numpy.ndarray</span>
 <span class="sd">        Array format of raster file.</span>
-<span class="sd">    bounds: list</span>
-<span class="sd">        List of bounds (xmin,ymin,xmax,ymax).</span>
 <span class="sd">    profile: rasterio.profiles</span>
 <span class="sd">        See :class:`rasterio.profiles.Profile`</span>
+<span class="sd">    bounds: list</span>
+<span class="sd">        List of bounds (xmin,ymin,xmax,ymax) if return_bounds is True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># load</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1429,20 +1429,20 @@
 <div class="viewcode-block" id="rstparams_to_rasterprofile">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.rstparams_to_rasterprofile">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rstparams_to_rasterprofile</span><span class="p">(</span><span class="n">rstparams</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform rstparams dictionary to to rasterio rasterprofile dictionary</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform rstparams dictionary to rasterio raster profile dictionary</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rstparams: rasterio.profiles</span>
-<span class="sd">        See :class:`rasterio.profiles.Profile`</span>
+<span class="sd">    rstparams: dict</span>
+<span class="sd">        gdal dictionary holding all metadata for idrisi rasters</span>
 <span class="sd">    epsg: str, default None</span>
 <span class="sd">        The epsg code defining the coordinate system of the raster,</span>
 <span class="sd">        format = &quot;EPSG:XXXXX&quot;</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    rstparams: dict</span>
-<span class="sd">        gdal dictionary holding all metadata for idrisi rasters</span>
+<span class="sd">    profile: rasterio.profiles</span>
+<span class="sd">        See :class:`rasterio.profiles.Profile`</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">profile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nodata&quot;</span><span class="p">:</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]}</span>
@@ -1490,7 +1490,7 @@
 <span class="sd">    profile: rasterio.profiles</span>
 <span class="sd">        See :class:`rasterio.profiles.Profile`</span>
 <span class="sd">    dtype: numpy.dtype, default None</span>
-<span class="sd">        e.g. np.float64, np.float32, ..</span>
+<span class="sd">        e.g. np.float64, np.float32, ...</span>
 <span class="sd">    nodata_val: int, default -9999</span>
 <span class="sd">        Standard value for nodata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1577,7 +1577,7 @@
 <div class="viewcode-block" id="set_dtype_arr_rst">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.set_dtype_arr_rst">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_dtype_arr_rst</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set type for an array</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set dtype for a numpy array and update the raster profile</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1605,13 +1605,13 @@
 
 <div class="viewcode-block" id="get_rstparams">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_rstparams">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_rstparams</span><span class="p">(</span><span class="n">modelinputfolder</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_rstparams</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get rstparams and rasterprofile from template raster (default:pkaart)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    modelinputfolder: str or pathlib.Path</span>
-<span class="sd">        the path to the modelinputfolder of WaTEM/SEDEM</span>
+<span class="sd">    ini: pathlib.Path</span>
+<span class="sd">        file path to ini-file of WaTEM-SEDEM</span>
 <span class="sd">    epsg: str, default None</span>
 <span class="sd">        the epsg code defining the coordinate system of the raster,</span>
 <span class="sd">        format = &quot;EPSG:XXXXX&quot;</span>
@@ -1631,7 +1631,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># this template is used to generate binair mask</span>
     <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">template</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">modelinputfolder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;pfactor.rst&quot;</span>
+        <span class="n">modelinputfolder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">get_item_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s2">&quot;Working directories&quot;</span><span class="p">,</span> <span class="s2">&quot;input directory&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="n">modelinputfolder</span> <span class="o">/</span> <span class="n">get_item_from_ini</span><span class="p">(</span>
+            <span class="n">ini</span><span class="p">,</span> <span class="s2">&quot;Files&quot;</span><span class="p">,</span> <span class="s2">&quot;p factor map filename&quot;</span><span class="p">,</span> <span class="nb">str</span>
+        <span class="p">)</span>
+
     <span class="c1"># open and assign profile to rstparams</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
@@ -1916,7 +1922,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">create_filename</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;tempfiles_pywatemsedem&quot;</span><span class="p">)):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create temporary filename in a dedicated directory</span>
 
-<span class="sd">    Create directory if it is not exists</span>
+<span class="sd">    Create directory if it does not exist</span>
 
 <span class="sd">    Only filenames are generated, not the files</span>
 
@@ -2040,16 +2046,21 @@
 <div class="viewcode-block" id="mask_array_with_val">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.mask_array_with_val">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mask_array_with_val</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">mask_val</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Masking array by a mask</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mask an array using a mask array.</span>
 
 <span class="sd">    Parameters</span>
-<span class="sd">    ---------</span>
-<span class="sd">    arr: numpy.ndarray</span>
-<span class="sd">        array of which values are masked</span>
-<span class="sd">    mask: numpy.ndarray</span>
-<span class="sd">        masking array with same dimensions as arr</span>
-<span class="sd">    mask_val: float or int</span>
-<span class="sd">            masking arr when mask is mask_val</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : numpy.ndarray</span>
+<span class="sd">        Array of which values are masked.</span>
+<span class="sd">    mask : numpy.ndarray</span>
+<span class="sd">        Masking array with same dimensions as arr.</span>
+<span class="sd">    mask_val : float or int</span>
+<span class="sd">        Values in mask where arr should be masked.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ma.MaskedArray</span>
+<span class="sd">        Masked array where mask equals mask_val.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">arr_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="n">mask_val</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">arr_masked</span></div>
