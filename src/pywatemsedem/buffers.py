@@ -23,7 +23,7 @@ def process_buffer_outlets(gdf_outlets, gdf_buffer):
     Returns
     -------
     gdf_outlets: gpd.GeoDataFrame
-        Updated outlets with buf id assigedn
+        Updated outlets with buf id assigned.
     """
     gdf_outlets["BUF_ID"] = 0
     # 1. per buffer kijken welke outlets er in liggen en het

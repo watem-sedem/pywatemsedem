@@ -20,22 +20,19 @@ from pywatemsedem.geo.utils import (
 
 
 class AbstractRaster:
-    """Abstract raster class based on numpy arrays and raster properties
+    """Abstract raster class based on numpy arrays and raster properties.
 
-    Parameters
-    -----------
-    arr: numpy.ndarray
-        Raster array
-    rp: RasterProperties
-        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-    arr_mask: numpy.ndarray, default None
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
-    allow_nodata_array: boolean, default False
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
+    Attributes
+    ----------
+    arr : numpy.ndarray
+        Raster array.
+    rp : pywatemsedem.geo.rasterproperties.RasterProperties
+        Raster properties instance.
 
-    Note
-    ----
-    If an array mask is provided, the array is automatically masked.
+    Notes
+    -----
+    If an array mask is provided to the initialize method, the array is
+    automatically masked.
     """
 
     def __init__(self):
@@ -44,7 +41,19 @@ class AbstractRaster:
         self._rp = None
 
     def initialize(self, arr, rp, arr_mask=None, allow_nodata_array=False):
-        """Initialize array and rasterproperties"""
+        """Initialize array and raster properties.
+
+        Parameters
+        ----------
+        arr : numpy.ndarray
+            Raster array.
+        rp : pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties instance.
+        arr_mask : numpy.ndarray, default None
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        allow_nodata_array : bool, default False
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        """
         if len(arr.shape) < 2:
             msg = "Dimensionality of input raster array should be larger than 1."
             raise ValueError(msg)
@@ -55,58 +64,67 @@ class AbstractRaster:
 
     @property
     def arr(self):
-        """Return array
+        """Return array.
 
         Returns
         -------
         numpy.ndarray
+            Raster array.
         """
         return self._arr
 
     @arr.setter
     def arr(self, input):
-        """
+        """Set array.
 
         Parameters
         ----------
-        input: numpy.ndarray
+        input : numpy.ndarray
+            Raster array.
         """
         self._arr = input
 
     @property
     def rp(self):
-        """Return raster properties
+        """Return raster properties.
 
         Returns
         -------
-        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+        pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties instance.
         """
         return self._rp
 
     def update_nodata_value(self, to):
-        """Update the nodata value
+        """Update the nodata value.
 
         Parameters
         ----------
-        to: float
-            New nodata value
+        to : float
+            New nodata value.
         """
         self._arr[self._arr == self.rp.nodata] = to
         self._rp._nodata = to
 
     def clip(self):
-        """NotImplemented clip function"""
+        """Clip function (not implemented).
+
+        Raises
+        ------
+        NotImplementedError
+            This method is not implemented in the abstract class.
+        """
         raise NotImplementedError
 
     def mask(self, arr_mask, allow_nodata_array=False):
-        """Mask function.
+        """Mask the raster array.
 
         Parameters
         ----------
-        arr_mask: numpy.ndarray
-            Array mask (1, nodata). Note that array mask should have same nodata value
-            as raster array.
-        allow_nodata_array: bool
+        arr_mask : numpy.ndarray
+            Array mask (1, nodata). Note that array mask should have same nodata
+            value as raster array.
+        allow_nodata_array : bool, default False
             Allow to return a nodata-array.
         """
         try:
@@ -122,13 +140,27 @@ class AbstractRaster:
 
         Parameters
         ----------
-        outfile_path: pathlib.Path or str
-            File path output
-        format: "idrisi" or "tiff", default "idrisi"
-        dtype: numpy.dtype, default None
+        outfile_path : pathlib.Path or str
+            File path output.
+        format : str, default "idrisi"
+            Output format, either "idrisi" or "tiff".
+        dtype : numpy.dtype, default None
             Output raster type. If None, dtype of array is used.
-        nodata: float, default None
-            Nodata value for output raster. If None, nodata of rasterproperties is used.
+        nodata : float, default None
+            Nodata value for output raster. If None, nodata of rasterproperties
+            is used.
+
+        Returns
+        -------
+        bool
+            True if write was successful.
+
+        Raises
+        ------
+        NotImplementedError
+            If format is not supported.
+        TypeError
+            If file extension does not match format.
         """
         outfile_path = Path(outfile_path)
 
@@ -179,23 +211,28 @@ class AbstractRaster:
         return True
 
     def plot(self, fig=None, ax=None, nodata=None, *args, **kwargs):
-        """Plot raster array with imshow
+        """Plot raster array with imshow.
 
         Parameters
         ----------
-        fig: matplotlib.figure.Figure, default = None
-            if not given, defaults to generating new figure
-        ax: matplotlib.axes.Axes, default = None
-            if not given, defaults to generating new axis
-        nodata: float, default = None
+        fig : matplotlib.figure.Figure, default None
+            If not given, defaults to generating new figure.
+        ax : matplotlib.axes.Axes, default None
+            If not given, defaults to generating new axis.
+        nodata : float, default None
             Used to mask certain values present in arr which represent
-            nodata (e.g. -9999)
+            nodata (e.g. -9999).
+        *args
+            Additional positional arguments passed to imshow.
+        **kwargs
+            Additional keyword arguments passed to imshow.
 
         Returns
         -------
-        fig: matplotlib.figure.Figure
-
-        ax: matplotlib.axes.Axes
+        fig : matplotlib.figure.Figure
+            Figure object.
+        ax : matplotlib.axes.Axes
+            Axes object.
         """
 
         if not ax:
@@ -209,25 +246,31 @@ class AbstractRaster:
     def histogram(
         self, fig=None, ax=None, nodata=None, ylogscale=False, *args, **kwargs
     ):
-        """Plot density histogram of raster data values with 25th, 50th and 75th
-        percentiles
+        """Plot density histogram of raster data values.
+
+        Plots histogram with 25th, 50th and 75th percentiles.
 
         Parameters
         ----------
-        fig: matplotlib.figure.Figure, default = None
-            if not given, defaults to generating new figure
-        ax: matplotlib.axes.Axes, default = None
-            if not given, defaults to generating new axis
-        nodata: float
-            Used to mask no data values
-        ylogscale: bool, default = False
-                Log transformation on density axis if True
+        fig : matplotlib.figure.Figure, default None
+            If not given, defaults to generating new figure.
+        ax : matplotlib.axes.Axes, default None
+            If not given, defaults to generating new axis.
+        nodata : float, default None
+            Used to mask no data values.
+        ylogscale : bool, default False
+            Log transformation on density axis if True.
+        *args
+            Additional positional arguments passed to hist.
+        **kwargs
+            Additional keyword arguments passed to hist.
 
         Returns
         -------
-        fig: matplotlib.figure.Figure
-
-        ax: matplotlib.axes.Axes
+        fig : matplotlib.figure.Figure
+            Figure object.
+        ax : matplotlib.axes.Axes
+            Axes object.
         """
         if not ax:
             fig, ax = plt.subplots(figsize=[10, 10])
@@ -253,64 +296,92 @@ class AbstractRaster:
         return fig, ax
 
     def is_empty(self):
-        """check if array (raster) is None (empty)
+        """Check if array (raster) is None (empty).
 
         Returns
         -------
-        True/False
+        bool
+            True if array is None, False otherwise.
         """
         return self._arr is None
 
 
 @dataclass
 class RasterMemory(AbstractRaster):
-    """Array raster
+    """Raster stored in memory from a numpy array.
 
-    Parameters
+    Attributes
     ----------
-    arr: numpy.ndarray
-        See :class:`pywatemsedem.geo.rasters.AbstractRaster`
-    rp: RasterProperties
-        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-    arr_mask: numpy.ndarray, default None
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
-    allow_nodata_array: bool, default False
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
+    arr : numpy.ndarray
+        Raster array.
+    rp : pywatemsedem.geo.rasterproperties.RasterProperties
+        Raster properties instance.
+
+    Notes
+    -----
+    Inherits from :class:`pywatemsedem.geo.rasters.AbstractRaster`.
     """
 
     def __init__(self, arr, rp, arr_mask=None, allow_nodata_array=False):
-        """Initialize RasterMemory"""
+        """Initialize RasterMemory.
+
+        Parameters
+        ----------
+        arr : numpy.ndarray
+            Raster array.
+        rp : pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties instance.
+        arr_mask : numpy.ndarray, default None
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        allow_nodata_array : bool, default False
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        """
         super().initialize(
             arr, rp, arr_mask=arr_mask, allow_nodata_array=allow_nodata_array
         )
 
     def clip(self):
-        """NotImplemented"""
+        """Clip function (not implemented for RasterMemory).
+
+        Raises
+        ------
+        NotImplementedError
+            Clipping is not implemented for RasterMemory class.
+        """
         raise NotImplementedError("Clipping not implemented for RasterMemory class")
 
 
 class RasterFile(AbstractRaster):
-    """Array based on a input raster file.
+    """Raster loaded from an input raster file.
 
-    Parameters
+    Attributes
     ----------
-    file_path: pathlib.Path
-        File path to user input raster.
-    rp: RasterProperties, default None
-        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`. If None,
-        rasterproperties from inputfile are used.
-    arr_mask: numpy.ndarray, default None
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
-    allow_nodata_array: bool, default False
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
+    arr : numpy.ndarray
+        Raster array.
+    rp : pywatemsedem.geo.rasterproperties.RasterProperties
+        Raster properties instance.
 
-    Note
-    ----
-    If rasterproperties are inputted by the user, clipping is automatically done.
+    Notes
+    -----
+    If rasterproperties are provided by the user, clipping is automatically done.
+    Inherits from :class:`pywatemsedem.geo.rasters.AbstractRaster`.
     """
 
     def __init__(self, file_path, rp=None, arr_mask=None, allow_nodata_array=False):
-        """Initialize RasterFile class"""
+        """Initialize RasterFile.
+
+        Parameters
+        ----------
+        file_path : pathlib.Path
+            File path to user input raster.
+        rp : pywatemsedem.geo.rasterproperties.RasterProperties, default None
+            Raster properties instance. If None, rasterproperties from input
+            file are used.
+        arr_mask : numpy.ndarray, default None
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        allow_nodata_array : bool, default False
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        """
         if rp:
             with rasterio.open(file_path) as src:
                 rst_profile = src.profile
@@ -334,27 +405,32 @@ class RasterFile(AbstractRaster):
 
     @staticmethod
     def clip(file_path, rp, resample="mode"):
-        """Clip function
+        """Clip raster to specified extent.
 
         Parameters
         ----------
-        file_path: pathlib.Path
+        file_path : pathlib.Path
             File path to user input raster.
-        rp: RasterProperties
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-        resample: str, default "mode"
-            Either "near" or "mode", see :func:`pywatemsedem.geo.utils.clip_rst`
+        rp : pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties instance defining the clip extent.
+        resample : str, default "mode"
+            Resampling method, either "near" or "mode".
+            See :func:`pywatemsedem.geo.utils.clip_rst`.
 
         Returns
         -------
-        arr: numpy.ndarray
-            Clipped array
+        numpy.ndarray
+            Clipped array.
+
+        Raises
+        ------
+        IOError
+            If clipped output raster is empty.
 
         Notes
         -----
-        Clipping also provides resampling to another resolution. See
-        :func:`pywatemsedem.geo.utils.clip_rst`.
-
+        Clipping also provides resampling to another resolution.
+        See :func:`pywatemsedem.geo.utils.clip_rst`.
         """
         rst_temp = create_filename(".rst")
         clip_rst(
@@ -379,25 +455,35 @@ class RasterFile(AbstractRaster):
 
 
 class TemporalRaster:
-    """3-D raster with first two dimension spatial x and y dimension, with the third
-    dimension being temporal.
+    """3-D raster with spatial x and y dimensions and a temporal dimension.
 
-    Parameters
+    The first two dimensions are spatial (x, y), and the third dimension is
+    temporal.
+
+    Attributes
     ----------
-    arr: numpy.ndarray
-        3D Raster array
-    rp: RasterProperties
-        See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-    arr_mask: np.ndarray, default None
-        See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`
+    arr : numpy.ndarray
+        3D raster array.
+    rp : pywatemsedem.geo.rasterproperties.RasterProperties
+        Raster properties instance.
 
-    Note
-    ----
-    This class only works with array inputs!
+    Notes
+    -----
+    This class only works with array inputs.
     """
 
     def __init__(self, arr, rp, arr_mask=None):
-        """Initialize array and rasterproperties"""
+        """Initialize TemporalRaster.
+
+        Parameters
+        ----------
+        arr : numpy.ndarray
+            3D raster array.
+        rp : pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties instance.
+        arr_mask : numpy.ndarray, default None
+            See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
+        """
         if len(arr.shape) != 3:
             msg = "Dimensionality of temporal raster array should be equal to 3."
             raise ValueError(msg)
@@ -407,25 +493,37 @@ class TemporalRaster:
 
     @property
     def arr(self):
-        """Return array
+        """Return array.
+
         Returns
         -------
         numpy.ndarray
+            3D raster array.
         """
         return self._arr
 
     def write(self, outfiles, format="idrisi", dtype=None):
-        """Write function.
+        """Write temporal raster data to disk.
 
         Parameters
         ----------
-        outfiles: list or tuple of pathlib.Path or str
-            List of output files
-        format: basestring
-            See :func:`pywatemsedem.geo.rasters.AbstractRaster.write`
-        dtype: numpy.dtype
-            See :func:`pywatemsedem.geo.rasters.AbstractRaster.write`
+        outfiles : list or tuple of pathlib.Path or str
+            List of output files, one for each temporal slice.
+        format : str, default "idrisi"
+            Output format. See :func:`pywatemsedem.geo.rasters.AbstractRaster.write`.
+        dtype : numpy.dtype, default None
+            Output raster type. See
+            :func:`pywatemsedem.geo.rasters.AbstractRaster.write`.
 
+        Returns
+        -------
+        bool
+            True if write was successful.
+
+        Raises
+        ------
+        ValueError
+            If number of output files does not match temporal dimension.
         """
         if len(outfiles) != self._arr.shape[-1]:
             msg = (
@@ -441,11 +539,16 @@ class TemporalRaster:
         return True
 
     def plot(self, nodata=None, *args, **kwargs):
-        """Sequential plot raster in cols
+        """Plot raster sequentially in columns.
 
         Parameters
         ----------
-        nodata: float
+        nodata : float, default None
+            Used to mask no data values.
+        *args
+            Additional positional arguments passed to plot.
+        **kwargs
+            Additional keyword arguments passed to plot.
         """
         shape = self._arr.shape[-1]
         fig, ax = plt.subplots(ncols=shape, figsize=[10, 5 * shape])

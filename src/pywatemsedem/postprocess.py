@@ -84,7 +84,7 @@ def valid_routing_sediout_vector(self):
     """Check if routing vector is defined"""
     if self.vct_routing is None:
         msg = (
-            "No routing vector (with sediout) created, please rirst run "
+            "No routing vector (with sediout) created, please first run "
             "'couple_sediout_routing."
         )
         raise IOError(msg)
@@ -167,7 +167,7 @@ class PostProcess(Factory):
             self.sfolder.wsinput_folder,
             epsg=self.epsg,
         )
-        # intialize functionalities factory
+        # initialize functionalities factory
         super().__init__(
             resolution, self.epsg, -9999, name, bounds=self.rasterprop["minmax"]
         )
@@ -414,7 +414,7 @@ class PostProcess(Factory):
         )
 
     def identify_subcatchments_to_buffers(self):
-        """Define the seperate subcatchments to the buffer outlets
+        """Define the separate subcatchments to the buffer outlets
 
         See :func:`pywatemsedem.postprocess.identify_subcatchments_to_buffers`
         """
@@ -997,7 +997,7 @@ class PostProcess(Factory):
         cond = ~df_subcatchments["lnduSource"].isnull()
         unique_ids = df_subcatchments.loc[cond, "lnduSource"].unique()
 
-        #  set pixels that have no parcel_id (lnduSource) wihtin the
+        #  set pixels that have no parcel_id (lnduSource) within the
         #  unique_ids list to nodata
         cond = df_sediout_parcel["lnduSource"].isin(unique_ids)
         df_sediout_parcel.loc[~cond, "SediOut"] = profile["nodata"]
@@ -1464,13 +1464,13 @@ class PostProcess(Factory):
         logger.info("Looking for sinks in routing...")
         txt = self.files["txt_routing"]
         if txt.exists():
-            # check if file is tab seperated
+            # check if file is tab separated
             with open(txt) as f:
                 first_line = f.readline()
             if "\t" not in first_line:
                 df_routing = pd.read_csv(
                     txt, sep=";"
-                )  # old model runs used ; as seperator in routing file
+                )  # old model runs used ; as separator in routing file
             else:
                 df_routing = pd.read_csv(txt, sep="\t")
 

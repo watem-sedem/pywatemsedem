@@ -32,21 +32,74 @@ COLORMAP = "cividis"
 
 @dataclass
 class Modelinput(Factory):
+    """Raster class with model inputs as attributes.
+
+    Modelinput class serves the goal of automating the reading in, checking and
+    visualisation of the input data of the WaTEM/SEDEM model.
+
+    Attributes
+    ----------
+    mask : pathlib.Path or str
+        Catchment mask raster or polygon.
+    rivermask : pathlib.Path or str
+        River mask raster.
+    cfactor : pathlib.Path or str
+        C-factor raster.
+    buffers : pathlib.Path or str
+        Buffers raster.
+    dtm : pathlib.Path or str
+        Digital terrain model raster.
+    kfactor : pathlib.Path or str
+        K-factor raster.
+    ktc : pathlib.Path or str
+        kTC raster.
+    outlet : pathlib.Path or str
+        Outlet raster.
+    pfactor : pathlib.Path or str
+        P-factor raster.
+    compositelanduse : pathlib.Path or str
+        Composite landuse raster.
+    ptef : pathlib.Path or str
+        Parcel trapping efficiency raster.
+    riversegments : pathlib.Path or str
+        River segments raster.
+    riverrouting : pathlib.Path or str
+        River routing raster.
+    sewers : pathlib.Path or str
+        Sewers raster.
+    upstream_segments : pathlib.Path or str
+        Upstream segments table.
+    adjacent_segments : pathlib.Path or str
+        Adjacent segments table.
+    ktil : pathlib.Path or str
+        kTil raster.
+    tillagedirection : pathlib.Path or str
+        Tillage direction raster.
+    orientedroughness : pathlib.Path or str
+        Oriented roughness raster.
+    ditches : pathlib.Path or str
+        Ditches raster.
+    dams : pathlib.Path or str
+        Dams raster.
+    cn : pathlib.Path or str
+        Curve number raster.
+    rainfall : pathlib.Path or str
+        Rainfall table.
+    """
+
     def __init__(self, ini, resolution, epsg, nodata):
-        """AbstractRaster class with model inputs as attributes. Modelinput class
-        serves the goal of automating the reading in, checking and visualisation
-        of the input data of the WaTEM/SEDEM model.
+        """Initialize the Modelinput instance.
 
         Parameters
         ----------
-        ini: pathlib.Path
+        ini : pathlib.Path
             Path to the ini file with model settings and input file paths of
             WaTEM-SEDEM.
-        resolution: int
-            See :class:`pywatemsedem.geo.RasterProperties`
-        epsg: int
+        resolution : int
             See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata: int
+        epsg : int
+            See :class:`pywatemsedem.geo.RasterProperties`.
+        nodata : int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 

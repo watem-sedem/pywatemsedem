@@ -1,3 +1,8 @@
+"""ktc.py
+
+This module contains functions for creating the ktc raster.
+"""
+
 import numpy as np
 
 from pywatemsedem.geo.utils import clean_up_tempfiles, create_filename
@@ -23,8 +28,9 @@ def create_ktc(
     The ktc value for landuse rivers, infrastructure and ponds is set to 9999
     (all sediment is routed downwards).
 
-    The ktc values for grass strips are scaled according to their width (see
-    :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`).
+    The ktc values for grass strips can be scaled according to their width (see
+    :func:`pywatemsedem.ktc.scale_ktc_gdf_grass_strips`) if correction_width is set to
+    True.
 
     Parameters
     ----------
@@ -119,7 +125,7 @@ def scale_ktc_gdf_grass_strips(gdf_grass_strips, ktc_low, ktc_high):
     if ("width" not in gdf_grass_strips.columns) or (
         "scale_ktc" not in gdf_grass_strips.columns
     ):
-        msg = "Columns 'BREEDTE' and 'scale_ktc' should be in grass strips dataframe"
+        msg = "Columns 'width' and 'scale_ktc' should be in grass strips dataframe"
         return KeyError(msg)
 
     arr_ktc_grass, arr_ste = scale_ktc_with_grass_strip_width(
