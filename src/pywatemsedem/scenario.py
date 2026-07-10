@@ -277,9 +277,33 @@ class WSException(Exception):
 
 
 class Scenario:
-    """Construct a new Scenario instance
+    """Construct a new Scenario instance.
 
     The scenario class holds all dynamic information for a scenario.
+
+    Attributes
+    ----------
+    vct_parcels : pathlib.Path, str or geopandas.GeoDataFrame
+        Parcels polygon vector with landuse and C-factor attributes.
+    vct_grass_strips : pathlib.Path, str or geopandas.GeoDataFrame
+        Grass strips polygon vector with width and scale_ktc attributes.
+    vct_buffers : pathlib.Path, str or geopandas.GeoDataFrame
+        Buffers polygon vector with buffer properties (buffercap, hdam, hknijp,
+        dknijp, qcoef, boverl, eff).
+    vct_bufferoutlets : pathlib.Path, str or geopandas.GeoDataFrame
+        Buffer outlets polygon vector.
+    vct_ditches : pathlib.Path, str or geopandas.GeoDataFrame
+        Ditches line vector.
+    vct_conductive_dams : pathlib.Path, str or geopandas.GeoDataFrame
+        Conductive dams line vector.
+    vct_outlets : pathlib.Path, str or geopandas.GeoDataFrame
+        Outlets point vector.
+    vct_endpoints : pathlib.Path, str or geopandas.GeoDataFrame
+        Endpoints line vector (sewers, ditches) with efficiency attribute.
+    force_routing : pathlib.Path, str or geopandas.GeoDataFrame
+        Forced routing line vector.
+    grass_strips : pathlib.Path, str or numpy.ndarray
+        Grass strips raster.
     """
 
     def __init__(self, catchm, year, scenario_nr, userchoices):

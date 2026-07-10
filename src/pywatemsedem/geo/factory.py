@@ -54,15 +54,24 @@ def valid_mask_factory(func):
 
 
 class Factory:
-    """Factory class
+    """Factory class for generating vectors and rasters.
 
-    Used to enable functions to generate vectors and rasters.
+    Used to enable functions to generate vectors and rasters with consistent
+    spatial properties (resolution, EPSG code, nodata value).
+
+    Attributes
+    ----------
+    mask : pathlib.Path or str
+        Mask raster or vector polygon file.
+    rp : pywatemsedem.geo.rasterproperties.RasterProperties
+        Raster properties instance.
 
     Notes
     -----
-    By default a rasterproperties instance is made in the initialisation
-    See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled of by
-    setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to False
+    By default a rasterproperties instance is made in the initialisation.
+    See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled off
+    by setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to
+    False.
     """
 
     def __init__(self, resolution, epsg_code, nodata, resmap, bounds=None):

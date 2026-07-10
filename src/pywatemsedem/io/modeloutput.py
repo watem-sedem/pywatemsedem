@@ -48,18 +48,71 @@ COLORMAP_WATEREROS = colors.LinearSegmentedColormap.from_list(
 
 @dataclass
 class Modeloutput(Factory):
+    """Class with model outputs as attributes.
+
+    Modeloutput class serves the goal of automating the reading in, checking and
+    visualisation of the output data of the WaTEM/SEDEM model.
+
+    Attributes
+    ----------
+    aspect : pathlib.Path or str
+        Aspect raster.
+    routing : pathlib.Path or str
+        Routing table.
+    routing_missing : pathlib.Path or str
+        Routing missing table.
+    ls : pathlib.Path or str
+        LS-factor raster.
+    slope : pathlib.Path or str
+        Slope raster.
+    uparea : pathlib.Path or str
+        Upstream area raster.
+    total_sediment : pathlib.Path or str
+        Total sediment table.
+    total_sediment_segments : pathlib.Path or str
+        Total sediment per segment table.
+    cumulative_sediment_segments : pathlib.Path or str
+        Cumulative sediment per segment table.
+    sewer_in : pathlib.Path or str
+        Sewer in raster.
+    sedi_export : pathlib.Path or str
+        Sediment export raster.
+    sedi_in : pathlib.Path or str
+        Sediment in raster.
+    sedi_out : pathlib.Path or str
+        Sediment out raster.
+    sedtil_in : pathlib.Path or str
+        Tillage sediment in raster.
+    sedtil_out : pathlib.Path or str
+        Tillage sediment out raster.
+    cumulative : pathlib.Path or str
+        Cumulative sediment raster.
+    watereros_kg : pathlib.Path or str
+        Water erosion raster (kg).
+    watereros_mm : pathlib.Path or str
+        Water erosion raster (mm).
+    tileros_kg : pathlib.Path or str
+        Tillage erosion raster (kg).
+    tileros_mm : pathlib.Path or str
+        Tillage erosion raster (mm).
+    capacity : pathlib.Path or str
+        Capacity raster.
+    rusle : pathlib.Path or str
+        RUSLE raster.
+    """
+
     def __init__(self, ini, resolution, epsg, nodata):
-        """Initialize model outputs and validation for a WaTEM/SEDEM setup.
+        """Initialize the Modeloutput instance.
 
         Parameters
         ----------
-        ini: pathlib.Path
-            ini file
-        resolution: int
-            See :class:`pywatemsedem.geo.RasterProperties`
-        epsg: int
+        ini : pathlib.Path
+            Path to the ini file.
+        resolution : int
             See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata: int
+        epsg : int
+            See :class:`pywatemsedem.geo.RasterProperties`.
+        nodata : int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
