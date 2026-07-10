@@ -329,7 +329,7 @@ class Scenario:
         # WaTEM/SEDEM input
         self._ktc = AbstractRaster()
         self._cn = AbstractRaster()
-        self._cn_table = None
+        self._rainfall = None
         self._cfactor = AbstractRaster()
         self._composite_landuse = AbstractRaster()
 
@@ -1123,50 +1123,6 @@ class Scenario:
         self.endpoints = np.where(cond_mask, 0, self.endpoints.arr)
 
     @property
-    def cn_table(self):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        return self._cn_table
-
-    @cn_table.setter
-    def cn_table(self, df):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        if not {"CNmaxID", "CNmax_1", "CNmax_2", "CNmax_3", "CNmax_4"}.issubset(df):
-            msg = (
-                "Dataframe should have columns 'CNmaxID', 'CNmax_1', 'CNmax_2', "
-                "'CNmax_3', 'CNmax_4'."
-            )
-            raise IOError(msg)
-        self._cn_table = df
-
-    @property
     def composite_landuse(self):
         """Getter infrastructure polygon vector"""
         return self._composite_landuse
@@ -1240,6 +1196,34 @@ class Scenario:
             3-D raster: x,y raster for every season.
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
+
+    @property
+    def rainfall(self):
+        """Getter rainfall file"""
+        return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, rainfall_filename):
+        """Setter rainfall file
+
+        Parameters
+        ----------
+        file_path: str or pathlib.Path
+            rainfall time series, for documentation, see
+            :ref:`here <watemsedem:rainfallfile>`
+
+        """
+        if not (
+            isinstance(rainfall_filename, str) or isinstance(rainfall_filename, Path)
+        ):
+            msg = "Rainfall filename is not of type `str` or `pathlib.Path`."
+            raise TypeError(msg)
+
+        if not Path(rainfall_filename).exists():
+            msg = f"Rainfall filename {rainfall_filename} does not exist."
+            raise IOError(msg)
+
+        self._rainfall = Path(rainfall_filename)
 
     @valid_landuse
     @valid_river
@@ -1457,11 +1441,21 @@ class Scenario:
             dtype=np.int32,
         )
         if self.choices.extensions.curve_number.value:
-            if self.cn is not None:
+            if not self.cn.is_empty():
                 self.cn.write(self.sfolder.wsinput_folder / inputfilename.cn_file)
             else:
-                msg = "Model version in 'CN-WS', define a CN raster to run CN."
+                msg = "CN extension is enabled, define a CN raster to run CN."
                 raise IOError(msg)
+
+            if self.rainfall is not None:
+                shutil.copy(
+                    self.rainfall,
+                    self.sfolder.wsinput_folder / inputfilename.rainfall_file,
+                )
+            else:
+                msg = "CN extension is enabled, define a rainfall file to run CN."
+                raise IOError(msg)
+
         if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.wsinput_folder / inputfilename.ktc_file)
