@@ -286,3 +286,29 @@ this to release:
 
     Run the flanders WS end-to-end test and validate results before creating
     a new release. To run these tests, see :ref:`here <unittest>`
+
+Dependencies
+============
+
+pywatemsedem depends on a number of external packages. The main dependencies are:
+- :ref:`geopandas <https://geopandas.org/>`
+- :ref:`pandas <https://pandas.pydata.org/>`
+- :ref:`numpy <https://numpy.org/>`
+- :ref:`rasterio <https://rasterio.readthedocs.io/>`
+- :ref:`gdal and ogr <https://gdal.org/>`
+- :ref:`saga <https://sourceforge.net/projects/saga-gis/>`
+
+To keep pywatemsedem up to date with the latest versions of the python dependencies, we
+use following workflow:
+
+- Dependabot on github will do a weekly check on the dependencies and create a pull
+request with the adjusted 'requirements.txt' when a new version is available.
+- Github actions will run the unit tests and documentation build on the pull request.
+If all tests pass, we can adjust the versions in 'environment.yml' and then the pull
+request can be merged. The update of 'environment.yml' is done manually.
+
+For every other pull request, we run the unit tests and documentation build on several
+environments:
+- an environment with pinned versions of the dependencies (as defined in 'requirements.txt')
+- environments with the latest versions of the dependencies and different python
+versions.

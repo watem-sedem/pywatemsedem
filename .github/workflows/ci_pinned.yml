@@ -1,25 +1,34 @@
+# This workflow will install Python dependencies, run tests with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Update docs
+name: Test and build package with pinned dependencies
+
 on:
-  workflow_dispatch:
   push:
-    branches: [ gha ]
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ci-pinned-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
+
     runs-on: ubuntu-24.04
+
     steps:
     - uses: actions/checkout@v4
-    - name: Get all git tags
-      run: git fetch --prune --unshallow --tags
-    - name: Set up Python
+      with:
+        lfs: 'true'
+    - name: Set up Python 3.13
       uses: actions/setup-python@v5
       with:
         python-version: '3.13'
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -e .[develop,cache]
+        pip install tox
         sudo apt-get update
         sudo apt-get install -y gdal-bin saga wget pandoc
         gdal_translate --version # echo version for debugging
@@ -29,12 +38,17 @@ jobs:
         wget https://github.com/watem-sedem/watem-sedem/releases/download/5.0.3/watem-sedem_5.0.3.330.gbp3f65b4_amd64.deb
         sudo dpkg -i watem-sedem*.deb
         watem_sedem || true # report the version, but don't fail because there is no ini file
+    - name: Test with tox (pinned dependencies)
+      run: |
+        tox -e pinned
+    # - name: Test doctests
+    #  # this is new and still needs fixes to be succesful
+    #  continue-on-error: true
+    #  run: |
+    #    tox -e doctests
     - name: Build documentation
       run: |
-        sudo apt-get install -y pandoc
         tox -e docs
-    - name: Deploy documentation
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/_build/html
+    - name: Test package build
+      run: |
+        tox -e build
