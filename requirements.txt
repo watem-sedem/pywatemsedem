@@ -38,7 +38,7 @@ kiwisolver==1.5.0
     # via matplotlib
 matplotlib==3.11.0
     # via pywatemsedem (setup.py)
-numpy==2.3.5
+numpy==2.5.1
     # via
     #   contourpy
     #   geopandas
@@ -58,7 +58,7 @@ pandas==3.0.0
     # via geopandas
 pillow==12.3.0
     # via matplotlib
-pyogrio==0.11.0
+pyogrio==0.13.0
     # via
     #   geopandas
     #   pywatemsedem (setup.py)
@@ -78,7 +78,7 @@ pytz==2026.2
     # via pandas
 rasterio==1.4.3
     # via pywatemsedem (setup.py)
-scikit-learn==1.7.2
+scikit-learn==1.9.0
     # via pywatemsedem (setup.py)
 scipy==1.18.0
     # via scikit-learn
@@ -88,5 +88,5 @@ six==1.17.0
     # via python-dateutil
 threadpoolctl==3.6.0
     # via scikit-learn
-tzdata==2026.2
+tzdata==2026.3
     # via pandas
