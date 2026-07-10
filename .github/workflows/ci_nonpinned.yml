@@ -41,7 +41,7 @@ jobs:
         watem_sedem || true # report the version, but don't fail because there is no ini file
     - name: Test with tox (nonpinned)
       run: |
-        tox
+        tox -e py
     # - name: Test doctests
     #  # this is new and still needs fixes to be succesful
     #  continue-on-error: true
