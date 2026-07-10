@@ -1,7 +1,4 @@
-"""grasstrips.py
-
-pywatemsedem grass strips processing functions
-"""
+"""pywatemsedem grass strips processing functions"""
 
 import logging
 from pathlib import Path
@@ -193,16 +190,16 @@ def scale_ktc_zhang(
     k: (int, float) = 90.9,
     b: (int, float) = 0.446,
 ):
-    """Scale function for ktc based on Zhang et al. (2010).
+    """Scale function for ktc based on a Zhang et al. (2010).
 
     Parameters
     ----------
     arr_width: numpy.ndarray
         See :func:`pywatemsedem.grasstrips.scale_ktc_with_grass_strip_width`
     ktc_high: float
-        The upper boundary to scale the ktc value.
+        The upper boundary to which scale the ktc value.
     k: float
-        Maximum sediment trapping efficiency (K in Zhang et al., 2010)
+        Maximum sediment trappping efficiency (K in Zhang et al., 2010)
     b: float
         Slope coefficient (see Zhang et al., 2010).
 
@@ -215,8 +212,8 @@ def scale_ktc_zhang(
 
     Notes
     -----
-    1. The ktc values for grass strips are determined by using empirical sediment
-    trapping efficiency (STE) values in the equation of Verstraeten et al. (2006):
+    1. The ktc valeus for grass strips are determined by using emperical sediment
+    trapping efficiency (STE) values in the equation of Verstraete et al. (2006):
 
     .. math::
 
@@ -227,7 +224,7 @@ def scale_ktc_zhang(
 
         :math:`ktc_{var}` (1/m): the ktc values for the grass strips;
 
-    The STE can be determined by using the empirical findings of Zhang et al. (2010):
+    The STE can be determined by using the emperical findings of Zhang et al. (2010):
 
     .. math::s
 
@@ -241,7 +238,7 @@ def scale_ktc_zhang(
 
         :math:`b` = 0.446;
 
-        :math:`gs` (m) = width of the grass strips
+        :math:`gs` (m) = width grass strips
 
     References
     ----------
@@ -474,7 +471,7 @@ def expand_grass_strips_with_triggers(
     1. For algorithm description, see
     :func:`pywatemsedem.grasstrips.core_expand_grass_strips_with_triggers`
 
-    For a visual example, see the image below:
+    For visual example, see image below:
 
     .. image:: /_static/png/expand_grass_strips_at_infr_parcel_boundary.png
       :width: 600
@@ -526,7 +523,7 @@ def expand_grass_strips_with_triggers(
 
 
 def compute_number_of_non_zero_neighbours(arr, nodata=None, mode=1):
-    """Compute the number of non-zero neighbour (max eight) elements for every
+    """Compute number of non-zero neighbour (eight) elemnts for every
     array element.
 
     This algorithm computes how many neighbours of a pixel are not equal to zero (and
@@ -536,7 +533,7 @@ def compute_number_of_non_zero_neighbours(arr, nodata=None, mode=1):
     ----------
     arr: numpy.ndarray
         Input array with valid values: (nodata, 0, >0)
-        Nodata values are considered as 0-values. >0 values are considered as 1-values
+        Nodata values are considered as 0-values. >0 values are considerd as 1-values
     nodata: float, default None
         Values to ignore, if equal to None this is not considered.
     mode: int
@@ -618,17 +615,17 @@ def core_expand_grass_strips_with_triggers(
 ):
     """Grass strip expansion algorithm based on raster inputs.
 
-    The grass strips expansion algorithm executes the following steps:
+    The grass strips expansion algorithm executes following steps:
 
     1. Expand the grass strips with one pixel. This implies that adjacent (ordinal
-       and/or cardinal directions, depending on the mode, see
+       and/or cardinal directions, depending on mode, see
        :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`) pixels to
        a grass strip pixel are classified as grass strip pixels.
 
-    2. The added grass strip pixels can only be retained if the following rules are
+    2. The added grass strip pixels can only be retained if following rules are
        satisfied:
 
-        - The added grass strip pixels are in the direct vicinity of (one of 8
+        - The added grass strip pixels is in the direct vicinity of (one of 8
           neighbours) a trigger pixel (river, infrastructure pixel).
         - (optional) The added grass strip pixels can only be withheld when it belongs
           to a parcel to which the original grass strip was part of.
@@ -644,7 +641,7 @@ def core_expand_grass_strips_with_triggers(
         See :func:`pywatemsedem.grasstrips.compute_number_of_non_zero_neighbours`
         applied on triggers array.
     arr_parcels: nump.ndarray, default None
-        Parcel ids raster. Pixels belonging to one parcel share the same unique id. The
+        Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
         value zero indicates that no parcel is present. If None, the expansion is not
         limited to the boundaries of a parcel.
     nodata: float, default None
@@ -659,7 +656,7 @@ def core_expand_grass_strips_with_triggers(
     Notes
     -----
     1. This algorithm is not able to make a distinction between two separate grass
-       strips in one parcel.
+       strip in one parcel.
 
     2. For the expansion of the grass strips, the source grass pixels overlapping with
        the triggers are not considered. This implies that if a specific gras strip
@@ -699,15 +696,15 @@ def process_grass_strips(
 ):
     """Create grass strips raster for WaTEM/SEDEM
 
-    This function creates the grass strips raster used as input creating the
+    This function create the grass strips raster that is used as input creating the
     composite WaTEM/SEDEM parcels raster (see :ref:`here <watemsedem:prcmap>`). The
     output of this function provides a raster with -6-values for grass strip pixels.
 
     Parameters
     ----------
     arr_grass_strips_ids: numpy.ndarray
-        Grass strips id's-raster. Pixels belonging to one grass strip share the same
-        unique id. Other values should have the nodata-value described in the parameter
+        Grass strips id's-raster. Pixel belonging to one grass strip share the same
+        unique id. Other values should be have nodata-value described in the parameter
         profile.
     arr_river: numpy.ndarray
         River raster. River pixels should have the value differing from 0 or nodata
@@ -716,7 +713,7 @@ def process_grass_strips(
         Infrastructure raster. Infrastructure pixels should have the value differing
         from 0 or nodata (defined in profile).
     arr_parcels: numpy.ndarray, default None
-        Parcel ids raster. Pixels belonging to one parcel share the same unique id. The
+        Parcel ids raster. Pixel belonging to one parcel share the same unique id. The
         value zero indicates that no parcel is present. If None, the expansion is not
         limited to the boundaries of a parcel.
     nodata: int
@@ -757,17 +754,31 @@ def process_grass_strips(
 def get_neighbour_grass_strips_ids_array(
     vct_grass_strips, rst_params, width_polygon=20
 ):
-    """
-    Get an array of neighboring grass strip IDs by generating buffer geometries and
-    converting vector data to raster.
+    """Generate a raster array of buffered grass strip IDs.
+
+    This function creates a buffer around each grass strip polygon and rasterizes
+    the result to identify neighboring grass strip pixels.
 
     Parameters
     ----------
-        vct_grass_strips: pathlib.Path or str
-            Path to the vector file containing the grass strips (polygons).
-        rst_params: dict
-        width_polygon (float, optional): Buffer width to create around each grass strip.
-            Defaults to 20.
+    vct_grass_strips : str or pathlib.Path
+        File path to the grass strips vector file. Must contain a 'NR' column
+        with unique grass strip identifiers.
+    rst_params : dict
+        Raster parameters for output raster creation, including resolution,
+        extent, and coordinate reference system.
+    width_polygon : int, default 20
+        Buffer width in meters to expand grass strip polygons.
+
+    Returns
+    -------
+    None
+        Writes the rasterized buffered grass strips to disk.
+
+    Notes
+    -----
+    The function creates an intermediate buffered shapefile and a raster output
+    file named 'neighbour_grass_strips_ids_array.tiff'.
     """
     gdf = gpd.read_file(vct_grass_strips)
     gdf["buffer"] = gdf.buffer(width_polygon)
@@ -788,7 +799,7 @@ def extract_grass_strips_from_parcels(vct_parcels, year, resmap=Path.cwd(), tag=
     """Extract grass buffers from parcels using the Thinnes criterium
 
     Extract grass buffers from parcels using the Thinnes
-    criterium (>0.3).
+    criterium (>0.3) of a given year.
 
     ! EXPERIMENTAL - NOT IN USE YET !
 

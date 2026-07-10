@@ -6,10 +6,36 @@ logger = logging.getLogger(__name__)
 
 
 class UserChoice:
+    """Represent a single user-configurable choice/option.
+
+    This class encapsulates a configuration option with validation,
+    type checking, and default value handling.
+
+    Parameters
+    ----------
+    key : str
+        The name/identifier of the choice.
+    section : str
+        The INI file section this choice belongs to.
+    dtype : type
+        The expected data type (e.g., str, int, float, bool).
+    mandatory : bool
+        Whether this choice must have a value set.
+    default_value : any, default None
+        The default value if none is provided.
+    allowed_values : list, default None
+        List of allowed values. If None, any value of correct dtype is allowed.
+
+    Attributes
+    ----------
+    value : any
+        The current value of the choice.
+    """
+
     def __init__(
         self, key, section, dtype, mandatory, default_value=None, allowed_values=None
     ):
-        """Initialize choice"""
+        """Initialize the UserChoice instance."""
         self.key = key
         self.section = section
         self.dtype = dtype
@@ -196,12 +222,12 @@ class Options(WSMixin):
 
     @l_model.setter
     def l_model(self, input_value):
-        """Assign the l_model
+        """Assign the l_model.
 
         Parameters
-        ---------
-        input_value: str
-            name of the L model
+        ----------
+        input_value : str
+            Name of the L model.
         """
         self._l_model.value = input_value
 
@@ -218,12 +244,12 @@ class Options(WSMixin):
 
     @s_model.setter
     def s_model(self, input_value):
-        """Assign the s_model
+        """Assign the s_model.
 
         Parameters
-        ---------
-        input_value: str
-            name of the S model
+        ----------
+        input_value : str
+            Name of the S model.
         """
         self._s_model.value = input_value
 
@@ -240,12 +266,12 @@ class Options(WSMixin):
 
     @tc_model.setter
     def tc_model(self, input_value):
-        """Assign the tc_model
+        """Assign the tc_model.
 
         Parameters
-        ---------
-        input_value: str
-            name of the TC model
+        ----------
+        input_value : str
+            Name of the TC model.
         """
         self._tc_model.value = input_value
 
@@ -262,11 +288,12 @@ class Options(WSMixin):
 
     @only_routing.setter
     def only_routing(self, input_value):
-        """Assign the only_routing option
+        """Assign the only_routing option.
 
         Parameters
-        ---------
-        input_value: bool
+        ----------
+        input_value : bool
+            Whether to only perform routing.
         """
         self._only_routing.value = input_value
 
@@ -283,11 +310,12 @@ class Options(WSMixin):
 
     @calculate_tillage_erosion.setter
     def calculate_tillage_erosion(self, input_value):
-        """Assign the calculate_tillage_erosion option
+        """Assign the calculate_tillage_erosion option.
 
         Parameters
-        ---------
-        input_value: bool
+        ----------
+        input_value : bool
+            Whether to calculate tillage erosion.
         """
         self._calculate_tillage_erosion.value = input_value
 

@@ -121,19 +121,29 @@ def valid_vectorlist(lst_vct, fun, req_type=None):
 
 
 def valid_vector(vct, fun, req_type=None):
-    """Check if input file is a valid vector
+    """Check if input file is a valid vector.
 
     Parameters
     ----------
-    Parameters
-    ----------
-    vct: pathlib.Path
+    vct : pathlib.Path
         File path to vector.
-    fun: callable
+    fun : callable
         See :func:`pywatemsedem.geo.valid.valid_input`.
-    req_type:
+    req_type : str, default None
         Required geometry type of vector, limited to "Polygon", "LineString", "Point"
         and None (i.e. don't check).
+
+    Returns
+    -------
+    bool
+        True if valid.
+
+    Raises
+    ------
+    IOError
+        If req_type is not a recognized geometry type.
+    PywatemsedemTypeError
+        If geometry type doesn't match or file cannot be opened.
     """
     if req_type not in ["Polygon", "LineString", "Point", None]:
         msg = f"Geomtry type '{req_type}' not known."
@@ -268,6 +278,7 @@ def valid_input(func=None, dict=None):
     def _decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            """Execute function after validating inputs according to dict mapping."""
             for it, key in enumerate(signature(func).parameters.keys()):
                 if key in dict:
                     valid_fun = dict[key]

@@ -22,11 +22,27 @@ from pywatemsedem.geo.vectors import VectorFile, VectorMemory
 
 
 def valid_mask_factory(func):
-    """Check valid mask inputted when using raster or vectofactory"""
+    """Decorator to check if a valid mask is set before using raster or vector factory.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that validates mask existence.
+
+    Raises
+    ------
+    PywatemsedemInputError
+        If the mask has not been created.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """Wrapper fun"""
+        """Execute the wrapped function after validating mask is set."""
         if self.mask is None:
             msg = (
                 f"First create a mask with " f"{Factory.create_mask.__name__}-function"
@@ -50,21 +66,21 @@ class Factory:
     """
 
     def __init__(self, resolution, epsg_code, nodata, resmap, bounds=None):
-        """See class docs
+        """Initialize the Factory instance.
 
         Parameters
-        ---------
-        resolution:int
-            Model spatial resolution
-        epsg_code: int
+        ----------
+        resolution : int
+            Model spatial resolution.
+        epsg_code : int
             EPSG code should be a numeric value, see https://epsg.io/.
-        nodata: float
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-        resmap: pathlib.Path | str
-            Folder path to write factory files to
-        bounds: list, default None
+        nodata : float
+            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
+        resmap : pathlib.Path or str
+            Folder path to write factory files to.
+        bounds : list, default None
             Raster boundaries which you wish for model.
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
         """
         self._resolution = resolution
         self._epsg_code = epsg_code

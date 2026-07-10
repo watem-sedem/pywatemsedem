@@ -87,16 +87,19 @@ class Calibration:
 
 
 def _make_template_df(arr_ktc_low, arr_ktc_high):
-    """Create a pandas.DataFrame with all combinations of ktc_low and ktc_high
+    """Create a pandas.DataFrame with all combinations of ktc_low and ktc_high.
 
     Parameters
     ----------
-    arr_ktc_low: numpy.array
-    arr_ktc_high: numpy.array
+    arr_ktc_low : numpy.ndarray
+        Array of ktc low values.
+    arr_ktc_high : numpy.ndarray
+        Array of ktc high values.
 
     Returns
     -------
-    df_cal_template: pandas.DataFrame. The DataFrame contains following columns:
+    df_cal_template : pandas.DataFrame
+        The DataFrame contains following columns:
 
         - *ktc_high* (float): high transport capacity coefficient
         - *ktc_low* (float); low transport capacity coefficient

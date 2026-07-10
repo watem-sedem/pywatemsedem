@@ -4,16 +4,40 @@ from pathlib import Path
 
 @dataclass
 class CatchmentFolder:
+    """Data class for managing catchment folder structure.
+
+    This class defines and manages the folder structure for catchment data,
+    including paths for vector and raster files.
+
+    Parameters
+    ----------
+    home_folder : Path
+        Root folder path for the catchment.
+    resolution : int
+        Spatial resolution in meters, used to name the raster folder.
+
+    Attributes
+    ----------
+    catchment_folder : Path
+        Path to the 'Data_Bekken' subfolder.
+    vct_folder : Path
+        Path to the vector files folder ('Shps').
+    rst_folder : Path
+        Path to the raster files folder ('Rst_{resolution}m').
+    """
+
     home_folder: Path
     resolution: int
 
     def __post_init__(self):
+        """Initialize derived folder paths from home_folder and resolution."""
         self.home_folder = Path(self.home_folder)
         self.catchment_folder = self.home_folder / "Data_Bekken"
         self.vct_folder = self.catchment_folder / "Shps"
         self.rst_folder = self.catchment_folder / f"Rst_{self.resolution}m"
 
     def create_all(self):
+        """Create all folders in the catchment folder structure."""
         self.check_home_folder(create=True)
         self.check_catchment_folder(create=True)
         self.check_vct_folder(create=True)
@@ -53,7 +77,7 @@ class ScenarioFolders:
     year: int
 
     def __post_init__(self):
-        """Assign folder names to self"""
+        """Initialize derived scenario folder paths."""
         self.scenario_folder = (
             self.cfolder.home_folder / f"scenario_{self.scenario_label}"
         )
@@ -63,6 +87,7 @@ class ScenarioFolders:
         self.scenarioyear_folder = self.scenario_folder / f"{self.year}"
 
     def create_all(self):
+        """Create all folders in the scenario folder structure."""
         self.cfolder.create_all()
         self.check_scenario(create=True)
         self.check_wsinput(create=True)

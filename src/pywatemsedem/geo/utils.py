@@ -1760,16 +1760,21 @@ def process_mask_shape_from_raster_file(gdf_catchment, catchment_value=1):
 
 
 def mask_array_with_val(arr, mask, mask_val):
-    """Masking array by a mask
+    """Mask an array using a mask array.
 
     Parameters
-    ---------
-    arr: numpy.ndarray
-        array of which values are masked
-    mask: numpy.ndarray
-        masking array with same dimensions as arr
-    mask_val: float or int
-            masking arr when mask is mask_val
+    ----------
+    arr : numpy.ndarray
+        Array of which values are masked.
+    mask : numpy.ndarray
+        Masking array with same dimensions as arr.
+    mask_val : float or int
+        Values in mask where arr should be masked.
+
+    Returns
+    -------
+    numpy.ma.MaskedArray
+        Masked array where mask equals mask_val.
     """
     arr_masked = np.ma.masked_where(mask == mask_val, arr)
     return arr_masked
