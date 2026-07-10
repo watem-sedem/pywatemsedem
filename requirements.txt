@@ -54,7 +54,7 @@ packaging==26.2
     #   geopandas
     #   matplotlib
     #   pyogrio
-pandas==3.0.0
+pandas==3.0.3
     # via geopandas
 pillow==12.3.0
     # via matplotlib
