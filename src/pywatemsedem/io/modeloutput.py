@@ -214,11 +214,12 @@ class Modeloutput(Factory):
 
     @routing_missing.setter
     def routing_missing(self, text):
-        """Setter
+        """Set the routing_missing table.
 
         Parameters
-        ---------
-        text: pathlib.Path | str
+        ----------
+        text : pathlib.Path or str
+            File path to the routing_missing table.
         """
         self._routing_missing = pd.read_table(text)
         self._txt_routing_missing = text
@@ -288,11 +289,12 @@ class Modeloutput(Factory):
 
     @ls.setter
     def ls(self, raster):
-        """Setter
+        """Set the LS raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the LS raster.
         """
         self._ls = self.raster_factory(raster, flag_mask=False)
 
@@ -347,11 +349,12 @@ class Modeloutput(Factory):
 
     @slope.setter
     def slope(self, raster):
-        """Setter
+        """Set the slope raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the slope raster.
         """
         self._slope = self.raster_factory(raster, flag_mask=False)
 
@@ -406,11 +409,12 @@ class Modeloutput(Factory):
 
     @uparea.setter
     def uparea(self, raster):
-        """Setter
+        """Set the uparea raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the uparea raster.
         """
         self._uparea = self.raster_factory(raster, flag_mask=False)
 
@@ -491,11 +495,12 @@ class Modeloutput(Factory):
 
     @sewer_in.setter
     def sewer_in(self, raster):
-        """Setter
+        """Set the sewer_in raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the sewer_in raster.
         """
         self._sewer_in = self.raster_factory(raster, flag_mask=True)
 
@@ -693,11 +698,12 @@ class Modeloutput(Factory):
 
     @capacity.setter
     def capacity(self, raster):
-        """Setter
+        """Set the capacity raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the capacity raster.
         """
         self._capacity = self.raster_factory(raster, flag_mask=False)
 
@@ -765,11 +771,12 @@ class Modeloutput(Factory):
 
     @rusle.setter
     def rusle(self, raster):
-        """Setter
+        """Set the RUSLE raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the RUSLE raster.
         """
         self._rusle = self.raster_factory(raster, flag_mask=False)
 

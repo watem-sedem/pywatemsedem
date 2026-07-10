@@ -4,20 +4,21 @@ import numpy as np
 
 
 def valid_boundaries(arr, lower=None, upper=None):
-    """Checks if values are within specified boundaries
+    """Check if values are within specified boundaries.
 
     Parameters
-    ---------
-    arr: numpy.ndarray
-        Input array
-    lower: int, float, default None
-        Lower boundary
-    upper: int, float, default None
-        Upper boundary
+    ----------
+    arr : numpy.ndarray
+        Input array.
+    lower : int or float, default None
+        Lower boundary.
+    upper : int or float, default None
+        Upper boundary.
 
     Returns
     -------
-    True
+    bool
+        True if all values are within boundaries.
     """
 
     if (lower is None) and (upper is None):
