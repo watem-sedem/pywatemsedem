@@ -10,19 +10,19 @@ dependencies:
   # Geospatial (conda handles GDAL/PROJ binaries)
   - geopandas=1.1.4
   - rasterio=1.4.3
-  - pyogrio=0.11.0
+  - pyogrio=0.13.0
   - pyproj=3.7.2
   - shapely=2.1.2
 
   # Data & computation
-  - numpy=2.3.5
-  - pandas=3.0.0
+  - numpy=2.5.1
+  - pandas=3.0.3
   - scipy=1.18.0
-  - scikit-learn=1.7.2
+  - scikit-learn=1.9.0
   - matplotlib=3.11.0
 
   # Utilities
-  - python-dotenv=1.2.1
+  - python-dotenv=1.2.2
 
   # Development tools
   - pip:
