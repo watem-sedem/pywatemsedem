@@ -73,7 +73,7 @@ class Calibration:
         self.stepresolution_low = (self.ktc_low_max - self.ktc_low_min) / self.steps
 
     def define_parameter_grid(self):
-        """Defne parameter grid for ktc low and high"""
+        """Define parameter grid for ktc low and high."""
         self.arr_ktc_low = np.arange(
             self.ktc_low_min,
             self.ktc_low_max + self.stepresolution_low,
@@ -122,9 +122,9 @@ def process_calibrationrun_output(
     catchment_area,
     endpoint_coefficient=0.0,
 ):
-    """Processes the output-file of a calibration run for a given catchment
+    """Processes the output-file of a calibration run for a given catchment.
 
-    This function reads the calibration output file for a given catchement and
+    This function reads the calibration output file for a given catchment and
     calculates for every combination of ktc values the predicted specific
     sediment yield (P ssy) and calculates the squared difference between the
     observed and predicted (specific) sediment yield.
@@ -389,10 +389,10 @@ def calculate_model_efficiency(df_calibration_data, df_calibration_results):
 
     """
 
-    denominator_sy = compute_denomitor_nash_sutcliffe(
+    denominator_sy = compute_denominator_nash_sutcliffe(
         df_calibration_data, "sy", squared_error=True
     )
-    denominator_ssy = compute_denomitor_nash_sutcliffe(
+    denominator_ssy = compute_denominator_nash_sutcliffe(
         df_calibration_data, "ssy", squared_error=True
     )
 
@@ -421,7 +421,7 @@ def compute_nash_sutcliffe(
     df_calibration_results: pandas.DataFrame
         See :func:`pywatemsedem.calibrate.calculate_model_efficiency`.
     denominator: float
-        See :func:`pywatemsedem.calibrate.compute_denomitor_nash_sutcliffe`.
+        See :func:`pywatemsedem.calibrate.compute_denominator_nash_sutcliffe`.
     variable: str
         Name of output variable 'sy' or 'ssy'.
     squared_error: bool, default True
@@ -463,8 +463,8 @@ def compute_nash_sutcliffe(
     return df_me
 
 
-def compute_denomitor_nash_sutcliffe(df_calibration_data, variable, squared_error):
-    """Compute the denomitor for the Nash-Sutcliffe model efficiency.
+def compute_denominator_nash_sutcliffe(df_calibration_data, variable, squared_error):
+    """Compute the denominator for the Nash-Sutcliffe model efficiency.
 
     You can make use of squared or absolute errors to compute the denominator.
 

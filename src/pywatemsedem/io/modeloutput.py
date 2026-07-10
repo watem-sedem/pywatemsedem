@@ -1,4 +1,4 @@
-# seperate plotting funcion
+# separate plotting function
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -1035,7 +1035,7 @@ def make_routing_vct_saga(
 
     # condition tag for making routing shape
     if txt_routing.exists():
-        # check if file is tab seperated
+        # check if file is tab separated
         with open(txt_routing) as f:
             first_line = f.readline()
         seperator = ";" if "\t" not in first_line else "\t"
@@ -1058,7 +1058,7 @@ def make_routing_vct_saga(
 
 
 def prepare_make_routing_vct_saga(
-    txt_routing, vct_out, seperator, rstparams, extent, tile_number
+    txt_routing, vct_out, separator, rstparams, extent, tile_number
 ):
     """
     Prepare the input files for make routing vct_saga
@@ -1068,15 +1068,15 @@ def prepare_make_routing_vct_saga(
     Parameters
     ----------
     txt_routing_nonriver: str or pathlib.Path | str
-        File path of the WaTEM/SEDEM routing tabl
+        File path of the WaTEM/SEDEM routing table.
     vct_out: str
-        name of output shapefile for 'run_saga_make_routing_shp_cmd' fuction
-    seperator: str
-        current delimited of txt_routing
+        Name of output shapefile for 'run_saga_make_routing_shp_cmd' function.
+    separator: str
+        Current delimiter of txt_routing.
     rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
+        gdal dictionary holding all metadata for idrisi rasters.
     extent: list
-        min and max of rectangular frame to clip df [xmin, xmax, ymin, ymax]
+        min and max of rectangular frame to clip df [xmin, xmax, ymin, ymax].
     tile_number: int
         number of tile
 
@@ -1118,7 +1118,7 @@ def prepare_make_routing_vct_saga(
         tag = f"_selected_{(0 if tile_number is None else tile_number)}"
         txt_routing = txt_routing.parent / txt_routing.stem + tag + ".txt"
         vct_temp = vct_out.parent / vct_out.stem + tag + ".shp"
-        if seperator != "\t":
+        if separator != "\t":
             df_routing.to_csv(txt_routing, sep="\t", index=False)
         # condition true if routing directions are found within extent
         condition = False if len(df_routing) == 0 else True
@@ -1131,7 +1131,7 @@ def prepare_make_routing_vct_saga(
         if df_routing.empty:
             msg = f"{txt_routing.name} is empty"
             raise IOError(msg)
-        if seperator != "\t":
+        if separator != "\t":
             df_routing.to_csv(txt_routing, sep="\t", index=False)
 
     return vct_temp, condition
@@ -1482,16 +1482,16 @@ def compute_efficiency_buffers(rst_buffer, rst_sediin, rst_sediout):
 
 
 def open_txt_routing_file(txt_routing):
-    """Open routing file with exceptions and seperators as needed
+    """Open routing file with exceptions and separators as needed.
 
     Parameters
     ----------
-    txt_routing: str or pathlib.Path | str
-        File path of the WaTEM/SEDEM routing table
+    txt_routing : str or pathlib.Path
+        File path of the WaTEM/SEDEM routing table.
 
     Returns
     -------
-    df_routing: pandas.DataFrame
+    df_routing : pandas.DataFrame
         The routing DataFrame contains the following columns:
 
         - *col* (int): source column in rasters
@@ -1508,8 +1508,8 @@ def open_txt_routing_file(txt_routing):
     try:
         with open(txt_routing) as f:
             first_line = f.readline()
-        seperator = ";" if "\t" not in first_line else "\t"
-        df_routing = pd.read_csv(txt_routing, sep=seperator)
+        separator = ";" if "\t" not in first_line else "\t"
+        df_routing = pd.read_csv(txt_routing, sep=separator)
         if df_routing.empty:
             msg = f"{txt_routing.name} is empty"
             raise IOError(msg)

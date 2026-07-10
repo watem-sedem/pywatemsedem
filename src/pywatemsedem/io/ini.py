@@ -1,7 +1,7 @@
 """ini.py
 
 This module contains the IniFile class, which is used to create the WaTEM/SEDEM
-ini-file, togehter with some usefull functions to handle ini-files.
+ini-file, together with some useful functions to handle ini-files.
 """
 
 import configparser

@@ -285,7 +285,7 @@ class Catchment(Factory):
         # set dtm
         self.dtm = rst_dtm
 
-        # API atttributes
+        # API attributes
         self._hydrosoilgroup = AbstractRaster()
         self._landuse = AbstractRaster()
         self._water = AbstractRaster()
