@@ -193,23 +193,28 @@ def valid_vct_parcels(func):
 
 
 class Catchment(Factory):
-    """Construct a new Catchment instance
+    """Construct a new Catchment instance.
 
     The catchment class holds all static information for a catchment.
     The class considers all data of which the content is user-option-independent (i.e.
-    :class:`pywatemsedem.choices.Choices`.
+    :class:`pywatemsedem.choices.Choices`).
 
-    Following properties can be set:
-
-        - *kfactor*: K-factor raster.
-        - *landuse*: base landuse raster.
-        - *river*: river line vector.
-        - *water*: water polygon vector
-        - *vct_infrastructure_buildings*: polygon vector of infrastructure
-          (typically buildings).
-        - *vct_infrastructure_roads*: roads line vector (with optional attribute
-          'paved').
-        - *cnsoil*: cn soil raster (CN-only).
+    Attributes
+    ----------
+    kfactor : pathlib.Path, str or numpy.ndarray
+        K-factor raster.
+    landuse : pathlib.Path, str or numpy.ndarray
+        Base landuse raster.
+    vct_river : pathlib.Path, str or geopandas.GeoDataFrame
+        River line vector.
+    vct_water : pathlib.Path, str or geopandas.GeoDataFrame
+        Water polygon vector.
+    vct_infrastructure_buildings : pathlib.Path, str or geopandas.GeoDataFrame
+        Polygon vector of infrastructure (typically buildings).
+    vct_infrastructure_roads : pathlib.Path, str or geopandas.GeoDataFrame
+        Roads line vector (with optional attribute 'paved').
+    hydrological_soil_group : pathlib.Path, str or numpy.ndarray
+        CN soil raster (CN-only).
 
     Notes
     -----
