@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 concurrency:
-  group: ci-pinned-${{ github.ref }}
+  group: ci-nonpinned-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
