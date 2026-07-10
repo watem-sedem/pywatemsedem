@@ -78,7 +78,7 @@ pytz==2026.2
     # via pandas
 rasterio==1.4.3
     # via pywatemsedem (setup.py)
-scikit-learn==1.7.2
+scikit-learn==1.9.0
     # via pywatemsedem (setup.py)
 scipy==1.18.0
     # via scikit-learn
