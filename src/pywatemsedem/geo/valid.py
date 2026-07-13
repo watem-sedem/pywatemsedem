@@ -121,19 +121,29 @@ def valid_vectorlist(lst_vct, fun, req_type=None):
 
 
 def valid_vector(vct, fun, req_type=None):
-    """Check if input file is a valid vector
+    """Check if input file is a valid vector.
 
     Parameters
     ----------
-    Parameters
-    ----------
-    vct: pathlib.Path
+    vct : pathlib.Path
         File path to vector.
-    fun: callable
+    fun : callable
         See :func:`pywatemsedem.geo.valid.valid_input`.
-    req_type:
+    req_type : str, default None
         Required geometry type of vector, limited to "Polygon", "LineString", "Point"
         and None (i.e. don't check).
+
+    Returns
+    -------
+    bool
+        True if valid.
+
+    Raises
+    ------
+    IOError
+        If req_type is not a recognized geometry type.
+    PywatemsedemTypeError
+        If geometry type doesn't match or file cannot be opened.
     """
     if req_type not in ["Polygon", "LineString", "Point", None]:
         msg = f"Geomtry type '{req_type}' not known."
@@ -191,7 +201,7 @@ def valid_exists(rst, fun):
     Parameters
     ----------
     rst: pathlib.Path
-        File path to raster.
+        File path to file, e.g. raster or vector.
     fun: callable
         See :func:`pywatemsedem.geo.valid.valid_input`.
     """
@@ -199,11 +209,11 @@ def valid_exists(rst, fun):
     if not Path(rst).exists():
         if fun is not None:
             msg = (
-                f"Input raster '{rst}' does not exist, cannot execute "
+                f"Input file '{rst}' does not exist, cannot execute "
                 f"'{fun.__name__}'."
             )
         else:
-            msg = f"Input raster '{rst}' does not exist"
+            msg = f"Input file '{rst}' does not exist"
         raise PywatemsedemInputError(msg)
 
     return True
@@ -248,14 +258,14 @@ def valid_input(func=None, dict=None):
     ::
 
         from pywatemsedem.geo.utils import (
-            valid_input,valid_rasterlist,valid_polygonvector
+            valid_input, valid_rasterlist, valid_polygonvector
         )
         #note: only on-keyword arguments!
         @valid_input(dict={"lst_rst": valid_rasterlist, "vct_in": valid_polygonvector})
-        def grid_statistics(lst_rst,vct_in):
+        def grid_statistics(lst_rst, vct_in):
         # ... function code
 
-    Above example check if input of lst_rst is a list of rasters (and rasters exist)
+    Above example checks if input of lst_rst is a list of rasters (and rasters exist)
     (1) and if input of vct_in is a polygoon shape (2).
 
     Note
@@ -268,6 +278,7 @@ def valid_input(func=None, dict=None):
     def _decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            """Execute function after validating inputs according to dict mapping."""
             for it, key in enumerate(signature(func).parameters.keys()):
                 if key in dict:
                     valid_fun = dict[key]

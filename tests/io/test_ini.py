@@ -14,47 +14,47 @@ from pywatemsedem.io.ini import (
 
 
 class TestModifyField:
-    """Class combining all tests for the modify_field function"""
+    """Class combining all tests for the modify_field function."""
 
     def test_modify(self, tmp_path):
-        """Test basic func"""
-        modify_field(ini_file, "User Choices", "max kernel", 3)
+        """Test basic function."""
+        modify_field(ini_file, "Parameters", "max kernel", 3)
 
     def test_wrong_section(self, tmp_path):
-        """Expect error when the section does not exist"""
-        with pytest.raises(KeyError, match="Section 'User Choice' does not exist"):
-            modify_field(ini_file, "User Choice", "max kernel", 3)
+        """Expect error when the section does not exist."""
+        with pytest.raises(KeyError, match="Section 'Parameter' does not exist"):
+            modify_field(ini_file, "Parameter", "max kernel", 3)
 
     def test_wrong_key(self, tmp_path):
-        """Expect error when the to-modify-key does not exist"""
+        """Expect error when the to-modify-key does not exist."""
         with pytest.raises(KeyError, match="Key 'max kernelzz' does not exist"):
-            modify_field(ini_file, "User Choices", "max kernelzz", 3)
+            modify_field(ini_file, "Parameters", "max kernelzz", 3)
 
 
 class TestAddField:
-    """Class combining all tests for the add field section"""
+    """Class combining all tests for the add field section."""
 
     def test_add(self, tmp_path):
-        """Test basic func"""
+        """Test basic function."""
         shutil.copy(ini_file, tmp_path / "test.ini")
-        add_field(tmp_path / "test.ini", "User Choices", "max kernelzzz", 3)
+        add_field(tmp_path / "test.ini", "Parameters", "max kernelzzz", 3)
 
     def test_wrong_section(self, tmp_path):
-        """Expect error when the section does not exist"""
-        with pytest.raises(KeyError, match="Section 'User Choice' does not exist"):
-            add_field(ini_file, "User Choice", "max kernel", 3)
+        """Expect error when the section does not exist."""
+        with pytest.raises(KeyError, match="Section 'Parameter' does not exist"):
+            add_field(ini_file, "Parameter", "max kernel", 3)
 
     def test_key_exists(self, tmp_path):
-        """Expect error when the to-add-key already exists"""
+        """Expect error when the to-add-key already exists."""
         with pytest.raises(KeyError, match="Key 'max kernel' already exist in"):
-            add_field(ini_file, "User Choices", "max kernel", 3)
+            add_field(ini_file, "Parameters", "max kernel", 3)
 
 
 class TestGetItemFromIni:
-    """Class combining all tests for the get_item_from_ini function"""
+    """Class combining all tests for the get_item_from_ini function."""
 
     def test_get_string_from_ini(self):
-        """Test if a string can be retrieved from an ini-file"""
+        """Test if a string can be retrieved from an ini-file."""
         value = get_item_from_ini(
             ini_file, section="Test Section", option="string_option", dtype=str
         )
@@ -62,7 +62,7 @@ class TestGetItemFromIni:
         assert value == expected_string
 
     def test_get_float_from_ini(self):
-        """Test if a float can be retrieved from an ini-file"""
+        """Test if a float can be retrieved from an ini-file."""
         value = get_item_from_ini(
             ini_file, section="Test Section", option="float_option", dtype=float
         )
@@ -70,7 +70,7 @@ class TestGetItemFromIni:
         assert value == expected_float
 
     def test_get_int_from_ini(self):
-        """Test if an int can be retrieved from an ini-file"""
+        """Test if an int can be retrieved from an ini-file."""
         value = get_item_from_ini(
             ini_file, section="Test Section", option="int_option", dtype=int
         )
@@ -78,7 +78,7 @@ class TestGetItemFromIni:
         assert value == expected_int
 
     def test_get_bool_from_ini(self):
-        """Test if a bool can be retrieved from an ini-file"""
+        """Test if a bool can be retrieved from an ini-file."""
         value = get_item_from_ini(
             ini_file, section="Test Section", option="bool_option", dtype=bool
         )
@@ -86,8 +86,7 @@ class TestGetItemFromIni:
         assert value == expected_bool
 
     def test_non_existant_section(self):
-        """Test if a ValueError is raised when a value from a non-existing section in
-        the ini-file is wanted"""
+        """Test if a ValueError is raised for a non-existing section."""
         with pytest.raises(
             ValueError, match="Section Not existing section does not exist in ini-file"
         ):
@@ -99,8 +98,7 @@ class TestGetItemFromIni:
             )
 
     def test_non_existant_option(self):
-        """Test if a ValueError is raised when a value from a non-existing option in
-        the ini-file is wanted"""
+        """Test if a ValueError is raised for a non-existing option."""
         with pytest.raises(
             ValueError,
             match=(
@@ -116,8 +114,7 @@ class TestGetItemFromIni:
             )
 
     def test_wrong_dtype_from_ini(self):
-        """Test if a TypeError is raised
-        when no correct dtype is given"""
+        """Test if a TypeError is raised when no correct dtype is given."""
         with pytest.raises(TypeError, match="not a correct Type"):
             get_item_from_ini(
                 ini_file,
@@ -127,7 +124,7 @@ class TestGetItemFromIni:
             )
 
     def test_wrong_ini_file(self):
-        """Test if a FileNotFoundError is raised when no correct ini file is given"""
+        """Test if a FileNotFoundError is raised for an incorrect ini file."""
         with pytest.raises(
             FileNotFoundError, match="This_File_Does_Not_Exist.ini does not exist"
         ):
@@ -140,15 +137,17 @@ class TestGetItemFromIni:
 
 
 def test_get_sections_from_ini():
-    """Test if all sections are retrieved from an ini-file"""
+    """Test if all sections are retrieved from an ini-file."""
     sections = get_sections_from_ini(ini_file)
     assert sections == [
         "Model information",
         "Working directories",
         "Files",
-        "User Choices",
-        "Output maps",
-        "Variables",
+        "Parameters",
+        "Output",
+        "Options",
+        "Extensions",
+        "Parameters Extensions",
         "Buffer 1",
         "Buffer 2",
         "Test Section",
@@ -156,6 +155,6 @@ def test_get_sections_from_ini():
 
 
 def test_get_options_from_ini():
-    """Test if all options of a section are retrieved from an ini-file"""
+    """Test if all options of a section are retrieved from an ini-file."""
     options = get_options_from_ini(ini_file, "Test Section")
     assert options == ["string_option", "int_option", "float_option", "bool_option"]

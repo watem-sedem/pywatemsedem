@@ -10,14 +10,16 @@ from pywatemsedem.geo.valid import PywatemsedemInputError
 
 
 class TestFactory:
-    """Test class for factory
+    """Test class for factory.
 
-    Parameters
+    Attributes
     ----------
-    nodata: -9999
-    epsg_code: 31370 (Lambert)
-    resolution: 20 (m)
-
+    nodata : int
+        Nodata value (-9999).
+    epsg_code : int
+        EPSG code (31370, Lambert).
+    resolution : int
+        Resolution (20 m).
     """
 
     nodata = -9999
@@ -26,31 +28,18 @@ class TestFactory:
 
     @pytest.mark.saga
     def test_raster_mask(self, tmp_path):
-        """Test factory with raster
-
-        ----------
-        tmp_path
-        """
+        """Test factory with raster."""
         f = Factory(self.resolution, self.epsg_code, self.nodata, tmp_path)
         assert f.create_mask(geodata.rst_mask)
 
     def test_vector_mask(self, tmp_path):
-        """Test factory with vector
-
-        ----------
-        tmp_path
-        """
+        """Test factory with vector."""
         f = Factory(self.resolution, self.epsg_code, self.nodata, tmp_path)
         assert f.create_mask(geodata.catchment)
 
     @pytest.mark.saga
     def test_error_no_mask(self, tmp_path):
-        """Test error when no mask is created
-
-        Parameters
-        ----------
-        tmp_path
-        """
+        """Test error when no mask is created."""
         f = Factory(self.resolution, self.epsg_code, self.nodata, tmp_path)
 
         # feed raster to vector factory
@@ -64,12 +53,7 @@ class TestFactory:
 
     @pytest.mark.saga
     def test_error_input_to_factory(self, tmp_path):
-        """Test error in input to factory
-
-        Parameters
-        ----------
-        tmp_path
-        """
+        """Test error in input to factory."""
         f = Factory(self.resolution, self.epsg_code, self.nodata, tmp_path)
         f.create_mask(geodata.rst_mask)
 

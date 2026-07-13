@@ -15,7 +15,7 @@ from pywatemsedem.grasstrips import (
 
 
 def test_expand_grass_strips_with_triggers():
-    """Test function for expand grass strips with triggers"""
+    """Test function for expand grass strips with triggers."""
 
     # triggers, for instance road pixels
     arr_triggers = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])

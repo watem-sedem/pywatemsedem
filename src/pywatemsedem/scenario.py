@@ -9,7 +9,6 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-import geopandas as gpd
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_float_dtype, is_integer_dtype
@@ -26,7 +25,7 @@ from pywatemsedem.errors import (
     missing_attribute_error_in_vct,
 )
 from pywatemsedem.geo.rasters import AbstractRaster
-from pywatemsedem.geo.utils import nearly_identical, saga_intersection
+from pywatemsedem.geo.utils import nearly_identical
 from pywatemsedem.geo.vectors import AbstractVector
 from pywatemsedem.grasstrips import process_grass_strips
 from pywatemsedem.io.folders import ScenarioFolders
@@ -278,9 +277,33 @@ class WSException(Exception):
 
 
 class Scenario:
-    """Construct a new Scenario instance
+    """Construct a new Scenario instance.
 
     The scenario class holds all dynamic information for a scenario.
+
+    Attributes
+    ----------
+    vct_parcels : pathlib.Path, str or geopandas.GeoDataFrame
+        Parcels polygon vector with landuse and C-factor attributes.
+    vct_grass_strips : pathlib.Path, str or geopandas.GeoDataFrame
+        Grass strips polygon vector with width and scale_ktc attributes.
+    vct_buffers : pathlib.Path, str or geopandas.GeoDataFrame
+        Buffers polygon vector with buffer properties (buffercap, hdam, hknijp,
+        dknijp, qcoef, boverl, eff).
+    vct_bufferoutlets : pathlib.Path, str or geopandas.GeoDataFrame
+        Buffer outlets polygon vector.
+    vct_ditches : pathlib.Path, str or geopandas.GeoDataFrame
+        Ditches line vector.
+    vct_conductive_dams : pathlib.Path, str or geopandas.GeoDataFrame
+        Conductive dams line vector.
+    vct_outlets : pathlib.Path, str or geopandas.GeoDataFrame
+        Outlets point vector.
+    vct_endpoints : pathlib.Path, str or geopandas.GeoDataFrame
+        Endpoints line vector (sewers, ditches) with efficiency attribute.
+    force_routing : pathlib.Path, str or geopandas.GeoDataFrame
+        Forced routing line vector.
+    grass_strips : pathlib.Path, str or numpy.ndarray
+        Grass strips raster.
     """
 
     def __init__(self, catchm, year, scenario_nr, userchoices):
@@ -304,7 +327,7 @@ class Scenario:
         self.catchm = deepcopy(catchm)
         self.rp = self.catchm.rp
 
-        # Initalize
+        # Initialize
         self.vector_factory = self.catchm.vector_factory
         self.raster_factory = self.catchm.raster_factory
 
@@ -330,7 +353,7 @@ class Scenario:
         # WaTEM/SEDEM input
         self._ktc = AbstractRaster()
         self._cn = AbstractRaster()
-        self._cn_table = None
+        self._rainfall = None
         self._cfactor = AbstractRaster()
         self._composite_landuse = AbstractRaster()
 
@@ -397,7 +420,7 @@ class Scenario:
             - *[0,1]*: C-factor for crop.
             - *NULL*: no C-factor defined.
 
-        Should contain a defiction of the C-reduction (column 'C_reduct'), used
+        Should contain a definition of the C-reduction (column 'C_reduct'), used
         in case of source-oriented measures.
 
         Can contain a 'NR' column which is the identification ID of the
@@ -1124,50 +1147,6 @@ class Scenario:
         self.endpoints = np.where(cond_mask, 0, self.endpoints.arr)
 
     @property
-    def cn_table(self):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        return self._cn_table
-
-    @cn_table.setter
-    def cn_table(self, df):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        if not {"CNmaxID", "CNmax_1", "CNmax_2", "CNmax_3", "CNmax_4"}.issubset(df):
-            msg = (
-                "Dataframe should have columns 'CNmaxID', 'CNmax_1', 'CNmax_2', "
-                "'CNmax_3', 'CNmax_4'."
-            )
-            raise IOError(msg)
-        self._cn_table = df
-
-    @property
     def composite_landuse(self):
         """Getter infrastructure polygon vector"""
         return self._composite_landuse
@@ -1241,6 +1220,34 @@ class Scenario:
             3-D raster: x,y raster for every season.
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
+
+    @property
+    def rainfall(self):
+        """Getter rainfall file"""
+        return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, rainfall_filename):
+        """Setter rainfall file
+
+        Parameters
+        ----------
+        file_path: str or pathlib.Path
+            rainfall time series, for documentation, see
+            :ref:`here <watemsedem:rainfallfile>`
+
+        """
+        if not (
+            isinstance(rainfall_filename, str) or isinstance(rainfall_filename, Path)
+        ):
+            msg = "Rainfall filename is not of type `str` or `pathlib.Path`."
+            raise TypeError(msg)
+
+        if not Path(rainfall_filename).exists():
+            msg = f"Rainfall filename {rainfall_filename} does not exist."
+            raise IOError(msg)
+
+        self._rainfall = Path(rainfall_filename)
 
     @valid_landuse
     @valid_river
@@ -1458,11 +1465,21 @@ class Scenario:
             dtype=np.int32,
         )
         if self.choices.extensions.curve_number.value:
-            if self.cn is not None:
+            if not self.cn.is_empty():
                 self.cn.write(self.sfolder.wsinput_folder / inputfilename.cn_file)
             else:
-                msg = "Model version in 'CN-WS', define a CN raster to run CN."
+                msg = "CN extension is enabled, define a CN raster to run CN."
                 raise IOError(msg)
+
+            if self.rainfall is not None:
+                shutil.copy(
+                    self.rainfall,
+                    self.sfolder.wsinput_folder / inputfilename.rainfall_file,
+                )
+            else:
+                msg = "CN extension is enabled, define a rainfall file to run CN."
+                raise IOError(msg)
+
         if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.wsinput_folder / inputfilename.ktc_file)
@@ -1589,129 +1606,6 @@ class Scenario:
     def zip(self):
 
         zip_folder(self.sfolder.scenario_folder)
-
-
-def remove_known_grass_strips_from_parcels_vct_saga(parcels, vct_grass_strips):
-    """Remove parcels with overlap above 75%
-
-    Remove the parcels in vct_parcels that overlap with grass strips
-    in vct_grass_strips if the overlap for both features is at least 75%.
-
-    The function updates the vct_parcels input layer
-
-    The amount of intersection or overlap between a parcel is caluclated as
-    area_intersect(grass strips, parcel)/area(parcel).
-
-    Parameters
-    ----------
-    parcels: geopandas.GeoDataFrame
-        Can have any column, should have geometries
-    vct_grass_strips: str or pathlib.Path
-        File path of parcel shapefile
-    """
-    cond = (vct_grass_strips is not None) and (parcels is not None)
-    fname_temp = vct_grass_strips.parents[0] / "temp_intersect.shp"
-    fname_parcels = vct_grass_strips.parents[0] / "temp_parcels.shp"
-
-    if cond:
-        # check if NR is in vct_parcels
-        if "NR" not in parcels:
-            parcels["NR"] = np.arange(1, len(parcels) + 1, 1)
-        parcels.to_file(fname_parcels, spatial_index="YES")
-        saga_intersection(
-            str(fname_parcels),
-            str(vct_grass_strips),
-            fname_temp,
-        )
-
-        # intersect
-        parcels_intersection = gpd.read_file(fname_temp)
-
-        # couple considered parcels from this year and prior year (only consider
-        # largest intersect)
-        parcels_intersection["area_inter"] = parcels_intersection["geometry"].area
-
-        # find largest interesecting parcel and select only those
-        parcels_intersection["area_inter_max"] = parcels_intersection.groupby("NR")[
-            "area_inter"
-        ].transform(np.max)
-        cond = (
-            parcels_intersection["area_inter_max"] == parcels_intersection["area_inter"]
-        )
-        parcels_intersection = parcels_intersection[cond]
-
-        # load parcels
-        parcels.loc[:, "area"] = parcels["geometry"].area.values
-
-        parcels = parcels.merge(
-            parcels_intersection[["NR", "area_inter"]],
-            on="NR",
-            how="left",
-        )
-
-        # normalize area intersction  with area of parcel of considered year
-        parcels["norm_over"] = parcels["area_inter"] / parcels["area"] * 100
-
-        # define condition
-        cond = (parcels["norm_over"].isnull()) | (parcels["norm_over"] <= 75)
-        parcels = parcels.loc[cond]
-        parcels = parcels.drop(
-            columns=["area_inter_max", "norm_over", "area_inter"], errors="ignore"
-        )
-
-    return parcels
-
-
-def convert_grass_strips_to_agricultural_fields(parcels, vct_grass_strips):
-    """Convert known grass strips to agricultural fields in the parcels shape file.
-
-    If a parcel in vct_parcels intersects for 75% or more with a grass strip in
-    vct_grass_strips, the attributes of the parcel are changed: "LANDUSE" is set
-    to -9999 (agriculture), "GWSCOD_H" is set to "9999" (unknown crop) and
-    "C-factor" is set to 0.37. This function updates the input vct_parcels.
-
-    The amount of intersection or overlap between a parcel is caluclated as
-    area_intersect(grasstri, parcel)/area(parcel).
-
-    Parameters
-    ----------
-    parcels: geopandas.GeoDataFrame
-        Can have any column, should have geometries
-
-    vct_grass_strips: str or pathlib.Path
-        File path of parcel shapefiles
-
-    Returns
-    -------
-    parcels: geopandas.GeoDataFrame
-        With added column:
-
-        - *default_cfactor* (bool): convert to default C-factor (and landuse).
-
-    """
-
-    if vct_grass_strips is not None and parcels is not None:
-        if "C_factor" not in parcels:
-            parcels["C_factor"] = np.nan
-        gdf_grass = gpd.read_file(vct_grass_strips)
-        matches = parcels.geometry.apply(lambda x: nearly_identical(gdf_grass, x))
-        matches = matches.unstack().reset_index(0, drop=True).dropna()
-        gdf_grass_matched = gdf_grass.reindex(index=matches.values)
-        gdf_grass_matched.index = matches.index
-        gdf_grass_matched["grasstrip"] = 1
-        gdf_grass_matched = gdf_grass_matched[["grasstrip"]]
-        parcels = pd.merge(
-            parcels,
-            gdf_grass_matched,
-            how="left",
-            left_index=True,
-            right_index=True,
-        )
-        parcels.loc[parcels["grasstrip"] == 1, "LANDUSE"] = -9999
-        parcels.loc[parcels["grasstrip"] == 1, "GWSCOD_H"] = 9999
-        parcels.loc[parcels["grasstrip"] == 1, "C_factor"] = 0.37
-
-    return parcels
 
 
 def assign_buffer_id_to_df_buffer(df):

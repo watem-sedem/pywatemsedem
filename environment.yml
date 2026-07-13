@@ -1,12 +1,31 @@
-name: pywatemsedem
+name: pywatemsedem-dev
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - python
-  - geopandas
-  - pandas
-  - numpy
-  - rasterio
-  - matplotlib
-  - scikit-learn
-  - libgdal
+  # Core
+  - python>=3.11
+  - pip
+
+  # Geospatial (conda handles GDAL/PROJ binaries)
+  - geopandas=1.1.4
+  - rasterio=1.4.3
+  - pyogrio=0.13.0
+  - pyproj=3.7.2
+  - shapely=2.1.2
+
+  # Data & computation
+  - numpy=2.5.1
+  - pandas=3.0.3
+  - scipy=1.18.0
+  - scikit-learn=1.9.0
+  - matplotlib=3.11.0
+
+  # Utilities
+  - python-dotenv=1.2.2
+
+  # Development tools
+  - pip:
+      - build
+      - pip-tools
+      - wheel

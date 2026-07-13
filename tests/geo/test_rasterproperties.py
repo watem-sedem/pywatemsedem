@@ -7,7 +7,7 @@ from pywatemsedem.geo.rasterproperties import RasterProperties
 
 
 def test_rasterproperties():
-    """Test roundtrip between gdal and rasterio raster profile"""
+    """Test roundtrip between gdal and rasterio raster profile."""
     rasterio_profile = {
         "driver": "GTiff",
         "nodata": -9999.0,

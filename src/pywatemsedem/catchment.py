@@ -42,10 +42,27 @@ logger = logging.getLogger(__name__)
 
 
 def valid_dtm(func):
-    """Check if you have defined a DTM."""
+    """Decorator to check if a DTM is defined before executing the function.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for DTM definition.
+
+    Raises
+    ------
+    IOError
+        If the DTM is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating DTM is defined."""
         if self._dtm.is_empty():
             msg = "Please first define non-empty DTM!"
             raise IOError(msg)
@@ -56,10 +73,27 @@ def valid_dtm(func):
 
 
 def valid_vct_river(func):
-    """Check if you have defined a river vector."""
+    """Decorator to check if a river vector is defined before executing the function.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for river vector definition.
+
+    Raises
+    ------
+    IOError
+        If the river vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating river vector is defined."""
         if self._vct_river.is_empty():
             msg = "Please define non-empty river vector!"
             raise IOError(msg)
@@ -69,10 +103,27 @@ def valid_vct_river(func):
 
 
 def valid_vct_infra_line(func):
-    """Check if infrastructure vectors are defined"""
+    """Decorator to check if infrastructure line vectors are defined.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for infrastructure line vector definition.
+
+    Raises
+    ------
+    IOError
+        If the infrastructure roads vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating infrastructure line vector."""
         if self._vct_infrastructure_roads.is_empty():
             msg = "Please define infrastructure line vector!"
             raise IOError(msg)
@@ -82,10 +133,27 @@ def valid_vct_infra_line(func):
 
 
 def valid_vct_infra_poly(func):
-    """Check if infrastructure vectors are defined"""
+    """Decorator to check if infrastructure polygon vectors are defined.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for infrastructure polygon vector definition.
+
+    Raises
+    ------
+    IOError
+        If the infrastructure buildings vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute wrapped function after validating infrastructure polygon vector."""
         if self._vct_infrastructure_buildings.is_empty():
             msg = "Please define non-empty infrastructure polygon vector!"
             raise IOError(msg)
@@ -95,10 +163,27 @@ def valid_vct_infra_poly(func):
 
 
 def valid_vct_parcels(func):
-    """Check if infrastructure vectors are defined"""
+    """Decorator to check if parcel vectors are defined.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for parcel vector definition.
+
+    Raises
+    ------
+    IOError
+        If the parcels vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating parcels vector is defined."""
         if self._vct_parcels.is_empty():
             msg = "Please define non_empty parcels polygon vector!"
             raise IOError(msg)
@@ -108,23 +193,28 @@ def valid_vct_parcels(func):
 
 
 class Catchment(Factory):
-    """Construct a new Catchment instance
+    """Construct a new Catchment instance.
 
     The catchment class holds all static information for a catchment.
     The class considers all data of which the content is user-option-independent (i.e.
-    :class:`pywatemsedem.choices.Choices`.
+    :class:`pywatemsedem.choices.Choices`).
 
-    Following properties can be set:
-
-        - *kfactor*: K-factor raster.
-        - *landuse*: base landuse raster.
-        - *river*: river line vector.
-        - *water*: water polygon vector
-        - *vct_infrastructure_buildings*: polygon vector of infrastructure
-          (typically buildings).
-        - *vct_infrastructure_roads*: roads line vector (with optional attribute
-          'paved').
-        - *cnsoil*: cn soil raster (CN-only).
+    Attributes
+    ----------
+    kfactor : pathlib.Path, str or numpy.ndarray
+        K-factor raster.
+    landuse : pathlib.Path, str or numpy.ndarray
+        Base landuse raster.
+    vct_river : pathlib.Path, str or geopandas.GeoDataFrame
+        River line vector.
+    vct_water : pathlib.Path, str or geopandas.GeoDataFrame
+        Water polygon vector.
+    vct_infrastructure_buildings : pathlib.Path, str or geopandas.GeoDataFrame
+        Polygon vector of infrastructure (typically buildings).
+    vct_infrastructure_roads : pathlib.Path, str or geopandas.GeoDataFrame
+        Roads line vector (with optional attribute 'paved').
+    hydrological_soil_group : pathlib.Path, str or numpy.ndarray
+        CN soil raster (CN-only).
 
     Notes
     -----
@@ -142,23 +232,25 @@ class Catchment(Factory):
         nodata,
         results_folder=None,
     ):
-        """Initialize
+        """Initialize the Catchment instance.
 
         Parameters
         ----------
-        name: str
+        name : str
             Name of the catchment.
-        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame
+        vct_catchment : str or pathlib.Path or geopandas.GeoDataFrame
             Vector file of catchment outline (mask). This should be a single polygon
             vector.
-        resolution: int
-            Spatial resolution (m)
-        epsg_code: int
-            EPSG-code
-        nodata: float
-            Nodata-value
-        results_folder: str | pathlib.Path, default None
-            Folder path to write results to. If None, write to current folder
+        rst_dtm : str or pathlib.Path
+            File path to the digital terrain model raster.
+        resolution : int
+            Spatial resolution (m).
+        epsg_code : int
+            EPSG-code.
+        nodata : float
+            Nodata-value.
+        results_folder : str or pathlib.Path, default None
+            Folder path to write results to. If None, write to current folder.
         """
         # prepare catchment
         if results_folder is None:
@@ -198,7 +290,7 @@ class Catchment(Factory):
         # set dtm
         self.dtm = rst_dtm
 
-        # API atttributes
+        # API attributes
         self._hydrosoilgroup = AbstractRaster()
         self._landuse = AbstractRaster()
         self._water = AbstractRaster()

@@ -7,14 +7,14 @@ from pywatemsedem.geo.vectors import VectorFile, VectorMemory
 
 
 def test_vectorfile():
-    """Test functionalities of VectorFile class"""
+    """Test functionalities of VectorFile class."""
 
     vector = VectorFile(geodata.vct_example)
     assert len(vector.geodata) == 19
 
 
 def test_vectorfile_clip():
-    """Test functionalities of VectorFile class, with clip"""
+    """Test functionalities of VectorFile class, with clip."""
 
     # clip
     vector = VectorFile(geodata.vct_example, vct_clip=geodata.catchment)
@@ -23,7 +23,7 @@ def test_vectorfile_clip():
 
 @pytest.mark.parametrize("unknwon_type", ["Line", "CurvePolygon"])
 def test_vectormemory_unknown_geometry_type(unknwon_type):
-    """Test loading a vector with a different geometry type than required"""
+    """Test loading a vector with a different geometry type than required."""
     # load
     gdf = gpd.read_file(geodata.vct_example)
     geometry_type = get_geometry_type(geodata.vct_example)
@@ -41,7 +41,7 @@ def test_vectormemory_unknown_geometry_type(unknwon_type):
 
 
 def test_vectormemory_wrong_required_geometry_type():
-    """Test loading a vector with a different geometry type than required"""
+    """Test loading a vector with a different geometry type than required."""
     # load
     gdf = gpd.read_file(geodata.vct_example)
     geometry_type = get_geometry_type(geodata.vct_example)
@@ -58,7 +58,7 @@ def test_vectormemory_wrong_required_geometry_type():
 
 
 def test_vectormemory_empty_dataframe():
-    """Test loading an empty dataframe"""
+    """Test loading an empty dataframe."""
     gdf = gpd.GeoDataFrame(columns=["NR", "geometry"])
     # empty dataframe
     req_geometry_type = "LineString"
@@ -73,7 +73,7 @@ def test_vectormemory_empty_dataframe():
 
 
 def test_vectormemory():
-    """Test loading a vector, without clipping"""
+    """Test loading a vector, without clipping."""
     # load
     gdf = gpd.read_file(geodata.vct_example)
     geometry_type = get_geometry_type(geodata.vct_example)
@@ -84,7 +84,7 @@ def test_vectormemory():
 
 
 def test_vectormemory_clip():
-    """Test loading a vector, with clipping"""
+    """Test loading a vector, with clipping."""
     # load
     gdf = gpd.read_file(geodata.vct_example)
     geometry_type = get_geometry_type(geodata.vct_example)
@@ -97,7 +97,7 @@ def test_vectormemory_clip():
 
 
 def test_vectormemory_wrong_epsg():
-    """Test loading a vector with a different epsg than required"""
+    """Test loading a vector with a different epsg than required."""
     # load
     gdf = gpd.read_file(geodata.vct_example)
     req_epsg = 4326
