@@ -35,10 +35,15 @@ Getting started
 ---------------
 
 After :ref:`installation` you can start using the package with the tutorial notebooks
-available in this documentation:
+available in this documentation.
 
 - A quick start to get to know the basic api  <getting-started/api.ipynb>
+- A tutorial on how to use the User Choices <getting-started/userchoices.rst>
+- A tutorial on how to calibrate WaTEM/SEDEM <getting-started/calibrate.ipynb>
 
+If you have already used WaTEM/SEDEM in the past and want to use the visualisation and
+(post)processing tools of pywatemsedem, you can start with the tutorial on the
+modelinput and output modules <getting-started/modelinput_modeloutput.rst>.
 
 
 .. toctree::
