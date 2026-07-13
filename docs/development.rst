@@ -295,13 +295,14 @@ To keep pywatemsedem up to date with the latest versions of the python dependenc
 use following workflow:
 
 - Dependabot on github will do a weekly check on the dependencies and create a pull
-request with the adjusted 'requirements.txt' when a new version is available.
+  request with the adjusted 'requirements.txt' when a new version is available.
 - Github actions will run the unit tests and documentation build on the pull request.
-If all tests pass, we can adjust the versions in 'environment.yml' and then the pull
-request can be merged. The update of 'environment.yml' is done manually.
+  If all tests pass, we can adjust the versions in 'environment.yml' and then the pull
+  request can be merged. The update of 'environment.yml' is done manually.
 
 For every other pull request, we run the unit tests and documentation build on several
 environments:
+
 - an environment with pinned versions of the dependencies (as defined in 'requirements.txt')
 - environments with the latest versions of the dependencies and different python
-versions.
+  versions.
