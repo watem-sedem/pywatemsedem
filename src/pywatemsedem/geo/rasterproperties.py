@@ -7,7 +7,7 @@ from rasterio import Affine
 
 
 class RasterProperties:
-    """Raster properties class
+    """Raster properties class.
 
     Pywatemsedem makes use of rasterio and gdal for loading, writing and processing
     rasters/vectors. A small class is implemented to easily switch between raster
@@ -57,15 +57,40 @@ class RasterProperties:
         epsg = 31370
         rp = RasterProperties(bounds, resolution, nodata, epsg)
 
+    Attributes
+    ----------
+    bounds : list of float
+        Raster boundary coordinates [x_left, y_lower, x_right, y_upper].
+    resolution : int
+        Spatial resolution.
+    nodata : float
+        No data value used in raster.
+    epsg : int
+        EPSG code of the raster projection.
+    driver : str
+        Name of GDAL driver (GTiff, RST, or SAGA).
+    nrows : int
+        Number of rows in the raster.
+    ncols : int
+        Number of columns in the raster.
+    xcoord : numpy.ndarray
+        1D-vector array of x-coordinates.
+    ycoord : numpy.ndarray
+        1D-vector array of y-coordinates.
+    gdal_profile : dict
+        GDAL profile dictionary.
+    rasterio_profile : dict
+        Rasterio profile dictionary.
+
     Notes
     -----
-    1. Current implementation support storing of raster properties, yet is does not aim
-       to provide functionalities to adapt raster properties (as these functionalities
-       are present in rasterio).
+    1. Current implementation supports storing of raster properties, yet it does not
+       aim to provide functionalities to adapt raster properties (as these
+       functionalities are present in rasterio).
     2. Current implementation does not support tiled rasters. In addition,
-       it only support bands-interleaving as only single-band raster are used.
+       it only supports bands-interleaving as only single-band rasters are used.
     3. Definition interleaving: the way multiple bands of a raster are saved to the
-       raster (e.g. pixel-based, line-based, band-based)
+       raster (e.g. pixel-based, line-based, band-based).
     4. The coordinate reference system (crs) is defined in EPSG.
     5. Note that dtype in gdal operation is typically derived from input raster
        dtype that is used to execute the gdal operation. As such dtype is not

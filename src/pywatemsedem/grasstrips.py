@@ -64,8 +64,8 @@ def scale_cfactor_linear(
     upper_cfactor=0.37,
     lower_cfactor=0.01,
 ):
-    """Scale function for ktc based on a lineair interpolation between the defined lower
-    and upper boundary condtion, and the resolution.
+    """Scale function for ktc based on a linear interpolation between the defined lower
+    and upper boundary condition, and the resolution.
 
     Parameters
     ----------
@@ -92,7 +92,7 @@ def scale_cfactor_linear(
 
         C = 0.01*\\frac{w}{r}+0.37*\\frac{r-w}{r}
 
-    Considering an lower and upper C-factor of 0.01 and 0.37, widths are capped to
+    Considering a lower and upper C-factor of 0.01 and 0.37, widths are capped to
     model resolution.
 
     References
@@ -119,8 +119,8 @@ def scale_ktc_linear(
     ktc_low: (int, float) = 3,
     ktc_high: (int, float) = 12,
 ):
-    """Scale function for ktc based on a lineair interpolation between the defined lower
-    and upper boundary condtion, and the resolution.
+    """Scale function for ktc based on a linear interpolation between the defined lower
+    and upper boundary condition, and the resolution.
 
     Parameters
     ----------
@@ -199,7 +199,7 @@ def scale_ktc_zhang(
     ktc_high: float
         The upper boundary to which scale the ktc value.
     k: float
-        Maximum sediment trappping efficiency (K in Zhang et al., 2010)
+        Maximum sediment trapping efficiency (K in Zhang et al., 2010)
     b: float
         Slope coefficient (see Zhang et al., 2010).
 
@@ -212,7 +212,7 @@ def scale_ktc_zhang(
 
     Notes
     -----
-    1. The ktc valeus for grass strips are determined by using emperical sediment
+    1. The ktc values for grass strips are determined by using empirical sediment
     trapping efficiency (STE) values in the equation of Verstraete et al. (2006):
 
     .. math::
@@ -224,7 +224,7 @@ def scale_ktc_zhang(
 
         :math:`ktc_{var}` (1/m): the ktc values for the grass strips;
 
-    The STE can be determined by using the emperical findings of Zhang et al. (2010):
+    The STE can be determined by using the empirical findings of Zhang et al. (2010):
 
     .. math::s
 
@@ -261,7 +261,7 @@ CFACTOR_SCALING_FUNCTIONS = [scale_cfactor_linear]
 def scale_ktc_with_grass_strip_width(
     arr_width: np.ndarray, scaling_function: Callable, **parameters
 ):
-    """Scale ktc value for grass stripts according to the width of the grass strip.
+    """Scale ktc value for grass strips according to the width of the grass strip.
 
     The ktc parameters (which determines the amount of sediment which is routed
     downstream) for a grass strip varies as a function of the width of the grass strip.
@@ -286,7 +286,7 @@ def scale_ktc_with_grass_strip_width(
     Notes
     -----
     The theoretical 'sediment trapping efficiency' (STE) is interpreted as the
-    trapping efficiency of a grass strips on a homogenous lineair slope. In other
+    trapping efficiency of a grass strip on a homogeneous linear slope. In other
     words, the slope plane can be defined as a flat plane (as in: can be defined in
     by two dimensions). This is also sometimes referred to as a linear slope (see
     Verstraete et al. (2006))
@@ -754,6 +754,32 @@ def process_grass_strips(
 def get_neighbour_grass_strips_ids_array(
     vct_grass_strips, rst_params, width_polygon=20
 ):
+    """Generate a raster array of buffered grass strip IDs.
+
+    This function creates a buffer around each grass strip polygon and rasterizes
+    the result to identify neighboring grass strip pixels.
+
+    Parameters
+    ----------
+    vct_grass_strips : str or pathlib.Path
+        File path to the grass strips vector file. Must contain a 'NR' column
+        with unique grass strip identifiers.
+    rst_params : dict
+        Raster parameters for output raster creation, including resolution,
+        extent, and coordinate reference system.
+    width_polygon : int, default 20
+        Buffer width in meters to expand grass strip polygons.
+
+    Returns
+    -------
+    None
+        Writes the rasterized buffered grass strips to disk.
+
+    Notes
+    -----
+    The function creates an intermediate buffered shapefile and a raster output
+    file named 'neighbour_grass_strips_ids_array.tiff'.
+    """
     gdf = gpd.read_file(vct_grass_strips)
     gdf["buffer"] = gdf.buffer(width_polygon)
     gdf = gdf[["NR", "buffer"]]

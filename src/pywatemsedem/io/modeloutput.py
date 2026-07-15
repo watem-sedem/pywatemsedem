@@ -1,4 +1,4 @@
-# seperate plotting funcion
+# separate plotting function
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -49,18 +49,71 @@ COLORMAP_WATEREROS = colors.LinearSegmentedColormap.from_list(
 
 @dataclass
 class Modeloutput(Factory):
+    """Class with model outputs as attributes.
+
+    Modeloutput class serves the goal of automating the reading in, checking and
+    visualisation of the output data of the WaTEM/SEDEM model.
+
+    Attributes
+    ----------
+    aspect : pathlib.Path or str
+        Aspect raster.
+    routing : pathlib.Path or str
+        Routing table.
+    routing_missing : pathlib.Path or str
+        Routing missing table.
+    ls : pathlib.Path or str
+        LS-factor raster.
+    slope : pathlib.Path or str
+        Slope raster.
+    uparea : pathlib.Path or str
+        Upstream area raster.
+    total_sediment : pathlib.Path or str
+        Total sediment table.
+    total_sediment_segments : pathlib.Path or str
+        Total sediment per segment table.
+    cumulative_sediment_segments : pathlib.Path or str
+        Cumulative sediment per segment table.
+    sewer_in : pathlib.Path or str
+        Sewer in raster.
+    sedi_export : pathlib.Path or str
+        Sediment export raster.
+    sedi_in : pathlib.Path or str
+        Sediment in raster.
+    sedi_out : pathlib.Path or str
+        Sediment out raster.
+    sedtil_in : pathlib.Path or str
+        Tillage sediment in raster.
+    sedtil_out : pathlib.Path or str
+        Tillage sediment out raster.
+    cumulative : pathlib.Path or str
+        Cumulative sediment raster.
+    watereros_kg : pathlib.Path or str
+        Water erosion raster (kg).
+    watereros_mm : pathlib.Path or str
+        Water erosion raster (mm).
+    tileros_kg : pathlib.Path or str
+        Tillage erosion raster (kg).
+    tileros_mm : pathlib.Path or str
+        Tillage erosion raster (mm).
+    capacity : pathlib.Path or str
+        Capacity raster.
+    rusle : pathlib.Path or str
+        RUSLE raster.
+    """
+
     def __init__(self, ini, resolution, epsg, nodata):
-        """Initialize model outputs and validation for a WaTEM/SEDEM setup.
+        """Initialize the Modeloutput instance.
 
         Parameters
         ----------
-        ini: pathlib.Path
-            ini file
-        resolution: int
-            See :class:`pywatemsedem.geo.RasterProperties`
-        epsg: int
+        ini : pathlib.Path
+            Path to the ini file.
+        resolution : int
             See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata: int
+        epsg : int
+            See :class:`pywatemsedem.geo.RasterProperties`.
+        nodata : int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
@@ -252,8 +305,9 @@ class Modeloutput(Factory):
         """Set the routing_missing table.
 
         Parameters
-        ---------
-        text: pathlib.Path | str
+        ----------
+        text : pathlib.Path or str
+            File path to the routing_missing table.
         """
         self._routing_missing = pd.read_table(text)
         self._txt_routing_missing = text
@@ -329,8 +383,9 @@ class Modeloutput(Factory):
         """Set the LS raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the LS raster.
         """
         self._ls = self.raster_factory(raster, flag_mask=False)
 
@@ -402,8 +457,9 @@ class Modeloutput(Factory):
         """Set the slope raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the slope raster.
         """
         self._slope = self.raster_factory(raster, flag_mask=False)
 
@@ -467,8 +523,9 @@ class Modeloutput(Factory):
         """Set the uparea raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the uparea raster.
         """
         self._uparea = self.raster_factory(raster, flag_mask=False)
 
@@ -631,8 +688,9 @@ class Modeloutput(Factory):
         """Set the sewer_in raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the sewer_in raster.
         """
         self._sewer_in = self.raster_factory(raster, flag_mask=True)
 
@@ -1484,8 +1542,9 @@ class Modeloutput(Factory):
         """Set the capacity raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the capacity raster.
         """
         self._capacity = self.raster_factory(raster, flag_mask=False)
 
@@ -1553,8 +1612,9 @@ class Modeloutput(Factory):
         """Set the RUSLE raster.
 
         Parameters
-        ---------
-        raster: pathlib.Path | str
+        ----------
+        raster : pathlib.Path or str
+            File path to the RUSLE raster.
         """
         self._rusle = self.raster_factory(raster, flag_mask=False)
 
@@ -1810,7 +1870,7 @@ def make_routing_vct_saga(
 
     # condition tag for making routing shape
     if txt_routing.exists():
-        # check if file is tab seperated
+        # check if file is tab separated
         with open(txt_routing) as f:
             first_line = f.readline()
         seperator = ";" if "\t" not in first_line else "\t"
@@ -1838,7 +1898,7 @@ def make_routing_vct_saga(
 
 
 def prepare_make_routing_vct_saga(
-    txt_routing, vct_out, seperator, rstparams, extent, tile_number
+    txt_routing, vct_out, separator, rstparams, extent, tile_number
 ):
     """
     Prepare the input files for make routing vct_saga
@@ -1848,15 +1908,15 @@ def prepare_make_routing_vct_saga(
     Parameters
     ----------
     txt_routing_nonriver: str or pathlib.Path | str
-        File path of the WaTEM/SEDEM routing tabl
+        File path of the WaTEM/SEDEM routing table.
     vct_out: str
-        name of output shapefile for 'run_saga_make_routing_shp_cmd' fuction
-    seperator: str
-        current delimited of txt_routing
+        Name of output shapefile for 'run_saga_make_routing_shp_cmd' function.
+    separator: str
+        Current delimiter of txt_routing.
     rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
+        gdal dictionary holding all metadata for idrisi rasters.
     extent: list
-        min and max of rectangular frame to clip df [xmin, xmax, ymin, ymax]
+        min and max of rectangular frame to clip df [xmin, xmax, ymin, ymax].
     tile_number: int
         number of tile
 
@@ -1895,7 +1955,7 @@ def prepare_make_routing_vct_saga(
         tag = f"_selected_{(0 if tile_number is None else tile_number)}"
         txt_routing = txt_routing.parent / txt_routing.stem + tag + ".txt"
         vct_temp = vct_out.parent / vct_out.stem + tag + ".shp"
-        if seperator != "\t":
+        if separator != "\t":
             df_routing.to_csv(txt_routing, sep="\t", index=False)
         # condition true if routing directions are found within extent
         condition = False if len(df_routing) == 0 else True
@@ -1905,7 +1965,7 @@ def prepare_make_routing_vct_saga(
         vct_temp = vct_out
         condition = True
         df_routing = open_txt_routing_file(txt_routing)
-        if seperator != "\t":
+        if separator != "\t":
             df_routing.to_csv(txt_routing, sep="\t", index=False)
 
     return vct_temp, condition
@@ -2199,11 +2259,28 @@ def compute_efficiency_buffers(rst_buffer, rst_sedi_in, rst_sedi_out):
 
 
 def open_txt_routing_file(txt_routing):
-    """
+    """Open routing file with exceptions and separators as needed.
+
+    Parameters
+    ----------
+    txt_routing : str or pathlib.Path
+        File path of the WaTEM/SEDEM routing table.
+
     Returns
     -------
-    pandas.DataFrame
-        Routing table if successful
+    df_routing : pandas.DataFrame
+        The routing DataFrame contains the following columns:
+
+        - *col* (int): source column in rasters
+        - *row* (int): source row in rasters
+        - *target1col* (int): first target column in rasters
+        - *target1row* (int): first target row in rasters
+        - *part1* (float): Part that flows to target1
+        - *distance1* (float): Distance of 1st vector
+        - *target2col* (int): second target column in rasters
+        - *target2row* (int): second target row in rasters
+        - *part2* (float): Part that flows to target2
+        - *distance2* (float): Distance of 2nd vector
 
     Raises
     ------

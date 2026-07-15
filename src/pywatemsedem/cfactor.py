@@ -165,7 +165,7 @@ def create_cfactor_degerick2015(
         temp = np.where(np.isin(temp, np.arange(1, 11, 1)), cfactor_aggriculture, temp)
         arr_cfactor = np.where(arr_cfactor == nodata, temp, arr_cfactor)
 
-    # last posible pixels
+    # last possible pixels
     arr_mask = np.where(mask.arr, cfactor_aggriculture, 0)
     arr_cfactor = np.where(arr_cfactor == nodata, arr_mask, arr_cfactor)
     arr_cfactor = arr_cfactor.astype("float32")

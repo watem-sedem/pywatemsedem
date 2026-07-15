@@ -1,3 +1,14 @@
+"""utils.py
+
+This module provides utility functions for geospatial data processing,
+including raster and vector data manipulation, rasterization, polygonization,
+and statistical analysis of raster data within polygon features.
+
+The functions rely on libraries such as rasterio, geopandas, pyogrio, and subprocess
+to perform various geospatial operations. The module also includes decorators for input
+validation and type checking to ensure that the functions are used correctly.
+"""
+
 # Standard libraries
 import logging
 import random
@@ -41,23 +52,23 @@ logger = logging.getLogger(__name__)
 
 @valid_input(dict={"rst_in": valid_raster})
 def read_rst_params(rst_in):
-    """Read all spatial dimensions of a raster
+    """Read all spatial dimensions of a raster.
 
     Parameters
     ----------
-    rst_in: pathlib.Path or str
-        File path to the input raster
+    rst_in : pathlib.Path or str
+        File path to the input raster.
 
     Returns
     -------
-    minmax: list
-        A list with the extreme coordinate values (xmin, ymin, xmax and ymax)
-    transform: rasterio.transform
+    minmax : list
+        A list with the extreme coordinate values (xmin, ymin, xmax and ymax).
+    transform : rasterio.transform.Affine
         Transformation as defined in Rasterio.
-    cols: int
-        The number of columns in the raster
-    rows: int
-        The number of rows in the raster
+    cols : int
+        The number of columns in the raster.
+    rows : int
+        The number of rows in the raster.
     """
     with rasterio.open(rst_in) as src:
         cols = src.width
@@ -73,17 +84,17 @@ def read_rst_params(rst_in):
 
 @valid_input(dict={"rst_in": valid_raster})
 def read_rasterio_profile(rst_in):
-    """Read all spatial dimensions of a raster
+    """Read all spatial dimensions of a raster as a rasterio profile.
 
     Parameters
     ----------
-    rst_in: pathlib.Path
-        File path to the input raster
+    rst_in : pathlib.Path
+        File path to the input raster.
 
     Returns
     -------
-    profile: dict
-        See :func:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`
+    profile : dict
+        See :func:`pywatemsedem.geo.rasterproperties.RasterProperties.rasterio_profile`.
     """
     with rasterio.open(rst_in) as src:
         profile = src.profile
@@ -92,17 +103,25 @@ def read_rasterio_profile(rst_in):
 
 
 def write_arr_as_rst(arr, rst_out, dtype, profile):
-    """Write numpy.ndarray as a raster-file
+    """Write numpy.ndarray as a raster file.
 
     Parameters
     ----------
-    arr: numpy.ndarray
-        2D numpy array to be written as a raster file
-    rst_out: pathlib.Path or str
-        File path to the output raster
-    dtype: numpy.dtype
-    profile: rasterio.profiles
-        See :class:`rasterio.profiles.Profile`
+    arr : numpy.ndarray
+        2D numpy array to be written as a raster file.
+    rst_out : pathlib.Path or str
+        File path to the output raster.
+    dtype : numpy.dtype
+        Data type for the output raster.
+    profile : dict
+        Rasterio profile. See :class:`rasterio.profiles.Profile`.
+
+    Raises
+    ------
+    Exception
+        If mandatory keys are missing from profile or dimensions don't match.
+    TypeError
+        If dtype is not valid.
     """
     mandatorykeys = [
         "driver",
@@ -137,16 +156,21 @@ def write_arr_as_rst(arr, rst_out, dtype, profile):
 
 
 def check_raster_properties_raster_with_template(path_check, path_template, epsg):
-    """Checks if extent and resolution of new raster and template raster align
+    """Check if extent and resolution of new raster and template raster align.
 
     Parameters
     ----------
-    path_check: pathlib.Path | RasterProperties
-                Incoming, new raster
-    path_template: pathlib.Path
-                    Template raster
-    epsg: int
-            EPSG code of the cartographic projection
+    path_check : pathlib.Path or RasterProperties
+        Incoming, new raster.
+    path_template : pathlib.Path
+        Template raster.
+    epsg : int
+        EPSG code of the cartographic projection.
+
+    Raises
+    ------
+    ValueError
+        If extent or resolution does not match.
     """
     if isinstance(path_check, Path):
         rp_check = RasterProperties.from_rasterio(
@@ -168,16 +192,20 @@ def check_raster_properties_raster_with_template(path_check, path_template, epsg
 
 @valid_input(dict={"rst_in1": valid_raster, "rst_in2": valid_raster})
 def grid_difference(rst_in1, rst_in2, rst_out):
-    """Make the difference between two grids
+    """Make the difference between two grids.
 
     Parameters
     ----------
-    rst_in1: str
-        File path to inputraster 1
-    rst_in2: str
-        File path to inputraster 2
-    rst_out: str
-        File path to outputraster
+    rst_in1 : str
+        File path to input raster 1.
+    rst_in2 : str
+        File path to input raster 2.
+    rst_out : str
+        File path to output raster.
+
+    Notes
+    -----
+    Uses the SAGA CLI command "grid_calculus" with the option "3" (difference).
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_calculus", "3"]
     cmd_args += ["-A", str(rst_in1), "-B", str(rst_in2), "-C", str(rst_out)]
@@ -187,12 +215,12 @@ def grid_difference(rst_in1, rst_in2, rst_out):
 
 @valid_input(dict={"vct": valid_vector})
 def get_fields_vct(vct):
-    """Get a list of all fields in a shapefile
+    """Get a list of all fields in a shapefile.
 
     Parameters
     ----------
-    vct: str
-        File path to shapefile
+    vct : str
+        File path to shapefile.
 
     Returns
     -------
@@ -205,17 +233,17 @@ def get_fields_vct(vct):
 
 @valid_input(dict={"vct": valid_vector})
 def get_geometry_type(vct):
-    """Get the geometry type of a shapefile
+    """Get the geometry type of a shapefile.
 
     Parameters
     ----------
-    vct: str or pathlib.Path
-        File path to shapefile
+    vct : str or pathlib.Path
+        File path to shapefile.
 
     Returns
     -------
     str
-        Geometry type (see gdal documentation for all possibilities)
+        Geometry type (see GDAL documentation for all possibilities).
     """
     geom = pyogrio.read_info(vct)["geometry_type"]
     return geom
@@ -223,17 +251,17 @@ def get_geometry_type(vct):
 
 @valid_input(dict={"tiff_in": valid_raster})
 def tiff_to_geopandas_df(tiff_in):
-    """Transform a tiff file to a geopandas dataframe
+    """Transform a tiff file to a geopandas dataframe.
 
     Parameters
     ----------
-    tiff_in: str or pathlib.Path
-        File path of tiff raster file
+    tiff_in : str or pathlib.Path
+        File path of tiff raster file.
 
     Returns
     -------
-    gdf: geopandas.GeoDataFrame
-        Geopandas representation of tiff raster
+    geopandas.GeoDataFrame
+        Geopandas representation of tiff raster.
     """
     with rasterio.open(str(tiff_in)) as src:
         image = src.read(1)
@@ -252,19 +280,32 @@ def tiff_to_geopandas_df(tiff_in):
 
 
 def valid_gdal_type(func):
-    """Check if your input array mask is valid. Use as decorator"""
+    """Check if input array mask is valid.
+
+    Use this function as a decorator.
+
+    Parameters
+    ----------
+    func : callable
+        Function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function.
+    """
 
     @wraps(func)
     def wrapper(*args, dtype):
-        """Wrapper function
+        """Execute function after validating GDAL dtype.
 
         Parameters
         ----------
-        *args:
-            non keyword arguments
-        dtype: numpy.dtype or str
-            allowed types are "Float32", "Float64", "Int16", "Int32", "Int64"
-            integer is Int16, float is Float32
+        *args
+            Non keyword arguments.
+        dtype : numpy.dtype or str
+            Allowed types are "Float32", "Float64", "Int16", "Int32", "Int64".
+            "integer" maps to Int16, "float" maps to Float32.
         """
         if dtype == "integer":
             dtype = "Int16"
@@ -291,20 +332,20 @@ def valid_gdal_type(func):
 @valid_input(dict={"tiff_in": valid_raster})
 @valid_gdal_type
 def tiff_to_idrisi(tiff_in, rst_out, dtype):
-    """Convert a GeoTiff to an Idrisi RST
+    """Convert a GeoTiff to an Idrisi RST.
 
     Parameters
     ----------
-    tiff_in: pathlib.Path or str
-        File path of the input tiff file
-    rst_out: pathlib.Path or str
-        File path of the destination rst
-    dtype: str, default Float64
-        Raster type
+    tiff_in : pathlib.Path or str
+        File path of the input tiff file.
+    rst_out : pathlib.Path or str
+        File path of the destination rst.
+    dtype : str
+        Raster type (e.g. "Float32", "Int16", "Int32", "Int64").
 
-    Note
-    ----
-    Uses and relies on gdal_translate CLI
+    Notes
+    -----
+    Uses and relies on gdal_translate CLI.
     """
     cmd_args = [
         "gdal_translate",
@@ -321,13 +362,12 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
 
 @valid_input(dict={"rst_in": valid_raster})
 def delete_rst(rst_in):
-    """Delete a raster dataset
+    """Delete a raster dataset.
 
     Parameters
     ----------
-    rst_in: str or  pathlib.Path
-        File path of the raster dataset to be deleted
-
+    rst_in : str or pathlib.Path
+        File path of the raster dataset to be deleted.
     """
     cmd_args = ["gdalmanage", "delete", str(rst_in)]
     execute_subprocess(cmd_args)
@@ -336,28 +376,30 @@ def delete_rst(rst_in):
 
 @valid_input(dict={"rst_in": valid_raster})
 def clip_rst(rst_in, rst_out, cnst, resampling="near"):
-    """Clips a raster to a certain bounding box with a given resolution
+    """Clip a raster to a certain bounding box with a given resolution.
 
     Parameters
     ----------
-    rst_in: pathlib.Path or str
-        File path to in input raster.
-    rst_out: pathlib.Path or str
+    rst_in : pathlib.Path or str
+        File path to the input raster.
+    rst_out : pathlib.Path or str
         File path to the destination raster.
-    cnst: dict
+    cnst : dict
         Dictionary with following keys:
 
-        - *epsg* (str): the EPSG-code of the rst_in
-        - *res* (int): resolution
-        - *nodata* (int): nodata flag
-        - *minmax* (list): list with xmin, ymin, xmax, ymax
-    resampling: str, default 'near'
-        Either "mode" or "near"
+        - *epsg* (str): the EPSG-code of the rst_in.
+        - *res* (int): resolution.
+        - *nodata* (int): nodata flag.
+        - *minmax* (list): list with xmin, ymin, xmax, ymax.
+    resampling : str, default "near"
+        Either "mode" or "near".
 
     Notes
     -----
-    1. "mode" and "near" have been tested, see
-        https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r
+    1. This function uses the gdalwarp CLI, see
+       https://gdal.org/en/stable/programs/gdalwarp.html for more information.
+    2. "mode" and "near" have been tested, see
+       https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r.
     """
 
     rst_in = Path(rst_in)
@@ -377,70 +419,20 @@ def clip_rst(rst_in, rst_out, cnst, resampling="near"):
 
 @valid_input(dict={"vct": valid_vector})
 def get_extent_vct(vct):
-    """Gets the bounding box coordinates of a shapefile
+    """Get the bounding box coordinates of a shapefile.
 
     Parameters
     ----------
-    vct: str or pathlib.Path
+    vct : str or pathlib.Path
         File path of the input shapefile.
 
     Returns
     -------
     tuple
-        xmin, ymin, xmax, ymax
+        xmin, ymin, xmax, ymax.
     """
     extent = pyogrio.read_info(vct)["total_bounds"]
     return extent  # xmin, ymin, xmax, ymax
-
-
-@valid_input(dict={"vct": valid_vector, "vct_clip": valid_vector})
-def clip_vct(vct_in, vct_out, vct_clip, overwrite=False, lst_ignore_field=None):
-    """Clip a shapefile by another shapefile
-
-    Parameters
-    ----------
-    vct_in: str or pathlib.Path
-        File path of shapefile to be clipped.
-    vct_out: str or pathlib.Path
-        File path of the destination shapefile
-    vct_clip: str or pathlib.Path
-        File path of the clip boundary vector
-    overwrite: bool, default False
-        If True, overwrite existing file
-    lst_ignore_field: list, optional
-        Ignore a specific field from input in output.
-
-    Note
-    ----
-    Uses and relies on ogr2ogr CLI
-    """
-    cond = True
-    if not overwrite:
-        if vct_out.exists():
-            cond = False
-    if cond:
-        logger.info(f"Clipping {vct_in.name}...")
-        ext = get_extent_vct(vct_clip)
-        cmd_args = [
-            "ogr2ogr",
-            "-spat",
-            str(ext[0]),
-            str(ext[1]),
-            str(ext[2]),
-            str(ext[3]),
-        ]
-        cmd_args += ["-skipfailures"]
-        cmd_args += ["-clipsrc", str(vct_clip)]
-        if lst_ignore_field is not None:
-            fields = get_fields_vct(vct_in)
-            cmd_args += [
-                "-select",
-                (", ").join(
-                    [field for field in fields if field not in lst_ignore_field]
-                ),
-            ]
-        cmd_args += [str(vct_out), str(vct_in)]
-        execute_subprocess(cmd_args)
 
 
 @valid_input(dict={"lst_rasters": valid_rasterlist, "vct_polygon": valid_vector})
@@ -453,49 +445,55 @@ def compute_statistics_rasters_per_polygon_vector(
     normalize=True,
     ton=False,
 ):
-    """Compute statistics
+    """Compute statistics of a raster per polygon feature.
 
     Parameters
     ----------
-    lst_rasters: list
-        File path rasters (pathlib.Path)
-    vct_polygon: str
+    lst_rasters : list
+        File path rasters (pathlib.Path).
+    vct_polygon : str
         File path to input polygon vector.
-    vct_out: str
+    vct_out : str
         File path to output polygon vector.
-    lst_names: dict
+    lst_names : list
         List of output names in output vector for files in lst_rasters.
-    dict_operators: dict
+    dict_operators : dict
         Operators. For a description of the dictionary of statistics, see
         inputs in :func:`pywatemsedem.geo.utils.grid_statistics`. See example for use.
-    normalize: bool, default False
-        Normalize with shape area (True)
-    ton: bool, default False
-        Use ton (true)
+    normalize : bool, default True
+        Normalize with shape area.
+    ton : bool, default False
+        Use ton.
 
-    Note
-    ----
+    Returns
+    -------
+    geopandas.GeoDataFrame
+        GeoDataFrame with computed statistics.
+
+    Notes
+    -----
     The desired statistics are inputted after the file reference of the raster, and are
     formatted as a dictionary, e.g.:
 
     .. code-block:: python
 
-        dict_operators = {"COUNT":True,"SUM":True}
+        dict_operators = {"COUNT": True, "SUM": True}
 
     Examples
     --------
-
     >>> from pywatemsedem.geo.utils import compute_statistics_rasters_per_polygon_vector
     >>> vct_aho = "AHO.shp"
     >>> vct_out = "statistics_aho.shp"
-    >>> rst_sewerin ="sewerin.rst"
-    >>> rst_sediexport ="SediExport.rst"
-    >>> compute_statistics_rasters_per_polygon_vector([rst_sewerin, rst_sediexport],
-    ...                                               vct_polygon,
-    ...                                               vct_out,
-    ...                                               ["River","Sewers"],
-    ...                                               {"COUNT":True,"SUM":True},
-    ...                                               ton = True)
+    >>> rst_sewerin = "sewerin.rst"
+    >>> rst_sediexport = "SediExport.rst"
+    >>> compute_statistics_rasters_per_polygon_vector(
+    ...     [rst_sewerin, rst_sediexport],
+    ...     vct_polygon,
+    ...     vct_out,
+    ...     ["River", "Sewers"],
+    ...     {"COUNT": True, "SUM": True},
+    ...     ton=True,
+    ... )
     """
     grid_statistics(lst_rasters, vct_polygon, vct_out, **dict_operators)
 
@@ -520,14 +518,14 @@ def compute_statistics_rasters_per_polygon_vector(
 
 @valid_input(dict={"rst_in": valid_raster})
 def rst_to_vct_points(rst_in, vct_out):
-    """Convert all no nodata values in a raster to a vector point file.
+    """Convert all non-nodata values in a raster to a vector point file.
 
     Parameters
     ----------
-    rst_in: str or pathlib.Path
+    rst_in : str or pathlib.Path
         File path of the raster file that should be converted to a shapefile.
-    vct_out: pathlib.Path
-        File path of the destination vct.
+    vct_out : pathlib.Path
+        File path of the destination vector.
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "3"]
     cmd_args += ["-GRIDS", str(rst_in)]
@@ -539,29 +537,31 @@ def rst_to_vct_points(rst_in, vct_out):
 def vct_to_rst_value_gdal(
     vct_in, rst_out, raster_properties, nodata=-9999, alltouched=True, dtype=None
 ):
-    """Rasterizes a shapefile as data/no-data
+    """Rasterize a shapefile as data/no-data.
 
     Parameters
     ----------
-    vct_in: str or pathlib.Path
+    vct_in : str or pathlib.Path
         File path of the shapefile to be rasterized.
-    rst_out: pathlib.Path
-        File path of the destination rst
-    raster_properties: dict
+    rst_out : pathlib.Path
+        File path of the destination rst.
+    raster_properties : dict
         Dictionary with following keys:
 
-        - *res* (int): resolution
-        - *nodata* (int): nodata flag
-        - *minmax* (list): list with xmin, ymin, xmax, ymax
-    alltouched: bool, default true
+        - *res* (int): resolution.
+        - *nodata* (int): nodata flag.
+        - *minmax* (list): list with xmin, ymin, xmax, ymax.
+    nodata : int, default -9999
+        Nodata value.
+    alltouched : bool, default True
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
-    dtype: str, default None
-        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+    dtype : str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.
 
-    Note
+    Notes
     -----
-    Uses and relies on gdal_rasterize CLI
+    Uses and relies on gdal_rasterize CLI.
     """
     cmd_args = ["gdal_rasterize", "-q", "-a_nodata", str(nodata)]
     if alltouched:
@@ -588,29 +588,29 @@ def vct_to_rst_value_gdal(
 def vct_to_rst_value_saga(
     vct_in, rst_out, raster_properties, alltouched=True, dtype=None
 ):
-    """Rasterizes a shapefile as data/no-data
+    """Rasterize a shapefile as data/no-data.
 
     Parameters
     ----------
-    vct_in: str or pathlib.Path
+    vct_in : str or pathlib.Path
         File path of the shapefile to be rasterized.
-    rst_out: pathlib.Path
-        File path of the destination rst
-    raster_properties: dict
+    rst_out : pathlib.Path
+        File path of the destination rst.
+    raster_properties : dict
         Dictionary with following keys:
 
-        - *res* (int): resolution
-        - *nodata* (int): nodata flag
-        - *minmax* (list): list with xmin, ymin, xmax, ymax
-    alltouched: bool, default true
+        - *res* (int): resolution.
+        - *nodata* (int): nodata flag.
+        - *minmax* (list): list with xmin, ymin, xmax, ymax.
+    alltouched : bool, default True
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
-    dtype: str, default None
-        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+    dtype : str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.
 
-    Note
+    Notes
     -----
-    Uses and relies on saga_cmd CLI
+    Uses and relies on saga_cmd CLI.
     """
 
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
@@ -653,28 +653,27 @@ def vct_to_rst_value(
     dtype=None,
     gdal=True,
 ):
-    """Rasterizes a shapefile by a given constant value
+    """Rasterize a shapefile by a given constant value.
 
     Parameters
     ----------
-    vct_in: str or pathlib.Path
+    vct_in : str or pathlib.Path
         File path of the shapefile to be rasterized.
-    rst_out: pathlib.Path
-        File path of the destination rst
-    raster_properties: dict
+    rst_out : pathlib.Path
+        File path of the destination rst.
+    raster_properties : dict
         Dictionary with following keys:
 
-        - *res* (int): resolution
-        - *nodata* (int): nodata flag
-        - *minmax* (list): list with xmin, ymin, xmax, ymax
-    alltouched: bool, default true
+        - *res* (int): resolution.
+        - *nodata* (int): nodata flag.
+        - *minmax* (list): list with xmin, ymin, xmax, ymax.
+    alltouched : bool, default True
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
-    dtype: str, default None
-        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
-    gdal: bool, default True
-        rasterize using gdal_rasterize or via saga CLI
-
+    dtype : str, default None
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.
+    gdal : bool, default True
+        Rasterize using gdal_rasterize (True) or via saga CLI (False).
     """
 
     if gdal:
@@ -683,35 +682,35 @@ def vct_to_rst_value(
             rst_out,
             raster_properties,
             nodata=-9999,
-            alltouched=True,
-            dtype=None,
+            alltouched=alltouched,
+            dtype=dtype,
         )
     else:
         vct_to_rst_value_saga(
             vct_in,
             rst_out,
             raster_properties,
-            alltouched=True,
-            dtype=None,
+            alltouched=alltouched,
+            dtype=dtype,
         )
 
 
 @valid_input(dict={"rst_in": valid_raster})
 def raster_to_polygon(rst_in, vct_out):
-    """Polygonize a raster
+    """Polygonize a raster.
 
-    This function converts rastercells to polygons
+    This function converts raster cells to polygons.
 
     Parameters
     ----------
-    rst_in: str or pathlib.Path
-        File path of theinput raster
-    vct_out: str or pathlib.Path
-        File path of the destination shapefile
+    rst_in : str or pathlib.Path
+        File path of the input raster.
+    vct_out : str or pathlib.Path
+        File path of the destination shapefile.
 
-    Note
+    Notes
     -----
-    Uses and relies on saga_cmd CLI
+    Uses and relies on saga_cmd CLI shapes_grid -6.
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "6", "-GRID", str(rst_in)]
     cmd_args += ["-POLYGONS", str(vct_out), "-CLASS_ALL", "1", "-SPLIT", "0"]
@@ -720,25 +719,24 @@ def raster_to_polygon(rst_in, vct_out):
 
 @valid_input(dict={"vct_line": valid_linesvector, "rst_template": valid_raster})
 def lines_to_direction(vct_line, rst_out, rst_template):
-    """Converts line features to a direction raster
+    """Convert line features to a direction raster.
 
     This function converts the direction of line features to a raster. See the
     :ref:`docs of WaTEM/SEDEM for more information <watemsedem:routingmap>` about this
-    raster
+    raster.
 
     Parameters
     ----------
-    vct_line: str or pathlib.Path
-        File path to the input line shapefile
-    rst_out: pathlib.Path
-        File path to the output raster
-    rst_template: str or pathlib.Path
-        File path to a template raster
+    vct_line : str or pathlib.Path
+        File path to the input line shapefile.
+    rst_out : pathlib.Path
+        File path to the output raster.
+    rst_template : str or pathlib.Path
+        File path to a template raster.
 
-    Note
+    Notes
     -----
-    Uses and relies on saga_cmd CLI
-
+    Uses and relies on saga_cmd CLI.
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "line_direction", "0"]
     cmd_args += [
@@ -768,32 +766,31 @@ def lines_to_direction(vct_line, rst_out, rst_template):
 def vct_to_rst_field(
     vct_in, rst_out, Cnst, field=None, alltouched=True, dtype="Float64"
 ):
-    """Rasterizes a shapefile by a given attribute field
+    """Rasterize a shapefile by a given attribute field.
 
     Parameters
     ----------
-    vct_in: str or pathlib.Path
+    vct_in : str or pathlib.Path
         File path of the shapefile to be rasterized.
-    rst_out: pathlib.Path
-        File path of the destination rst
-    Cnst: dict
+    rst_out : pathlib.Path
+        File path of the destination rst.
+    Cnst : dict
         Dictionary with following keys:
 
-        - *res* (int): resolution
-        - *nodata* (int): nodata flag
-        - *minmax* (list): list with xmin, ymin, xmax, ymax
-
-    field: str
-        The field of the shapefile containing the values for the raster
-    alltouched: bool, default True
+        - *res* (int): resolution.
+        - *nodata* (int): nodata flag.
+        - *minmax* (list): list with xmin, ymin, xmax, ymax.
+    field : str, default None
+        The field of the shapefile containing the values for the raster.
+    alltouched : bool, default True
         Enables the ALL_TOUCHED rasterization option so that all pixels
         touched by lines or polygons will be updated.
-    dtype: str, default None
-        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+    dtype : str, default "Float64"
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.
 
-    Note
-    ----
-    Uses and relies on gdal_rasterize CLI
+    Notes
+    -----
+    Uses and relies on gdal_rasterize CLI.
     """
     # if rst_out.exists():
     #    delete_rst(rst_out)
@@ -839,15 +836,20 @@ def vct_to_rst_field(
 
 
 def execute_saga(cmd_args):
-    """Run saga executable and catch non-informative error
+    """Run saga executable and catch non-informative error.
 
     This function catches saga error command and ignores 'corrupted size vs. prev_size
     in fastbins' error in case output runs from saga are okay.
 
     Parameters
     ----------
-    cmd_args: list
-        Saga command
+    cmd_args : list
+        Saga command.
+
+    Raises
+    ------
+    IOError
+        If command is not a saga command.
     """
     if "saga_cmd" not in cmd_args:
         msg = f"{' '.join(cmd_args)} is not a saga command."
@@ -865,25 +867,24 @@ def execute_saga(cmd_args):
 
 @valid_input(dict={"vct_point": valid_pointvector, "rst_template": valid_raster})
 def points_to_raster(vct_point, rst_out, rst_template, field, dtype):
-    """Converts a polygon shapefile to a raster
+    """Convert a point shapefile to a raster.
 
     Parameters
     ----------
-    vct_point: str or pathlib.Path
-        File path of input point shapefile
-    rst_out: str or pathlib.Path
-        File path of output rasterfile
-    rst_template: str or pathlib.Path
-        File path to a template raster
-    field: str
-        The field of the shapefile containing the values for the raster
-    dtype: str, default None
-        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32...
+    vct_point : str or pathlib.Path
+        File path of input point shapefile.
+    rst_out : str or pathlib.Path
+        File path of output rasterfile.
+    rst_template : str or pathlib.Path
+        File path to a template raster.
+    field : str
+        The field of the shapefile containing the values for the raster.
+    dtype : str
+        Data type of the values, e.g. Byte/Int16/UInt16/UInt32/Int32/Float32.
 
-    Note
+    Notes
     -----
-    Uses and relies on saga_cmd CLI
-
+    Uses and relies on saga_cmd CLI.
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "grid_gridding", "0"]
     cmd_args += ["-INPUT", str(vct_point), "-FIELD", str(field)]
@@ -1009,23 +1010,23 @@ def create_spatial_index(vct_in):
 
 @valid_input(dict={"rst": valid_raster})
 def load_raster(rst, return_bounds=False):
-    """load raster with rasterio
+    """read raster with rasterio as a numpy array.
 
     Parameters
     ----------
     rst: str or pathlib.Path
         File path of the file, .rst arr.
     return_bounds: bool, default False
-        Flag to indicate whether a bounds of the arr should be returned.
+        Flag to indicate whether the bounds of the arr should be returned.
 
     Returns
     -------
     arr: numpy.ndarray
         Array format of raster file.
-    bounds: list
-        List of bounds (xmin,ymin,xmax,ymax).
     profile: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
+    bounds: list
+        List of bounds (xmin,ymin,xmax,ymax) if return_bounds is True
     """
     # load
     try:
@@ -1234,20 +1235,20 @@ def rasterprofile_to_rstparams(profile):
 
 
 def rstparams_to_rasterprofile(rstparams, epsg=None):
-    """Transform rstparams dictionary to to rasterio rasterprofile dictionary
+    """Transform rstparams dictionary to rasterio raster profile dictionary
 
     Parameters
     ----------
-    rstparams: rasterio.profiles
-        See :class:`rasterio.profiles.Profile`
+    rstparams: dict
+        gdal dictionary holding all metadata for idrisi rasters
     epsg: str, default None
         The epsg code defining the coordinate system of the raster,
         format = "EPSG:XXXXX"
 
     Returns
     -------
-    rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
+    profile: rasterio.profiles
+        See :class:`rasterio.profiles.Profile`
 
     """
     profile = {"nodata": rstparams["nodata"]}
@@ -1292,7 +1293,7 @@ def set_no_data_rst(
     profile: rasterio.profiles
         See :class:`rasterio.profiles.Profile`
     dtype: numpy.dtype, default None
-        e.g. np.float64, np.float32, ..
+        e.g. np.float64, np.float32, ...
     nodata_val: int, default -9999
         Standard value for nodata
     """
@@ -1370,7 +1371,7 @@ def set_no_data_arr(arr, arr_mask, nodata):
 
 
 def set_dtype_arr_rst(arr, profile, dtype=None):
-    """Set type for an array
+    """Set dtype for a numpy array and update the raster profile
 
     Parameters
     ----------
@@ -1688,7 +1689,7 @@ def define_extent_from_vct(
 def create_filename(suffix, directory=Path("tempfiles_pywatemsedem")):
     """Create temporary filename in a dedicated directory
 
-    Create directory if it is not exists
+    Create directory if it does not exist
 
     Only filenames are generated, not the files
 
@@ -1800,16 +1801,21 @@ def process_mask_shape_from_raster_file(gdf_catchment, catchment_value=1):
 
 
 def mask_array_with_val(arr, mask, mask_val):
-    """Masking array by a mask
+    """Mask an array using a mask array.
 
     Parameters
-    ---------
-    arr: numpy.ndarray
-        array of which values are masked
-    mask: numpy.ndarray
-        masking array with same dimensions as arr
-    mask_val: float or int
-            masking arr when mask is mask_val
+    ----------
+    arr : numpy.ndarray
+        Array of which values are masked.
+    mask : numpy.ndarray
+        Masking array with same dimensions as arr.
+    mask_val : float or int
+        Values in mask where arr should be masked.
+
+    Returns
+    -------
+    numpy.ma.MaskedArray
+        Masked array where mask equals mask_val.
     """
     arr_masked = np.ma.masked_where(mask == mask_val, arr)
     return arr_masked

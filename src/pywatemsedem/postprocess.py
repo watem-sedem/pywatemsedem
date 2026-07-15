@@ -82,8 +82,8 @@ def valid_routing_sedi_out_vector(self):
     """Check if routing vector is defined"""
     if self.vct_routing is None:
         msg = (
-            "No routing vector (with sedi_out) created, please rirst run "
-            "'couple_sedi_out_routing."
+            "No routing vector (with sedi_out) created, please first run "
+            "'couple_sediout_routing."
         )
         raise IOError(msg)
 
@@ -3387,7 +3387,7 @@ class PostProcess(Factory):
         cond = ~df_subcatchments["lnduSource"].isnull()
         unique_ids = df_subcatchments.loc[cond, "lnduSource"].unique()
 
-        #  set pixels that have no parcel_id (lnduSource) wihtin the
+        #  set pixels that have no parcel_id (lnduSource) within the
         #  unique_ids list to nodata
         cond = df_sedi_out_parcel["lnduSource"].isin(unique_ids)
         df_sedi_out_parcel.loc[~cond, "SediOut"] = profile["nodata"]
@@ -3770,13 +3770,13 @@ class PostProcess(Factory):
         logger.info("Looking for sinks in routing...")
         txt = self.files["txt_routing"]
         if txt.exists():
-            # check if file is tab seperated
+            # check if file is tab separated
             with open(txt) as f:
                 first_line = f.readline()
             if "\t" not in first_line:
                 df_routing = pd.read_csv(
                     txt, sep=";"
-                )  # old model runs used ; as seperator in routing file
+                )  # old model runs used ; as separator in routing file
             else:
                 df_routing = pd.read_csv(txt, sep="\t")
 

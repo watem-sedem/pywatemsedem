@@ -41,14 +41,26 @@ def ensure_folder(
 
 @dataclass
 class CatchmentFolder:
-    """Path container for the catchment-level input structure.
+    """Data class for managing catchment folder structure.
+
+    This class defines and manages the folder structure for catchment data,
+    including paths for vector and raster files.
 
     Parameters
     ----------
     home_folder : Path
-        Root directory where catchment data is stored.
+        Root folder path for the catchment.
     resolution : int
-        Raster resolution in meters used to build the raster folder name.
+        Spatial resolution in meters, used to name the raster folder.
+
+    Attributes
+    ----------
+    catchment_folder : Path
+        Path to the 'Data_Bekken' subfolder.
+    vct_folder : Path
+        Path to the vector files folder ('Shps').
+    rst_folder : Path
+        Path to the raster files folder ('Rst_{resolution}m').
     """
 
     home_folder: Path
