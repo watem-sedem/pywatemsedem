@@ -126,6 +126,22 @@ class UserChoice:
 
 
 class WSMixin:
+    """Mixin class providing common functionality for choice container classes.
+
+    This mixin provides shared methods for representing, validating, and
+    loading configuration values from INI files. It is inherited by
+    Options, Parameters, Extensions, ExtensionsParameters, and Output classes.
+
+    Methods
+    -------
+    check_mandatory_values()
+        Validate that all mandatory UserChoice attributes have values set.
+    apply_defaults()
+        Apply default values to all UserChoice attributes.
+    read_values_from_ini(ini)
+        Load values from an INI configuration file.
+    """
+
     def __repr__(self):
         """String representation of the Choices class"""
         print_ = []
@@ -172,8 +188,36 @@ class WSMixin:
 
 
 class Options(WSMixin):
+    """Container for WaTEM/SEDEM model algorithm options.
+
+    This class holds configuration options that control which algorithms
+    are used for calculating erosion factors (L, S, TC models), routing
+    behavior, and other computational settings.
+
+    Attributes
+    ----------
+    l_model : UserChoice
+        Length-slope factor calculation method ('Desmet1996_Vanoost2003' or
+        'Desmet1996_McCool').
+    s_model : UserChoice
+        Slope factor calculation method ('Nearing1997' or 'McCool1987').
+    tc_model : UserChoice
+        Transport capacity model ('VanOost2000' or 'Verstraeten2007').
+    only_routing : UserChoice
+        Flag to run only the routing algorithm without erosion calculation.
+    only_watemsedem : UserChoice
+        Flag to run only the WaTEM/SEDEM erosion model.
+    calculate_tillage_erosion : UserChoice
+        Flag to include tillage erosion in calculations.
+
+    See Also
+    --------
+    Parameters : Model parameter values.
+    Extensions : Optional model extensions.
+    """
+
     def __init__(self):
-        """Initialise WSOptions"""
+        """Initialize the Options instance with default algorithm choices."""
         self._l_model = UserChoice(
             "L model",
             "Options",
@@ -321,8 +365,43 @@ class Options(WSMixin):
 
 
 class Parameters(WSMixin):
+    """Container for WaTEM/SEDEM model parameters.
+
+    This class holds the numerical parameters required for erosion
+    calculations, including the R-factor, parcel connectivity values,
+    trapping efficiencies, and kernel sizes.
+
+    Attributes
+    ----------
+    r_factor : UserChoice
+        Rainfall erosivity factor (R-factor) for the study area.
+    parcel_connectivity_cropland : UserChoice
+        Connectivity percentage for cropland parcels (0-100).
+    parcel_connectivity_grasstrips : UserChoice
+        Connectivity percentage for grass strips (0-100).
+    parcel_connectivity_forest : UserChoice
+        Connectivity percentage for forest parcels (0-100).
+    parcel_trapping_eff_cropland : UserChoice
+        Sediment trapping efficiency for cropland (0-100).
+    parcel_trapping_eff_pasture : UserChoice
+        Sediment trapping efficiency for pasture (0-100).
+    parcel_trapping_eff_forest : UserChoice
+        Sediment trapping efficiency for forest (0-100).
+    max_kernel : UserChoice
+        Maximum kernel size for flow routing calculations.
+    max_kernel_river : UserChoice
+        Maximum kernel size for river routing calculations.
+    bulk_density : UserChoice
+        Soil bulk density in kg/m³.
+
+    See Also
+    --------
+    Options : Model algorithm options.
+    ExtensionsParameters : Parameters for optional extensions.
+    """
+
     def __init__(self):
-        """Initialise WSParameters"""
+        """Initialize the Parameters instance with required model parameters."""
         self._r_factor = UserChoice("R factor", "Parameters", float, True, None)
         self._parcel_connectivity_cropland = UserChoice(
             "Parcel connectivity cropland", "Parameters", int, True, None
@@ -570,8 +649,55 @@ class Parameters(WSMixin):
 
 
 class Extensions(WSMixin):
+    """Container for WaTEM/SEDEM optional model extensions.
+
+    This class holds boolean flags that enable or disable optional
+    features and extensions in the WaTEM/SEDEM model, such as curve
+    number calculations, sewer systems, buffers, and output options.
+
+    Attributes
+    ----------
+    curve_number : UserChoice
+        Enable curve number based runoff calculations.
+    include_sewers : UserChoice
+        Include sewer system in routing calculations.
+    create_ktc_map : UserChoice
+        Generate transport capacity coefficient map.
+    create_ktil_map : UserChoice
+        Generate tillage transport coefficient map.
+    estimate_clay_content : UserChoice
+        Estimate clay content from parent material.
+    include_tillage_direction : UserChoice
+        Account for tillage direction in calculations.
+    include_buffers : UserChoice
+        Include buffer strips in the model.
+    include_ditches : UserChoice
+        Include ditches in routing calculations.
+    include_dams : UserChoice
+        Include dams in routing calculations.
+    output_per_river_segment : UserChoice
+        Generate output aggregated per river segment.
+    adjusted_slope : UserChoice
+        Use adjusted slope calculations.
+    buffer_reduce_area : UserChoice
+        Reduce contributing area at buffer locations.
+    force_routing : UserChoice
+        Force specific routing directions.
+    river_routing : UserChoice
+        Enable river routing calculations.
+    manual_outlet_selection : UserChoice
+        Allow manual selection of watershed outlets.
+    convert_output : UserChoice
+        Convert output to alternative formats.
+
+    See Also
+    --------
+    ExtensionsParameters : Parameters for enabled extensions.
+    Options : Model algorithm options.
+    """
+
     def __init__(self):
-        """Initialise WSExtensions"""
+        """Initialize the Extensions instance with all extensions disabled."""
         self._curve_number = UserChoice(
             "Curve Number", "Extensions", bool, False, False
         )
@@ -987,8 +1113,47 @@ class Extensions(WSMixin):
 
 
 class ExtensionsParameters(WSMixin):
+    """Container for parameters associated with enabled model extensions.
+
+    This class holds numerical parameters that are required when specific
+    extensions are enabled. The mandatory status of each parameter depends
+    on whether its associated extension is active.
+
+    Parameters
+    ----------
+    extensions : Extensions
+        Instance of Extensions class containing the enabled/disabled
+        status of each model extension.
+
+    Attributes
+    ----------
+    sewer_exit : UserChoice
+        Sewer exit location identifier (required if include_sewers is True).
+    clay_content_parent_material : UserChoice
+        Clay content of parent material (required if estimate_clay_content is True).
+    antecedent_rainfall : UserChoice
+        5-day antecedent rainfall in mm (required if curve_number is True).
+    stream_velocity : UserChoice
+        Stream flow velocity in m/s (required if curve_number is True).
+    alpha : UserChoice
+        Alpha parameter for curve number calculations.
+    beta : UserChoice
+        Beta parameter for curve number calculations.
+    ls_correction : UserChoice
+        LS factor correction multiplier.
+    ktc_low : UserChoice
+        Low transport capacity coefficient (required if create_ktc_map is True).
+    ktc_high : UserChoice
+        High transport capacity coefficient (required if create_ktc_map is True).
+
+    See Also
+    --------
+    Extensions : Boolean flags for enabling extensions.
+    Parameters : Core model parameters.
+    """
+
     def __init__(self, extensions):
-        """Generate WSExtensionsParameters instance .
+        """Initialize ExtensionsParameters based on enabled extensions.
 
         Parameters
         ----------
@@ -1562,8 +1727,46 @@ class ExtensionsParameters(WSMixin):
 
 
 class Output(WSMixin):
+    """Container for WaTEM/SEDEM output configuration options.
+
+    This class holds boolean flags that control which intermediate and
+    final results are written to output files during model execution.
+
+    Attributes
+    ----------
+    write_aspect : UserChoice
+        Write aspect (flow direction) raster to output.
+    write_ls_factor : UserChoice
+        Write LS factor raster to output.
+    write_upstream_area : UserChoice
+        Write upstream contributing area raster to output.
+    write_slope : UserChoice
+        Write slope raster to output.
+    write_routing_table : UserChoice
+        Write routing table to output.
+    write_routing_column_row : UserChoice
+        Write routing column/row information to output.
+    write_rusle : UserChoice
+        Write RUSLE erosion values to output.
+    write_sediment_export : UserChoice
+        Write sediment export raster to output.
+    write_water_erosion : UserChoice
+        Write water erosion raster to output.
+    write_rainfall_excess : UserChoice
+        Write rainfall excess raster to output.
+    write_total_runoff : UserChoice
+        Write total runoff raster to output.
+    export_saga : UserChoice
+        Export grids in SAGA GIS format (.sgrd).
+
+    See Also
+    --------
+    Options : Model algorithm options.
+    Choices : Main container combining all choice categories.
+    """
+
     def __init__(self):
-        """Initialise WSOutput"""
+        """Initialize the Output instance with all output options disabled."""
         self._write_aspect = UserChoice("Write aspect", "Output", bool, False, False)
         self._write_ls_factor = UserChoice(
             "Write LS factor", "Output", bool, False, False
@@ -1849,21 +2052,62 @@ class Output(WSMixin):
 
 
 class Choices:
+    """Main container aggregating all WaTEM/SEDEM configuration categories.
+
+    This class serves as the top-level container that combines all
+    configuration components (options, parameters, extensions, extension
+    parameters, and output settings) into a single object for convenient
+    access and management.
+
+    Parameters
+    ----------
+    options : pywatemsedem.choices.Options
+        Instance containing model algorithm options.
+    parameters : pywatemsedem.choices.Parameters
+        Instance containing core model parameters.
+    extensions : pywatemsedem.choices.Extensions
+        Instance containing extension enable/disable flags.
+    extensionparameters : pywatemsedem.choices.ExtensionsParameters
+        Instance containing parameters for enabled extensions.
+    output : pywatemsedem.choices.Output
+        Instance containing output configuration options.
+
+    Attributes
+    ----------
+    options : pywatemsedem.choices.Options
+        Model algorithm options.
+    parameters : pywatemsedem.choices.Parameters
+        Core model parameters.
+    extensions : pywatemsedem.choices.Extensions
+        Extension enable/disable flags.
+    extensionparameters : pywatemsedem.choices.ExtensionsParameters
+        Parameters for enabled extensions.
+    output : pywatemsedem.choices.Output
+        Output configuration options.
+
+    Examples
+    --------
+    >>> from pywatemsedem.choices import (
+    ...     Options, Parameters, Extensions, ExtensionsParameters, Output, Choices
+    ... )
+    >>> options = Options()
+    >>> parameters = Parameters()
+    >>> extensions = Extensions()
+    >>> ext_params = ExtensionsParameters(extensions)
+    >>> output = Output()
+    >>> choices = Choices(options, parameters, extensions, ext_params, output)
+
+    See Also
+    --------
+    pywatemsedem.choices.Options : Model algorithm options.
+    pywatemsedem.choices.Parameters : Core model parameters.
+    pywatemsedem.choices.Extensions : Optional model extensions.
+    pywatemsedem.choices.ExtensionsParameters : Extension-specific parameters.
+    pywatemsedem.choices.Output : Output configuration options.
+    """
+
     def __init__(self, options, parameters, extensions, extensionparameters, output):
-        """Initialise Choices container
-
-        Parameters
-        ----------
-        options: pywatemsedem.choices.Options
-            Instance of :class:`pywatemsedem options
-            <pywatemsedem.core.choices.WSOptions>` containing the model options.
-        parameters: pywatemsedem.core.choices.WSParameters
-            Instance of :class:`pywatemsedem parameters
-            <pywatemsedem.core.choices.WSParameters>` containing the model parameters.
-        extensions: pywatemsedem.core.choices.WSExtensions
-            Instance of :class:`pywatemsed
-
-        """
+        """Initialize the Choices container with all configuration components."""
         self.options = options
         self.parameters = parameters
         self.extensions = extensions
