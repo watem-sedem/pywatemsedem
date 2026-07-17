@@ -197,18 +197,20 @@ class Options(WSMixin):
     Attributes
     ----------
     l_model : UserChoice
-        Length-slope factor calculation method ('Desmet1996_Vanoost2003' or
-        'Desmet1996_McCool').
+        L-factor calculation method ('Desmet1996_Vanoost2003' or
+        'Desmet1996_McCool'). For documentation, see :ref:`here <watemsedem:lmodel>`.
     s_model : UserChoice
-        Slope factor calculation method ('Nearing1997' or 'McCool1987').
+        S-factor calculation method ('Nearing1997' or 'McCool1987').
+        For documentation, see :ref:`here <watemsedem:smodel>`.
     tc_model : UserChoice
         Transport capacity model ('VanOost2000' or 'Verstraeten2007').
+        For documentation, see :ref:`here <watemsedem:tcmodel>`.
     only_routing : UserChoice
         Flag to run only the routing algorithm without erosion calculation.
-    only_watemsedem : UserChoice
-        Flag to run only the WaTEM/SEDEM erosion model.
+        For documentation, see :ref:`here <watemsedem:onlyrouting>`.
     calculate_tillage_erosion : UserChoice
         Flag to include tillage erosion in calculations.
+        For documentation, see :ref:`here <watemsedem:calctileros>`.
 
     See Also
     --------
@@ -375,24 +377,34 @@ class Parameters(WSMixin):
     ----------
     r_factor : UserChoice
         Rainfall erosivity factor (R-factor) for the study area.
+        For documentation, see :ref:`here <watemsedem:rfactor_var>`.
     parcel_connectivity_cropland : UserChoice
-        Connectivity percentage for cropland parcels (0-100).
+        Parcel connectivity for cropland parcels (0-100).
+        For documentation, see :ref:`here <watemsedem:parcelconncrop>`.
     parcel_connectivity_grasstrips : UserChoice
-        Connectivity percentage for grass strips (0-100).
+        Parcel connectivity for grass strips (0-100).
+        For documentation, see :ref:`here <watemsedem:parcelconngras>`.
     parcel_connectivity_forest : UserChoice
-        Connectivity percentage for forest parcels (0-100).
+        Parcel connectivity for forest parcels (0-100).
+        For documentation, see :ref:`here <watemsedem:parcelconnforest>`.
     parcel_trapping_eff_cropland : UserChoice
-        Sediment trapping efficiency for cropland (0-100).
+        Parcel trapping efficiency for cropland (0-100).
+        For documentation, see :ref:`here <watemsedem:parceltrapppingcrop>`.
     parcel_trapping_eff_pasture : UserChoice
-        Sediment trapping efficiency for pasture (0-100).
+        Parcel trapping efficiency for pasture (0-100).
+        For documentation, see :ref:`here <watemsedem:parceltrappingpasture>`.
     parcel_trapping_eff_forest : UserChoice
-        Sediment trapping efficiency for forest (0-100).
+        Parcel trapping efficiency for forest (0-100).
+        For documentation, see :ref:`here <watemsedem:parceltrappingforest>`.
     max_kernel : UserChoice
         Maximum kernel size for flow routing calculations.
+        For documentation, see :ref:`here <watemsedem:maxkernel>`.
     max_kernel_river : UserChoice
         Maximum kernel size for river routing calculations.
+        For documentation, see :ref:`here <watemsedem:maxkernelriver>`.
     bulk_density : UserChoice
         Soil bulk density in kg/m³.
+        For documentation, see :ref:`here <watemsedem:bulkdensity>`.
 
     See Also
     --------
@@ -659,36 +671,57 @@ class Extensions(WSMixin):
     ----------
     curve_number : UserChoice
         Enable curve number based runoff calculations.
+        For documentation, see :ref:`here <watemsedem:simple>`.
     include_sewers : UserChoice
         Include sewer system in routing calculations.
+        For documentation, see :ref:`here <watemsedem:inlcudesewers>`.
     create_ktc_map : UserChoice
-        Generate transport capacity coefficient map.
+        Generate ktc map by watem-sedem. If set to False, pywatemsedem
+        can make the ktc map.
+        For documentation, see :ref:`here <watemsedem:createktc>`.
     create_ktil_map : UserChoice
-        Generate tillage transport coefficient map.
+        Generate ktil map.
+        For documentation, see :ref:`here <watemsedem:createktil>`.
     estimate_clay_content : UserChoice
         Estimate clay content from parent material.
+        For documentation, see :ref:`here <watemsedem:estimclay>`.
     include_tillage_direction : UserChoice
         Account for tillage direction in calculations.
+        For documentation, see :ref:`here <watemsedem:includetillagedirection>`.
     include_buffers : UserChoice
-        Include buffer strips in the model.
+        Include buffers.
+        For documentation, see :ref:`here <watemsedem:includebuffers>`.
     include_ditches : UserChoice
-        Include ditches in routing calculations.
+        Include ditches.
+        For documentation, see :ref:`here <watemsedem:includeditches>`.
     include_dams : UserChoice
-        Include dams in routing calculations.
+        Include dams.
+        For documentation, see :ref:`here <watemsedem:includedams>`.
     output_per_river_segment : UserChoice
         Generate output aggregated per river segment.
+        For documentation, see :ref:`here <watemsedem:outputsegment>`.
     adjusted_slope : UserChoice
         Use adjusted slope calculations.
+        For documentation, see :ref:`here <watemsedem:adjustslope>`.
     buffer_reduce_area : UserChoice
         Reduce contributing area at buffer locations.
+        For documentation, see :ref:`here <watemsedem:bufferreduce>`.
     force_routing : UserChoice
         Force specific routing directions.
+        For documentation, see :ref:`here <watemsedem:forcerouting>`.
     river_routing : UserChoice
         Enable river routing calculations.
+        For documentation, see :ref:`here <watemsedem:riverrouting>`.
     manual_outlet_selection : UserChoice
-        Allow manual selection of watershed outlets.
+        Add outlets manually to the model.
+        For documentation, see :ref:`here <watemsedem:manualoutlet>`.
     convert_output : UserChoice
-        Convert output to alternative formats.
+    calibrate : UserChoice
+        Enable calibration mode for ktc factors.
+        For documentation, see :ref:`here <watemsedem:calibrate>`.
+    cardinal_routing_river : UserChoice
+        Use only cardinal directions for routing to river pixels.
+        For documentation, see :ref:`here <watemsedem:cardinalrouting>`.
 
     See Also
     --------
@@ -1121,7 +1154,7 @@ class ExtensionsParameters(WSMixin):
 
     Parameters
     ----------
-    extensions : Extensions
+    extensions : pywatemsedem.choices.Extensions
         Instance of Extensions class containing the enabled/disabled
         status of each model extension.
 
@@ -1129,22 +1162,61 @@ class ExtensionsParameters(WSMixin):
     ----------
     sewer_exit : UserChoice
         Sewer exit location identifier (required if include_sewers is True).
+        For documentation, see :ref:`here <watemsedem:sewerexit>`.
     clay_content_parent_material : UserChoice
         Clay content of parent material (required if estimate_clay_content is True).
+        For documentation, see :ref:`here <watemsedem:claycontent>`.
     antecedent_rainfall : UserChoice
         5-day antecedent rainfall in mm (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:5dayrainfall>`.
     stream_velocity : UserChoice
         Stream flow velocity in m/s (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:streamvelocity>`.
     alpha : UserChoice
         Alpha parameter for curve number calculations.
+        For documentation, see :ref:`here <watemsedem:alpha>`.
     beta : UserChoice
         Beta parameter for curve number calculations.
+        For documentation, see :ref:`here <watemsedem:beta>`.
     ls_correction : UserChoice
         LS factor correction multiplier.
+        For documentation, see :ref:`here <watemsedem:lscorrection>`.
     ktc_low : UserChoice
         Low transport capacity coefficient (required if create_ktc_map is True).
+        For documentation, see :ref:`here <watemsedem:ktclow>`.
     ktc_high : UserChoice
         High transport capacity coefficient (required if create_ktc_map is True).
+        For documentation, see :ref:`here <watemsedem:ktchigh>`.
+    ktc_limit : UserChoice
+        C-factor threshold for ktc classification.
+        For documentation, see :ref:`here <watemsedem:ktclimit>`.
+    ktil_default : UserChoice
+        Default ktil value for tillage erosion.
+        For documentation, see :ref:`here <watemsedem:ktildefault>`.
+    ktil_threshold : UserChoice
+        C-factor threshold for ktil classification.
+        For documentation, see :ref:`here <watemsedem:ktilthres>`.
+    desired_timestep : UserChoice
+        Model timestep in minutes (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:timestep>`.
+    endtime_model : UserChoice
+        Total simulation time in minutes (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:endtime>`.
+    ktc_low_lower : UserChoice
+        Lower bound of ktc_low range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktclow_lower>`.
+    ktc_low_upper : UserChoice
+        Upper bound of ktc_low range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktclow_upper>`.
+    ktc_high_lower : UserChoice
+        Lower bound of ktc_high range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktchigh_lower>`.
+    ktc_high_upper : UserChoice
+        Upper bound of ktc_high range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktchigh_upper>`.
+    steps : UserChoice
+        Number of calibration steps between lower and upper ktc values.
+        For documentation, see :ref:`here <watemsedem:steps>`.
 
     See Also
     --------
@@ -1735,29 +1807,41 @@ class Output(WSMixin):
     Attributes
     ----------
     write_aspect : UserChoice
-        Write aspect (flow direction) raster to output.
+        Write aspect raster to output.
+        For documentation, see :ref:`here <watemsedem:writeaspect>`.
     write_ls_factor : UserChoice
         Write LS factor raster to output.
+        For documentation, see :ref:`here <watemsedem:writels>`.
     write_upstream_area : UserChoice
-        Write upstream contributing area raster to output.
+        Write upstream area raster to output.
+        For documentation, see :ref:`here <watemsedem:writeuparea>`.
     write_slope : UserChoice
         Write slope raster to output.
+        For documentation, see :ref:`here <watemsedem:writeslope>`.
     write_routing_table : UserChoice
         Write routing table to output.
+        For documentation, see :ref:`here <watemsedem:writerouting>`.
     write_routing_column_row : UserChoice
         Write routing column/row information to output.
+        For documentation, see :ref:`here <watemsedem:writeroutingrc>`.
     write_rusle : UserChoice
-        Write RUSLE erosion values to output.
+        Write RUSLE raster to output.
+        For documentation, see :ref:`here <watemsedem:writerusle>`.
     write_sediment_export : UserChoice
         Write sediment export raster to output.
+        For documentation, see :ref:`here <watemsedem:writesedexport>`.
     write_water_erosion : UserChoice
         Write water erosion raster to output.
+        For documentation, see :ref:`here <watemsedem:writerwatereros>`.
     write_rainfall_excess : UserChoice
         Write rainfall excess raster to output.
+        For documentation, see :ref:`here <watemsedem:writerainfallexcess>`.
     write_total_runoff : UserChoice
         Write total runoff raster to output.
+        For documentation, see :ref:`here <watemsedem:writetotalrunoff>`.
     export_saga : UserChoice
         Export grids in SAGA GIS format (.sgrd).
+        For documentation, see :ref:`here <watemsedem:sagagrids>`.
 
     See Also
     --------
