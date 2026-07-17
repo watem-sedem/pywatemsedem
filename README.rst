@@ -1,6 +1,11 @@
 pywatemsedem
 ============
 
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+
+
+
 The pywatemsedem package is a Python wrapper for.
 `WaTEM/SEDEM <https://watem-sedem.github.io/watem-sedem/>`_.
 The aim of the pywatemsedem package is to:

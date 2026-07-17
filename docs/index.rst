@@ -1,36 +1,83 @@
 .. _changes:
 
-.. include:: ../README.rst
+Welcome to pywatemsedem's documentation!
+========================================
 
-Contents
-========
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+
+A Python wrapper for WaTEM/SEDEM.
+
+* Free software: MIT license
+* Documentation: https://watem-sedem.github.io/pywatemsedem/
+
+Introduction
+------------
+
+The pywatemsedem package is a Python wrapper for `WaTEM/SEDEM <https://watem-sedem.github.io/watem-sedem/>`_.
+
+The goal of pywatemsedem is to make it easier to produce and process the input and output of WaTEM/SEDEM.
+The package provides tools to interact with WaTEM/SEDEM, such as running the model and processing the output.
+
+Pywatemsedem is developed to facilitate standardized and reproducible
+applications of the WaTEM/SEDEM model.
+The package provides a user-friendly interface to set up and run the model,
+as well as tools for visualizing and analyzing the model output.
+
+The python package is developed and maintained by Fluves, funded by the
+Departement Omgeving of the Vlaamse Overheid, but everyone is welcome to
+contribute.
+
+The package is implemented in Python and best used with the tutorial
+notebooks available in this documentation.
+
+Getting started
+---------------
+
+After :ref:`installation` you can start using the package with the tutorial notebooks
+available in this documentation.
+
+- A quick start to get to know the basic api  <getting-started/api.ipynb>
+- A tutorial on how to use the User Choices <getting-started/userchoices.rst>
+- A tutorial on how to calibrate WaTEM/SEDEM <getting-started/calibrate.ipynb>
+
+If you have already used WaTEM/SEDEM in the past and want to use the visualisation and
+(post)processing tools of pywatemsedem, you can start with the tutorial on the
+modelinput and output modules <getting-started/modelinput_modeloutput.rst>.
+
 
 .. toctree::
    :caption: pywatemsedem
    :maxdepth: 2
 
+   Home <self>
    Installation <installation>
-   Module Reference <api/modules>
 
 .. toctree::
    :caption: Getting started
    :maxdepth: 1
 
-   Data processing<getting-started/api.ipynb>
+   User Guide <getting-started/api.ipynb>
+   How to use the User Choices <getting-started/userchoices.rst>
    Calibrating WaTEM/SEDEM <getting-started/calibrate.ipynb>
+
+.. toctree::
+   :caption: Advanced guide
+   :maxdepth: 1
    Processing rasters and vector <getting-started/geo.rst>
-   User Choices <getting-started/userchoices.rst>
-   How to apply the user choices <getting-started/choices.ipynb>
    IO <getting-started/io.rst>
+   Module Reference <api/modules>
 
 .. toctree::
    :caption: Developer guide
    :maxdepth: 1
 
    Contributing <contributing>
-   Authors <authors>
+   Development <development>
+   API Reference <api/modules>
    Changelog <changelog>
    License <license>
+   Authors <authors>
    Code of conduct <codeofconduct>
 
 
