@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem package &mdash; pywatemsedem 1.1.0.post1.dev136+g5fe24695f documentation</title>
+  <title>pywatemsedem package &mdash; pywatemsedem 1.1.0.post1.dev141+gb8b58607b documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=3fabc56e"></script>
+      <script src="../_static/documentation_options.js?v=b2b41614"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1431,7 +1431,7 @@ See <a class="reference external" href="https://watem-sedem.github.io/watem-sede
 <dt class="sig sig-object py" id="id0">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">hydrological_soil_group</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>CN hydrological soil group raster</p>
-<p>This raster (int) holds the four categories (see <a href="#id19"><span class="problematic" id="id1">[2]_</span></a>):</p>
+<p>This raster (int) holds the four categories (see <a href="#id86"><span class="problematic" id="id1">[2]_</span></a>):</p>
 <ul class="simple">
 <li><p><em>A</em> (value 1): Soils in this group have low runoff potential when thoroughly
 wet.</p></li>
@@ -1959,15 +1959,341 @@ on C-factor.</p>
 <dt class="sig sig-object py" id="pywatemsedem.choices.Choices">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">Choices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extensions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extensionparameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#Choices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.Choices" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.13/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Main container aggregating all WaTEM/SEDEM configuration categories.</p>
+<p>This class serves as the top-level container that combines all
+configuration components (options, parameters, extensions, extension
+parameters, and output settings) into a single object for convenient
+access and management.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<a class="reference internal" href="#pywatemsedem.choices.Options" title="pywatemsedem.choices.Options"><em>pywatemsedem.choices.Options</em></a>) – Instance containing model algorithm options.</p></li>
+<li><p><strong>parameters</strong> (<a class="reference internal" href="#pywatemsedem.choices.Parameters" title="pywatemsedem.choices.Parameters"><em>pywatemsedem.choices.Parameters</em></a>) – Instance containing core model parameters.</p></li>
+<li><p><strong>extensions</strong> (<a class="reference internal" href="#pywatemsedem.choices.Extensions" title="pywatemsedem.choices.Extensions"><em>pywatemsedem.choices.Extensions</em></a>) – Instance containing extension enable/disable flags.</p></li>
+<li><p><strong>extensionparameters</strong> (<a class="reference internal" href="#pywatemsedem.choices.ExtensionsParameters" title="pywatemsedem.choices.ExtensionsParameters"><em>pywatemsedem.choices.ExtensionsParameters</em></a>) – Instance containing parameters for enabled extensions.</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="#pywatemsedem.choices.Output" title="pywatemsedem.choices.Output"><em>pywatemsedem.choices.Output</em></a>) – Instance containing output configuration options.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Choices.options">
+<span class="sig-name descname"><span class="pre">options</span></span><a class="headerlink" href="#pywatemsedem.choices.Choices.options" title="Link to this definition"></a></dt>
+<dd><p>Model algorithm options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.Options" title="pywatemsedem.choices.Options">pywatemsedem.choices.Options</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Choices.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#pywatemsedem.choices.Choices.parameters" title="Link to this definition"></a></dt>
+<dd><p>Core model parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.Parameters" title="pywatemsedem.choices.Parameters">pywatemsedem.choices.Parameters</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Choices.extensions">
+<span class="sig-name descname"><span class="pre">extensions</span></span><a class="headerlink" href="#pywatemsedem.choices.Choices.extensions" title="Link to this definition"></a></dt>
+<dd><p>Extension enable/disable flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.Extensions" title="pywatemsedem.choices.Extensions">pywatemsedem.choices.Extensions</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Choices.extensionparameters">
+<span class="sig-name descname"><span class="pre">extensionparameters</span></span><a class="headerlink" href="#pywatemsedem.choices.Choices.extensionparameters" title="Link to this definition"></a></dt>
+<dd><p>Parameters for enabled extensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.ExtensionsParameters" title="pywatemsedem.choices.ExtensionsParameters">pywatemsedem.choices.ExtensionsParameters</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Choices.output">
+<span class="sig-name descname"><span class="pre">output</span></span><a class="headerlink" href="#pywatemsedem.choices.Choices.output" title="Link to this definition"></a></dt>
+<dd><p>Output configuration options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.Output" title="pywatemsedem.choices.Output">pywatemsedem.choices.Output</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.choices</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">Options</span><span class="p">,</span> <span class="n">Parameters</span><span class="p">,</span> <span class="n">Extensions</span><span class="p">,</span> <span class="n">ExtensionsParameters</span><span class="p">,</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Choices</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span> <span class="o">=</span> <span class="n">Options</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extensions</span> <span class="o">=</span> <span class="n">Extensions</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ext_params</span> <span class="o">=</span> <span class="n">ExtensionsParameters</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">choices</span> <span class="o">=</span> <span class="n">Choices</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">ext_params</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pywatemsedem.choices.Options" title="pywatemsedem.choices.Options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pywatemsedem.choices.Options</span></code></a></dt><dd><p>Model algorithm options.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Parameters" title="pywatemsedem.choices.Parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pywatemsedem.choices.Parameters</span></code></a></dt><dd><p>Core model parameters.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Extensions" title="pywatemsedem.choices.Extensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pywatemsedem.choices.Extensions</span></code></a></dt><dd><p>Optional model extensions.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.ExtensionsParameters" title="pywatemsedem.choices.ExtensionsParameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pywatemsedem.choices.ExtensionsParameters</span></code></a></dt><dd><p>Extension-specific parameters.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Output" title="pywatemsedem.choices.Output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pywatemsedem.choices.Output</span></code></a></dt><dd><p>Output configuration options.</p>
+</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pywatemsedem.choices.Extensions">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">Extensions</span></span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#Extensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.Extensions" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pywatemsedem.choices.WSMixin" title="pywatemsedem.choices.WSMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSMixin</span></code></a></p>
-<dl class="py property">
+<p>Container for WaTEM/SEDEM optional model extensions.</p>
+<p>This class holds boolean flags that enable or disable optional
+features and extensions in the WaTEM/SEDEM model, such as curve
+number calculations, sewer systems, buffers, and output options.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.curve_number">
+<span class="sig-name descname"><span class="pre">curve_number</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.curve_number" title="Link to this definition"></a></dt>
+<dd><p>Enable curve number based runoff calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#simple" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_sewers">
+<span class="sig-name descname"><span class="pre">include_sewers</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_sewers" title="Link to this definition"></a></dt>
+<dd><p>Include sewer system in routing calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#inlcudesewers" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.create_ktc_map">
+<span class="sig-name descname"><span class="pre">create_ktc_map</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.create_ktc_map" title="Link to this definition"></a></dt>
+<dd><p>Generate ktc map by watem-sedem. If set to False, pywatemsedem
+can make the ktc map.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#createktc" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.create_ktil_map">
+<span class="sig-name descname"><span class="pre">create_ktil_map</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.create_ktil_map" title="Link to this definition"></a></dt>
+<dd><p>Generate ktil map.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#createktil" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.estimate_clay_content">
+<span class="sig-name descname"><span class="pre">estimate_clay_content</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.estimate_clay_content" title="Link to this definition"></a></dt>
+<dd><p>Estimate clay content from parent material.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#estimclay" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_tillage_direction">
+<span class="sig-name descname"><span class="pre">include_tillage_direction</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_tillage_direction" title="Link to this definition"></a></dt>
+<dd><p>Account for tillage direction in calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includetillagedirection" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_buffers">
+<span class="sig-name descname"><span class="pre">include_buffers</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_buffers" title="Link to this definition"></a></dt>
+<dd><p>Include buffers.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includebuffers" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_ditches">
+<span class="sig-name descname"><span class="pre">include_ditches</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_ditches" title="Link to this definition"></a></dt>
+<dd><p>Include ditches.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includeditches" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_dams">
+<span class="sig-name descname"><span class="pre">include_dams</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_dams" title="Link to this definition"></a></dt>
+<dd><p>Include dams.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#includedams" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.output_per_river_segment">
+<span class="sig-name descname"><span class="pre">output_per_river_segment</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.output_per_river_segment" title="Link to this definition"></a></dt>
+<dd><p>Generate output aggregated per river segment.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#outputsegment" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.adjusted_slope">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adjusted_slope</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.adjusted_slope" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">adjusted_slope</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.adjusted_slope" title="Link to this definition"></a></dt>
+<dd><p>Use adjusted slope calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#adjustslope" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.buffer_reduce_area">
+<span class="sig-name descname"><span class="pre">buffer_reduce_area</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.buffer_reduce_area" title="Link to this definition"></a></dt>
+<dd><p>Reduce contributing area at buffer locations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#bufferreduce" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.force_routing">
+<span class="sig-name descname"><span class="pre">force_routing</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.force_routing" title="Link to this definition"></a></dt>
+<dd><p>Force specific routing directions.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#forcerouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.river_routing">
+<span class="sig-name descname"><span class="pre">river_routing</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.river_routing" title="Link to this definition"></a></dt>
+<dd><p>Enable river routing calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#riverrouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.manual_outlet_selection">
+<span class="sig-name descname"><span class="pre">manual_outlet_selection</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.manual_outlet_selection" title="Link to this definition"></a></dt>
+<dd><p>Add outlets manually to the model.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#manualoutlet" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.convert_output">
+<span class="sig-name descname"><span class="pre">convert_output</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.convert_output" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.calibrate">
+<span class="sig-name descname"><span class="pre">calibrate</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.calibrate" title="Link to this definition"></a></dt>
+<dd><p>Enable calibration mode for ktc factors.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#calibrate" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.cardinal_routing_river">
+<span class="sig-name descname"><span class="pre">cardinal_routing_river</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.cardinal_routing_river" title="Link to this definition"></a></dt>
+<dd><p>Use only cardinal directions for routing to river pixels.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#cardinalrouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pywatemsedem.choices.ExtensionsParameters" title="pywatemsedem.choices.ExtensionsParameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExtensionsParameters</span></code></a></dt><dd><p>Parameters for enabled extensions.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Options" title="pywatemsedem.choices.Options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Options</span></code></a></dt><dd><p>Model algorithm options.</p>
+</dd>
+</dl>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="id8">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adjusted_slope</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
 <dd><p>Getter adjusted_slope extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1980,8 +2306,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.buffer_reduce_area">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">buffer_reduce_area</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.buffer_reduce_area" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id9">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">buffer_reduce_area</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
 <dd><p>Getter buffer_reduce_area extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1994,8 +2320,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.calibrate">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">calibrate</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.calibrate" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id10">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">calibrate</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
 <dd><p>Getter calibrate extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2008,8 +2334,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.cardinal_routing_river">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cardinal_routing_river</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.cardinal_routing_river" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cardinal_routing_river</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
 <dd><p>Getter cardinal_routing_river extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2022,8 +2348,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.convert_output">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">convert_output</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.convert_output" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id12">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">convert_output</span></span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
 <dd><p>Getter convert_output extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2036,8 +2362,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.create_ktc_map">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_ktc_map</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.create_ktc_map" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id13">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_ktc_map</span></span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
 <dd><p>Getter create_ktc_map extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2050,8 +2376,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.create_ktil_map">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_ktil_map</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.create_ktil_map" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id14">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">create_ktil_map</span></span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
 <dd><p>Getter create_ktil_map extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2064,8 +2390,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.curve_number">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">curve_number</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.curve_number" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id15">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">curve_number</span></span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
 <dd><p>Getter curve_number extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2078,8 +2404,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.estimate_clay_content">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">estimate_clay_content</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.estimate_clay_content" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id16">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">estimate_clay_content</span></span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
 <dd><p>Getter estimate_clay_content extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2092,8 +2418,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.force_routing">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">force_routing</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.force_routing" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id17">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">force_routing</span></span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
 <dd><p>Getter force_routing extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2106,8 +2432,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_buffers">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_buffers</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_buffers" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id18">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_buffers</span></span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
 <dd><p>Getter include_buffers extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2120,8 +2446,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_dams">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_dams</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_dams" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id19">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_dams</span></span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
 <dd><p>Getter include_dams extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2134,8 +2460,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_ditches">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_ditches</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_ditches" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id20">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_ditches</span></span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
 <dd><p>Getter include_ditches extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2148,8 +2474,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_sewers">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_sewers</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_sewers" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id21">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_sewers</span></span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
 <dd><p>Getter include_sewers extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2162,8 +2488,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.include_tillage_direction">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_tillage_direction</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.include_tillage_direction" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id22">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">include_tillage_direction</span></span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
 <dd><p>Getter include_tillage_direction extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2176,8 +2502,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.manual_outlet_selection">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">manual_outlet_selection</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.manual_outlet_selection" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id23">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">manual_outlet_selection</span></span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
 <dd><p>Getter manual_outlet_selection extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2190,8 +2516,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.output_per_river_segment">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">output_per_river_segment</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.output_per_river_segment" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id24">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">output_per_river_segment</span></span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
 <dd><p>Getter output_per_river_segment extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2204,8 +2530,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Extensions.river_routing">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">river_routing</span></span><a class="headerlink" href="#pywatemsedem.choices.Extensions.river_routing" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id25">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">river_routing</span></span><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
 <dd><p>Getter river_routing extension</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2223,9 +2549,256 @@ on C-factor.</p>
 <dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">ExtensionsParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extensions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#ExtensionsParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pywatemsedem.choices.WSMixin" title="pywatemsedem.choices.WSMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSMixin</span></code></a></p>
-<dl class="py property">
+<p>Container for parameters associated with enabled model extensions.</p>
+<p>This class holds numerical parameters that are required when specific
+extensions are enabled. The mandatory status of each parameter depends
+on whether its associated extension is active.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extensions</strong> (<a class="reference internal" href="#pywatemsedem.choices.Extensions" title="pywatemsedem.choices.Extensions"><em>pywatemsedem.choices.Extensions</em></a>) – Instance of Extensions class containing the enabled/disabled
+status of each model extension.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.sewer_exit">
+<span class="sig-name descname"><span class="pre">sewer_exit</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.sewer_exit" title="Link to this definition"></a></dt>
+<dd><p>Sewer exit location identifier (required if include_sewers is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#sewerexit" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.clay_content_parent_material">
+<span class="sig-name descname"><span class="pre">clay_content_parent_material</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.clay_content_parent_material" title="Link to this definition"></a></dt>
+<dd><p>Clay content of parent material (required if estimate_clay_content is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#claycontent" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.antecedent_rainfall">
+<span class="sig-name descname"><span class="pre">antecedent_rainfall</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.antecedent_rainfall" title="Link to this definition"></a></dt>
+<dd><p>5-day antecedent rainfall in mm (required if curve_number is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#dayrainfall" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.stream_velocity">
+<span class="sig-name descname"><span class="pre">stream_velocity</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.stream_velocity" title="Link to this definition"></a></dt>
+<dd><p>Stream flow velocity in m/s (required if curve_number is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#streamvelocity" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.alpha">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.alpha" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.alpha" title="Link to this definition"></a></dt>
+<dd><p>Alpha parameter for curve number calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#alpha" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.beta" title="Link to this definition"></a></dt>
+<dd><p>Beta parameter for curve number calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#beta" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ls_correction">
+<span class="sig-name descname"><span class="pre">ls_correction</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ls_correction" title="Link to this definition"></a></dt>
+<dd><p>LS factor correction multiplier.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#lscorrection" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_low">
+<span class="sig-name descname"><span class="pre">ktc_low</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_low" title="Link to this definition"></a></dt>
+<dd><p>Low transport capacity coefficient (required if create_ktc_map is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclow" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_high">
+<span class="sig-name descname"><span class="pre">ktc_high</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_high" title="Link to this definition"></a></dt>
+<dd><p>High transport capacity coefficient (required if create_ktc_map is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktchigh" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_limit">
+<span class="sig-name descname"><span class="pre">ktc_limit</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_limit" title="Link to this definition"></a></dt>
+<dd><p>C-factor threshold for ktc classification.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclimit" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktil_default">
+<span class="sig-name descname"><span class="pre">ktil_default</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktil_default" title="Link to this definition"></a></dt>
+<dd><p>Default ktil value for tillage erosion.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktildefault" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktil_threshold">
+<span class="sig-name descname"><span class="pre">ktil_threshold</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktil_threshold" title="Link to this definition"></a></dt>
+<dd><p>C-factor threshold for ktil classification.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktilthres" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.desired_timestep">
+<span class="sig-name descname"><span class="pre">desired_timestep</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.desired_timestep" title="Link to this definition"></a></dt>
+<dd><p>Model timestep in minutes (required if curve_number is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#timestep" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.endtime_model">
+<span class="sig-name descname"><span class="pre">endtime_model</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.endtime_model" title="Link to this definition"></a></dt>
+<dd><p>Total simulation time in minutes (required if curve_number is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#endtime" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_low_lower">
+<span class="sig-name descname"><span class="pre">ktc_low_lower</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_low_lower" title="Link to this definition"></a></dt>
+<dd><p>Lower bound of ktc_low range for calibration (required if calibrate is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclow-lower" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_low_upper">
+<span class="sig-name descname"><span class="pre">ktc_low_upper</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_low_upper" title="Link to this definition"></a></dt>
+<dd><p>Upper bound of ktc_low range for calibration (required if calibrate is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktclow-upper" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_high_lower">
+<span class="sig-name descname"><span class="pre">ktc_high_lower</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_high_lower" title="Link to this definition"></a></dt>
+<dd><p>Lower bound of ktc_high range for calibration (required if calibrate is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktchigh-lower" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_high_upper">
+<span class="sig-name descname"><span class="pre">ktc_high_upper</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_high_upper" title="Link to this definition"></a></dt>
+<dd><p>Upper bound of ktc_high range for calibration (required if calibrate is True).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktchigh-upper" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.steps">
+<span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.steps" title="Link to this definition"></a></dt>
+<dd><p>Number of calibration steps between lower and upper ktc values.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#steps" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pywatemsedem.choices.Extensions" title="pywatemsedem.choices.Extensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Extensions</span></code></a></dt><dd><p>Boolean flags for enabling extensions.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Parameters" title="pywatemsedem.choices.Parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parameters</span></code></a></dt><dd><p>Core model parameters.</p>
+</dd>
+</dl>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="id26">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
 <dd><p>Getter alpha parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2238,8 +2811,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.antecedent_rainfall">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">antecedent_rainfall</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.antecedent_rainfall" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id27">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">antecedent_rainfall</span></span><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
 <dd><p>Getter antecedent_rainfall parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2252,8 +2825,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.beta">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.beta" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id28">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
 <dd><p>Getter beta parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2266,8 +2839,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.clay_content_parent_material">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">clay_content_parent_material</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.clay_content_parent_material" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id29">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">clay_content_parent_material</span></span><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
 <dd><p>Getter clay_content_parent_material parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2280,8 +2853,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.desired_timestep">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">desired_timestep</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.desired_timestep" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id30">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">desired_timestep</span></span><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
 <dd><p>Getter desired_timestep parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2294,8 +2867,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.endtime_model">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">endtime_model</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.endtime_model" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id31">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">endtime_model</span></span><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
 <dd><p>Getter endtime_model parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2322,8 +2895,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_high">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_high</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_high" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id32">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_high</span></span><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_high parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2336,8 +2909,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_high_lower">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_high_lower</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_high_lower" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id33">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_high_lower</span></span><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_low_lower parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2350,8 +2923,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_high_upper">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_high_upper</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_high_upper" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id34">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_high_upper</span></span><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_high_upper parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2364,8 +2937,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_limit">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_limit</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_limit" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id35">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_limit</span></span><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_limit parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2378,8 +2951,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_low">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_low</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_low" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id36">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_low</span></span><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_low parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2392,8 +2965,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_low_lower">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_low_lower</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_low_lower" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id37">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_low_lower</span></span><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_low_lower parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2406,8 +2979,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktc_low_upper">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_low_upper</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktc_low_upper" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id38">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc_low_upper</span></span><a class="headerlink" href="#id38" title="Link to this definition"></a></dt>
 <dd><p>Getter ktc_low_upper parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2420,8 +2993,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktil_default">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil_default</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktil_default" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id39">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil_default</span></span><a class="headerlink" href="#id39" title="Link to this definition"></a></dt>
 <dd><p>Getter ktil_default parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2434,8 +3007,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ktil_threshold">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil_threshold</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ktil_threshold" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id40">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil_threshold</span></span><a class="headerlink" href="#id40" title="Link to this definition"></a></dt>
 <dd><p>Getter ktil_threshold parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2448,8 +3021,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.ls_correction">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ls_correction</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.ls_correction" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id41">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ls_correction</span></span><a class="headerlink" href="#id41" title="Link to this definition"></a></dt>
 <dd><p>Getter ls_correction parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2462,8 +3035,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.sewer_exit">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewer_exit</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.sewer_exit" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id42">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewer_exit</span></span><a class="headerlink" href="#id42" title="Link to this definition"></a></dt>
 <dd><p>Getter sewer_exit parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2476,8 +3049,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.steps">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.steps" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id43">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#id43" title="Link to this definition"></a></dt>
 <dd><p>Getter steps parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2490,8 +3063,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.ExtensionsParameters.stream_velocity">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stream_velocity</span></span><a class="headerlink" href="#pywatemsedem.choices.ExtensionsParameters.stream_velocity" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id44">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stream_velocity</span></span><a class="headerlink" href="#id44" title="Link to this definition"></a></dt>
 <dd><p>Getter stream_velocity parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2509,9 +3082,82 @@ on C-factor.</p>
 <dt class="sig sig-object py" id="pywatemsedem.choices.Options">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">Options</span></span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#Options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.Options" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pywatemsedem.choices.WSMixin" title="pywatemsedem.choices.WSMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSMixin</span></code></a></p>
-<dl class="py property">
+<p>Container for WaTEM/SEDEM model algorithm options.</p>
+<p>This class holds configuration options that control which algorithms
+are used for calculating erosion factors (L, S, TC models), routing
+behavior, and other computational settings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Options.l_model">
+<span class="sig-name descname"><span class="pre">l_model</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.l_model" title="Link to this definition"></a></dt>
+<dd><p>L-factor calculation method (‘Desmet1996_Vanoost2003’ or
+‘Desmet1996_McCool’). For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#lmodel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Options.s_model">
+<span class="sig-name descname"><span class="pre">s_model</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.s_model" title="Link to this definition"></a></dt>
+<dd><p>S-factor calculation method (‘Nearing1997’ or ‘McCool1987’).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#smodel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Options.tc_model">
+<span class="sig-name descname"><span class="pre">tc_model</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.tc_model" title="Link to this definition"></a></dt>
+<dd><p>Transport capacity model (‘VanOost2000’ or ‘Verstraeten2007’).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#tcmodel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Options.only_routing">
+<span class="sig-name descname"><span class="pre">only_routing</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.only_routing" title="Link to this definition"></a></dt>
+<dd><p>Flag to run only the routing algorithm without erosion calculation.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#onlyrouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pywatemsedem.choices.Options.calculate_tillage_erosion">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">calculate_tillage_erosion</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.calculate_tillage_erosion" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calculate_tillage_erosion</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.calculate_tillage_erosion" title="Link to this definition"></a></dt>
+<dd><p>Flag to include tillage erosion in calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#calctileros" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pywatemsedem.choices.Parameters" title="pywatemsedem.choices.Parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parameters</span></code></a></dt><dd><p>Model parameter values.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Extensions" title="pywatemsedem.choices.Extensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Extensions</span></code></a></dt><dd><p>Optional model extensions.</p>
+</dd>
+</dl>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="id45">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">calculate_tillage_erosion</span></span><a class="headerlink" href="#id45" title="Link to this definition"></a></dt>
 <dd><p>Getter calculate_tillage_erosion option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2524,8 +3170,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Options.l_model">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">l_model</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.l_model" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id46">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">l_model</span></span><a class="headerlink" href="#id46" title="Link to this definition"></a></dt>
 <dd><p>Getter L model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2538,8 +3184,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Options.only_routing">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">only_routing</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.only_routing" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id47">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">only_routing</span></span><a class="headerlink" href="#id47" title="Link to this definition"></a></dt>
 <dd><p>Getter only_routing option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2552,8 +3198,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Options.s_model">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">s_model</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.s_model" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id48">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">s_model</span></span><a class="headerlink" href="#id48" title="Link to this definition"></a></dt>
 <dd><p>Getter S model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2566,8 +3212,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Options.tc_model">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tc_model</span></span><a class="headerlink" href="#pywatemsedem.choices.Options.tc_model" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id49">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tc_model</span></span><a class="headerlink" href="#id49" title="Link to this definition"></a></dt>
 <dd><p>Getter TC model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2585,9 +3231,165 @@ on C-factor.</p>
 <dt class="sig sig-object py" id="pywatemsedem.choices.Output">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">Output</span></span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#Output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.Output" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pywatemsedem.choices.WSMixin" title="pywatemsedem.choices.WSMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSMixin</span></code></a></p>
-<dl class="py property">
+<p>Container for WaTEM/SEDEM output configuration options.</p>
+<p>This class holds boolean flags that control which intermediate and
+final results are written to output files during model execution.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_aspect">
+<span class="sig-name descname"><span class="pre">write_aspect</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_aspect" title="Link to this definition"></a></dt>
+<dd><p>Write aspect raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeaspect" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_ls_factor">
+<span class="sig-name descname"><span class="pre">write_ls_factor</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_ls_factor" title="Link to this definition"></a></dt>
+<dd><p>Write LS factor raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writels" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_upstream_area">
+<span class="sig-name descname"><span class="pre">write_upstream_area</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_upstream_area" title="Link to this definition"></a></dt>
+<dd><p>Write upstream area raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeuparea" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_slope">
+<span class="sig-name descname"><span class="pre">write_slope</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_slope" title="Link to this definition"></a></dt>
+<dd><p>Write slope raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeslope" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_routing_table">
+<span class="sig-name descname"><span class="pre">write_routing_table</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_routing_table" title="Link to this definition"></a></dt>
+<dd><p>Write routing table to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_routing_column_row">
+<span class="sig-name descname"><span class="pre">write_routing_column_row</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_routing_column_row" title="Link to this definition"></a></dt>
+<dd><p>Write routing column/row information to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writeroutingrc" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_rusle">
+<span class="sig-name descname"><span class="pre">write_rusle</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_rusle" title="Link to this definition"></a></dt>
+<dd><p>Write RUSLE raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerusle" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_sediment_export">
+<span class="sig-name descname"><span class="pre">write_sediment_export</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_sediment_export" title="Link to this definition"></a></dt>
+<dd><p>Write sediment export raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writesedexport" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_water_erosion">
+<span class="sig-name descname"><span class="pre">write_water_erosion</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_water_erosion" title="Link to this definition"></a></dt>
+<dd><p>Write water erosion raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerwatereros" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_rainfall_excess">
+<span class="sig-name descname"><span class="pre">write_rainfall_excess</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_rainfall_excess" title="Link to this definition"></a></dt>
+<dd><p>Write rainfall excess raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#writerainfallexcess" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_total_runoff">
+<span class="sig-name descname"><span class="pre">write_total_runoff</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_total_runoff" title="Link to this definition"></a></dt>
+<dd><p>Write total runoff raster to output.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/model_extensions.html#writetotalrunoff" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pywatemsedem.choices.Output.export_saga">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">export_saga</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.export_saga" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">export_saga</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.export_saga" title="Link to this definition"></a></dt>
+<dd><p>Export grids in SAGA GIS format (.sgrd).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#sagagrids" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pywatemsedem.choices.Options" title="pywatemsedem.choices.Options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Options</span></code></a></dt><dd><p>Model algorithm options.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.Choices" title="pywatemsedem.choices.Choices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Choices</span></code></a></dt><dd><p>Main container combining all choice categories.</p>
+</dd>
+</dl>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="id50">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">export_saga</span></span><a class="headerlink" href="#id50" title="Link to this definition"></a></dt>
 <dd><p>Getter export_saga output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2600,8 +3402,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_aspect">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_aspect</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_aspect" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id51">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_aspect</span></span><a class="headerlink" href="#id51" title="Link to this definition"></a></dt>
 <dd><p>Getter write_aspect output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2614,8 +3416,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_ls_factor">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_ls_factor</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_ls_factor" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id52">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_ls_factor</span></span><a class="headerlink" href="#id52" title="Link to this definition"></a></dt>
 <dd><p>Getter write_ls_factor output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2628,8 +3430,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_rainfall_excess">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_rainfall_excess</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_rainfall_excess" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id53">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_rainfall_excess</span></span><a class="headerlink" href="#id53" title="Link to this definition"></a></dt>
 <dd><p>Getter write_rainfall_excess output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2642,8 +3444,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_routing_column_row">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_routing_column_row</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_routing_column_row" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id54">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_routing_column_row</span></span><a class="headerlink" href="#id54" title="Link to this definition"></a></dt>
 <dd><p>Getter write_routing_column_row output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2656,8 +3458,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_routing_table">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_routing_table</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_routing_table" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id55">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_routing_table</span></span><a class="headerlink" href="#id55" title="Link to this definition"></a></dt>
 <dd><p>Getter write_routing_table output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2670,8 +3472,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_rusle">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_rusle</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_rusle" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id56">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_rusle</span></span><a class="headerlink" href="#id56" title="Link to this definition"></a></dt>
 <dd><p>Getter write_rusle output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2684,8 +3486,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_sediment_export">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_sediment_export</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_sediment_export" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id57">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_sediment_export</span></span><a class="headerlink" href="#id57" title="Link to this definition"></a></dt>
 <dd><p>Getter write_sediment_export output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2698,8 +3500,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_slope">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_slope</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_slope" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id58">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_slope</span></span><a class="headerlink" href="#id58" title="Link to this definition"></a></dt>
 <dd><p>Getter write_slope output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2712,8 +3514,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_total_runoff">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_total_runoff</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_total_runoff" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id59">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_total_runoff</span></span><a class="headerlink" href="#id59" title="Link to this definition"></a></dt>
 <dd><p>Getter write_total_runoff output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2726,8 +3528,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_upstream_area">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_upstream_area</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_upstream_area" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id60">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_upstream_area</span></span><a class="headerlink" href="#id60" title="Link to this definition"></a></dt>
 <dd><p>Getter write_upstream_area output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2740,8 +3542,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Output.write_water_erosion">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_water_erosion</span></span><a class="headerlink" href="#pywatemsedem.choices.Output.write_water_erosion" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id61">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">write_water_erosion</span></span><a class="headerlink" href="#id61" title="Link to this definition"></a></dt>
 <dd><p>Getter write_water_erosion output option</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2759,9 +3561,142 @@ on C-factor.</p>
 <dt class="sig sig-object py" id="pywatemsedem.choices.Parameters">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">Parameters</span></span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#Parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.Parameters" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pywatemsedem.choices.WSMixin" title="pywatemsedem.choices.WSMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">WSMixin</span></code></a></p>
-<dl class="py property">
+<p>Container for WaTEM/SEDEM model parameters.</p>
+<p>This class holds the numerical parameters required for erosion
+calculations, including the R-factor, parcel connectivity values,
+trapping efficiencies, and kernel sizes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.r_factor">
+<span class="sig-name descname"><span class="pre">r_factor</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.r_factor" title="Link to this definition"></a></dt>
+<dd><p>Rainfall erosivity factor (R-factor) for the study area.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#rfactor-var" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_connectivity_cropland">
+<span class="sig-name descname"><span class="pre">parcel_connectivity_cropland</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_connectivity_cropland" title="Link to this definition"></a></dt>
+<dd><p>Parcel connectivity for cropland parcels (0-100).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parcelconncrop" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_connectivity_grasstrips">
+<span class="sig-name descname"><span class="pre">parcel_connectivity_grasstrips</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_connectivity_grasstrips" title="Link to this definition"></a></dt>
+<dd><p>Parcel connectivity for grass strips (0-100).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parcelconngras" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_connectivity_forest">
+<span class="sig-name descname"><span class="pre">parcel_connectivity_forest</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_connectivity_forest" title="Link to this definition"></a></dt>
+<dd><p>Parcel connectivity for forest parcels (0-100).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parcelconnforest" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_trapping_eff_cropland">
+<span class="sig-name descname"><span class="pre">parcel_trapping_eff_cropland</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_trapping_eff_cropland" title="Link to this definition"></a></dt>
+<dd><p>Parcel trapping efficiency for cropland (0-100).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrapppingcrop" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_trapping_eff_pasture">
+<span class="sig-name descname"><span class="pre">parcel_trapping_eff_pasture</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_trapping_eff_pasture" title="Link to this definition"></a></dt>
+<dd><p>Parcel trapping efficiency for pasture (0-100).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrappingpasture" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_trapping_eff_forest">
+<span class="sig-name descname"><span class="pre">parcel_trapping_eff_forest</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_trapping_eff_forest" title="Link to this definition"></a></dt>
+<dd><p>Parcel trapping efficiency for forest (0-100).
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrappingforest" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.max_kernel">
+<span class="sig-name descname"><span class="pre">max_kernel</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.max_kernel" title="Link to this definition"></a></dt>
+<dd><p>Maximum kernel size for flow routing calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#maxkernel" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.max_kernel_river">
+<span class="sig-name descname"><span class="pre">max_kernel_river</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.max_kernel_river" title="Link to this definition"></a></dt>
+<dd><p>Maximum kernel size for river routing calculations.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#maxkernelriver" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.bulk_density">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">bulk_density</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.bulk_density" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bulk_density</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.bulk_density" title="Link to this definition"></a></dt>
+<dd><p>Soil bulk density in kg/m³.
+For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#bulkdensity" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.choices.UserChoice" title="pywatemsedem.choices.UserChoice">UserChoice</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#pywatemsedem.choices.Options" title="pywatemsedem.choices.Options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Options</span></code></a></dt><dd><p>Model algorithm options.</p>
+</dd>
+<dt><a class="reference internal" href="#pywatemsedem.choices.ExtensionsParameters" title="pywatemsedem.choices.ExtensionsParameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExtensionsParameters</span></code></a></dt><dd><p>Parameters for optional extensions.</p>
+</dd>
+</dl>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="id62">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">bulk_density</span></span><a class="headerlink" href="#id62" title="Link to this definition"></a></dt>
 <dd><p>Getter bulk_density parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2774,8 +3709,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.max_kernel">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_kernel</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.max_kernel" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id63">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_kernel</span></span><a class="headerlink" href="#id63" title="Link to this definition"></a></dt>
 <dd><p>Getter max_kernel parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2788,8 +3723,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.max_kernel_river">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_kernel_river</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.max_kernel_river" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id64">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">max_kernel_river</span></span><a class="headerlink" href="#id64" title="Link to this definition"></a></dt>
 <dd><p>Getter max_kernel_river parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2802,8 +3737,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_connectivity_cropland">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_connectivity_cropland</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_connectivity_cropland" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id65">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_connectivity_cropland</span></span><a class="headerlink" href="#id65" title="Link to this definition"></a></dt>
 <dd><p>Getter parcel_connectivity_cropland parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2816,8 +3751,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_connectivity_forest">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_connectivity_forest</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_connectivity_forest" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id66">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_connectivity_forest</span></span><a class="headerlink" href="#id66" title="Link to this definition"></a></dt>
 <dd><p>Getter parcel_connectivity_forest parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2830,8 +3765,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_connectivity_grasstrips">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_connectivity_grasstrips</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_connectivity_grasstrips" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id67">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_connectivity_grasstrips</span></span><a class="headerlink" href="#id67" title="Link to this definition"></a></dt>
 <dd><p>Getter parcel_connectivity_grasstrips parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2844,8 +3779,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_trapping_eff_cropland">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_trapping_eff_cropland</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_trapping_eff_cropland" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id68">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_trapping_eff_cropland</span></span><a class="headerlink" href="#id68" title="Link to this definition"></a></dt>
 <dd><p>Getter parcel_trapping_eff_cropland parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2858,8 +3793,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_trapping_eff_forest">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_trapping_eff_forest</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_trapping_eff_forest" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id69">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_trapping_eff_forest</span></span><a class="headerlink" href="#id69" title="Link to this definition"></a></dt>
 <dd><p>Getter parcel_trapping_eff_forest parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2872,8 +3807,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.parcel_trapping_eff_pasture">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_trapping_eff_pasture</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.parcel_trapping_eff_pasture" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id70">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parcel_trapping_eff_pasture</span></span><a class="headerlink" href="#id70" title="Link to this definition"></a></dt>
 <dd><p>Getter parcel_trapping_eff_pasture parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2886,8 +3821,8 @@ on C-factor.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.choices.Parameters.r_factor">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">r_factor</span></span><a class="headerlink" href="#pywatemsedem.choices.Parameters.r_factor" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id71">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">r_factor</span></span><a class="headerlink" href="#id71" title="Link to this definition"></a></dt>
 <dd><p>Getter r_factor parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2972,12 +3907,12 @@ type checking, and default value handling.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id8">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id72">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#id72" title="Link to this definition"></a></dt>
 <dd><p>Getter of the value of the UserChoice</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#id8" title="pywatemsedem.choices.UserChoice.value">pywatemsedem.choices.UserChoice.value</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#id72" title="pywatemsedem.choices.UserChoice.value">pywatemsedem.choices.UserChoice.value</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2988,21 +3923,43 @@ type checking, and default value handling.</p>
 <dt class="sig sig-object py" id="pywatemsedem.choices.WSMixin">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.choices.</span></span><span class="sig-name descname"><span class="pre">WSMixin</span></span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.WSMixin" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.13/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pywatemsedem.choices.WSMixin.apply_defaults">
-<span class="sig-name descname"><span class="pre">apply_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.apply_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.WSMixin.apply_defaults" title="Link to this definition"></a></dt>
-<dd><p>Set default value as value for every attribute</p>
-</dd></dl>
-
+<p>Mixin class providing common functionality for choice container classes.</p>
+<p>This mixin provides shared methods for representing, validating, and
+loading configuration values from INI files. It is inherited by
+Options, Parameters, Extensions, ExtensionsParameters, and Output classes.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.choices.WSMixin.check_mandatory_values">
 <span class="sig-name descname"><span class="pre">check_mandatory_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.check_mandatory_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.WSMixin.check_mandatory_values" title="Link to this definition"></a></dt>
-<dd><p>Check if the value of an attribute is not None when it is mandatory</p>
+<dd><p>Validate that all mandatory UserChoice attributes have values set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.choices.WSMixin.apply_defaults">
+<span class="sig-name descname"><span class="pre">apply_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.apply_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.WSMixin.apply_defaults" title="Link to this definition"></a></dt>
+<dd><p>Apply default values to all UserChoice attributes.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.choices.WSMixin.read_values_from_ini">
 <span class="sig-name descname"><span class="pre">read_values_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.read_values_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.choices.WSMixin.read_values_from_ini" title="Link to this definition"></a></dt>
+<dd><p>Load values from an INI configuration file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id73">
+<span class="sig-name descname"><span class="pre">apply_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.apply_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id73" title="Link to this definition"></a></dt>
+<dd><p>Set default value as value for every attribute</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id74">
+<span class="sig-name descname"><span class="pre">check_mandatory_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.check_mandatory_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id74" title="Link to this definition"></a></dt>
+<dd><p>Check if the value of an attribute is not None when it is mandatory</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id75">
+<span class="sig-name descname"><span class="pre">read_values_from_ini</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/choices.html#WSMixin.read_values_from_ini"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id75" title="Link to this definition"></a></dt>
 <dd><p>Read the values present in an ini-file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -5771,14 +6728,14 @@ on the C-factor and ktc_limit (i.e. C_factor &lt; ktc_high -&gt; ktc_low, C_fact
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id9">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">force_routing</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id76">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">force_routing</span></span><a class="headerlink" href="#id76" title="Link to this definition"></a></dt>
 <dd><p>#todo</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id10">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">grass_strips</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id77">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">grass_strips</span></span><a class="headerlink" href="#id77" title="Link to this definition"></a></dt>
 <dd><p>Grass strips raster getter</p>
 </dd></dl>
 
@@ -5907,44 +6864,44 @@ id sequence in vector).</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id11">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_bufferoutlets</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id78">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_bufferoutlets</span></span><a class="headerlink" href="#id78" title="Link to this definition"></a></dt>
 <dd><p>Getter infrastructure polygon vector</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id12">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_buffers</span></span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id79">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_buffers</span></span><a class="headerlink" href="#id79" title="Link to this definition"></a></dt>
 <dd><p>Getter buffers polygon vector</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id13">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_conductive_dams</span></span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id80">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_conductive_dams</span></span><a class="headerlink" href="#id80" title="Link to this definition"></a></dt>
 <dd><p>Getter conductive dams vector</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id14">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_ditches</span></span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id81">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_ditches</span></span><a class="headerlink" href="#id81" title="Link to this definition"></a></dt>
 <dd><p>Getter ditches lines vector</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id15">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_endpoints</span></span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id82">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_endpoints</span></span><a class="headerlink" href="#id82" title="Link to this definition"></a></dt>
 <dd><p>Getter endpoints lines vector</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id16">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_grass_strips</span></span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id83">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_grass_strips</span></span><a class="headerlink" href="#id83" title="Link to this definition"></a></dt>
 <dd><p>Getter grass strips polygon vector</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id17">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_outlets</span></span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id84">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_outlets</span></span><a class="headerlink" href="#id84" title="Link to this definition"></a></dt>
 <dd><p>Getter outlets vector</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -5954,8 +6911,8 @@ id sequence in vector).</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id18">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_parcels</span></span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id85">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_parcels</span></span><a class="headerlink" href="#id85" title="Link to this definition"></a></dt>
 <dd><p>Getter parcels polygon vector</p>
 </dd></dl>
 
