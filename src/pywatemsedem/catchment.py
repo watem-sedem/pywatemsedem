@@ -764,11 +764,6 @@ class Catchment(Factory):
         else:
             msg = "River input vector is empty, setting river routing to None"
             logger.info(msg)
-            self.river = AbstractRaster()
-            self.segments = AbstractRaster()
-            self._adjacent_edges = AbstractVector()
-            self._up_edges = AbstractVector()
-            self._routing = AbstractRaster()
 
     @property
     def tubed_river(self):
