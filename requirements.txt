@@ -8,7 +8,7 @@ affine==2.4.0
     # via rasterio
 attrs==26.1.0
     # via rasterio
-certifi==2026.6.17
+certifi==2026.7.22
     # via
     #   pyogrio
     #   pyproj
