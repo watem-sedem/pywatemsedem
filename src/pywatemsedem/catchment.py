@@ -735,23 +735,23 @@ class Catchment(Factory):
             ["line_id", "startpt_id", "endpt_id", "geometry"]
         ]
 
-        river = self._vct_river.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            "line_id",
-            dtype_raster="integer",
-            gdal=False,
-        )
-
-        self.river = river
-        self.segments = river
-
-        self._adjacent_edges, self._up_edges, flag = check_segment_edges(
-            self.adjacent_edges, self.up_edges, self.segments.arr
-        )
-
-        # set routing
         if not self._vct_river.is_empty():
+            river = self._vct_river.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                "line_id",
+                dtype_raster="integer",
+                gdal=False,
+            )
+
+            self.river = river
+            self.segments = river
+
+            self._adjacent_edges, self._up_edges, flag = check_segment_edges(
+                self.adjacent_edges, self.up_edges, self.segments.arr
+            )
+
+            # set routing
             routing = self._vct_river.rasterize(
                 self.rasterfile_mask,
                 self.rp.epsg,
@@ -760,9 +760,14 @@ class Catchment(Factory):
             )
             routing[routing == self.rp.nodata] = 0
             self.routing = routing
+
         else:
             msg = "River input vector is empty, setting river routing to None"
             logger.info(msg)
+            self.river = AbstractRaster()
+            self.segments = AbstractRaster()
+            self._adjacent_edges = AbstractVector()
+            self._up_edges = AbstractVector()
             self._routing = AbstractRaster()
 
     @property
