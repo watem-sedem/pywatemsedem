@@ -307,7 +307,14 @@ class AbstractVector:
         bool
             True if geodata is None, False otherwise.
         """
-        return self._geodata is None
+        empty = False
+
+        if self._geodata is None:
+            empty = True
+        elif len(self._geodata) == 0:
+            empty = True
+
+        return empty
 
 
 class VectorMemory(AbstractVector):
