@@ -97,3 +97,29 @@ def test_compute_netto_erosion_parcels():
         atol=1e-2,
         rtol=1e-02,
     )
+
+
+def test_priority_subcatchments_percentage_adds_cumperc_column():
+    """Percentage approach should expose cumulative contribution on geodata."""
+    pp = postprocess.pp
+
+    pp.identify_priority_subcatchments(
+        source="sedi_export + sewer_in",
+        approach="percentage",
+        threshold=30,
+        flag_merge=True,
+    )
+
+    gdf_points = pp.vct_priority_points.geodata
+    gdf_sub = pp.vct_priority_points.vct_subcatchments.geodata
+
+    assert "cumperc" in gdf_points.columns
+    assert "cumperc" in gdf_sub.columns
+
+    points_cumperc = pd.to_numeric(gdf_points["cumperc"], errors="coerce").dropna()
+    sub_cumperc = pd.to_numeric(gdf_sub["cumperc"], errors="coerce").dropna()
+
+    assert len(points_cumperc) > 0
+    assert len(sub_cumperc) > 0
+    assert points_cumperc.is_monotonic_increasing
+    assert sub_cumperc.is_monotonic_increasing

@@ -18,6 +18,7 @@ from pywatemsedem.geo.utils import (
     create_filename,
     create_spatial_index,
     execute_saga,
+    get_rstparams,
     load_raster,
     mask_array_with_val,
     raster_array_to_pandas_dataframe,
@@ -116,8 +117,14 @@ class Modeloutput(Factory):
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
+        # arguments
+        self.resolution = resolution
+        self.epsg = epsg
+        self.nodata = nodata
+
         # inifile and modeloutput folder
         self.ini = ini
+        self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
         self.modelinputfolder = Path(
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
@@ -154,6 +161,7 @@ class Modeloutput(Factory):
         self._tileros_mm = None
         self._capacity = None
         self._rusle = None
+        self._sinks = None
 
     @property
     def aspect(self):
@@ -197,7 +205,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.aspect.arr, self.mask.arr, self.nodata)
             ticks = [0, np.pi / 2, np.pi, 3 / 2 * np.pi, 2 * np.pi]
             fig, ax = plot_output_raster(
                 fig,
@@ -214,6 +222,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._aspect.plot = plot
+        self._aspect.file_path = raster
 
     @property
     def routing(self):
@@ -279,6 +288,7 @@ class Modeloutput(Factory):
             # Future implementation: try to draw arrow in correct direction
 
         self._routing.plot = plot
+        self._routing.file_path = text
 
     @property
     def routing_missing(self):
@@ -356,6 +366,7 @@ class Modeloutput(Factory):
                     return self.gdf_routing_missing.explore()
 
         self._routing_missing.plot = plot
+        self._routing_missing.file_path = text
 
     @property
     def ls(self):
@@ -386,7 +397,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.ls.arr, required_type=np.float32)
         valid_boundaries(
-            self.ls.arr[(self.mask.arr != self._nodata) & (segments.arr < 1)],
+            self.ls.arr[(self.mask.arr != self.nodata) & (segments.arr < 1)],
             lower=0,
             upper=None,
         )
@@ -413,7 +424,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.ls.arr, self.ls.arr, self._nodata)
+            arr = mask_array_with_val(self.ls.arr, self.ls.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -429,6 +440,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._ls.plot = plot
+        self._ls.file_path = raster
 
     @property
     def slope(self):
@@ -453,7 +465,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.slope.arr, required_type=np.float32)
         valid_boundaries(
-            self.slope.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.slope.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -478,7 +490,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.slope.arr, self.slope.arr, self._nodata)
+            arr = mask_array_with_val(self.slope.arr, self.slope.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -494,6 +506,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._slope.plot = plot
+        self._slope.file_path = raster
 
     @property
     def uparea(self):
@@ -518,7 +531,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.uparea.arr, required_type=np.float32)
         valid_boundaries(
-            self.uparea.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.uparea.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -548,7 +561,7 @@ class Modeloutput(Factory):
                 msg = "Assign ls to Modeloutput before plotting uparea"
                 raise NotImplementedError(msg)
             else:
-                arr = mask_array_with_val(self.uparea.arr, self.ls.arr, self._nodata)
+                arr = mask_array_with_val(self.uparea.arr, self.ls.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig,
                 ax,
@@ -564,6 +577,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._uparea.plot = plot
+        self._uparea.file_path = raster
 
     @property
     def total_sediment(self):
@@ -587,6 +601,7 @@ class Modeloutput(Factory):
         """
         dict = load_total_sediment_file(text)
         self._total_sediment = pd.DataFrame(dict, index=[0])
+        self._total_sediment.file_path = text
 
     @property
     def total_sediment_segments(self):
@@ -612,6 +627,7 @@ class Modeloutput(Factory):
         """
         df_total_sediment_segments = load_sediment_segments_file(text)
         self._total_sediment_segments = df_total_sediment_segments
+        self._total_sediment_segments.file_path = text
 
         segment_ids = df_total_sediment_segments.index.values
         sediment_values = df_total_sediment_segments["Sediment"].values
@@ -646,6 +662,7 @@ class Modeloutput(Factory):
         """
         df_cumulative_sediment_segments = load_sediment_segments_file(text)
         self._cumulative_sediment_segments = df_cumulative_sediment_segments
+        self._cumulative_sediment_segments.file_path = text
 
         segment_ids = df_cumulative_sediment_segments.index.values
         sediment_values = df_cumulative_sediment_segments["Sediment"].values
@@ -679,7 +696,10 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sewer_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sewer_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sewer_in.arr[self.mask.arr != self.nodata],
+            lower=0,
+            upper=None,
+            tolerance=0.001,
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sewer in [kg/year]"
@@ -706,9 +726,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(
-                self.sewer_in.arr, self.sewer_in.arr, self._nodata
-            )
+            arr = mask_array_with_val(self.sewer_in.arr, self.sewer_in.arr, self.nodata)
             arr = mask_array_with_val(arr, self.sewer_in.arr, 0)
             fig, ax = plot_output_raster(
                 fig,
@@ -726,6 +744,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._sewer_in.plot = plot
+        self._sewer_in.file_path = raster
 
     @property
     def sedi_export(self):
@@ -749,7 +768,10 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_export.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_export.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedi_export.arr[self.mask.arr != self.nodata],
+            lower=0,
+            upper=None,
+            tolerance=0.001,
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedi_export [kg/year]"
@@ -779,14 +801,14 @@ class Modeloutput(Factory):
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.sedi_export.arr, self.mask.arr, 0)
             arr = mask_array_with_val(
-                self.sedi_export.arr, self.sedi_export.arr, self._nodata
+                self.sedi_export.arr, self.sedi_export.arr, self.nodata
             )
             # mask where the river is not present
             if not self.ls:
                 msg = "Assign ls to Modeloutput before plotting sedi_export"
                 raise NotImplementedError(msg)
             else:
-                arr = np.ma.masked_where(self.ls.arr != self._nodata, arr)
+                arr = np.ma.masked_where(self.ls.arr != self.nodata, arr)
             if not ticks:
                 arr_nozeros = mask_array_with_val(arr, arr, 0)
                 arr_nozeros = np.ma.filled(arr_nozeros, np.nan)
@@ -810,6 +832,110 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._sedi_export.plot = plot
+        self._sedi_export.file_path = raster
+
+    @property
+    def sinks(self):
+        """Return the sinks raster.
+
+        Sinks is computed as the sum of sewer_in and sedi_export.
+        This represents the total sediment load reaching sink points.
+        """
+        if self._sinks is None:
+            self.sinks = None
+        return self._sinks
+
+    @sinks.setter
+    def sinks(self, raster):
+        """Set the sinks raster.
+
+        If raster is None, sinks is computed from sewer_in and sedi_export,
+        written to a temporary GeoTIFF, and loaded as a raster factory object.
+        Otherwise, sinks is loaded from the provided raster path.
+
+        Parameters
+        ----------
+        raster: pathlib.Path | str | None
+            Path to a sinks raster file, or None to compute from sewer_in +
+            sedi_export.
+        """
+
+        if raster is None:
+            # Sum endpoints (for now only sewer_in) and sedi_export
+            arr_sewer_in = np.where(
+                self.sewer_in.arr == self.nodata, 0, self.sewer_in.arr
+            )
+            arr_sedi_export = np.where(
+                self.sedi_export.arr == self.nodata, 0, self.sedi_export.arr
+            )
+            arr_sinks = arr_sewer_in + arr_sedi_export
+            arr_sinks[self.mask.arr == self.nodata] = self.nodata
+
+            rst_sinks = self.modeloutputfolder / "sinks.rst"
+            write_arr_as_rst(arr_sinks, rst_sinks, np.float32, self.rstparams)
+            self._sinks = self.raster_factory(rst_sinks, flag_mask=False)
+            raster_used = rst_sinks
+        else:
+            self._sinks = self.raster_factory(raster, flag_mask=False)
+            raster_used = raster
+
+        valid_array_type(self.sinks.arr, required_type=np.float32)
+        valid_boundaries(
+            self.sinks.arr[self.mask.arr != self.nodata],
+            lower=0,
+            upper=None,
+            tolerance=0.001,
+        )
+        check_raster_properties_raster_with_template(
+            self.rp, raster_used, epsg=self.rp.epsg
+        )
+
+        title = "sinks [kg/year]"
+
+        def plot(fig=None, ax=None, ticks=None, *args, **kwargs):
+            """Plot the sinks raster with a non-linear colormap.
+
+            Parameters
+            ----------
+            fig: matplotlib.figure.Figure, default = None
+                if not given, defaults to generating new figure
+            ax: matplotlib.pyplot.axis, default = None
+                if not given, defaults to generating new axis
+            ticks: list, default = None
+                Possibility to supply a list of 5 values for ticks of colorscale.
+                Default is 0th, 25th, 50th, 75th and 100th percentile
+
+            Returns
+            -------
+            fig: matplotlib.figure.Figure
+
+            ax: matplotlib.axes.Axes
+            """
+            fig, ax = axes_creator(fig, ax)
+            arr = mask_array_with_val(self.sinks.arr, self.mask.arr, 0)
+            arr = mask_array_with_val(self.sinks.arr, self.sinks.arr, self.nodata)
+            if not ticks:
+                arr_nozeros = mask_array_with_val(arr, arr, 0)
+                arr_nozeros = np.ma.filled(arr_nozeros, np.nan)
+                ticks = np.nanpercentile(arr_nozeros, [0, 25, 50, 75, 100])
+                ticks = np.round(ticks).tolist()
+            fig, ax = plot_output_raster(
+                fig,
+                ax,
+                arr,
+                self.mask.arr,
+                self.rp.bounds,
+                title,
+                ticks,
+                cmap=COLORMAP_SEDI_OUT,
+                *args,
+                **kwargs,
+            )
+            ax.set_facecolor("lightgray")
+            return fig, ax
+
+        self._sinks.plot = plot
+        self._sinks.file_path = raster_used
 
     @property
     def sedi_in(self):
@@ -833,7 +959,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_in.arr[self.mask.arr != self._nodata],
+            self.sedi_in.arr[self.mask.arr != self.nodata],
             lower=0,
             upper=None,
             tolerance=1e-3,
@@ -878,6 +1004,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedi_in.plot = plot
+        self._sedi_in.file_path = raster
 
     @property
     def sedi_out(self):
@@ -901,7 +1028,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedi_out.arr[self.mask.arr != self._nodata],
+            self.sedi_out.arr[self.mask.arr != self.nodata],
             lower=0,
             upper=None,
             tolerance=1e-3,
@@ -946,6 +1073,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedi_out.plot = plot
+        self._sedi_out.file_path = raster
 
     @property
     def sedtil_in(self):
@@ -969,7 +1097,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedtil_in.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedtil_in.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedtil_in.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedtil_in [kg/year]"
@@ -1011,6 +1139,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedtil_in.plot = plot
+        self._sedtil_in.file_path = raster
 
     @property
     def sedtil_out(self):
@@ -1034,7 +1163,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedtil_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.sedtil_out.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.sedtil_out.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "sedtil_out [kg/year]"
@@ -1076,6 +1205,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._sedtil_out.plot = plot
+        self._sedtil_out.file_path = raster
 
     @property
     def cumulative(self):
@@ -1099,7 +1229,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.sedi_out.arr, required_type=np.float32)
         valid_boundaries(
-            self.cumulative.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.cumulative.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
         title = "cumulative [kg/year]"
@@ -1124,7 +1254,7 @@ class Modeloutput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.cumulative.arr, self.mask.arr, self.nodata)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
@@ -1143,6 +1273,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._cumulative.plot = plot
+        self._cumulative.file_path = raster
 
     @property
     def watereros_kg(self):
@@ -1207,6 +1338,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._watereros_kg.plot = plot
+        self._watereros_kg.file_path = raster
 
     @property
     def watereros_mm(self):
@@ -1269,6 +1401,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._watereros_mm.plot = plot
+        self._watereros_mm.file_path = raster
 
     @property
     def tileros_kg(self):
@@ -1331,6 +1464,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._tileros_kg.plot = plot
+        self._tileros_kg.file_path = raster
 
     @property
     def tileros_mm(self):
@@ -1391,6 +1525,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._tileros_mm.plot = plot
+        self._tileros_mm.file_path = raster
 
     @property
     def capacity(self):
@@ -1415,7 +1550,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
         valid_boundaries(
-            self.capacity.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.capacity.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -1441,7 +1576,7 @@ class Modeloutput(Factory):
             ax: matplotlib.axes.Axes
             """
             fig, ax = axes_creator(fig, ax)
-            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.capacity.arr, self.mask.arr, self.nodata)
             lower = log_scale_enabler(arr, cnorm="log")
             norm = colors.LogNorm(vmin=lower, vmax=np.nanmax(arr))
             fig, ax = plot_continuous_raster(
@@ -1460,6 +1595,7 @@ class Modeloutput(Factory):
             return fig, ax
 
         self._capacity.plot = plot
+        self._capacity.file_path = raster
 
     @property
     def rusle(self):
@@ -1484,7 +1620,7 @@ class Modeloutput(Factory):
 
         valid_array_type(self.capacity.arr, required_type=np.float32)
         valid_boundaries(
-            self.rusle.arr[self.mask.arr != self._nodata], lower=0, upper=None
+            self.rusle.arr[self.mask.arr != self.nodata], lower=0, upper=None
         )
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
@@ -1510,7 +1646,7 @@ class Modeloutput(Factory):
 
             ax: matplotlib.axes.Axes
             """
-            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, self._nodata)
+            arr = mask_array_with_val(self.rusle.arr, self.mask.arr, self.nodata)
             fig, ax = plot_output_raster(
                 fig=fig,
                 ax=ax,
@@ -1525,6 +1661,7 @@ class Modeloutput(Factory):
             ax.set_facecolor("lightgray")
 
         self._rusle.plot = plot
+        self._rusle.file_path = raster
 
     def make_routing_vector(self, modelinput, percentile=90, routing_missing=False):
         """Converts pandas dataframe of routing or routing_missing to a geopandas
@@ -1745,8 +1882,13 @@ def make_routing_vct_saga(
         # if condition True, run, if False (no routing segments available in
         # routing table) don't run
         if condition:
-            run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out)
-            return vct_out
+            run_saga_make_routing_shp_cmd(
+                txt_routing,
+                rst_prckrt,
+                vct_temp,
+                rstparams=rstparams,
+            )
+            return vct_temp
         else:
             msg = "No valid extent to clip routing "
             raise Warning(msg)
@@ -1806,9 +1948,6 @@ def prepare_make_routing_vct_saga(
 
     if extent is not None:
         df_routing = open_txt_routing_file(txt_routing)
-        if df_routing.empty:
-            msg = f"{txt_routing.name} is empty"
-            raise IOError(msg)
         df_routing = condition_routing_dataframe_on_extent(
             df_routing, rstparams, extent
         )
@@ -1826,9 +1965,6 @@ def prepare_make_routing_vct_saga(
         vct_temp = vct_out
         condition = True
         df_routing = open_txt_routing_file(txt_routing)
-        if df_routing.empty:
-            msg = f"{txt_routing.name} is empty"
-            raise IOError(msg)
         if separator != "\t":
             df_routing.to_csv(txt_routing, sep="\t", index=False)
 
@@ -1874,7 +2010,64 @@ def condition_routing_dataframe_on_extent(df_routing, rstparams, extent):
     return df_routing
 
 
-def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out):
+def _parse_epsg_from_value(crs_value):
+    """Extract EPSG code as int from multiple CRS representations."""
+    if crs_value is None:
+        return None
+
+    if isinstance(crs_value, int):
+        return crs_value
+
+    if hasattr(crs_value, "to_epsg"):
+        epsg = crs_value.to_epsg()
+        if epsg is not None:
+            return int(epsg)
+
+    if isinstance(crs_value, str):
+        value = crs_value.upper().strip()
+        if "EPSG:" in value:
+            value = value.split(":")[-1]
+        if value.isdigit():
+            return int(value)
+
+    return None
+
+
+def _get_epsg_for_routing_vector(rstparams=None, rst_prckrt=None):
+    """Resolve the EPSG code for routing vectors."""
+    if isinstance(rstparams, dict):
+        epsg = _parse_epsg_from_value(rstparams.get("crs"))
+        if epsg is not None:
+            return epsg
+        epsg = _parse_epsg_from_value(rstparams.get("epsg"))
+        if epsg is not None:
+            return epsg
+
+    if rst_prckrt is not None:
+        _, profile = load_raster(rst_prckrt)
+        return _parse_epsg_from_value(profile.get("crs"))
+
+    return None
+
+
+def _set_vector_epsg(vct_out, epsg):
+    """Set CRS on a vector file and overwrite with explicit EPSG metadata."""
+    if epsg is None:
+        warnings.warn(f"Could not determine EPSG for routing vector '{vct_out}'.")
+        return
+
+    gdf_out = gpd.read_file(vct_out)
+    current_epsg = (
+        gdf_out.crs.to_epsg()
+        if (gdf_out.crs is not None and hasattr(gdf_out.crs, "to_epsg"))
+        else None
+    )
+    if current_epsg != epsg:
+        gdf_out = gdf_out.set_crs(epsg=epsg, allow_override=True)
+        gdf_out.to_file(vct_out, spatial_index="YES")
+
+
+def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out, rstparams=None):
     """
     Run the saga make routing shape command. This command makes from a pywatemsedem
     routing table and a pywatemsedem 'perceelskaart' a routing shapfile
@@ -1915,6 +2108,10 @@ def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out):
     ]
     cmd_args += ["-OUTPUTLINES", str(vct_out)]
     execute_saga(cmd_args)
+
+    epsg = _get_epsg_for_routing_vector(rstparams=rstparams, rst_prckrt=rst_prckrt)
+    _set_vector_epsg(vct_out, epsg)
+
     create_spatial_index(vct_out)
 
 
@@ -1984,124 +2181,6 @@ def define_subcatchments_saga(
         (rst_subcatchments.parent / (rst_subcatchments.stem + ".sdat")),
         vct_subcatchments,
     )
-
-
-def identify_individual_priority_catchments(
-    arr_sedi_out,
-    rst_profile,
-    txt_routing_non_river,
-    nmax,
-    resmap=Path.cwd(),
-    epsg="",
-):
-    """
-    identify the individual priority catchments and add them to a raster
-    and shapes dictionary
-
-    Parameters
-    ----------
-    arr_sedi_out: numpy.ndarray
-        numpy array format of sedout raster
-    rst_profile: rasterio profile
-        rasterio profile of the sedout raster
-    txt_routing_nonriver: str or pathlib.Path | str
-        File path of the WaTEM/SEDEM routing table
-    nmax: int
-        maximum number of catchment
-
-    Returns
-    -------
-    subcatchmentpriority: geopandas.GeoDataFrame
-        catchment shapes with number of catchment
-    """
-
-    n = 1
-    id_ = 0
-    # loop until break is encountered (no more pixels to cluster,
-    # or a maximum number of clusters is reached)
-    while True:
-
-        # identify point with highest sediment load
-        id_, max_sedi_out = create_id_raster_for_highest_value_arr(
-            arr_sedi_out, id_, rst_profile, resmap=resmap / "priority_catchments"
-        )
-
-        # identify subcatchment/cluster coupled to this point
-        template_name = (
-            resmap / "priority_catchments" / f"subcatchments_priority_{n}.shp"
-        )
-        if not template_name.exists():
-            rst_subcatch, vct_subcatch = define_subcatchments_saga(
-                id_, txt_routing_non_river, tag=template_name
-            )
-            # assign sedi_out value to self.subcatchmprioritSHP
-            gdf = gpd.read_file(vct_subcatch)
-            gdf["sedi_out"] = max_sedi_out
-            gdf.to_file(vct_subcatch, spatial_index="YES")
-        else:
-            vct_subcatch = template_name
-            rst_subcatch = vct_subcatch.with_suffix(".sdat")
-
-        # condition: if a max number of clusters is identified
-        # OR all pixels are classified: stop
-        if (n >= nmax) | (np.sum(arr_sedi_out != rst_profile["nodata"]) == 0):
-            nmax = n
-            break
-        else:
-            arr_subcatch, _ = load_raster(rst_subcatch)
-            arr_sedi_out[arr_subcatch != -99999.0] = rst_profile["nodata"]
-            n += 1
-
-    # merge different subcatchments to one file
-    lst_gdf = []
-    for i in Path("priority_catchments").iterdir():
-        if i.suffix == ".shp":
-            lst_gdf.append(gpd.read_file(i))
-    gdf_subcatchmpriority = pd.concat(lst_gdf)
-
-    gdf_subcatchmpriority.crs = {"init": epsg}
-    dst = resmap / "priority_catchments.shp"
-    gdf_subcatchmpriority.to_file(dst, spatial_index="YES")
-
-    return gdf_subcatchmpriority
-
-
-def create_id_raster_for_highest_value_arr(arr, id_, profile, resmap):
-    """Create a raster with an id value assigned to the highest value in the raster"
-
-    Parameters
-    ----------
-    arr: str or pathlib.Path | str
-        with floats
-    id_: int
-        Sequential number of the catchment
-    profile: rasterio profile
-        Rasterio profile of the sedout raster
-    resmap: str or pathlib.Path | str, optional
-        Folder path to write results to
-
-    Returns
-    -------
-    rst_id: str
-        File path of the raster with id for highest value in raster
-    val: float
-        Maximum value in raster
-    """
-    resmap = Path(resmap)
-    if not resmap.exists():
-        (resmap).mkdir(parents=True, exist_ok=True)
-
-    arr_id = arr.copy()
-    max_val = np.max(arr)
-    cond = arr == max_val
-    arr_id[cond] = id_
-    arr_id[~cond] = profile["nodata"]
-
-    # write to disk
-    rst_id = resmap / f"id_{id_}.rst"
-    write_arr_as_rst(arr_id, rst_id, np.int32, profile)
-
-    return rst_id, max_val
 
 
 def remove_river_routing(df_routing):
@@ -2202,20 +2281,45 @@ def open_txt_routing_file(txt_routing):
         - *target2row* (int): second target row in rasters
         - *part2* (float): Part that flows to target2
         - *distance2* (float): Distance of 2nd vector
-    """
-    try:
-        with open(txt_routing) as f:
-            first_line = f.readline()
-        separator = ";" if "\t" not in first_line else "\t"
-        df_routing = pd.read_csv(txt_routing, sep=separator)
-        if df_routing.empty:
-            msg = f"{txt_routing.name} is empty"
-            raise IOError(msg)
-    except IOError:
-        msg = f"'{txt_routing}' does not exist"
-        return IOError(msg)
 
-    return df_routing
+    Raises
+    ------
+    FileNotFoundError
+        If file does not exist
+    ValueError
+        If file exists but is empty or invalid
+    RuntimeError
+        For other reading/parsing issues
+    """
+
+    txt_routing = Path(txt_routing)
+
+    # 1. File does not exist
+    if not txt_routing.exists():
+        raise FileNotFoundError(f"Routing file does not exist: '{txt_routing}'")
+
+    try:
+        # 2. Check if empty
+        with open(txt_routing) as f:
+            first_line = f.readline().strip()
+
+        if first_line == "":
+            raise ValueError(f"Routing file is empty: '{txt_routing}'")
+
+        separator = ";" if "\t" not in first_line else "\t"
+
+        df_routing = pd.read_csv(txt_routing, sep=separator)
+
+        if df_routing.empty:
+            raise ValueError(f"Routing file has no data rows: '{txt_routing}'")
+
+        return df_routing
+
+    except pd.errors.EmptyDataError:
+        raise ValueError(f"Routing file contains no readable data: '{txt_routing}'")
+
+    except Exception as e:
+        raise RuntimeError(f"Error reading routing file '{txt_routing}': {e}") from e
 
 
 def create_erosion_raster(rst_watereros):
@@ -2274,7 +2378,7 @@ def create_deposition_raster(rst_watereros):
 
 
 def map_rank_sediment_loads(
-    rst_sedi_export, threshold, vct_out="rank.shp", rst_endpoints=None, unit="kg"
+    rst_sedi_export, threshold, epsg, vct_out="rank.shp", rst_endpoints=None, unit="kg"
 ):
     """Rank the sediment loads in sedi_export (and sewer_in) from high to low
 
@@ -2291,6 +2395,8 @@ def map_rank_sediment_loads(
         File path of WaTEM/SEDEM sedi_export raster.
     threshold: float
         See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`
+    epsg: int
+        EPSG code
     vct_out: str or pathlib.Path | str
         File path of output vector.
     rst_endpoints: str or pathlib.Path | str, default None
@@ -2312,13 +2418,15 @@ def map_rank_sediment_loads(
     )
     rst_to_vct_points(rst_out, vct_out)
     gdf_out = gpd.read_file(vct_out)
-    gdf_out["rank"] = gdf_out[Path(rst_out).stem]
+    gdf_out["rank"] = gdf_out[gdf_out.columns[0]]
     gdf_out = gdf_out.merge(df_sedi_export, on="rank")
     if unit == "ton":
         gdf_out["sedi_export"] = gdf_out["sedi_export"] / 1000
-    clean_up_tempfiles(Path(rst_out), "rst")
 
-    return gdf_out
+    gdf_out = gdf_out.dropna()
+    gdf_out = gdf_out.set_crs(epsg=epsg)
+    gdf_out.to_file(vct_out)
+    clean_up_tempfiles(Path(rst_out), "rst")
 
 
 def identify_rank_sediment_loads(
@@ -2443,19 +2551,23 @@ def compute_cumulative_loads_in_sinks(
             "cumulative_sedi_export.png",
         )
 
-    # hotfix on percentage: if the first percentage is higher than the
-    # user-predefined percentage, adjust it (small catchments)!
-    threshold = verify_highest_load_with_threshold(df_sedi_export, threshold)
-
     # prepare ids for subcatchment delineation
     df_sedi_export["rank"] = profile["nodata"]
     df_sedi_export["class"] = profile["nodata"]
 
-    # assign unique id's - in order of importance - to records
-    cond = (df_sedi_export["cum_perc"] <= threshold) & (
-        ~df_sedi_export["cum_perc"].isnull()
-    )
-    df_sedi_export.loc[cond, "rank"] = np.arange(np.sum(cond)) + 1
+    # assign unique ids using "net over threshold" logic:
+    # all rows below threshold + first row reaching/exceeding threshold
+    cond_valid = ~df_sedi_export["cum_perc"].isnull()
+    cond_below_threshold = cond_valid & (df_sedi_export["cum_perc"] < threshold)
+    cond_at_or_above_threshold = cond_valid & (df_sedi_export["cum_perc"] >= threshold)
+    if cond_at_or_above_threshold.any():
+        first_exceeding_idx = df_sedi_export.loc[cond_at_or_above_threshold].index[0]
+        cond_selected = cond_below_threshold.copy()
+        cond_selected.loc[first_exceeding_idx] = True
+    else:
+        cond_selected = cond_valid.copy()
+
+    df_sedi_export.loc[cond_selected, "rank"] = np.arange(np.sum(cond_selected)) + 1
 
     # calculate percentage
     df_sedi_export["perc"] = [
@@ -2467,19 +2579,31 @@ def compute_cumulative_loads_in_sinks(
         for i in range(0, len(df_sedi_export))
     ]
 
-    # chekc if begin percentage is below delta_perc
+    # check if begin percentage is below delta_perc
     bperc = delta
     eperc = int(threshold + 1)
     if df_sedi_export["cum_perc"].iloc[0] > bperc:
         bperc = int(np.ceil(df_sedi_export["cum_perc"].iloc[0] / 10) * 10)
 
+    # make sure classing includes the selected sink that crosses threshold
+    if cond_selected.any():
+        max_selected_cum_perc = df_sedi_export.loc[cond_selected, "cum_perc"].max()
+        eperc = max(eperc, int(np.ceil(max_selected_cum_perc)) + 1)
+
     for i in range(bperc, eperc, delta):
         cond = (
             (df_sedi_export["cum_perc"] > i - delta)
             & (df_sedi_export["cum_perc"] <= i)
-            & (~df_sedi_export["cum_perc"].isnull())
+            & cond_selected
         )
         df_sedi_export.loc[cond, "class"] = i
+
+    # Fallback: ensure every selected sink receives a class.
+    cond_missing_class = cond_selected & (df_sedi_export["class"] == profile["nodata"])
+    if cond_missing_class.any():
+        df_sedi_export.loc[cond_missing_class, "class"] = (
+            np.ceil(df_sedi_export.loc[cond_missing_class, "cum_perc"] / delta) * delta
+        )
 
     return (
         df_sedi_export[

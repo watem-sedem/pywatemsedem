@@ -360,6 +360,8 @@ class RasterFile(AbstractRaster):
         Raster array.
     rp : pywatemsedem.geo.rasterproperties.RasterProperties
         Raster properties instance.
+    file_path : pathlib.Path
+        File path to user input raster.
 
     Notes
     -----
@@ -382,6 +384,9 @@ class RasterFile(AbstractRaster):
         allow_nodata_array : bool, default False
             See :func:`pywatemsedem.geo.rasters.AbstractRaster.mask`.
         """
+
+        self.file_path = Path(file_path)
+
         if rp:
             with rasterio.open(file_path) as src:
                 rst_profile = src.profile
