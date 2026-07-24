@@ -252,6 +252,10 @@ class AbstractVector:
         if gdal & convert_lines_to_direction:
             gdal = False
 
+        if self._geodata is None:
+            msg = "Cannot rasterize empty vector"
+            raise ValueError(msg)
+
         if (col == "NR") & ("NR" not in self._geodata.columns):
             self._geodata["NR"] = np.arange(0, len(self._geodata), 1)
         if nodata is not None:

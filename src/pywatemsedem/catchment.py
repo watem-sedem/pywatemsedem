@@ -626,6 +626,9 @@ class Catchment(Factory):
             - *0*: no river
             - *-9999*: nodata
         """
+        if self._river.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, 0, self.mask.arr)
+            self.river = nodata_arr
 
         return self._river
 
@@ -762,7 +765,10 @@ class Catchment(Factory):
             self.routing = routing
 
         else:
-            msg = "River input vector is empty, setting river routing to None"
+            msg = (
+                "River input vector is empty"
+                ", no river raster and segments are generated."
+            )
             logger.info(msg)
 
     @property
@@ -1029,6 +1035,9 @@ class Catchment(Factory):
             - *-5*: open water
             - *-9999*: nodata
         """
+        if self._water.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, -9999, self.mask.arr)
+            self.water = nodata_arr
         return self._water
 
     @water.setter
@@ -1078,14 +1087,21 @@ class Catchment(Factory):
             self._vct_infrastructure_buildings.geodata["paved"].astype(int)
         )
 
-        infra = self._vct_infrastructure_buildings.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            col="paved",
-            dtype_raster="integer",
-            gdal=False,
-        )
-        self.infrastructure_buildings = infra
+        if not self._vct_infrastructure_buildings.is_empty():
+            infra = self._vct_infrastructure_buildings.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                col="paved",
+                dtype_raster="integer",
+                gdal=False,
+            )
+            self.infrastructure_buildings = infra
+        else:
+            msg = (
+                "Infrastructure (buildings) vector is empty"
+                ", no buildings raster is generated"
+            )
+            logger.info(msg)
 
     @property
     # @valid_req_property(
@@ -1102,6 +1118,10 @@ class Catchment(Factory):
             - *-2*: paved
             - *-9999*: nodata
         """
+        if self._infrastructure_buildings.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, -9999, self.mask.arr)
+            self.infrastructure_buildings = nodata_arr
+
         return self._infrastructure_buildings
 
     @infrastructure_buildings.setter
@@ -1129,9 +1149,13 @@ class Catchment(Factory):
             Raster containing following values:
 
             - *-2*: paved
-            - *-7*: paved
+            - *-7*: not paved
             - *-9999*: nodata
         """
+        if self._infrastructure_roads.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, -9999, self.mask.arr)
+            self.infrastructure_roads = nodata_arr
+
         return self._infrastructure_roads
 
     @infrastructure_roads.setter
@@ -1187,15 +1211,22 @@ class Catchment(Factory):
             self._vct_infrastructure_roads.geodata["paved"].astype(int)
         )
 
-        arr = self._vct_infrastructure_roads.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            col="paved",
-            dtype_raster="integer",
-            gdal=False,
-        )
+        if not self._vct_infrastructure_roads.is_empty():
+            arr = self._vct_infrastructure_roads.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                col="paved",
+                dtype_raster="integer",
+                gdal=False,
+            )
 
-        self.infrastructure_roads = arr
+            self.infrastructure_roads = arr
+        else:
+            msg = (
+                "Infrastructure (roads) vector is empty"
+                ", no roads raster is generated"
+            )
+            logger.info(msg)
 
     @property
     def infrastructure(self):
@@ -1219,28 +1250,15 @@ class Catchment(Factory):
         or roads and buildings (3). If no roads or buildings are defined, an error is
         thrown."""
 
-        if not self.infrastructure_roads.is_empty():
-            if not self.infrastructure_buildings.is_empty():
-                arr1 = self.infrastructure_roads.arr.copy()
-                arr2 = self.infrastructure_buildings.arr.copy()
-                cond1 = arr1 == self.infrastructure_roads.rp.nodata
-                cond2 = arr2 != self.infrastructure_buildings.rp.nodata
-                arr = np.where(cond1 & cond2, arr2, arr1)
-                arr = np.where(
-                    arr != self.infrastructure_buildings.rp.nodata, arr, self.rp.nodata
-                )
-                self._infrastructure = RasterMemory(arr, self.rp)
-            else:
-                self._infrastructure = self.infrastructure_roads
-        else:
-            if not self.infrastructure_buildings.is_empty():
-                self._infrastructure = self.infrastructure_buildings
-            else:
-                msg = (
-                    "First define infrastructure lines (roads) or/and polygons "
-                    "(buildings) before calling infrastructure property!"
-                )
-                raise IOError(msg)
+        arr1 = self.infrastructure_roads.arr.copy()
+        arr2 = self.infrastructure_buildings.arr.copy()
+        cond1 = arr1 == self.infrastructure_roads.rp.nodata
+        cond2 = arr2 != self.infrastructure_buildings.rp.nodata
+        arr = np.where(cond1 & cond2, arr2, arr1)
+        arr = np.where(
+            arr != self.infrastructure_buildings.rp.nodata, arr, self.rp.nodata
+        )
+        self._infrastructure = RasterMemory(arr, self.rp)
 
         def plot(nodata=None, *args, **kwargs):
             """Plotting fun"""
