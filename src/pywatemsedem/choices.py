@@ -147,7 +147,8 @@ class WSMixin:
         print_ = []
         for key in self.__dict__:
             attribute = getattr(self, key)
-            print_.append(f"{attribute.key}: {attribute.value}")
+            if isinstance(attribute, UserChoice):
+                print_.append(f"{attribute.key}: {attribute.value}")
         return "\n".join(print_)
 
     def check_mandatory_values(self):
