@@ -270,7 +270,6 @@ class TestCreateModel:
             ),
         )
 
-    @pytest.mark.skip(reason="Test to fix later")
     @pytest.mark.saga
     def test_omit_river(self, dummy_scenario):
         """Omit river to create WaTEM/SEDEM inputs."""
@@ -295,20 +294,19 @@ class TestCreateModel:
         arr = dummy_scenario.composite_landuse.arr
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
-        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, 0.0, 1.0])
+        np.testing.assert_allclose(counts, [212, 4348, 1110, 4085, 28234, 11455])
 
         # c-factor
         un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+        np.testing.assert_allclose(counts, np.array([32428, 1119, 4428, 11469]))
 
         # kTC
         un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
+        np.testing.assert_allclose(counts, [28234, 5458, 11455, 4297])
 
-    @pytest.mark.skip(reason="Test to fix later")
     @pytest.mark.saga
     def test_omit_infrastructure(self, dummy_scenario):
         """Omit infrastructure to create WaTEM/SEDEM parcels raster."""
@@ -331,19 +329,18 @@ class TestCreateModel:
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
         np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+        np.testing.assert_allclose(counts, [53, 5610, 1487, 774, 534, 28234, 12752])
 
         # c-factor
         un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+        np.testing.assert_allclose(counts, np.array([29546, 1494, 5648, 12756]))
 
         # kTC
         un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
+        np.testing.assert_allclose(counts, [28234, 7097, 12752, 1361])
 
-    @pytest.mark.skip(reason="Test to fix later")
     @pytest.mark.saga
     def test_ommit_all(self, dummy_scenario):
         """Ommit all input sources to create WaTEM/SEDEM parcels raster, except base
@@ -359,22 +356,23 @@ class TestCreateModel:
             dummy_scenario.choices.extensionparameters.ktc_limit.value,
             not dummy_scenario.choices.extensions.create_ktc_map.value,
         )
+
         # Composite land-use (test number of parcels pixels, and not unique id's)
         arr = dummy_scenario.composite_landuse.arr
         arr[arr > 0] = 1
         un, counts = np.unique(arr, return_counts=True)
-        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0])
-        np.testing.assert_allclose(counts, [2, 4054, 1111, 3965, 534, 28234, 11544])
+        np.testing.assert_allclose(un, [-5.0, -4.0, -3.0, -2.0, 0.0, 1.0])
+        np.testing.assert_allclose(counts, [5, 5717, 2003, 1140, 28234, 12345])
 
         # c-factor
         un, counts = np.unique(dummy_scenario.cfactor.arr, return_counts=True)
         np.testing.assert_allclose(un, np.array([0.0, 0.001, 0.01, 0.37]))
-        np.testing.assert_allclose(counts, np.array([32735, 1111, 4054, 11544]))
+        np.testing.assert_allclose(counts, np.array([29379, 2003, 5717, 12345]))
 
         # kTC
         un, counts = np.unique(dummy_scenario.ktc.arr, return_counts=True)
         np.testing.assert_allclose(un, [-9.999e03, 1.000e00, 9.000e00, 9.999e03])
-        np.testing.assert_allclose(counts, [28234, 5165, 11544, 4501])
+        np.testing.assert_allclose(counts, [28234, 7720, 12345, 1145])
 
 
 class TestEndpoints:
