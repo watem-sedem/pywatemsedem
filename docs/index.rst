@@ -3,7 +3,11 @@
 Welcome to pywatemsedem's documentation!
 ========================================
 
-.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci.yml/badge.svg?branch=master
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci_pinned.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci_nonpinned.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/linting.yml/badge.svg?branch=master
     :target: https://github.com/watem-sedem/pywatemsedem
 
 A Python wrapper for WaTEM/SEDEM.
