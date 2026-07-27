@@ -2059,7 +2059,7 @@ class Output(WSMixin):
         pywatemsedem.choices.UserChoice
             UserChoice instance of the write_water_erosion output option
         """
-        return self.write_water_erosion
+        return self._write_water_erosion
 
     @write_water_erosion.setter
     def write_water_erosion(self, input_value):
