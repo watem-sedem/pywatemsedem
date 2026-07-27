@@ -483,30 +483,32 @@ class IniFile:
             self.cfg.set(
                 "Calibration",
                 "KTcHigh_lower",
-                str(self.choices.extensionparameters["KTcHigh_lower"]),
+                str(self.choices.extensionparameters.ktc_high_lower.value),
             )
             self.cfg.set(
                 "Calibration",
                 "KTcHigh_upper",
-                str(self.choices.dict_variables["KTcHigh_upper"]),
+                str(self.choices.extensionparameters.ktc_high_upper.value),
             )
             self.cfg.set(
                 "Calibration",
                 "KTcLow_lower",
-                str(self.choices.dict_variables["KTcLow_lower"]),
+                str(self.choices.extensionparameters.ktc_low_lower.value),
             )
             self.cfg.set(
                 "Calibration",
                 "KTcLow_upper",
-                str(self.choices.dict_variables["KTcLow_upper"]),
+                str(self.choices.extensionparameters.ktc_low_upper.value),
             )
             self.cfg.set(
-                "Calibration", "steps", str(self.choices.dict_variables["steps"])
+                "Calibration",
+                "steps",
+                str(self.choices.extensionparameters.steps.value),
             )
             self.cfg.set(
                 "Parameters",
                 "ktc limit",
-                str(self.choices.parameters.ktc_limit.value),
+                str(self.choices.extensionparameters.ktc_limit.value),
             )
         elif (
             not self.choices.extensions.create_ktc_map.value
