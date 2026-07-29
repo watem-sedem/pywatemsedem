@@ -843,7 +843,7 @@ class Scenario:
             self.vct_buffers.geodata = assign_buffer_id_to_df_buffer(
                 self.vct_buffers.geodata
             )
-            if not self.catchm.vct_river.is_empty():
+            if not self.catchm.river.is_empty():
                 arr, self.vct_buffers.geodata = process_buffers_in_river(
                     self.vct_buffers.geodata,
                     self.buffers_exid.arr,
@@ -858,6 +858,10 @@ class Scenario:
                     logger.warning(msg)
                     self.choices.extensions.include_buffers = False
                     arr = None
+                    raster = AbstractRaster()
+            else:
+                arr = self.buffers_exid.arr
+
             if arr is not None:
                 arr = filter_outlets_in_arr_extension_id(
                     self.vct_buffers.geodata, arr, self.catchm.dtm.arr, None
