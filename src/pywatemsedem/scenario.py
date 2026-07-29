@@ -741,6 +741,11 @@ class Scenario:
             1.0, len(self.vct_buffers.geodata) + 1, 1
         )
 
+        if self._vct_buffers.is_empty():
+            msg = "Buffers vector is empty, setting include_buffers to False"
+            warnings.warn(msg)
+            self.choices.extensions.include_buffers = False
+
         if not self.choices.extensions.include_buffers.value:
             msg = (
                 "Include buffers' in 'dict_ecm_options' is equal to 0. Will not "
