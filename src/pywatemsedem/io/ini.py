@@ -474,39 +474,38 @@ class IniFile:
         """Add create ktc map and calibration extensions and
         their extension parameters to config file"""
         if self.choices.extensions.calibrate.value:
-            self.cfg.add_section("Calibration")
             self.cfg.set(
                 "Extensions",
                 "Calibrate",
                 "1",
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcHigh_lower",
                 str(self.choices.extensionparameters.ktc_high_lower.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcHigh_upper",
                 str(self.choices.extensionparameters.ktc_high_upper.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcLow_lower",
                 str(self.choices.extensionparameters.ktc_low_lower.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcLow_upper",
                 str(self.choices.extensionparameters.ktc_low_upper.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "steps",
                 str(self.choices.extensionparameters.steps.value),
             )
             self.cfg.set(
-                "Parameters",
+                "Parameters Extensions",
                 "ktc limit",
                 str(self.choices.extensionparameters.ktc_limit.value),
             )
