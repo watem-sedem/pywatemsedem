@@ -1504,7 +1504,6 @@ class Scenario:
             if self.choices.extensions.calibrate.value:
                 self.choices.output.write_sediment_export = False
                 self.choices.output.write_water_erosion = False
-                self.choices.extensions.output_per_river_segment = False
 
         if self.choices.extensions.include_buffers.value & (
             not self.buffers.is_empty()
