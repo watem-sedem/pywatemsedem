@@ -741,6 +741,11 @@ class Scenario:
             1.0, len(self.vct_buffers.geodata) + 1, 1
         )
 
+        if self._vct_buffers.is_empty():
+            msg = "Buffers vector is empty, setting include_buffers to False"
+            warnings.warn(msg)
+            self.choices.extensions.include_buffers = False
+
         if not self.choices.extensions.include_buffers.value:
             msg = (
                 "Include buffers' in 'dict_ecm_options' is equal to 0. Will not "
@@ -838,7 +843,7 @@ class Scenario:
             self.vct_buffers.geodata = assign_buffer_id_to_df_buffer(
                 self.vct_buffers.geodata
             )
-            if not self.catchm.vct_river.is_empty():
+            if not self.catchm.river.is_empty():
                 arr, self.vct_buffers.geodata = process_buffers_in_river(
                     self.vct_buffers.geodata,
                     self.buffers_exid.arr,
@@ -853,6 +858,10 @@ class Scenario:
                     logger.warning(msg)
                     self.choices.extensions.include_buffers = False
                     arr = None
+                    raster = AbstractRaster()
+            else:
+                arr = self.buffers_exid.arr
+
             if arr is not None:
                 arr = filter_outlets_in_arr_extension_id(
                     self.vct_buffers.geodata, arr, self.catchm.dtm.arr, None
@@ -1494,8 +1503,7 @@ class Scenario:
         if not self.choices.options.only_routing.value:
             if self.choices.extensions.calibrate.value:
                 self.choices.output.write_sediment_export = False
-                self.choices.output.write_water_export = False
-                self.choices.extensions.output_per_river_segment = False
+                self.choices.output.write_water_erosion = False
 
         if self.choices.extensions.include_buffers.value & (
             not self.buffers.is_empty()
