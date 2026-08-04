@@ -6,6 +6,7 @@ pycnws/tests/**/data/*.shx filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.dbf filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.prj filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.cpg filter=lfs diff=lfs merge=lfs -text
+pycnws/tests/**/data/*.qix filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.txt filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.csv filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/*.sdat filter=lfs diff=lfs merge=lfs -text
@@ -20,6 +21,7 @@ pycnws/tests/**/data/**/*.shx filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.dbf filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.prj filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.cpg filter=lfs diff=lfs merge=lfs -text
+pycnws/tests/**/data/**/*.qix filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.txt filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.sdat filter=lfs diff=lfs merge=lfs -text
 pycnws/tests/**/data/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
@@ -34,6 +36,7 @@ tests/**/data/*.shx filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.dbf filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.prj filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.cpg filter=lfs diff=lfs merge=lfs -text
+tests/**/data/*.qix filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.txt filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.csv filter=lfs diff=lfs merge=lfs -text
 tests/**/data/*.sdat filter=lfs diff=lfs merge=lfs -text
@@ -48,6 +51,7 @@ tests/**/data/**/*.shx filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.dbf filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.prj filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.cpg filter=lfs diff=lfs merge=lfs -text
+tests/**/data/**/*.qix filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.txt filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.sdat filter=lfs diff=lfs merge=lfs -text
 tests/**/data/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
@@ -62,6 +66,7 @@ tests/postprocess/**/*.shx filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.dbf filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.prj filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.cpg filter=lfs diff=lfs merge=lfs -text
+tests/postprocess/**/*.qix filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.txt filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.sdat filter=lfs diff=lfs merge=lfs -text
 tests/postprocess/**/*.sgrd filter=lfs diff=lfs merge=lfs -text
