@@ -722,19 +722,22 @@ class PostProcess(Factory):
             invalid_idx = np.where(disallowed_overlap)[0]
 
             if invalid_idx.size > 0:
-                preview = ", ".join(
-                    [
+                preview_items = []
+                for i in invalid_idx[:10]:
+                    value = int(
+                        arr_compositelanduse[
+                            rows_disallowed[i],
+                            cols_disallowed[i],
+                        ]
+                    )
+                    preview_items.append(
                         (
                             f"(row={int(rows_disallowed[i]) + 1}, "
                             f"col={int(cols_disallowed[i]) + 1}, "
-                            f"""value={int(arr_compositelanduse[
-                                rows_disallowed[i],
-                                cols_disallowed[i]
-                          ])})"""
+                            f"value={value})"
                         )
-                        for i in invalid_idx[:10]
-                    ]
-                )
+                    )
+                preview = ", ".join(preview_items)
                 msg = (
                     "Invalid grass strips vector: polygon overlap is only allowed "
                     "on compositelanduse values -1, -2 and -6. "
