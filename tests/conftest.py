@@ -40,7 +40,7 @@ class geodata:
     """Data class for geo test data"""
 
     rst_mask = folder_geo / "mask.tif"
-    vct_mak = folder_geo / "mask.shp"
+    vct_mask = folder_geo / "mask.shp"
     catchment = folder_geo / "catchm_langegracht.shp"
     rst_example = folder_geo / "example_input_raster.tif"
     vct_example = folder_geo / "example_input_vector.shp"
@@ -105,17 +105,17 @@ class postprocess:
     """Data class for postprocess tests data"""
 
     folder_postprocess = folder_core / "postprocess"
-    rst_prclskrt = folder_postprocess / "perceelskaart_2018_molenbeek_s1.rst"
+    rst_compositelanduse = folder_postprocess / "perceelskaart_2018_molenbeek_s1.rst"
     rst_buffers = folder_postprocess / "buffers.rst"
     txt_rainfall = folder_postprocess / "cn_synthetic_rainfall_event.txt"
 
     ## Outputs
-    rst_sediin = folder_postprocess / "SediIn_kg.rst"
-    rst_sediout = folder_postprocess / "SediOut_kg.rst"
-    rst_watereros = folder_postprocess / "WATEREROS (kg per gridcel).rst"
+    rst_sedi_in = folder_postprocess / "SediIn_kg.rst"
+    rst_sedi_out = folder_postprocess / "SediOut_kg.rst"
+    rst_watereros_kg = folder_postprocess / "WATEREROS (kg per gridcel).rst"
     txt_routing = folder_postprocess / "routing.txt"
-    rst_sediexport = folder_postprocess / "SediExport_kg.rst"
-    rst_sewerin = folder_postprocess / "sewer_in.rst"
+    rst_sedi_export = folder_postprocess / "SediExport_kg.rst"
+    rst_sewer_in = folder_postprocess / "sewer_in.rst"
 
     ## Postprocess
     ### netto erosion
@@ -125,13 +125,13 @@ class postprocess:
     txt_area_parcel = folder_postprocess / "area_parcel.txt"
 
     ### grass strips
-    txt_gras_efficiency = folder_postprocess / "grass_strips_effiency.csv"
+    txt_grass_strips_efficiency = folder_postprocess / "grass_strips_effiency.csv"
 
     ## Extra data
     rst_rasterized_prc_shp = folder_postprocess / "percelen.tif"
 
     ### Grass strips id
-    rst_grasstrips_id = folder_postprocess / "grasstrips_id.tif"
+    rst_grass_strips_id = folder_postprocess / "grasstrips_id.tif"
 
 
 class grassstripsdata:

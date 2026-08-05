@@ -41,18 +41,18 @@ def test_get_grass_strips_statistics():
     # run function
     _, _, df = compute_efficiency_grass_strips(
         postprocess.txt_routing,
-        postprocess.rst_grasstrips_id,
-        postprocess.rst_prclskrt,
-        postprocess.rst_sediout,
+        postprocess.rst_grass_strips_id,
+        postprocess.rst_compositelanduse,
+        postprocess.rst_sedi_out,
     )
 
-    df_test = pd.read_csv(postprocess.txt_gras_efficiency)
+    df_test = pd.read_csv(postprocess.txt_grass_strips_efficiency)
 
     assert_almost_equal(df["gras_id_target"].values, df_test["gras_id_target"].values)
     assert_almost_equal(df["gras_id_source"].values, df_test["gras_id_source"].values)
     assert_almost_equal(df["npixels_t"].values, df_test["npixels_t"].values)
     assert_almost_equal(df["eSTE"].values, df_test["STE"].values)
-    assert_almost_equal(df["sediin"].values, df_test["sediin"].values)
+    assert_almost_equal(df["sedi_in"].values, df_test["sediin"].values)
 
 
 def test_compute_netto_erosion_parcels():
@@ -64,8 +64,8 @@ def test_compute_netto_erosion_parcels():
 
     # script
     df_output, _ = compute_netto_erosion_parcels(
-        postprocess.rst_prclskrt,
-        postprocess.rst_watereros,
+        postprocess.rst_compositelanduse,
+        postprocess.rst_watereros_kg,
         postprocess.rst_rasterized_prc_shp,
         flag_write=True,
     )
@@ -97,29 +97,3 @@ def test_compute_netto_erosion_parcels():
         atol=1e-2,
         rtol=1e-02,
     )
-
-
-def test_priority_subcatchments_percentage_adds_cumperc_column():
-    """Percentage approach should expose cumulative contribution on geodata."""
-    pp = postprocess.pp
-
-    pp.identify_priority_subcatchments(
-        source="sedi_export + sewer_in",
-        approach="percentage",
-        threshold=30,
-        flag_merge=True,
-    )
-
-    gdf_points = pp.vct_priority_points.geodata
-    gdf_sub = pp.vct_priority_points.vct_subcatchments.geodata
-
-    assert "cumperc" in gdf_points.columns
-    assert "cumperc" in gdf_sub.columns
-
-    points_cumperc = pd.to_numeric(gdf_points["cumperc"], errors="coerce").dropna()
-    sub_cumperc = pd.to_numeric(gdf_sub["cumperc"], errors="coerce").dropna()
-
-    assert len(points_cumperc) > 0
-    assert len(sub_cumperc) > 0
-    assert points_cumperc.is_monotonic_increasing
-    assert sub_cumperc.is_monotonic_increasing

@@ -454,16 +454,15 @@ class Modelinput(Factory):
         ----------
         raster: pathlib.Path | str
         """
-        raster = self.raster_factory(raster, flag_mask=False)
+        self._kfactor = self.raster_factory(raster, flag_mask=False)
         # checks on raster data
-        valid_non_nan(raster.arr)
+        valid_non_nan(self._kfactor.arr)
         # NO need for checking no data, deal with this in plotting!
-        valid_array_type(raster.arr, required_type=np.int16)
+        valid_array_type(self._kfactor.arr, required_type=np.int16)
         valid_boundaries(
-            raster.arr[raster.arr != self._nodata], lower=0, upper=None
+            self._kfactor.arr[self._kfactor.arr != self._nodata], lower=0, upper=None
         )  # No data value excluded from check
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
-        self._kfactor = raster
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot the kfactor raster.

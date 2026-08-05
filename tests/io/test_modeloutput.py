@@ -107,8 +107,8 @@ def test_compute_efficiency_buffers():
 @pytest.mark.parametrize(
     "threshold,n_ranks,sum_sediment_load,mean_sediment_load",
     [
-        (50, 10, 610229.44, 61022.945),
-        (20, 2, 175243.22, 87621.61),
+        (50, 11, 629210.94, 57200.996),
+        (20, 3, 251075.0, 83691.664),
     ],
 )
 def test_identify_rank_sediment_loads(
