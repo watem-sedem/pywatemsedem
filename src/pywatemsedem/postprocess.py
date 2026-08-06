@@ -1735,6 +1735,19 @@ class PostProcess(Factory):
         setattr(self, attr_name, vct_point)
         self._vct_point = vct_point
         self._vct_points_dummy[attr_name] = vct_point
+        return attr_name
+
+    def _cleanup_dummy_point_properties(self, attr_names=None):
+        """Remove temporary one-point dummy vector attributes from self."""
+        if attr_names is None:
+            attr_names = list(self._vct_points_dummy.keys())
+
+        for attr_name in attr_names:
+            if hasattr(self, attr_name):
+                delattr(self, attr_name)
+            self._vct_points_dummy.pop(attr_name, None)
+
+        self._vct_point = None
 
     def _ensure_unique_priority_target_ids(self):
         """Ensure priority points have a unique integer ``target_id`` column."""
@@ -2212,44 +2225,49 @@ class PostProcess(Factory):
             )
 
         point_vectors = []
+        registered_dummy_attrs = []
 
-        for point_index in range(len(points_vector_obj.geodata)):
-            vct_point = self._make_dummy_point_vector(
+        try:
+            for point_index in range(len(points_vector_obj.geodata)):
+                vct_point = self._make_dummy_point_vector(
+                    points_vector_obj,
+                    point_index,
+                    target_id_column,
+                    tag,
+                    output_dir=output_dir,
+                )
+                point_id = int(vct_point.geodata.iloc[0][target_id_column])
+                point_tag = f"{tag}_{point_id}"
+
+                self.identify_subcatchment(
+                    vct_point,
+                    id_column=target_id_column,
+                    tag=point_tag,
+                    output_dir=output_dir,
+                )
+
+                attr_name = self._register_dummy_point_on_self(
+                    parent_property_name,
+                    point_id,
+                    vct_point,
+                )
+                registered_dummy_attrs.append(attr_name)
+                point_vectors.append(vct_point)
+
+            points_vector_obj.vct_points_individual = point_vectors
+            vct_subcatchments = self._aggregate_dummy_point_subcatchments(
                 points_vector_obj,
-                point_index,
-                target_id_column,
+                target_name,
                 tag,
-                output_dir=output_dir,
-            )
-            point_id = int(vct_point.geodata.iloc[0][target_id_column])
-            point_tag = f"{tag}_{point_id}"
-
-            self.identify_subcatchment(
-                vct_point,
-                id_column=target_id_column,
-                tag=point_tag,
+                point_vectors=point_vectors,
                 output_dir=output_dir,
             )
 
-            self._register_dummy_point_on_self(
-                parent_property_name,
-                point_id,
-                vct_point,
-            )
-            point_vectors.append(vct_point)
+            self._auto_cleanup_postprocessing_shapefiles()
 
-        points_vector_obj.vct_points_individual = point_vectors
-        vct_subcatchments = self._aggregate_dummy_point_subcatchments(
-            points_vector_obj,
-            target_name,
-            tag,
-            point_vectors=point_vectors,
-            output_dir=output_dir,
-        )
-
-        self._auto_cleanup_postprocessing_shapefiles()
-
-        return vct_subcatchments
+            return vct_subcatchments
+        finally:
+            self._cleanup_dummy_point_properties(registered_dummy_attrs)
 
     def _select_priority_subcatchment_raster(self, source):
         """Return raster array used to identify priority subcatchments.
@@ -5556,9 +5574,14 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out["sediment"] = np.round(
         gdf_out.sediment / 1000, 3
     )  # convert from kg to tonnes
+    # Drop very small sink loads that round to near-zero ton values.
+    gdf_out = gdf_out.loc[gdf_out["sediment"] >= 0.001].copy()
     gdf_out = gdf_out.sort_values("sediment", ascending=False)
     gdf_out["cumsum"] = gdf_out["sediment"].cumsum()
-    gdf_out["cumperc"] = (gdf_out["cumsum"] / (gdf_out["sediment"].sum())) * 100
+    if gdf_out.empty:
+        gdf_out["cumperc"] = pd.Series(dtype=float)
+    else:
+        gdf_out["cumperc"] = (gdf_out["cumsum"] / (gdf_out["sediment"].sum())) * 100
     gdf_out = gdf_out.reset_index()
     gdf_out.drop(columns=["index"], inplace=True)
     gdf_out.to_file(vct_out, spatial_index="YES")

@@ -10,6 +10,7 @@ from dotenv import find_dotenv, load_dotenv
 
 from pywatemsedem import choices
 from pywatemsedem.catchment import Catchment
+from pywatemsedem.postprocess import PostProcess
 from pywatemsedem.scenario import Scenario
 
 # Load environmental variables
@@ -212,3 +213,9 @@ def dummy_scenario(dummy_catchment):
 
     scenario = Scenario(dummy_catchment, 2019, 1, user_choices)
     return scenario
+
+
+@pytest.fixture(scope="function")
+def postprocess_obj(tmp_path):
+    """Create a fresh PostProcess instance for each test."""
+    return PostProcess(ini_file, tmp_path / "postprocess", 31370)
