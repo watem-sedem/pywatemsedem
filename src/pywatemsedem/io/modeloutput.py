@@ -102,29 +102,23 @@ class Modeloutput(Factory):
         RUSLE raster.
     """
 
-    def __init__(self, ini, resolution, epsg, nodata):
+    def __init__(self, ini, epsg):
         """Initialize the Modeloutput instance.
 
         Parameters
         ----------
         ini : pathlib.Path
             Path to the ini file.
-        resolution : int
-            See :class:`pywatemsedem.geo.RasterProperties`.
         epsg : int
-            See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata : int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
-        # arguments
-        self.resolution = resolution
-        self.epsg = epsg
-        self.nodata = nodata
-
         # inifile and modeloutput folder
         self.ini = ini
-        self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
+        self.rstparams, self.rp = get_rstparams(self.ini, epsg=epsg)
+        resolution = int(abs(self.rstparams["transform"][0]))
+        self.epsg = epsg
+        self.nodata = self.rstparams["nodata"]
         self.modelinputfolder = Path(
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
@@ -133,7 +127,7 @@ class Modeloutput(Factory):
         )
 
         # apply factory and set mask
-        super().__init__(resolution, epsg, nodata, self.modeloutputfolder)
+        super().__init__(resolution, epsg, self.nodata, self.modeloutputfolder)
         self.mask = self.modelinputfolder / get_item_from_ini(
             ini, "Files", "shapefile catchment", str
         )

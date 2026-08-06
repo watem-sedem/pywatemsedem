@@ -20,8 +20,8 @@ def test_modeloutput_all():
     file_path_in = Path("tests") / "io" / "data" / "modelinput"
     Path("tests") / "io" / "data" / "modeloutput"
     ini = file_path_in / "inifile.ini"
-    example_in = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
-    example_out = Modeloutput(ini, resolution=20, epsg=31370, nodata=-9999)
+    example_in = Modelinput(ini, epsg=31370)
+    example_out = Modeloutput(ini, epsg=31370)
 
     # sedi_out
     example_out.sedi_out

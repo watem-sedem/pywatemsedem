@@ -9,6 +9,7 @@ from matplotlib import colors
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
+    get_rstparams,
     mask_array_with_val,
 )
 from pywatemsedem.io.ini import get_item_from_ini
@@ -87,7 +88,7 @@ class Modelinput(Factory):
         Rainfall table.
     """
 
-    def __init__(self, ini, resolution, epsg, nodata):
+    def __init__(self, ini, epsg):
         """Initialize the Modelinput instance.
 
         Parameters
@@ -95,11 +96,7 @@ class Modelinput(Factory):
         ini : pathlib.Path
             Path to the ini file with model settings and input file paths of
             WaTEM-SEDEM.
-        resolution : int
-            See :class:`pywatemsedem.geo.RasterProperties`.
         epsg : int
-            See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata : int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
@@ -108,6 +105,10 @@ class Modelinput(Factory):
         self.modelinputfolder = Path(
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
+
+        rstparams, _ = get_rstparams(ini, epsg=epsg)
+        resolution = int(abs(rstparams["transform"][0]))
+        nodata = rstparams["nodata"]
 
         # apply factory and set mask
         super().__init__(resolution, epsg, nodata, self.modelinputfolder)

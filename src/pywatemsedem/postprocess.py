@@ -21,7 +21,6 @@ from pywatemsedem.geo.utils import (
     write_arr_as_rst,
 )
 from pywatemsedem.grasstrips import estimate_ste
-from pywatemsedem.io.folders import CatchmentFolder, ScenarioFolders
 from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
     Modeloutput,
@@ -35,7 +34,7 @@ from pywatemsedem.io.modeloutput import (
 )
 from pywatemsedem.io.plots import plot_cumulative_sedimentload
 from pywatemsedem.scenario import WSException
-from pywatemsedem.tools import package_resource, zip_folder
+from pywatemsedem.tools import package_resource
 
 logger = logging.getLogger(__name__)
 
@@ -110,26 +109,26 @@ class PostProcess(Factory):
 
     Parameters
     ----------
-    home_folder: str or pathlib.Path
-        path of folder to which results of scenario run are written too
-    scenario_label: int
-        scenario number
-    year: int
-        simulation year
+    ini: str or pathlib.Path
+        Path to the WaTEM/SEDEM inifile (``modelinput/inifile.ini``).
+    postprocessing_folder: str or pathlib.Path
+        Folder to which postprocessing results are written.
     epsg: int, default 31370
-        epsg-code
+        EPSG code.
+    year: int, optional
+        Simulation year, used only by legacy filename methods.
 
 
     Examples
     --------
     >>> from pywatemsedem.postprocess import PostProcess
-    >>> pp = PostProcess(r"molenbeek", 1, 2019, 31370) # note that the folder
-    >>> #molenbeek/scenario_1 and molenbeek/scenario_1/2019 must exist
-    >>> pp.make_routing_vct() #make a vector file of the text routig file.
+    >>> ini = r"molenbeek/scenario_1/modelinput/inifile.ini"
+    >>> pp = PostProcess(ini, r"molenbeek/scenario_1/postprocessing", 31370)
+    >>> pp.make_routing_vct()
 
     """
 
-    def __init__(self, home_folder, resolution, scenario_label, year, epsg):
+    def __init__(self, ini, postprocessing_folder, epsg):
 
         # DATA
         self._routing_non_river = None
@@ -148,38 +147,25 @@ class PostProcess(Factory):
         self._sinks = None
 
         # general
-        self.home_folder = Path(home_folder)
-        self.resolution = resolution
-        self.scenario_label = scenario_label
-        self.year = year
+        self.ini = Path(ini)
         self.epsg = epsg
 
-        self.catchment_name = self.home_folder.stem
-        self.scenario = f"scenario_{self.scenario_label}"
+        self.postprocessing_folder = Path(postprocessing_folder)
+        self.postprocessing_folder.mkdir(parents=True, exist_ok=True)
 
-        # test if fmap_results is found
-        self.cfolder = CatchmentFolder(self.home_folder, self.resolution)
-        self.sfolder = ScenarioFolders(self.cfolder, self.scenario_label, self.year)
-
-        self.cfolder.check_all()
-        self.sfolder.check_all()
-
-        # Initialise ModelInput and ModelOutput objects
-        self.ini = self.home_folder / self.scenario / "modelinput" / "inifile.ini"
         self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
+        self.resolution = int(abs(self.rstparams["transform"][0]))
         self.nodata = self.rp["nodata"]
 
         super().__init__(
             self.resolution,
             self.epsg,
             self.nodata,
-            self.sfolder.postprocessing_folder,
+            self.postprocessing_folder,
         )
 
-        self.modelinput = Modelinput(self.ini, self.resolution, self.epsg, self.nodata)
-        self.modeloutput = Modeloutput(
-            self.ini, self.resolution, self.epsg, self.nodata
-        )
+        self.modelinput = Modelinput(self.ini, self.epsg)
+        self.modeloutput = Modeloutput(self.ini, self.epsg)
 
         # Enable automatic cleanup of stale postprocessing shapefiles.
         self.auto_cleanup_postprocessing_shapefiles = True
@@ -193,7 +179,7 @@ class PostProcess(Factory):
             "priority": "priority_subcatchments",
         }
         dirname = workflow_map.get(str(workflow), str(workflow))
-        out_dir = self.sfolder.postprocessing_folder / dirname
+        out_dir = self.postprocessing_folder / dirname
         out_dir.mkdir(parents=True, exist_ok=True)
         return out_dir
 
@@ -203,11 +189,7 @@ class PostProcess(Factory):
             return self._workflow_subdir("poi")
         if parent_property_name == "vct_priority_points":
             return self._workflow_subdir("priority")
-        return self.sfolder.postprocessing_folder
-
-    def zip_folder(self):
-        """Zip output folder of scenario_x"""
-        zip_folder(self.sfolder.scenario_folder)
+        return self.postprocessing_folder
 
     def _set_vector_from_input(
         self,
@@ -296,7 +278,7 @@ class PostProcess(Factory):
 
         # Save the filtered routing file
         self._routing_non_river.file_path = (
-            self.sfolder.postprocessing_folder / "routing_non_river.txt"
+            self.postprocessing_folder / "routing_non_river.txt"
         )
         self._routing_non_river.to_csv(
             self._routing_non_river.file_path,
@@ -352,7 +334,7 @@ class PostProcess(Factory):
         file_path: pathlib.Path
             Path to the created routing vector shapefile.
         """
-        file_path = self.sfolder.postprocessing_folder / (
+        file_path = self.postprocessing_folder / (
             self.modeloutput.routing.file_path.stem + tag + ".shp"
         )
 
@@ -420,7 +402,7 @@ class PostProcess(Factory):
         file_path: pathlib.Path
             Path to the created routing missing vector shapefile.
         """
-        file_path = self.sfolder.postprocessing_folder / (
+        file_path = self.postprocessing_folder / (
             self.modeloutput.routing_missing.file_path.stem + tag + ".shp"
         )
 
@@ -479,7 +461,7 @@ class PostProcess(Factory):
             Path to the created sedi_export vector shapefile.
         """
         vct_out = (
-            self.sfolder.postprocessing_folder
+            self.postprocessing_folder
             / f"{self.modeloutput.sedi_export.file_path.stem}.shp"
         )
         convert_rst_sinks_to_vct(
@@ -526,7 +508,7 @@ class PostProcess(Factory):
             Path to the created sewer_in vector shapefile.
         """
         vct_out = (
-            self.sfolder.postprocessing_folder
+            self.postprocessing_folder
             / f"{self.modeloutput.sewer_in.file_path.stem}.shp"
         )
         convert_rst_sinks_to_vct(
@@ -608,7 +590,7 @@ class PostProcess(Factory):
 
         gdf_sinks = gdf_sinks.reset_index(drop=True)
 
-        vct_out = self.sfolder.postprocessing_folder / "sinks.shp"
+        vct_out = self.postprocessing_folder / "sinks.shp"
 
         gdf_sinks.to_file(vct_out, spatial_index="YES")
 
@@ -1817,7 +1799,7 @@ class PostProcess(Factory):
                 as_index=False,
             )
 
-        out_dir = output_dir or self.sfolder.postprocessing_folder
+        out_dir = output_dir or self.postprocessing_folder
         vct_subcatchments = out_dir / f"{target_name}_{tag}.shp"
         self._unlink_vector_dataset(vct_subcatchments)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
@@ -1958,7 +1940,7 @@ class PostProcess(Factory):
 
     def _collect_notebook_vector_paths(self):
         """Collect active vector paths that are typically shown in notebooks."""
-        postproc_root = self.sfolder.postprocessing_folder.resolve()
+        postproc_root = self.postprocessing_folder.resolve()
 
         def _as_path(vector_obj):
             if vector_obj is None or not hasattr(vector_obj, "file_path"):
@@ -2018,7 +2000,7 @@ class PostProcess(Factory):
         dict
             Summary with keys ``kept`` and ``removed``.
         """
-        root = self.sfolder.postprocessing_folder
+        root = self.postprocessing_folder
         keep_paths = self._collect_notebook_vector_paths()
 
         if include_subfolders:
@@ -2071,7 +2053,7 @@ class PostProcess(Factory):
         gdf_point = points_vector_obj.geodata.iloc[[point_index]].copy()
         point_id = int(gdf_point.iloc[0][id_column])
 
-        output_root = output_dir or self.sfolder.postprocessing_folder
+        output_root = output_dir or self.postprocessing_folder
         tempfolder = output_root / "point_targets"
         tempfolder.mkdir(parents=True, exist_ok=True)
 
@@ -2133,7 +2115,7 @@ class PostProcess(Factory):
             )
             raise ValueError(msg)
 
-        out_dir = output_dir or self.sfolder.postprocessing_folder
+        out_dir = output_dir or self.postprocessing_folder
 
         arr_target_ids = target_vector_obj.rasterize(
             self.modelinput.compositelanduse.file_path,
@@ -3266,9 +3248,7 @@ class PostProcess(Factory):
 
         gpd_priorities = gpd_priorities.to_crs(epsg=int(self.epsg))
 
-        vct_out = (
-            self.sfolder.postprocessing_folder / "priority_subcatchments_merged.shp"
-        )
+        vct_out = self.postprocessing_folder / "priority_subcatchments_merged.shp"
         gpd_priorities.to_file(vct_out, spatial_index="YES")
 
     def identify_export_parcel(self):
@@ -3285,7 +3265,7 @@ class PostProcess(Factory):
         valid_routing_sedi_out_vector(self)
         gdf_routing_sedi_out = gpd.read_file(self.vct_routing_sedi_out)
         gdf_routing_out_of_parcel = select_routing_out_of_parcel(gdf_routing_sedi_out)
-        out_shp = self.sfolder.postprocessing_folder / "routing_out_of_parcel.shp"
+        out_shp = self.postprocessing_folder / "routing_out_of_parcel.shp"
         gdf_routing_out_of_parcel.to_file(out_shp, spatial_index="YES")
         df_prckrt = self.aggregate_sedout_parcel(gdf_routing_out_of_parcel)
 
@@ -3396,7 +3376,7 @@ class PostProcess(Factory):
         df_sedi_out_parcel.loc[~cond, "SediOut"] = profile["nodata"]
 
         # write to disk
-        self.sfolder.postprocessing_folder / "SedoutSinks.tif"
+        self.postprocessing_folder / "SedoutSinks.tif"
         profile["driver"] = "GTiff"
 
         arr_sedi_out = raster_dataframe_to_arr(
@@ -3410,15 +3390,14 @@ class PostProcess(Factory):
             profile,
         )
 
-    def select_routing_to_outsidecatchment(self):
+    def select_routing_to_outsidecatchment(self, catchment_name):
         """Exports all routing vectors to the outside of the catchment"""
         valid_routing_sedi_out_vector(self)
 
         logger.info("Determining routing out of the catchment...")
 
         vct_out = (
-            self.sfolder.postprocessing_folder
-            / f"routing_to_outside_{self.catchment_name}.shp"
+            self.postprocessing_folder / f"routing_to_outside_{catchment_name}.shp"
         )
         if not vct_out.exists():
             gdf_routingsedi_out = gpd.read_file(self.vct_routingsedi_out)
@@ -3545,14 +3524,12 @@ class PostProcess(Factory):
                 gdf_buffer = compute_cdf_sediment_load(
                     gdf_buffer,
                     "buff_sed",
-                    self.sfolder.postprocessing_folder,
+                    self.postprocessing_folder,
                     tag="buffers",
                     plot=True,
                 )
             if vct_out is None:
-                vct_out = (
-                    self.sfolder.postprocessing_folder / self.files["vct_buffers"].name
-                )
+                vct_out = self.postprocessing_folder / self.files["vct_buffers"].name
 
             if cols:
                 gdf_buffer = gdf_buffer[cols]
@@ -3578,12 +3555,12 @@ class PostProcess(Factory):
             self.files["rst_watereros"],
             self.files["rst_percelen_prcid"],
             resolution=self.resolution,
-            fmap=self.sfolder.postprocessing_folder,
+            fmap=self.postprocessing_folder,
             flag_write=True,
             flag_join_vct_parcels=join,
         )
 
-    def merge_sedi_out_and_cumulative(self, segments_to_retain=None):
+    def merge_sedi_out_and_cumulative(self, catchment_name, segments_to_retain=None):
         """Merge SediOut.rst (sediment output on every land pixel) and
         Cumulative.rst (sediment output in every
         river pixel).
@@ -3622,10 +3599,7 @@ class PostProcess(Factory):
             arr_sedi_out_river + arr_sedi_out_nonriver,
             profile["nodata"],
         )
-        rst_out = (
-            self.sfolder.postprocessing_folder
-            / f"SediOut_merged_{self.catchment_name}.tif"
-        )
+        rst_out = self.postprocessing_folder / f"SediOut_merged_{catchment_name}.tif"
         write_arr_as_rst(arr_sedi_out_total, rst_out, "float32", self.rstparams)
 
     def convert_output_rsts_to_ton(self):
@@ -3689,7 +3663,7 @@ class PostProcess(Factory):
             gdf_subcatchments.drop(columns=["VALUE"], inplace=True)
             gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
-    def add_segment_results_to_vct(self):
+    def add_segment_results_to_vct(self, catchment_name, scenario_label):
         """Adds the sedimentinput to every riversegment and calculates the
         sedlen-argument.
 
@@ -3719,9 +3693,9 @@ class PostProcess(Factory):
             df_waterline["sedlen"] = df_waterline["Sediment"] / df_waterline.length
 
             self.vct_riversegment = (
-                self.sfolder.postprocessing_folder
-                / f"Sedimentexport2Segments_{self.catchment_name}_"
-                f"s{self.scenario_label}.shp"
+                self.postprocessing_folder
+                / f"Sedimentexport2Segments_{catchment_name}_"
+                f"s{scenario_label}.shp"
             )
 
             df_waterline.to_file(self.vct_riversegment, spatial_index="YES")
@@ -3765,7 +3739,7 @@ class PostProcess(Factory):
         gdf_subcatchments.drop(columns=["ids"], inplace=True)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
-    def identify_sinks_in_routing(self):
+    def identify_sinks_in_routing(self, catchment_name, scenario_label):
         """Identify sinks based on whether more than one routing vector goes to
         a pixel.
         """
@@ -3814,11 +3788,9 @@ class PostProcess(Factory):
                 gpd_bindomain = gpd.GeoDataFrame(
                     df_pkaart, geometry="geometry", crs=CRS
                 )
-                vct_out = (
-                    f"sinks_in_routing_{self.catchment_name}_s{self.scenario_label}.shp"
-                )
+                vct_out = f"sinks_in_routing_{catchment_name}_s{scenario_label}.shp"
 
-                vct_out = self.sfolder.postprocessing_folder / vct_out
+                vct_out = self.postprocessing_folder / vct_out
                 gpd_bindomain.to_file(vct_out, spatial_index="YES")
                 msg = f"{gpd_bindomain.shape[0]} sinks in routing!"
                 logger.info(msg)
@@ -3854,7 +3826,7 @@ class PostProcess(Factory):
             logger.warning(msg)
             raise WSException(msg)
 
-    def calculate_areas_prckrt(self):
+    def calculate_areas_prckrt(self, year, catchment_name, scenario_label):
         """Calculates the areas and relative areas of all landuse classes in
         the parcelmap
         """
@@ -3878,19 +3850,18 @@ class PostProcess(Factory):
         df["lnduse_class"] = vals
         df["area"] = areas
         df["rel_area"] = rel_areas * 100
-        f = self.sfolder.postprocessing_folder / (
-            f"opp_perceelskaart_{self.year}_{self.catchment_name}_"
-            f"s{self.scenario_label}.csv"
+        f = self.postprocessing_folder / (
+            f"opp_perceelskaart_{year}_{catchment_name}_" f"s{scenario_label}.csv"
         )
         df.to_csv(f, sep=";")
 
-    def make_facts(self):
+    def make_facts(self, year, catchment_name, scenario_label):
         """Make a textfile with a number of stats about the simulation"""
-        factsfile = self.sfolder.postprocessing_folder / (
-            f"facts_{self.catchment_name}_s{self.scenario_label}.csv"
+        factsfile = self.postprocessing_folder / (
+            f"facts_{catchment_name}_s{scenario_label}.csv"
         )
         with open(factsfile, "w") as f:
-            f.write(f";{self.catchment_name}\n")
+            f.write(f";{catchment_name}\n")
 
             opp_catch = np.sum(
                 self.arr_bindomain[self.arr_bindomain != self.rstparams["nodata"]]
@@ -3901,39 +3872,35 @@ class PostProcess(Factory):
 
             df_parcel = gpd.read_file(self.files["vct_percelen"])
             n_parcels = df_parcel.shape[0]
-            f.write(f"Aantal landbouwpercelen {self.year};{n_parcels}\n")
+            f.write(f"Aantal landbouwpercelen {year};{n_parcels}\n")
             df_parcel["opp"] = df_parcel.area
             opp_parcels = df_parcel.opp.sum()
             opp_parcels_ha = opp_parcels / 10000.0
-            f.write(f"Oppervlakte landbouwpercelen (ha) {self.year};{opp_parcels_ha}\n")
+            f.write(f"Oppervlakte landbouwpercelen (ha) {year};{opp_parcels_ha}\n")
             # (SG/DR) share of agricultural parcels
             aandeel_landbouw = (opp_parcels_ha / opp_catch_ha) * 100
-            f.write(
-                f"relatieve opp landbouwpercelen (%) {self.year};{aandeel_landbouw}\n"
-            )
+            f.write(f"relatieve opp landbouwpercelen (%) {year};{aandeel_landbouw}\n")
 
             if "Lndgbrk" in df_parcel.columns:
                 n_nt_kerend = df_parcel[df_parcel.ntkerend == 1].shape[0]
-                f.write(
-                    f"Aantal nt-kerend bewerkte percelen {self.year};{n_nt_kerend}\n"
-                )
+                f.write(f"Aantal nt-kerend bewerkte percelen {year};{n_nt_kerend}\n")
             df_grass = gpd.read_file(self.files["vct_grass_strips"])
             n_grass = df_grass.shape[0]
-            f.write(f"Aantal grasstroken {self.year};{n_grass}\n")
+            f.write(f"Aantal grasstroken {year};{n_grass}\n")
 
-    def split_sewerin(self):
+    def split_sewerin(self, scenario_label):
         """Split the sewerin raster with the sewer_id raster.
 
         See :func:`pywatemsedem.postprocess.split_endpoints_in_raster`
         """
 
         rst_sewers = (
-            Path(self.sfolder.postprocessing_folder)
-            / f"endpoints_in_sewers_s{self.scenario_label}.rst"
+            Path(self.postprocessing_folder)
+            / f"endpoints_in_sewers_s{scenario_label}.rst"
         )
         rst_ditches = (
-            Path(self.sfolder.postprocessing_folder)
-            / f"endpoints_in_ditches_s{self.scenario_label}.rst"
+            Path(self.postprocessing_folder)
+            / f"endpoints_in_ditches_s{scenario_label}.rst"
         )
 
         split_endpoints_in_raster(
@@ -3966,13 +3933,15 @@ class PostProcess(Factory):
         """
         self._sinks = self.raster_factory(raster, flag_mask=True)
 
-    def assign_filenames(self, fmap_results):
+    def assign_filenames(self, fmap_results, year, catchment_name, scenario_label):
         """Use filestructure defined in the package to appoint names of files
 
         Parameters
         ----------
         fmap_results: str or pathlib.Path
             Folder path (scenario_XX)
+        year: int
+            Simulation year used for filename formatting.
         """
         files = {}
 
@@ -3981,9 +3950,9 @@ class PostProcess(Factory):
         for index in df_datastructure_files.index:
             f = get_tuple_datastructure(df_datastructure_files, index)
             argument_inputs = {
-                "year": self.year,
-                "catchment_name": self.catchment_name,
-                "scenario": self.scenario_label,
+                "year": year,
+                "catchment_name": catchment_name,
+                "scenario": scenario_label,
             }
             filename = self.process_and_check_filename(
                 fmap_results, *f, argument_inputs
@@ -4129,9 +4098,7 @@ class PostProcess(Factory):
             Geopandas dataframe of vct with statistics per polygon.
         """
         dict_operators = {"SUM": True}
-        vct_out = self.sfolder.postprocessing_folder / Path(
-            f"{vct.stem}_statistics.shp"
-        )
+        vct_out = self.postprocessing_folder / Path(f"{vct.stem}_statistics.shp")
         rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file_path)
         rst_deposition = create_deposition_raster(
             self.modeloutput.watereros_kg.file_path
