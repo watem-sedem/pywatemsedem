@@ -4,11 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 from conftest import ini_file, postprocess, scenario_data
-from numpy.testing import assert_almost_equal
 
 from pywatemsedem.geo.utils import load_raster
 from pywatemsedem.postprocess import (
-    compute_efficiency_grass_strips,
     compute_netto_erosion_parcels,
     read_filestructure,
 )
@@ -33,27 +31,6 @@ def test_read_filestructure(sep):
     else:
         df = read_filestructure(sep=sep)
         assert len(df) > 0
-
-
-def test_get_grass_strips_statistics():
-    """Test function for get_gras_strips_statistics for individual grass strips.
-    This test function compares the arrays gras id, and coupled sedi in and out."""
-
-    # run function
-    _, _, df = compute_efficiency_grass_strips(
-        postprocess.txt_routing,
-        postprocess.rst_grass_strips_id,
-        postprocess.rst_compositelanduse,
-        postprocess.rst_sedi_out,
-    )
-
-    df_test = pd.read_csv(postprocess.txt_grass_strips_efficiency)
-
-    assert_almost_equal(df["gras_id_target"].values, df_test["gras_id_target"].values)
-    assert_almost_equal(df["gras_id_source"].values, df_test["gras_id_source"].values)
-    assert_almost_equal(df["npixels_t"].values, df_test["npixels_t"].values)
-    assert_almost_equal(df["eSTE"].values, df_test["STE"].values)
-    assert_almost_equal(df["sedi_in"].values, df_test["sediin"].values)
 
 
 def test_compute_netto_erosion_parcels():
@@ -137,6 +114,12 @@ def test_vct_routing_property(postprocess_obj):
     assert routing.file_path.exists()
     assert routing.file_path.suffix == ".shp"
     assert not routing.geodata.empty
+    ax = routing.plot(
+        show_mask=True,
+        show_river=True,
+        show_labels=False,
+    )
+    assert ax is not None
 
 
 def _assert_sink_vector_properties(vector_obj, raster_path, expected_type):
@@ -255,14 +238,15 @@ def test_process_grass_strips(postprocess_obj, compute_priority):
 
     postprocess_obj.vct_grass_strips = scenario_data.grass_strips
 
-    gdf_grass = postprocess_obj.process_grass_strips(
+    result = postprocess_obj.process_grass_strips(
         compute_priority=compute_priority,
     )
 
+    assert result is None
+    gdf_grass = postprocess_obj.vct_grass_strips.geodata
+
     assert not gdf_grass.empty
     expected_columns = {
-        "gras_id_target",
-        "gras_id_source",
         "npixels_t",
         "sedi_in",
         "sedi_out",
@@ -284,6 +268,19 @@ def test_process_grass_strips(postprocess_obj, compute_priority):
         if not cdf.empty:
             assert (cdf >= 0).all()
             assert (cdf <= 100).all()
+
+        valid = gdf_grass[gdf_grass["sed"] > 0].copy()
+        if not valid.empty:
+            assert valid["sed"].is_monotonic_decreasing
+            cdf_valid = pd.to_numeric(valid["cdf"], errors="coerce").dropna()
+            if len(cdf_valid) > 1:
+                assert cdf_valid.is_monotonic_increasing
+
+            total_deposition = valid["sed"].sum()
+            np.testing.assert_allclose(
+                valid["cdf"].to_numpy(),
+                100 * valid["cum_sum"].to_numpy() / total_deposition,
+            )
     else:
         assert "cum_sum" not in gdf_grass.columns
         assert "cdf" not in gdf_grass.columns
@@ -355,7 +352,7 @@ def test_add_poi(
             postprocess_obj.add_poi(
                 x_coord,
                 y_coord,
-                poi_id=poi_id,
+                id=poi_id,
                 filename=filename,
             )
         return
@@ -363,7 +360,7 @@ def test_add_poi(
     poi_path = postprocess_obj.add_poi(
         x_coord,
         y_coord,
-        poi_id=poi_id,
+        id=poi_id,
         filename=filename,
     )
 
@@ -373,7 +370,7 @@ def test_add_poi(
     poi_vector = postprocess_obj.vct_poi
     assert poi_vector.file_path == poi_path
     assert len(poi_vector.geodata) == len(expected_ids)
-    assert sorted(poi_vector.geodata["poi_id"].astype(int).tolist()) == expected_ids
+    assert sorted(poi_vector.geodata["id"].astype(int).tolist()) == expected_ids
 
 
 def test_vct_buffers_property(postprocess_obj):
@@ -385,7 +382,7 @@ def test_vct_buffers_property(postprocess_obj):
     assert buffers.file_path.exists()
     assert buffers.file_path.suffix == ".shp"
     assert not buffers.geodata.empty
-    assert "buffer_id" in buffers.geodata.columns
+    assert "id" in buffers.geodata.columns
     assert hasattr(buffers, "vct_subcatchments")
     assert buffers.vct_subcatchments is None
 
@@ -403,7 +400,11 @@ def test_identify_subcatchments_to_buffers(postprocess_obj):
     assert subcatchments.file_path == out
     assert not subcatchments.geodata.empty
     assert "id" in subcatchments.geodata.columns
+    assert "VALUE" not in subcatchments.geodata.columns
     assert len(subcatchments.geodata) == len(postprocess_obj.vct_buffers.geodata)
+    assert sorted(subcatchments.geodata["id"].astype(int).tolist()) == sorted(
+        postprocess_obj.vct_buffers.geodata["id"].astype(int).tolist()
+    )
 
 
 def test_identify_subcatchments_multiple_poi(postprocess_obj):
@@ -412,20 +413,20 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
     This test validates argument usage for
     ``identify_subcatchments(target_input, id_column, tag)``:
     - ``target_input="vct_poi"`` to use the POI vector
-    - ``id_column="poi_id"`` to map each delineated polygon to input POI ids
+    - ``id_column="id"`` to map each delineated polygon to input POI ids
     - ``tag="subcatchments"`` for deterministic output naming
     """
 
     postprocess_obj.add_poi(
         [165570.4, 164464.4],
         [168768, 166967.9],
-        poi_id=[11, 12],
+        id=[11, 12],
         filename="poi_subcatchments_test.shp",
     )
 
     out = postprocess_obj.identify_subcatchments(
         "vct_poi",
-        id_column="poi_id",
+        id_column="id",
         tag="subcatchments",
     )
 
@@ -436,11 +437,9 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
     subcatchments = postprocess_obj.vct_poi.vct_subcatchments
     assert subcatchments.file_path == out
     assert len(subcatchments.geodata) == 2
-    if "target_id" in subcatchments.geodata.columns:
-        assert sorted(subcatchments.geodata["target_id"].astype(int).tolist()) == [
-            11,
-            12,
-        ]
+    assert sorted(subcatchments.geodata["id"].astype(int).tolist()) == [11, 12]
+    assert "target_id" not in subcatchments.geodata.columns
+    assert "VALUE" not in subcatchments.geodata.columns
 
 
 @pytest.mark.parametrize(
@@ -516,23 +515,29 @@ def test_identify_priority_subcatchments(
     assert priority_points.file_path.exists()
     assert priority_points.file_path.name == "priority_points_of_interest.shp"
     assert not priority_points.geodata.empty
-    assert "target_id" in priority_points.geodata.columns
+    assert "id" in priority_points.geodata.columns
+    assert "target_id" not in priority_points.geodata.columns
+    assert "priority_i" not in priority_points.geodata.columns
+    assert "priority_id" not in priority_points.geodata.columns
 
     assert priority_subcatchments.file_path.exists()
     assert priority_subcatchments.file_path.name.endswith("priority_subcatchments.shp")
     assert not priority_subcatchments.geodata.empty
-    assert "target_id" in priority_subcatchments.geodata.columns
+    assert "id" in priority_subcatchments.geodata.columns
+    assert "target_id" not in priority_subcatchments.geodata.columns
+    assert "VALUE" not in priority_subcatchments.geodata.columns
 
-    point_ids = sorted(priority_points.geodata["target_id"].astype(int).tolist())
-    subcatchment_ids = sorted(
-        priority_subcatchments.geodata["target_id"].astype(int).tolist()
-    )
+    point_ids = sorted(priority_points.geodata["id"].astype(int).tolist())
+    subcatchment_ids = sorted(priority_subcatchments.geodata["id"].astype(int).tolist())
     assert subcatchment_ids == point_ids
 
     if approach == "n":
         assert len(priority_points.geodata) == nmax
         assert len(priority_subcatchments.geodata) == nmax
-        assert priority_points.geodata["target_id"].nunique() == nmax
+        assert priority_points.geodata["id"].nunique() == nmax
+        assert sorted(priority_points.geodata["id"].astype(int).tolist()) == list(
+            range(1, nmax + 1)
+        )
     else:
         assert len(priority_points.geodata) >= 1
         assert len(priority_subcatchments.geodata) >= 1

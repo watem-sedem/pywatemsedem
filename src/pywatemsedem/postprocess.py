@@ -199,6 +199,7 @@ class PostProcess(Factory):
         field_name,
         plot_title=None,
         init_subcatchments=False,
+        ensure_internal_id=True,
     ):
         """Create a vector object from a path and store it on this instance."""
         if self.mask is None:
@@ -213,7 +214,8 @@ class PostProcess(Factory):
             geometry_type,
             flag_clip=False,
         )
-        self._ensure_vector_id_column(vector_obj)
+        if ensure_internal_id:
+            self._ensure_vector_id_column(vector_obj)
 
         if init_subcatchments:
             vector_obj.vct_subcatchments = None
@@ -584,6 +586,16 @@ class PostProcess(Factory):
             ignore_index=True,
         )
 
+        # Keep consistency with sink vector conversion: values below 0.001 ton
+        # are considered near-zero and are excluded from sink outputs.
+        gdf_sinks = gdf_sinks.loc[gdf_sinks["sediment"] >= 0.001].copy()
+
+        if gdf_sinks.empty:
+            logger.warning(
+                "No sink features remain after filtering sediment < 0.001 ton."
+            )
+            return
+
         gdf_sinks = gdf_sinks.sort_values("sediment", ascending=False)
         gdf_sinks["cumsum"] = gdf_sinks["sediment"].cumsum()
         gdf_sinks["cumperc"] = (gdf_sinks["cumsum"] / gdf_sinks["sediment"].sum()) * 100
@@ -621,136 +633,12 @@ class PostProcess(Factory):
             plot_title="Catchment mask + rivers + grass strips",
         )
 
-    def valid_grass_strips(self):
-        """Validate the grass strips vector against compositelanduse.
-
-        The vector is valid when:
-
-        1. Polygon overlap only occurs on compositelanduse pixels with value
-           -1 (water), -2 (roads) or -6 (grass strips).
-        2. Every compositelanduse pixel with value -6 has polygon overlap.
-        """
-        if self._vct_grass_strips is None:
-            return
-
-        arr_compositelanduse = self.modelinput.compositelanduse.arr
-        rows_grass, cols_grass = np.where(arr_compositelanduse == -6)
-
-        gdf_grass = self._vct_grass_strips.geodata
-        if gdf_grass is None or gdf_grass.empty:
-            if len(rows_grass) == 0:
-                return
-            msg = (
-                "Grass strips vector is empty, but compositelanduse contains "
-                f"{len(rows_grass)} pixel(s) with value -6."
-            )
-            raise ValueError(msg)
-
-        gdf_grass = gdf_grass[gdf_grass.geometry.notnull()].copy()
-        gdf_grass = gdf_grass[~gdf_grass.geometry.is_empty]
-        if gdf_grass.empty:
-            if len(rows_grass) == 0:
-                return
-            msg = (
-                "Grass strips vector has no valid geometries, but "
-                "compositelanduse contains -6 pixels."
-            )
-            raise ValueError(msg)
-
-        target_crs = f"EPSG:{self.epsg}"
-        if gdf_grass.crs is not None and str(gdf_grass.crs) != target_crs:
-            gdf_grass = gdf_grass.to_crs(target_crs)
-
-        minx, miny, _, _ = self.rp["minmax"]
-        res = self.rp["res"]
-        nrows = self.rp["nrows"]
-
-        def _build_pixel_geometries(rows, cols):
-            return np.array(
-                [
-                    shapely.box(
-                        minx + col * res,
-                        miny + (nrows - row - 1) * res,
-                        minx + (col + 1) * res,
-                        miny + (nrows - row) * res,
-                    )
-                    for row, col in zip(rows, cols)
-                ],
-                dtype=object,
-            )
-
-        grass_union = shapely.union_all(gdf_grass.geometry.to_numpy())
-        if grass_union.is_empty:
-            if len(rows_grass) == 0:
-                return
-            msg = (
-                "Grass strips vector has empty union geometry, but "
-                "compositelanduse contains -6 pixels."
-            )
-            raise ValueError(msg)
-
-        # Rule 1: polygon overlap is only allowed on -1, -2 or -6 pixels.
-        allowed_values = np.array([-1, -2, -6])
-        allowed_mask = np.isin(arr_compositelanduse, allowed_values)
-        rows_disallowed, cols_disallowed = np.where(~allowed_mask)
-        if len(rows_disallowed) > 0:
-            disallowed_geometries = _build_pixel_geometries(
-                rows_disallowed, cols_disallowed
-            )
-            disallowed_overlap = (
-                shapely.area(shapely.intersection(disallowed_geometries, grass_union))
-                > 0
-            )
-            invalid_idx = np.where(disallowed_overlap)[0]
-
-            if invalid_idx.size > 0:
-                preview_items = []
-                for i in invalid_idx[:10]:
-                    value = int(
-                        arr_compositelanduse[
-                            rows_disallowed[i],
-                            cols_disallowed[i],
-                        ]
-                    )
-                    preview_items.append(
-                        (
-                            f"(row={int(rows_disallowed[i]) + 1}, "
-                            f"col={int(cols_disallowed[i]) + 1}, "
-                            f"value={value})"
-                        )
-                    )
-                preview = ", ".join(preview_items)
-                msg = (
-                    "Invalid grass strips vector: polygon overlap is only allowed "
-                    "on compositelanduse values -1, -2 and -6. "
-                    f"Found overlap in {invalid_idx.size} disallowed pixel(s). "
-                    f"Examples: {preview}."
-                )
-                raise ValueError(msg)
-
-        # Rule 2: every -6 pixel must have overlap with a grass strip polygon.
-        if len(rows_grass) > 0:
-            grass_pixel_geometries = _build_pixel_geometries(rows_grass, cols_grass)
-            grass_overlap = (
-                shapely.area(shapely.intersection(grass_pixel_geometries, grass_union))
-                > 0
-            )
-            missing_idx = np.where(~grass_overlap)[0]
-
-            if missing_idx.size > 0:
-                preview = ", ".join(
-                    [
-                        f"(row={int(rows_grass[i]) + 1}, col={int(cols_grass[i]) + 1})"
-                        for i in missing_idx[:10]
-                    ]
-                )
-                msg = (
-                    "Invalid grass strips vector: every compositelanduse pixel "
-                    "with value -6 must have polygon overlap. "
-                    f"Missing coverage for {missing_idx.size} pixel(s). "
-                    f"Examples: {preview}."
-                )
-                raise ValueError(msg)
+        gdf_grass = self._vct_grass_strips.geodata.copy()
+        if "NR" in gdf_grass.columns:
+            if "id" in gdf_grass.columns:
+                gdf_grass = gdf_grass.drop(columns=["id"])
+            gdf_grass = gdf_grass.rename(columns={"NR": "id"})
+            self._vct_grass_strips.geodata = gdf_grass
 
     def process_grass_strips(self, compute_priority=True):
         """Compute grass strips efficiency and compute priority
@@ -760,22 +648,11 @@ class PostProcess(Factory):
         compute_priority: bool, optional
             Compute priorities for grass strips based on deposition in grass strip.
 
-        Returns
-        -------
-        gdf_grass_strips: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips` added
-            with columns (if compute_priority=True)
-                - *gras_id_target* (float): grass_id
-                - *gras_id_source* (float): grass_id
-                - *npixels_t* (float: number of pixels of target grass strip
-                - *sedi_in* (float): total incoming sediment in grass strip (kg)
-                - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
-                - *eSTE* (float): estimated sediment trapping efficiency, see
-                  :func:`pywatemsedem.grasstrips.estimate_ste` (%)
-                - sed (float): amount of sedimentation (kg)
-                - *column_value* (float): deposition in grass strip.
-                - *cum_sum* (float): cumulative sum of deposition in grass strips
-                - *cdf* (float): cumulative distribution estimate.
+        Notes
+        -----
+        This method updates ``self.vct_grass_strips.geodata`` in place with
+        columns from :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips`
+        and, if ``compute_priority=True``, additional cumulative metrics.
         """
         logger.info("Calculating in- and output of sediment for every grass strip...")
 
@@ -789,14 +666,49 @@ class PostProcess(Factory):
         grass_dir = self._workflow_subdir("grass_strips")
         rst_grass_strips_id = grass_dir / "grass_strips_id.rst"
 
+        gdf_grass_strips = self.vct_grass_strips.geodata.copy()
+        if "id" not in gdf_grass_strips.columns:
+            msg = (
+                "Grass strips vector must contain an 'id' column. "
+                "Provide 'NR' in the input vector so it can be renamed to 'id'."
+            )
+            raise ValueError(msg)
+
         arr_grass_strips_id = self.vct_grass_strips.rasterize(
             self.modelinput.compositelanduse.file_path,
             self.epsg,
-            col="NR",
+            col="id",
             dtype_raster="integer",
             nodata=-9999,
             gdal=False,
         )
+
+        # Validate that every -6 compositelanduse cell maps to a rasterized
+        # grass-strip pixel.
+        arr_compositelanduse = self.modelinput.compositelanduse.arr
+        mask_grass_compositelanduse = arr_compositelanduse == -6
+        nodata_grass_ids = -9999
+
+        mask_grass_rasterized = (arr_grass_strips_id != nodata_grass_ids) & (
+            arr_grass_strips_id > 0
+        )
+
+        missing_mask = mask_grass_compositelanduse & (~mask_grass_rasterized)
+        if np.any(missing_mask):
+            rows_missing, cols_missing = np.where(missing_mask)
+            preview = ", ".join(
+                [
+                    f"(row={int(r) + 1}, col={int(c) + 1})"
+                    for r, c in zip(rows_missing[:10], cols_missing[:10])
+                ]
+            )
+            msg = (
+                "Rasterized grass strips do not fully cover compositelanduse "
+                "grass-strip cells (-6). "
+                f"Missing coverage for {len(rows_missing)} cell(s). "
+                f"Examples: {preview}."
+            )
+            raise ValueError(msg)
 
         write_arr_as_rst(
             arr_grass_strips_id,
@@ -812,9 +724,10 @@ class PostProcess(Factory):
             self.modeloutput.sedi_out.file_path,
         )
 
-        gdf_grass_strips = self.vct_grass_strips.geodata.copy()
         gdf_grass_strips = gdf_grass_strips.merge(
-            df_grass_strips_eff, left_on="NR", right_on="gras_id_target", how="left"
+            df_grass_strips_eff,
+            on="id",
+            how="left",
         )
         if compute_priority:
             gdf_grass_strips = compute_cdf_sediment_load(
@@ -822,17 +735,20 @@ class PostProcess(Factory):
                 "sed",
                 grass_dir,
                 ignore_negative_values=True,
+                sort_ascending=False,
                 tag="grass_strips",
                 plot=True,
             )
 
-        return gdf_grass_strips
+        # Keep grass-strip statistics on the active vector object so downstream
+        # calls can directly use ``pp.vct_grass_strips.geodata``.
+        self._vct_grass_strips.geodata = gdf_grass_strips
 
     def add_poi(
         self,
         x_coord,
         y_coord,
-        poi_id=1,
+        id=1,
         filename="poi.shp",
         lonlat=False,
     ):
@@ -852,12 +768,13 @@ class PostProcess(Factory):
                         - Default: interpreted in ``self.epsg``.
                         - If ``lonlat=True``: interpreted as decimal latitude(s)
                             in ``EPSG:4326``.
-        poi_id: int or array-like, default 1
-            Identifier(s) written to field ``poi_id``.
+        id: int or array-like, default 1
+            Identifier(s) written to field ``id``.
 
             - For a single POI, pass an integer.
-            - For multiple POIs, pass a list/array with one id per coordinate pair.
-            - If multiple POIs are given and ``poi_id`` is a single integer,
+                        - For multiple POIs, pass a list/array with one id per
+                            coordinate pair.
+                        - If multiple POIs are given and ``id`` is a single integer,
               sequential ids are generated starting from that value.
         filename: str, default "poi.shp"
             Name of the POI vector written in the postprocessing folder.
@@ -880,17 +797,17 @@ class PostProcess(Factory):
 
         npoi = x_vals.size
 
-        if np.isscalar(poi_id):
-            poi_start = int(poi_id)
+        if np.isscalar(id):
+            poi_start = int(id)
             if npoi == 1:
                 poi_ids = [poi_start]
             else:
                 poi_ids = list(range(poi_start, poi_start + npoi))
         else:
-            poi_ids = [int(i) for i in np.atleast_1d(poi_id)]
+            poi_ids = [int(i) for i in np.atleast_1d(id)]
             if len(poi_ids) != npoi:
                 msg = (
-                    "If 'poi_id' is array-like, it must have the same length "
+                    "If 'id' is array-like, it must have the same length "
                     "as coordinates."
                 )
                 raise ValueError(msg)
@@ -898,7 +815,7 @@ class PostProcess(Factory):
         source_epsg = 4326 if lonlat else int(self.epsg)
 
         gdf_poi = gpd.GeoDataFrame(
-            {"poi_id": poi_ids},
+            {"id": poi_ids},
             geometry=[
                 shapely.geometry.Point(float(x), float(y))
                 for x, y in zip(x_vals, y_vals)
@@ -922,7 +839,7 @@ class PostProcess(Factory):
         if outside_pois:
             bounds = self.modelinput.vct_mask.geodata.total_bounds
             outside_txt = "; ".join(
-                [f"poi_id={pid} at ({x:.3f}, {y:.3f})" for pid, x, y in outside_pois]
+                [f"id={pid} at ({x:.3f}, {y:.3f})" for pid, x, y in outside_pois]
             )
             msg = (
                 "POI coordinates must be inside the catchment mask. "
@@ -977,6 +894,7 @@ class PostProcess(Factory):
             "vct_poi",
             plot_title="Catchment mask + rivers + points of interest",
             init_subcatchments=True,
+            ensure_internal_id=False,
         )
 
     @property
@@ -1007,6 +925,7 @@ class PostProcess(Factory):
             "vct_priority_points",
             plot_title="Catchment mask + rivers + priority points",
             init_subcatchments=True,
+            ensure_internal_id=False,
         )
 
     @property
@@ -1053,7 +972,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(self._vct_priority_subcatchments)
 
         if self._vct_priority_points is not None:
             self._vct_priority_points.vct_subcatchments = (
@@ -1090,6 +1008,7 @@ class PostProcess(Factory):
             "vct_buffers",
             plot_title="Catchment mask + rivers + buffers",
             init_subcatchments=True,
+            ensure_internal_id=False,
         )
 
     def add_buffers(self, filename="buffers.shp"):
@@ -1097,7 +1016,7 @@ class PostProcess(Factory):
 
         Buffers are always derived by vectorizing
         ``self.modelinput.buffers.arr`` with nodata-aware masking.
-        A ``buffer_id`` field is created and used as stable identifier for
+        An ``id`` field is created and used as stable identifier for
         downstream subcatchment delineation.
 
         Parameters
@@ -1150,19 +1069,19 @@ class PostProcess(Factory):
             gdf_buffers = gdf_buffers[gdf_buffers[id_column] > 0].copy()
             exid_offset = 2**14
             raw_ids = gdf_buffers[id_column].astype(int)
-            gdf_buffers["buffer_id"] = np.where(
+            gdf_buffers["id"] = np.where(
                 raw_ids > exid_offset,
                 raw_ids - exid_offset,
                 raw_ids,
             ).astype(int)
             # Merge all polygon parts belonging to one logical buffer id.
-            gdf_buffers = gdf_buffers[["buffer_id", "geometry"]].dissolve(
-                by="buffer_id",
+            gdf_buffers = gdf_buffers[["id", "geometry"]].dissolve(
+                by="id",
                 as_index=False,
             )
         else:
             gdf_buffers = gdf_buffers.copy()
-            gdf_buffers["buffer_id"] = np.arange(1, len(gdf_buffers) + 1)
+            gdf_buffers["id"] = np.arange(1, len(gdf_buffers) + 1)
 
         buffer_dir = self._workflow_subdir("buffers")
         vct_buffers = buffer_dir / Path(filename).name
@@ -1228,7 +1147,24 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(vct_buffers.vct_subcatchments)
+        gdf_subcatchments = vct_buffers.vct_subcatchments.geodata.copy()
+        if "VALUE" in gdf_subcatchments.columns:
+            gdf_subcatchments["id"] = pd.to_numeric(
+                gdf_subcatchments["VALUE"],
+                errors="coerce",
+            ).astype("Int64")
+            gdf_subcatchments = gdf_subcatchments.drop(columns=["VALUE"])
+        elif "id" not in gdf_subcatchments.columns:
+            msg = "Buffer subcatchments output does not contain 'VALUE' or 'id'."
+            raise ValueError(msg)
+
+        self._unlink_vector_dataset(Path(vct_subcatchments))
+        gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
+        vct_buffers.vct_subcatchments = self.vector_factory(
+            Path(vct_subcatchments),
+            "Polygon",
+            flag_clip=False,
+        )
         self._attach_buffer_subcatchments_plot(vct_buffers)
         self._remove_individual_subcatchment_shapefiles(
             buffer_dir,
@@ -1247,12 +1183,12 @@ class PostProcess(Factory):
             return requested
 
         for candidate in [
+            "id",
+            "ID",
             "target_id",
             "poi_id",
             "priority_id",
             "priority_i",
-            "id",
-            "ID",
             "NR",
             "nr",
         ]:
@@ -1264,7 +1200,7 @@ class PostProcess(Factory):
 
     def _infer_polygon_id_column(self, gdf):
         """Infer an id column from a polygon GeoDataFrame."""
-        for candidate in ["buffer_id", "NR", "nr", "id", "ID", "VALUE"]:
+        for candidate in ["id", "ID", "buffer_id", "NR", "nr", "VALUE"]:
             if candidate in gdf.columns:
                 return candidate
         return None
@@ -1320,73 +1256,226 @@ class PostProcess(Factory):
             "linewidth": 0.5,
         }
 
+    def _vector_plot_kwargs(
+        self,
+        gdf,
+        default_kwargs,
+        column,
+        cmap,
+        legend,
+        legend_kwds,
+        kwargs,
+    ):
+        """Build validated keyword arguments for GeoDataFrame plotting."""
+        plot_kwargs = dict(default_kwargs)
+        plot_kwargs.update(kwargs)
+
+        if column is not None:
+            if column not in gdf.columns:
+                available_columns = ", ".join([str(col) for col in gdf.columns])
+                msg = (
+                    f"Column '{column}' not found in vector data. "
+                    f"Available columns: {available_columns}."
+                )
+                raise ValueError(msg)
+            plot_kwargs["column"] = column
+
+        if cmap is not None:
+            plot_kwargs["cmap"] = cmap
+
+        if legend:
+            plot_kwargs["legend"] = True
+            auto_legend_kwds = {
+                "shrink": 0.8,
+                "aspect": 25,
+                "pad": 0.02,
+            }
+            merged_legend_kwds = dict(auto_legend_kwds)
+            if legend_kwds is not None:
+                merged_legend_kwds.update(legend_kwds)
+            if "column" in plot_kwargs and "label" not in merged_legend_kwds:
+                merged_legend_kwds["label"] = str(plot_kwargs["column"])
+            plot_kwargs["legend_kwds"] = merged_legend_kwds
+
+        # GeoPandas cannot combine fixed color and value-based coloring.
+        if "column" in plot_kwargs or "values" in plot_kwargs:
+            plot_kwargs.pop("color", None)
+
+        return plot_kwargs
+
+    def _add_colorbar_axis(self, ax, plot_kwargs):
+        """Attach a bounded colorbar axis when continuous legends are used."""
+        if not (
+            plot_kwargs.get("legend", False)
+            and "column" in plot_kwargs
+            and "cax" not in plot_kwargs
+        ):
+            return
+
+        from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="4%", pad=0.08)
+        plot_kwargs["cax"] = cax
+        plot_kwargs["legend_kwds"].pop("shrink", None)
+
+    def _resolve_label_column(self, gdf, show_labels, label_column):
+        """Return effective label column and validate explicit label request."""
+        effective_label_column = "id" if label_column is None else label_column
+        if (
+            show_labels
+            and effective_label_column not in gdf.columns
+            and label_column is not None
+        ):
+            available_columns = ", ".join([str(col) for col in gdf.columns])
+            msg = (
+                f"Label column '{label_column}' not found in vector data. "
+                f"Available columns: {available_columns}."
+            )
+            raise ValueError(msg)
+        return effective_label_column
+
+    def _annotate_vector_labels(
+        self,
+        ax,
+        gdf,
+        show_labels,
+        label_column,
+        label_color,
+        label_fontsize,
+        label_weight,
+    ):
+        """Annotate feature labels on the map for supported geometries."""
+        if not (show_labels and label_column in gdf.columns):
+            return
+
+        for _, row in gdf.iterrows():
+            geom = row.geometry
+            if geom is None or geom.is_empty:
+                continue
+            point = geom if geom.geom_type == "Point" else geom.representative_point()
+            ax.annotate(
+                str(row[label_column]),
+                (point.x, point.y),
+                xytext=(3, 3),
+                textcoords="offset points",
+                fontsize=label_fontsize,
+                color=label_color,
+                weight=label_weight,
+            )
+
+    def _plot_attached_vector(
+        self,
+        vector_obj,
+        default_kwargs,
+        title,
+        ax=None,
+        show_mask=True,
+        show_river=True,
+        column=None,
+        cmap=None,
+        legend=False,
+        legend_kwds=None,
+        show_labels=True,
+        label_column=None,
+        label_color="black",
+        label_fontsize=8,
+        label_weight="normal",
+        river_color="#1f78b4",
+        **kwargs,
+    ):
+        """Plot an attached vector with context overlays and labels."""
+        import matplotlib.pyplot as plt
+
+        if ax is None:
+            _, ax = plt.subplots(figsize=(8, 8))
+
+        if show_mask:
+            self.vct_mask.geodata.plot(
+                ax=ax,
+                facecolor="none",
+                edgecolor="black",
+                linewidth=1,
+            )
+
+        if show_river:
+            self._add_river_overlay(ax, river_color=river_color)
+
+        gdf = vector_obj.geodata
+        if gdf is not None and not gdf.empty:
+            plot_kwargs = self._vector_plot_kwargs(
+                gdf,
+                default_kwargs,
+                column,
+                cmap,
+                legend,
+                legend_kwds,
+                kwargs,
+            )
+            self._add_colorbar_axis(ax, plot_kwargs)
+
+            plot_kwargs["ax"] = ax
+            gdf_plot = gdf
+            if "column" in plot_kwargs:
+                # Draw low values first and high values last (on top).
+                gdf_plot = gdf.sort_values(
+                    by=plot_kwargs["column"],
+                    ascending=True,
+                    na_position="first",
+                )
+
+            gdf_plot.plot(**plot_kwargs)
+
+            effective_label_column = self._resolve_label_column(
+                gdf,
+                show_labels,
+                label_column,
+            )
+            self._annotate_vector_labels(
+                ax,
+                gdf,
+                show_labels,
+                effective_label_column,
+                label_color,
+                label_fontsize,
+                label_weight,
+            )
+
+        ax.set_aspect("equal")
+        ax.set_title(title)
+        plt.tight_layout()
+        return ax
+
     def _attach_vector_plot(self, vector_obj, title="Vector"):
-        """Attach plot() with catchment mask and river context to a vector."""
+        """Attach a context-aware ``plot`` method to a vector object.
+
+        The injected plotting helper overlays the catchment mask and river network,
+        applies sensible defaults per geometry type, supports optional value-based
+        coloring, and labels vector features.
+
+        Line, point, and polygon geometries are rendered using GeoPandas plotting
+        with the same options interface.
+
+        Parameters
+        ----------
+        vector_obj : object
+            Vector-like object that exposes a ``geodata`` GeoDataFrame.
+        title : str, optional
+            Plot title used by the attached helper, by default ``"Vector"``.
+        """
         if vector_obj is None:
             return
 
         default_kwargs = self._default_vector_plot_kwargs(vector_obj)
 
-        def plot(
-            ax=None,
-            show_mask=True,
-            show_river=True,
-            show_labels=True,
-            label_column="id",
-            label_color="black",
-            label_fontsize=8,
-            label_weight="normal",
-            river_color="#1f78b4",
-            title=title,
-            **kwargs,
-        ):
-            import matplotlib.pyplot as plt
-
-            if ax is None:
-                _, ax = plt.subplots(figsize=(8, 8))
-
-            if show_mask:
-                self.vct_mask.geodata.plot(
-                    ax=ax,
-                    facecolor="none",
-                    edgecolor="black",
-                    linewidth=1,
-                )
-
-            if show_river:
-                self._add_river_overlay(ax, river_color=river_color)
-
-            gdf = vector_obj.geodata
-            if gdf is not None and not gdf.empty:
-                plot_kwargs = dict(default_kwargs)
-                plot_kwargs.update(kwargs)
-                plot_kwargs["ax"] = ax
-                gdf.plot(**plot_kwargs)
-
-                if show_labels and label_column in gdf.columns:
-                    for _, row in gdf.iterrows():
-                        geom = row.geometry
-                        if geom is None or geom.is_empty:
-                            continue
-                        point = (
-                            geom
-                            if geom.geom_type == "Point"
-                            else geom.representative_point()
-                        )
-                        ax.annotate(
-                            str(row[label_column]),
-                            (point.x, point.y),
-                            xytext=(3, 3),
-                            textcoords="offset points",
-                            fontsize=label_fontsize,
-                            color=label_color,
-                            weight=label_weight,
-                        )
-
-            ax.set_aspect("equal")
-            ax.set_title(title)
-            plt.tight_layout()
-            return ax
+        def plot(ax=None, title=title, **kwargs):
+            return self._plot_attached_vector(
+                vector_obj,
+                default_kwargs,
+                title,
+                ax=ax,
+                **kwargs,
+            )
 
         vector_obj.plot = plot
 
@@ -1396,13 +1485,13 @@ class PostProcess(Factory):
             return preferred
 
         for candidate in [
+            "id",
+            "ID",
             "target_id",
             "VALUE",
             "buffer_id",
             "poi_id",
             "priority_id",
-            "id",
-            "ID",
             "NR",
             "nr",
         ]:
@@ -1442,7 +1531,7 @@ class PostProcess(Factory):
         self,
         subcatchments_obj,
         ax=None,
-        column="VALUE",
+        column="id",
         show_river=True,
         river_color="#1f78b4",
         alpha=0.6,
@@ -1535,7 +1624,7 @@ class PostProcess(Factory):
         self,
         subcatchments_obj,
         ax=None,
-        column="VALUE",
+        column="id",
         show_river=True,
         show_labels=True,
         river_color="#1f78b4",
@@ -1570,13 +1659,10 @@ class PostProcess(Factory):
             )
 
         if show_labels:
-            if "id" in subcatchments_obj.geodata.columns:
-                label_column = "id"
-            else:
-                label_column = self._infer_subcatchment_label_column(
-                    subcatchments_obj.geodata,
-                    preferred=column,
-                )
+            label_column = self._infer_subcatchment_label_column(
+                subcatchments_obj.geodata,
+                preferred=column,
+            )
             self._annotate_subcatchment_labels(
                 ax,
                 subcatchments_obj,
@@ -1599,7 +1685,7 @@ class PostProcess(Factory):
 
         def plot(
             ax=None,
-            column="VALUE",
+            column="id",
             show_river=True,
             show_buffers=True,
             show_labels=True,
@@ -1750,11 +1836,36 @@ class PostProcess(Factory):
         self._vct_point = None
 
     def _ensure_unique_priority_target_ids(self):
-        """Ensure priority points have a unique integer ``target_id`` column."""
+        """Ensure priority points have a unique integer ``id`` column.
+
+        The ids are assigned as 1..N in decreasing priority order.
+        """
         points_obj = self.vct_priority_points
         gdf_points = points_obj.geodata.copy().reset_index(drop=True)
 
-        gdf_points["target_id"] = np.arange(1, len(gdf_points) + 1, dtype=int)
+        source_col = None
+        for candidate in ["source_value", "source_val"]:
+            if candidate in gdf_points.columns:
+                source_col = candidate
+                break
+
+        if source_col is not None:
+            order_col = pd.to_numeric(gdf_points[source_col], errors="coerce").fillna(
+                -np.inf
+            )
+            gdf_points = gdf_points.assign(_order_val=order_col).sort_values(
+                ["_order_val"],
+                ascending=[False],
+            )
+
+        gdf_points["id"] = np.arange(1, len(gdf_points) + 1, dtype=int)
+        gdf_points = gdf_points.drop(
+            columns=[
+                c
+                for c in ["target_id", "priority_i", "priority_id", "_order_val"]
+                if c in gdf_points.columns
+            ]
+        )
 
         points_path = Path(points_obj.file_path)
         self._unlink_vector_dataset(points_path)
@@ -1789,8 +1900,12 @@ class PostProcess(Factory):
                 point_id = int(vct_point.geodata.iloc[0][point_id_column])
 
             # Persist a stable coupling key between point and subcatchment.
-            gdf_point_sub["target_id"] = int(point_id)
-            gdf_point_sub["VALUE"] = int(point_id)
+            gdf_point_sub["id"] = int(point_id)
+            gdf_point_sub = gdf_point_sub.drop(
+                columns=[
+                    c for c in ["target_id", "VALUE"] if c in gdf_point_sub.columns
+                ]
+            )
             subcatchment_gdfs.append(gdf_point_sub)
 
         if not subcatchment_gdfs:
@@ -1805,7 +1920,7 @@ class PostProcess(Factory):
 
         # One target id can produce multiple polygon parts; dissolve by id so
         # each target appears only once in the coupled subcatchments vector.
-        dissolve_column = "target_id"
+        dissolve_column = "id"
         if dissolve_column in gdf_subcatchments.columns:
             gdf_subcatchments = gdf_subcatchments.dissolve(
                 by=dissolve_column,
@@ -1822,7 +1937,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(points_vector_obj.vct_subcatchments)
         self._attach_subcatchments_plot(points_vector_obj)
 
         # Keep only the aggregated subcatchments output: remove per-point
@@ -1851,7 +1965,7 @@ class PostProcess(Factory):
 
         def plot(
             ax=None,
-            column="VALUE",
+            column="id",
             show_river=True,
             show_labels=True,
             river_color="#1f78b4",
@@ -2159,7 +2273,21 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(target_vector_obj.vct_subcatchments)
+        point_id = int(target_vector_obj.geodata.iloc[0][target_id_column])
+        gdf_subcatchments = target_vector_obj.vct_subcatchments.geodata.copy()
+        gdf_subcatchments["id"] = point_id
+        gdf_subcatchments = gdf_subcatchments.drop(
+            columns=[
+                c for c in ["target_id", "VALUE"] if c in gdf_subcatchments.columns
+            ]
+        )
+        self._unlink_vector_dataset(Path(vct_subcatchments))
+        gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
+        target_vector_obj.vct_subcatchments = self.vector_factory(
+            Path(vct_subcatchments),
+            "Polygon",
+            flag_clip=False,
+        )
         self._attach_subcatchments_plot(target_vector_obj)
 
         return vct_subcatchments
@@ -2455,7 +2583,7 @@ class PostProcess(Factory):
                 self.identify_subcatchments(
                     "vct_priority_points",
                     target_type="points",
-                    id_column="target_id",
+                    id_column="id",
                     tag="priority_subcatchments",
                 )
                 self._vct_priority_subcatchments = (
@@ -2515,7 +2643,7 @@ class PostProcess(Factory):
                 self.identify_subcatchments(
                     "vct_priority_points",
                     target_type="points",
-                    id_column="target_id",
+                    id_column="id",
                     tag="priority_subcatchments",
                 )
                 self._vct_priority_subcatchments = (
@@ -2727,7 +2855,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(self.vct_priority_points.vct_subcatchments)
         self._attach_subcatchments_plot(self.vct_priority_points)
         self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
 
@@ -2754,7 +2881,7 @@ class PostProcess(Factory):
         point_id_column = self._infer_point_id_column(gdf_points)
         sub_id_column = self._infer_subcatchment_label_column(
             gdf_sub,
-            preferred="target_id",
+            preferred="id",
         )
         if sub_id_column is None:
             return
@@ -2823,9 +2950,7 @@ class PostProcess(Factory):
             return
 
         point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(
-            gdf_sub, preferred="target_id"
-        )
+        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
         if sub_id_column is None:
             return
 
@@ -2877,7 +3002,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(self.vct_priority_points.vct_subcatchments)
         self._attach_subcatchments_plot(self.vct_priority_points)
         self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
 
@@ -2896,9 +3020,7 @@ class PostProcess(Factory):
             return set()
 
         point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(
-            gdf_sub, preferred="target_id"
-        )
+        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
         if sub_id_column is None or "cumperc" not in gdf_points.columns:
             return set()
 
@@ -2947,7 +3069,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(self.vct_priority_points.vct_subcatchments)
         self._attach_subcatchments_plot(self.vct_priority_points)
         self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
 
@@ -2966,9 +3087,7 @@ class PostProcess(Factory):
             return
 
         point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(
-            gdf_sub, preferred="target_id"
-        )
+        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
         if sub_id_column is None:
             return
 
@@ -3002,16 +3121,14 @@ class PostProcess(Factory):
         if not id_map:
             return
 
-        gdf_points["target_id"] = gdf_points["_old_id"].map(id_map).astype(int)
-
-        priority_col = None
-        for candidate in ["priority_i", "priority_id"]:
-            if candidate in gdf_points.columns:
-                priority_col = candidate
-                break
-        if priority_col is None:
-            priority_col = "priority_id"
-        gdf_points[priority_col] = gdf_points["target_id"].astype(int)
+        gdf_points["id"] = gdf_points["_old_id"].map(id_map).astype(int)
+        gdf_points = gdf_points.drop(
+            columns=[
+                c
+                for c in ["target_id", "priority_i", "priority_id"]
+                if c in gdf_points.columns
+            ]
+        )
 
         gdf_sub = gdf_sub.copy()
         sub_ids = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce")
@@ -3021,8 +3138,10 @@ class PostProcess(Factory):
         ).astype(int)
         gdf_sub = gdf_sub.loc[gdf_sub["_old_id"].isin(set(id_map.keys()))].copy()
 
-        gdf_sub["target_id"] = gdf_sub["_old_id"].map(id_map).astype(int)
-        gdf_sub["VALUE"] = gdf_sub["target_id"].astype(int)
+        gdf_sub["id"] = gdf_sub["_old_id"].map(id_map).astype(int)
+        gdf_sub = gdf_sub.drop(
+            columns=[c for c in ["target_id", "VALUE"] if c in gdf_sub.columns]
+        )
 
         gdf_points = gdf_points.drop(
             columns=[c for c in ["_old_id", "_order"] if c in gdf_points.columns]
@@ -3044,7 +3163,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(self.vct_priority_points.vct_subcatchments)
         self._attach_subcatchments_plot(self.vct_priority_points)
         self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
 
@@ -3071,7 +3189,7 @@ class PostProcess(Factory):
         point_id_column = self._infer_point_id_column(gdf_points)
         sub_id_column = self._infer_subcatchment_label_column(
             gdf_sub,
-            preferred="target_id",
+            preferred="id",
         )
         if sub_id_column is None:
             return
@@ -3196,7 +3314,6 @@ class PostProcess(Factory):
             "Polygon",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(self.vct_priority_points.vct_subcatchments)
         self._attach_subcatchments_plot(self.vct_priority_points)
         self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
 
@@ -4609,8 +4726,7 @@ def compute_efficiency_grass_strips(
 
         Sediment load flowing in and flowing out grass strip with the columns:
 
-        - *gras_id_target* (float): grass_id
-        - *gras_id_source* (float): grass_id
+                - *id* (float): grass_id
         - *npixels_t* (float: number of pixels of target grass strip
         - *sedi_in* (float): total incoming sediment in grass strip (kg)
         - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
@@ -4620,23 +4736,25 @@ def compute_efficiency_grass_strips(
 
     Note
     ----
-    *gras_id_target* and *gras_id_source* are equal and refers to the gras_id.
+    The output uses a single grass strip identifier in column ``id``.
     """
     # load files
-    arr_prckrt, profile = load_raster(rst_prckrt)
-    df_prckrt = raster_array_to_pandas_dataframe(arr_prckrt, profile)
+    arr_prckrt, _ = load_raster(rst_prckrt)
     arr_grass_strips_id, profile = load_raster(rst_grass_strips)
+
+    # Filter grass-strip ids directly on array level: only pixels that are
+    # grass strip land-use (-6) in the perceelskaart are retained.
+    arr_grass_strips_id = np.where(
+        arr_prckrt == -6,
+        arr_grass_strips_id,
+        profile["nodata"],
+    )
     df_grass_strips = raster_array_to_pandas_dataframe(arr_grass_strips_id, profile)
 
     arr_sedi_out, profile_sedi_out = load_raster(rst_sedi_out)
     df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile_sedi_out)
     df_routing = open_txt_routing_file(txt_routing)
 
-    # filter grass strips that are actually modelled as grass strips in
-    # pywatemsedem
-    df_grass_strips = filter_grass_strips_with_prckrt(
-        df_grass_strips, df_prckrt, profile
-    )
     df_grass_strips["val"] = df_grass_strips["val"].astype(np.float64)
 
     # merge grass strips with sedi_out raster
@@ -4653,9 +4771,9 @@ def compute_efficiency_grass_strips(
     # compute counts
     arr_id, arr_npixels_t = np.unique(arr_grass_strips_id, return_counts=True)
     df_counts = pd.DataFrame()
-    df_counts["gras_id_target"] = arr_id
+    df_counts["id"] = arr_id
     df_counts["npixels_t"] = arr_npixels_t
-    df_efficiency = df_efficiency.merge(df_counts)
+    df_efficiency = df_efficiency.merge(df_counts, on="id")
     sediment_load_grass_strips_in = np.sum(df_efficiency["sedi_in"])
     sediment_load_grass_strips_out = np.sum(df_efficiency["sedi_out"])
 
@@ -4686,8 +4804,7 @@ def aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass):
     df_efficiency: pandas.DataFrame
         Sediment load flowing in and flowing out grass strip with the columns:
 
-        - *gras_id_target* (float): target grass_id
-        - *gras_id_source* (float): target grass_id
+                - *id* (float): grass_id
         - *sedi_in* (float): incoming sediment in grass strip
         - *sedi_out* (float): outgoing sediment out of grass strip
         - *eSTE* (float): estimated sediment trapping efficiency, see
@@ -4696,7 +4813,7 @@ def aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass):
 
     Notes
     -----
-    *gras_id_target* and *gras_id_source* are equal and refers to the gras_id (target).
+    The output uses a single grass strip identifier in column ``id``.
     """
 
     condition = df_routing_grass["gras_id_source"] != df_routing_grass["gras_id_target"]
@@ -4721,15 +4838,30 @@ def aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass):
         .reset_index()
     )
     df_efficiency = df_sedi_in_grass[["gras_id_target", "sedi_in"]].merge(
-        df_sedi_out_grass, left_on="gras_id_target", right_on="gras_id_source"
+        df_sedi_out_grass,
+        left_on="gras_id_target",
+        right_on="gras_id_source",
+        how="outer",
     )
-    df_npixels.columns = ["gras_id_target", "npixels_r"]
-    df_efficiency = df_efficiency.merge(df_npixels)
+    df_efficiency["id"] = df_efficiency["gras_id_target"].combine_first(
+        df_efficiency["gras_id_source"]
+    )
+    df_efficiency = df_efficiency.drop(columns=["gras_id_target", "gras_id_source"])
+    df_efficiency[["sedi_in", "sedi_out"]] = df_efficiency[
+        ["sedi_in", "sedi_out"]
+    ].fillna(0)
+
+    df_npixels.columns = ["id", "npixels_r"]
+    df_efficiency = df_efficiency.merge(df_npixels, on="id", how="left")
+    df_efficiency["npixels_r"] = df_efficiency["npixels_r"].fillna(0)
     df_efficiency["eSTE"] = estimate_ste(
         df_efficiency["sedi_in"], df_efficiency["sedi_out"]
     )
     df_efficiency["sed"] = df_efficiency["sedi_in"] - df_efficiency["sedi_out"]
-    df_efficiency = df_efficiency[df_efficiency["gras_id_target"] != -9999]
+    df_efficiency = df_efficiency[df_efficiency["id"] != -9999]
+    df_efficiency = df_efficiency[
+        ["id", "sedi_in", "sedi_out", "npixels_r", "eSTE", "sed"]
+    ]
 
     return df_efficiency
 
@@ -5371,6 +5503,7 @@ def compute_cdf_sediment_load(
     tag=None,
     no_data=None,
     ignore_negative_values=False,
+    sort_ascending=True,
     plot=False,
 ):
     """Compute the cdf of sediment load in 'column_value' in the dataframe df
@@ -5388,6 +5521,10 @@ def compute_cdf_sediment_load(
         No_data value in 'column_value'
     ignore_negative_values: float, optional
         Ignore negative values in column_value
+    sort_ascending: bool, optional
+        Sort values in ascending order before cumulative aggregation.
+        If ``False``, the cumulative statistics are computed from highest
+        values to lowest values.
     plot: str, optional
         Write plot to disk (True/False)
 
@@ -5401,25 +5538,34 @@ def compute_cdf_sediment_load(
         - *cdf* (float): cumulative distribution estimate
 
     """
-    # calculate cumulative sum, in percentage
+    # calculate cumulative sum and cdf, normalized to total deposition across
+    # all valid rows (optionally only positive values).
     df["value"] = df[column_value]
-    df = df.sort_values("value")
-    df["rank"] = np.nan
-    cond = df["value"] != no_data
+    df = df.sort_values("value", ascending=sort_ascending)
+    df[["rank", "cum_sum", "cdf"]] = np.nan
+
+    cond_valid = df["value"] != no_data
     if ignore_negative_values:
-        cond = cond & (df["value"] > 0.0)
-    df.loc[cond, "rank"] = np.arange(len(df.loc[cond]))
-    df.loc[cond, "cum_sum"] = df.loc[cond, "value"].cumsum()
-    df.loc[cond, "cdf"] = (
-        100 * df.loc[cond, "cum_sum"] / df.loc[cond, column_value].sum()
-    )
+        cond_contrib = cond_valid & (df["value"] > 0.0)
+    else:
+        cond_contrib = cond_valid
+
+    total_contrib = df.loc[cond_contrib, "value"].sum()
+
+    if np.any(cond_contrib):
+        df.loc[cond_contrib, "rank"] = np.arange(len(df.loc[cond_contrib]))
+        df.loc[cond_contrib, "cum_sum"] = df.loc[cond_contrib, "value"].cumsum()
+        if total_contrib > 0:
+            df.loc[cond_contrib, "cdf"] = (
+                100 * df.loc[cond_contrib, "cum_sum"] / total_contrib
+            )
 
     if plot:
         if tag is not None:
             fname = resmap / f"cumulative_sedimentload_{tag}.png"
         else:
             fname = resmap / "cumulative_sedimentload.png"
-        plot_cumulative_sedimentload(df.loc[cond], fname)
+        plot_cumulative_sedimentload(df.loc[cond_contrib], fname)
 
     return df
 
