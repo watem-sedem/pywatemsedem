@@ -71,6 +71,17 @@ class PostProcess(Factory):
     """
 
     def __init__(self, ini, postprocessing_folder, epsg):
+        """Initialise the PostProcess instance.
+
+        Parameters
+        ----------
+        ini : str or pathlib.Path
+            Path to the WaTEM/SEDEM inifile.
+        postprocessing_folder : str or pathlib.Path
+            Folder to which postprocessing results are written.
+        epsg : int
+            EPSG code for the coordinate reference system.
+        """
 
         # DATA
         self._routing_non_river = None
@@ -126,7 +137,20 @@ class PostProcess(Factory):
         return out_dir
 
     def _point_target_output_dir(self, parent_property_name):
-        """Resolve output folder for point-target subcatchment workflows."""
+        """Resolve output folder for point-target subcatchment workflows.
+
+        Parameters
+        ----------
+        parent_property_name : str
+            Name of the parent vector property (e.g. ``"vct_poi"``,
+            ``"vct_priority_points"``). Used to determine the appropriate
+            workflow subfolder.
+
+        Returns
+        -------
+        pathlib.Path
+            Output directory for the workflow.
+        """
         if parent_property_name == "vct_poi":
             return self._workflow_subdir("poi")
         if parent_property_name == "vct_priority_points":
@@ -143,7 +167,28 @@ class PostProcess(Factory):
         init_subcatchments=False,
         ensure_internal_id=True,
     ):
-        """Create a vector object from a path and store it on this instance."""
+        """Create a vector object from a path and store it on this instance.
+
+        Parameters
+        ----------
+        vector_input : str or pathlib.Path
+            File path to an existing vector shapefile.
+        attr_name : str
+            Attribute name on self to store the vector object.
+        geometry_type : str
+            Geometry type of the vector (``"Point"``, ``"LineString"`` or
+            ``"Polygon"``).
+        field_name : str
+            Field name used in error messages.
+        plot_title : str, optional
+            Title for the attached plot helper. If provided, a ``plot()``
+            method is attached to the vector object.
+        init_subcatchments : bool, default False
+            If ``True``, initialise ``vct_subcatchments`` to ``None``.
+        ensure_internal_id : bool, default True
+            If ``True``, ensure an integer ``id`` column exists on the
+            vector object.
+        """
         if self.mask is None:
             self.mask = self.modelinput.mask.file_path
 
@@ -168,7 +213,19 @@ class PostProcess(Factory):
             self._attach_vector_plot(vector_obj, title=plot_title)
 
     def _ensure_id_column_on_gdf(self, gdf):
-        """Ensure a GeoDataFrame has an integer ``id`` column."""
+        """Ensure a GeoDataFrame has an integer ``id`` column.
+
+        Parameters
+        ----------
+        gdf : geopandas.GeoDataFrame
+            Input GeoDataFrame to check and potentially modify.
+
+        Returns
+        -------
+        tuple
+            ``(modified_gdf, changed)`` where ``changed`` indicates whether
+            the ``id`` column was added.
+        """
         if "id" in gdf.columns:
             return gdf, False
 
@@ -180,7 +237,16 @@ class PostProcess(Factory):
         return gdf, True
 
     def _ensure_vector_id_column(self, vector_obj, persist=True):
-        """Ensure an in-memory vector object always exposes an ``id`` column."""
+        """Ensure an in-memory vector object always exposes an ``id`` column.
+
+        Parameters
+        ----------
+        vector_obj : object
+            Vector object with a ``geodata`` GeoDataFrame attribute.
+        persist : bool, default True
+            If ``True`` and the ``id`` column was added, write the updated
+            vector to disk.
+        """
         if vector_obj is None or not hasattr(vector_obj, "geodata"):
             return
 
@@ -1117,7 +1183,25 @@ class PostProcess(Factory):
         return vct_subcatchments
 
     def _infer_point_id_column(self, gdf, requested=None):
-        """Infer a point id column from a point GeoDataFrame."""
+        """Infer a point id column from a point GeoDataFrame.
+
+        Parameters
+        ----------
+        gdf : geopandas.GeoDataFrame
+            Point GeoDataFrame to inspect.
+        requested : str, optional
+            Explicit column name to use. Must exist in ``gdf``.
+
+        Returns
+        -------
+        str
+            Name of the inferred or requested id column.
+
+        Raises
+        ------
+        ValueError
+            If ``requested`` is not found or no id column can be inferred.
+        """
         if requested is not None:
             if requested not in gdf.columns:
                 msg = f"Requested id_column '{requested}' not found in point vector."
@@ -1141,14 +1225,33 @@ class PostProcess(Factory):
         raise ValueError(msg)
 
     def _infer_polygon_id_column(self, gdf):
-        """Infer an id column from a polygon GeoDataFrame."""
+        """Infer an id column from a polygon GeoDataFrame.
+
+        Parameters
+        ----------
+        gdf : geopandas.GeoDataFrame
+            Polygon GeoDataFrame to inspect.
+
+        Returns
+        -------
+        str or None
+            Name of the inferred id column, or ``None`` if not found.
+        """
         for candidate in ["id", "ID", "buffer_id", "NR", "nr", "VALUE"]:
             if candidate in gdf.columns:
                 return candidate
         return None
 
     def _add_river_overlay(self, ax, river_color="#1f78b4"):
-        """Plot river raster cells as a fixed-color overlay."""
+        """Plot river raster cells as a fixed-color overlay.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            Axes to plot on.
+        river_color : str, default "#1f78b4"
+            Hex color code for river cells.
+        """
         import rasterio
         from matplotlib.colors import ListedColormap
         from rasterio.plot import show
@@ -1173,7 +1276,18 @@ class PostProcess(Factory):
             )
 
     def _default_vector_plot_kwargs(self, vector_obj):
-        """Return default plot kwargs based on geometry type."""
+        """Return default plot kwargs based on geometry type.
+
+        Parameters
+        ----------
+        vector_obj : object
+            Vector object with a ``geodata`` GeoDataFrame attribute.
+
+        Returns
+        -------
+        dict
+            Default plot keyword arguments (color, alpha, etc.).
+        """
         gdf = getattr(vector_obj, "geodata", None)
         if gdf is None or gdf.empty:
             return {}
@@ -1208,7 +1322,30 @@ class PostProcess(Factory):
         legend_kwds,
         kwargs,
     ):
-        """Build validated keyword arguments for GeoDataFrame plotting."""
+        """Build validated keyword arguments for GeoDataFrame plotting.
+
+        Parameters
+        ----------
+        gdf : geopandas.GeoDataFrame
+            GeoDataFrame being plotted.
+        default_kwargs : dict
+            Default plot keyword arguments.
+        column : str, optional
+            Column name for value-based coloring.
+        cmap : str, optional
+            Colormap name.
+        legend : bool, default False
+            Whether to include a legend.
+        legend_kwds : dict, optional
+            Additional keyword arguments for the legend.
+        kwargs : dict
+            Additional user-provided keyword arguments.
+
+        Returns
+        -------
+        dict
+            Validated plot keyword arguments merged from all sources.
+        """
         plot_kwargs = dict(default_kwargs)
         plot_kwargs.update(kwargs)
 
@@ -1246,7 +1383,15 @@ class PostProcess(Factory):
         return plot_kwargs
 
     def _add_colorbar_axis(self, ax, plot_kwargs):
-        """Attach a bounded colorbar axis when continuous legends are used."""
+        """Attach a bounded colorbar axis when continuous legends are used.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            Axes to attach the colorbar to.
+        plot_kwargs : dict
+            Plot keyword arguments dict (modified in place to add ``cax``).
+        """
         if not (
             plot_kwargs.get("legend", False)
             and "column" in plot_kwargs
@@ -1262,7 +1407,28 @@ class PostProcess(Factory):
         plot_kwargs["legend_kwds"].pop("shrink", None)
 
     def _resolve_label_column(self, gdf, show_labels, label_column):
-        """Return effective label column and validate explicit label request."""
+        """Return effective label column and validate explicit label request.
+
+        Parameters
+        ----------
+        gdf : geopandas.GeoDataFrame
+            GeoDataFrame to inspect.
+        show_labels : bool
+            Whether labels are requested.
+        label_column : str, optional
+            Explicitly requested label column name.
+
+        Returns
+        -------
+        str
+            Effective label column name (``label_column`` if given, else
+            ``"id"``).
+
+        Raises
+        ------
+        ValueError
+            If ``label_column`` is given but not found in ``gdf``.
+        """
         effective_label_column = "id" if label_column is None else label_column
         if (
             show_labels
@@ -1287,7 +1453,25 @@ class PostProcess(Factory):
         label_fontsize,
         label_weight,
     ):
-        """Annotate feature labels on the map for supported geometries."""
+        """Annotate feature labels on the map for supported geometries.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            Axes to annotate on.
+        gdf : geopandas.GeoDataFrame
+            GeoDataFrame with features to label.
+        show_labels : bool
+            Whether to display labels.
+        label_column : str
+            Column name containing label values.
+        label_color : str, default "black"
+            Color of label text.
+        label_fontsize : int or float, default 8
+            Font size for labels.
+        label_weight : str, default "normal"
+            Font weight for labels (``"normal"``, ``"bold"``, etc.).
+        """
         if not (show_labels and label_column in gdf.columns):
             return
 
@@ -1326,7 +1510,50 @@ class PostProcess(Factory):
         river_color="#1f78b4",
         **kwargs,
     ):
-        """Plot an attached vector with context overlays and labels."""
+        """Plot an attached vector with context overlays and labels.
+
+        Parameters
+        ----------
+        vector_obj : object
+            Vector object with a ``geodata`` GeoDataFrame attribute.
+        default_kwargs : dict
+            Default plot keyword arguments by geometry type.
+        title : str
+            Plot title.
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on. If ``None``, a new figure/axes is created.
+        show_mask : bool, default True
+            Whether to overlay the catchment mask boundary.
+        show_river : bool, default True
+            Whether to overlay the river network.
+        column : str, optional
+            Column name for value-based coloring.
+        cmap : str, optional
+            Colormap for value-based coloring.
+        legend : bool, default False
+            Whether to display a legend.
+        legend_kwds : dict, optional
+            Legend keyword arguments.
+        show_labels : bool, default True
+            Whether to annotate feature labels.
+        label_column : str, optional
+            Column to use for labels (default ``"id"``).
+        label_color : str, default "black"
+            Color of label text.
+        label_fontsize : int, default 8
+            Font size for labels.
+        label_weight : str, default "normal"
+            Font weight for labels.
+        river_color : str, default "#1f78b4"
+            Color for the river overlay.
+        **kwargs : dict
+            Additional keyword arguments passed to ``GeoDataFrame.plot()``.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes object with the plot.
+        """
         import matplotlib.pyplot as plt
 
         if ax is None:
@@ -1422,7 +1649,20 @@ class PostProcess(Factory):
         vector_obj.plot = plot
 
     def _infer_subcatchment_label_column(self, gdf, preferred=None):
-        """Infer a label column for subcatchment polygons."""
+        """Infer a label column for subcatchment polygons.
+
+        Parameters
+        ----------
+        gdf : geopandas.GeoDataFrame
+            GeoDataFrame to inspect.
+        preferred : str, optional
+            Preferred column name to check first.
+
+        Returns
+        -------
+        str or None
+            Name of the inferred label column, or ``None`` if not found.
+        """
         if preferred is not None and preferred in gdf.columns:
             return preferred
 
@@ -1450,7 +1690,23 @@ class PostProcess(Factory):
         label_fontsize=9,
         label_weight="bold",
     ):
-        """Place labels in the middle of each subcatchment polygon."""
+        """Place labels in the middle of each subcatchment polygon.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            Axes to annotate on.
+        subcatchments_obj : object
+            Subcatchment vector object with a ``geodata`` GeoDataFrame.
+        label_column : str
+            Column name containing label values.
+        label_color : str, default "black"
+            Color of label text.
+        label_fontsize : int, default 9
+            Font size for labels.
+        label_weight : str, default "bold"
+            Font weight for labels.
+        """
         if (
             label_column is None
             or label_column not in subcatchments_obj.geodata.columns
@@ -1481,7 +1737,34 @@ class PostProcess(Factory):
         linewidth=0.5,
         **kwargs,
     ):
-        """Plot catchment boundary + subcatchments (+ optional river overlay)."""
+        """Plot catchment boundary + subcatchments (+ optional river overlay).
+
+        Parameters
+        ----------
+        subcatchments_obj : object
+            Subcatchment vector object with a ``geodata`` GeoDataFrame.
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on. If ``None``, a new figure/axes is created.
+        column : str, default "id"
+            Column to use for feature coloring.
+        show_river : bool, default True
+            Whether to overlay the river network.
+        river_color : str, default "#1f78b4"
+            Color for the river overlay.
+        alpha : float, default 0.6
+            Transparency of subcatchment fill.
+        edgecolor : str, default "white"
+            Edge color of subcatchment polygons.
+        linewidth : float, default 0.5
+            Line width of subcatchment edges.
+        **kwargs : dict
+            Additional keyword arguments passed to ``GeoDataFrame.plot()``.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes object with the plot.
+        """
         import matplotlib.pyplot as plt
 
         if ax is None:
@@ -1524,7 +1807,32 @@ class PostProcess(Factory):
         label_weight="bold",
         **plot_kwargs,
     ):
-        """Plot an overlay vector and optionally annotate feature labels."""
+        """Plot an overlay vector and optionally annotate feature labels.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            Axes to plot on.
+        overlay_obj : object
+            Overlay vector object with a ``geodata`` GeoDataFrame.
+        show_overlay : bool, default True
+            Whether to display the overlay.
+        show_labels : bool, default True
+            Whether to annotate feature labels.
+        id_column : str, optional
+            Column name containing feature ids for labels.
+        point_labels : bool, default False
+            If ``True``, labels are placed at point coordinates; otherwise
+            at the representative point of the geometry.
+        label_color : str, default "black"
+            Color of label text.
+        label_fontsize : int, default 9
+            Font size for labels.
+        label_weight : str, default "bold"
+            Font weight for labels.
+        **plot_kwargs : dict
+            Keyword arguments passed to ``GeoDataFrame.plot()``.
+        """
         if not show_overlay:
             return
 
@@ -1578,7 +1886,42 @@ class PostProcess(Factory):
         overlay_kwargs=None,
         **kwargs,
     ):
-        """Shared plot pipeline for coupled subcatchment vectors."""
+        """Shared plot pipeline for coupled subcatchment vectors.
+
+        Parameters
+        ----------
+        subcatchments_obj : object
+            Subcatchment vector object with a ``geodata`` GeoDataFrame.
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on. If ``None``, a new figure/axes is created.
+        column : str, default "id"
+            Column to use for feature coloring.
+        show_river : bool, default True
+            Whether to overlay the river network.
+        show_labels : bool, default True
+            Whether to annotate subcatchment labels.
+        river_color : str, default "#1f78b4"
+            Color for the river overlay.
+        alpha : float, default 0.6
+            Transparency of subcatchment fill.
+        edgecolor : str, default "white"
+            Edge color of subcatchment polygons.
+        linewidth : float, default 0.5
+            Line width of subcatchment edges.
+        title : str, default "Subcatchments"
+            Plot title.
+        overlay_obj : object, optional
+            Optional overlay vector object to plot on top.
+        overlay_kwargs : dict, optional
+            Keyword arguments for overlay plotting.
+        **kwargs : dict
+            Additional keyword arguments passed to plotting functions.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            The axes object with the plot.
+        """
         import matplotlib.pyplot as plt
 
         ax = self._plot_subcatchments_base(
@@ -1620,7 +1963,13 @@ class PostProcess(Factory):
         return ax
 
     def _attach_buffer_subcatchments_plot(self, buffers_vector_obj):
-        """Attach a convenience plot() to ``vct_buffers.vct_subcatchments``."""
+        """Attach a convenience ``plot()`` to ``vct_buffers.vct_subcatchments``.
+
+        Parameters
+        ----------
+        buffers_vector_obj : object
+            Buffer vector object with a ``vct_subcatchments`` attribute.
+        """
         subcatchments_obj = getattr(buffers_vector_obj, "vct_subcatchments", None)
         if subcatchments_obj is None:
             return
@@ -1714,7 +2063,27 @@ class PostProcess(Factory):
         subcatchments_obj.plot = plot
 
     def _resolve_point_vector_target(self, target_input):
-        """Resolve a target input to a point vector object and metadata."""
+        """Resolve a target input to a point vector object and metadata.
+
+        Parameters
+        ----------
+        target_input : str, pathlib.Path, or object
+            Target input specification. Can be a ``vct_*`` property name,
+            a file path, or a vector object with ``geodata`` and
+            ``file_path`` attributes.
+
+        Returns
+        -------
+        tuple
+            ``(target_vector_obj, target_name, parent_property_name)``
+            where ``parent_property_name`` is the ``vct_*`` property name
+            if applicable, otherwise ``None``.
+
+        Raises
+        ------
+        ValueError
+            If the input is invalid or the vector contains no features.
+        """
         parent_property_name = None
         if isinstance(target_input, str) and target_input.startswith("vct_"):
             if not hasattr(self, target_input):
@@ -1757,7 +2126,23 @@ class PostProcess(Factory):
         point_id,
         vct_point,
     ):
-        """Register a one-point dummy vector as a property on self."""
+        """Register a one-point dummy vector as a property on self.
+
+        Parameters
+        ----------
+        parent_property_name : str or None
+            Parent property name (e.g. ``"vct_poi"``,
+            ``"vct_priority_points"``). Used to construct the attribute name.
+        point_id : int
+            ID of the point.
+        vct_point : object
+            Vector object for the single point.
+
+        Returns
+        -------
+        str
+            Attribute name under which the vector was registered.
+        """
         parent_name = parent_property_name or "points"
         attr_name = f"vct_point_{parent_name}_{int(point_id)}"
         setattr(self, attr_name, vct_point)
@@ -1766,7 +2151,14 @@ class PostProcess(Factory):
         return attr_name
 
     def _cleanup_dummy_point_properties(self, attr_names=None):
-        """Remove temporary one-point dummy vector attributes from self."""
+        """Remove temporary one-point dummy vector attributes from self.
+
+        Parameters
+        ----------
+        attr_names : list of str, optional
+            Attribute names to remove. If ``None``, all dummy point
+            attributes are removed.
+        """
         if attr_names is None:
             attr_names = list(self._vct_points_dummy.keys())
 
@@ -1823,7 +2215,33 @@ class PostProcess(Factory):
         point_vectors=None,
         output_dir=None,
     ):
-        """Aggregate individual point subcatchments and attach to parent points."""
+        """Aggregate individual point subcatchments and attach to parent points.
+
+        Parameters
+        ----------
+        points_vector_obj : object
+            Parent point vector object.
+        target_name : str
+            Name of the target used for output file naming.
+        tag : str
+            Output tag for file naming.
+        point_vectors : list of object, optional
+            Individual point vector objects with subcatchments. If ``None``,
+            retrieves from ``points_vector_obj.vct_points_individual``.
+        output_dir : str or pathlib.Path, optional
+            Directory for aggregated output. If ``None``, uses
+            ``postprocessing_folder``.
+
+        Returns
+        -------
+        pathlib.Path
+            Path to the aggregated subcatchments vector.
+
+        Raises
+        ------
+        ValueError
+            If no dummy point vectors or subcatchments are available.
+        """
         if point_vectors is None:
             point_vectors = getattr(points_vector_obj, "vct_points_individual", [])
 
@@ -1900,7 +2318,13 @@ class PostProcess(Factory):
         return vct_subcatchments
 
     def _attach_subcatchments_plot(self, points_vector_obj):
-        """Attach a convenience plot() to the coupled subcatchments vector."""
+        """Attach a convenience ``plot()`` to the coupled subcatchments vector.
+
+        Parameters
+        ----------
+        points_vector_obj : object
+            Point vector object with a ``vct_subcatchments`` attribute.
+        """
         subcatchments_obj = getattr(points_vector_obj, "vct_subcatchments", None)
         if subcatchments_obj is None:
             return
@@ -1957,6 +2381,19 @@ class PostProcess(Factory):
 
         This supports gradual workflows where points become available over time
         and their subcatchments are delineated one-by-one.
+
+        Parameters
+        ----------
+        target_input : str, pathlib.Path, or object
+            Target point vector input (``vct_*`` property name, file path,
+            or vector object).
+        tag : str, default "subcatchments_to_targets"
+            Output tag for file naming.
+
+        Returns
+        -------
+        pathlib.Path
+            Path to the aggregated subcatchments vector.
         """
         points_vector_obj, target_name, _ = self._resolve_point_vector_target(
             target_input
@@ -1975,7 +2412,13 @@ class PostProcess(Factory):
         )
 
     def _unlink_vector_dataset(self, vector_path):
-        """Remove an existing vector dataset before re-writing it."""
+        """Remove an existing vector dataset before re-writing it.
+
+        Parameters
+        ----------
+        vector_path : str or pathlib.Path
+            Path to the vector file (shapefile or other format).
+        """
         vector_path = Path(vector_path)
         if vector_path.suffix.lower() == ".shp":
             for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix"]:
@@ -1986,7 +2429,15 @@ class PostProcess(Factory):
             vector_path.unlink()
 
     def _remove_individual_subcatchment_shapefiles(self, folder, keep_paths=None):
-        """Remove individual ``subcatchments_*.shp`` files in a folder."""
+        """Remove individual ``subcatchments_*.shp`` files in a folder.
+
+        Parameters
+        ----------
+        folder : str or pathlib.Path
+            Folder path to search for subcatchment shapefiles.
+        keep_paths : list of str or pathlib.Path, optional
+            File paths to preserve (not delete).
+        """
         folder = Path(folder)
         if not folder.exists():
             return
@@ -2118,7 +2569,27 @@ class PostProcess(Factory):
         tag,
         output_dir=None,
     ):
-        """Create a one-point vector object used for single-point delineation."""
+        """Create a one-point vector object used for single-point delineation.
+
+        Parameters
+        ----------
+        points_vector_obj : object
+            Source point vector object.
+        point_index : int
+            Index of the point to extract.
+        id_column : str
+            Column name containing point ids.
+        tag : str
+            Output tag for file naming.
+        output_dir : str or pathlib.Path, optional
+            Directory for output. If ``None``, uses ``postprocessing_folder``.
+
+        Returns
+        -------
+        object
+            Vector object for a single point with ``point_id`` and
+            ``vct_subcatchments`` attributes.
+        """
         gdf_point = points_vector_obj.geodata.iloc[[point_index]].copy()
         point_id = int(gdf_point.iloc[0][id_column])
 
@@ -2160,6 +2631,8 @@ class PostProcess(Factory):
             Field name in the point vector containing the target id.
         tag: str, default "subcatchment_to_target"
             Output tag used for naming intermediate and output files.
+        output_dir: str or pathlib.Path, optional
+            Output directory. If ``None``, uses ``postprocessing_folder``.
 
         Returns
         -------
@@ -2634,7 +3107,19 @@ class PostProcess(Factory):
         self._auto_cleanup_postprocessing_shapefiles()
 
     def _select_priority_source_column(self, gdf_points):
-        """Return first available source-value column for priority points."""
+        """Return first available source-value column for priority points.
+
+        Parameters
+        ----------
+        gdf_points : geopandas.GeoDataFrame
+            Points GeoDataFrame to inspect.
+
+        Returns
+        -------
+        str or None
+            Column name (``"source_value"`` or ``"source_val"``) if found,
+            else ``None``.
+        """
         for candidate in ["source_value", "source_val"]:
             if candidate in gdf_points.columns:
                 return candidate
@@ -2648,7 +3133,27 @@ class PostProcess(Factory):
         sub_id_column,
         source,
     ):
-        """Compute overlap-safe cumulative contribution from source raster."""
+        """Compute overlap-safe cumulative contribution from source raster.
+
+        Parameters
+        ----------
+        gdf_points : geopandas.GeoDataFrame
+            Points GeoDataFrame with source values.
+        gdf_sub : geopandas.GeoDataFrame
+            Subcatchments GeoDataFrame with geometries.
+        point_id_column : str
+            Column name for point ids.
+        sub_id_column : str
+            Column name for subcatchment ids.
+        source : str
+            Source raster specification (``"sedi_out"``, ``"sedi_export"``
+            or ``"sedi_export + sewer_in"``).
+
+        Returns
+        -------
+        pandas.Series
+            Cumulative contribution percentage by point id.
+        """
         if source is None:
             return pd.Series(dtype=np.float64)
 
@@ -2721,7 +3226,18 @@ class PostProcess(Factory):
         return pd.Series(contrib, dtype=np.float64)
 
     def _extract_priority_cumperc_from_subcatchments(self, gdf_subcatchmpriority):
-        """Extract cumulative contribution from precomputed subcatchment metadata."""
+        """Extract cumulative contribution from precomputed subcatchment metadata.
+
+        Parameters
+        ----------
+        gdf_subcatchmpriority : geopandas.GeoDataFrame
+            Subcatchment GeoDataFrame with a ``source_load_cumperc`` column.
+
+        Returns
+        -------
+        pandas.Series
+            Cumulative percentage by subcatchment id.
+        """
         if gdf_subcatchmpriority is None or gdf_subcatchmpriority.empty:
             return pd.Series(dtype=np.float64)
 
@@ -2739,7 +3255,20 @@ class PostProcess(Factory):
         return tmp.groupby("_id")["_cum"].max()
 
     def _compute_priority_contrib_fallback(self, gdf_points, point_id_column):
-        """Estimate cumulative contribution from point source values."""
+        """Estimate cumulative contribution from point source values.
+
+        Parameters
+        ----------
+        gdf_points : geopandas.GeoDataFrame
+            Points GeoDataFrame with source values.
+        point_id_column : str
+            Column name for point ids.
+
+        Returns
+        -------
+        pandas.Series
+            Cumulative percentage by point id.
+        """
         source_col = self._select_priority_source_column(gdf_points)
         if source_col is None:
             return pd.Series(dtype=np.float64)
@@ -2770,7 +3299,25 @@ class PostProcess(Factory):
         sub_id_column,
         contrib_by_id,
     ):
-        """Persist mapped ``cumperc`` values to points and subcatchments layers."""
+        """Persist mapped ``cumperc`` values to points and subcatchments layers.
+
+        Parameters
+        ----------
+        points_obj : object
+            Points vector object.
+        subcatchments_obj : object
+            Subcatchments vector object.
+        gdf_points : geopandas.GeoDataFrame
+            Points GeoDataFrame to update.
+        gdf_sub : geopandas.GeoDataFrame
+            Subcatchments GeoDataFrame to update.
+        point_id_column : str
+            Column name for point ids.
+        sub_id_column : str
+            Column name for subcatchment ids.
+        contrib_by_id : pandas.Series
+            Cumulative percentage values indexed by id.
+        """
         gdf_points["_map_id"] = pd.to_numeric(
             gdf_points[point_id_column], errors="coerce"
         )
@@ -2809,6 +3356,15 @@ class PostProcess(Factory):
         A ``cumperc`` column is added to both priority points and coupled
         priority subcatchments. Values express cumulative selected source load
         percentage in descending priority order.
+
+        Parameters
+        ----------
+        gdf_subcatchmpriority : geopandas.GeoDataFrame
+            Subcatchment GeoDataFrame with optional precomputed
+            ``source_load_cumperc``.
+        source : str, optional
+            Source raster specification. If ``None``, fallback methods are
+            used.
         """
         points_obj = self.vct_priority_points
         subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
@@ -2861,7 +3417,13 @@ class PostProcess(Factory):
         )
 
     def _clear_priority_subcatchment_workspace(self, tempfolder):
-        """Remove temporary priority delineation files from previous runs."""
+        """Remove temporary priority delineation files from previous runs.
+
+        Parameters
+        ----------
+        tempfolder : str or pathlib.Path
+            Temporary folder path to clean.
+        """
         tempfolder = Path(tempfolder)
         if not tempfolder.exists():
             return
@@ -2948,7 +3510,18 @@ class PostProcess(Factory):
         self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
 
     def _limit_priority_pairs_to_percentage(self, threshold_percentage):
-        """Trim priority pairs up to and including first threshold crossing."""
+        """Trim priority pairs up to and including first threshold crossing.
+
+        Parameters
+        ----------
+        threshold_percentage : float
+            Target cumulative percentage threshold (0, 100].
+
+        Returns
+        -------
+        set
+            Set of kept point ids.
+        """
         threshold_percentage = float(threshold_percentage)
 
         points_obj = self.vct_priority_points
@@ -3394,6 +3967,11 @@ class PostProcess(Factory):
 
         See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
 
+        Parameters
+        ----------
+        cols_out : list of str, optional
+            Columns to include in the output GeoDataFrame.
+
         Returns
         -------
         gdf_routing_sedi_out: geopandas.GeoDataFrame
@@ -3468,7 +4046,13 @@ class PostProcess(Factory):
         )
 
     def select_routing_to_outsidecatchment(self, catchment_name):
-        """Exports all routing vectors to the outside of the catchment"""
+        """Export all routing vectors to the outside of the catchment.
+
+        Parameters
+        ----------
+        catchment_name : str
+            Name of the catchment (used for output file naming).
+        """
         valid_routing_sedi_out_vector(self)
 
         logger.info("Determining routing out of the catchment...")
@@ -3562,7 +4146,13 @@ class PostProcess(Factory):
         return df_summary
 
     def process_buffers(self, **kwargs):
-        """Overwrite function"""
+        """Compute the ingoing, outgoing and depositing sediment in buffers.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Additional keyword arguments passed to ``_process_buffers()``.
+        """
         self._process_buffers(**kwargs)
 
     def _process_buffers(self, compute_priority=True, cols=None, vct_out=None):
@@ -3638,20 +4228,20 @@ class PostProcess(Factory):
         )
 
     def merge_sedi_out_and_cumulative(self, catchment_name, segments_to_retain=None):
-        """Merge SediOut.rst (sediment output on every land pixel) and
-        Cumulative.rst (sediment output in every
-        river pixel).
+        """Merge SediOut.rst and Cumulative.rst rasters.
 
-        It is possible to retain only certain river segments
-        in the merged raster. Therefore a list with
-        all segmentnumbers must be given to the parameter
-        segements_to_retain. The segements not retained will get value
-        0 in the resulting raster.
+        Merge SediOut.rst (sediment output on every land pixel) and
+        Cumulative.rst (sediment output in every river pixel).
+
+        It is possible to retain only certain river segments in the merged
+        raster. Segments not retained get value 0 in the result.
 
         Parameters
         ----------
-        segments_to_retain: list
-            list of ids of segments one wishes to retain in analysis
+        catchment_name : str
+            Name of the catchment (used for output file naming).
+        segments_to_retain : list, optional
+            List of segment ids to retain in the analysis.
         """
         arr_sedi_out_nonriver, profile = load_raster(self.files["rst_sedi_out"])
         arr_sedi_out_nonriver = np.where(
@@ -3741,12 +4331,17 @@ class PostProcess(Factory):
             gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
     def add_segment_results_to_vct(self, catchment_name, scenario_label):
-        """Adds the sedimentinput to every riversegment and calculates the
-        sedlen-argument.
+        """Add sediment input to every river segment and calculate sedlen.
 
-        Sedlen is calculated as sedimentinput/length river segment.
+        Sedlen is calculated as sediment input divided by river segment length.
+        The resulting shapefile is stored in ``self.vct_riversegment``.
 
-        The resulting shapefile is stored in self.segmShp.
+        Parameters
+        ----------
+        catchment_name : str
+            Name of the catchment (used for output file naming).
+        scenario_label : int or str
+            Scenario label (used for output file naming).
         """
         logger.info("Coupling results to segments...")
 
@@ -3817,8 +4412,14 @@ class PostProcess(Factory):
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
     def identify_sinks_in_routing(self, catchment_name, scenario_label):
-        """Identify sinks based on whether more than one routing vector goes to
-        a pixel.
+        """Identify sinks based on whether more than one routing vector goes to a pixel.
+
+        Parameters
+        ----------
+        catchment_name : str
+            Name of the catchment (used for output file naming).
+        scenario_label : int or str
+            Scenario label (used for output file naming).
         """
 
         logger.info("Looking for sinks in routing...")
@@ -3904,8 +4505,17 @@ class PostProcess(Factory):
             raise WSException(msg)
 
     def calculate_areas_prckrt(self, year, catchment_name, scenario_label):
-        """Calculates the areas and relative areas of all landuse classes in
-        the parcelmap
+        """Calculate the areas and relative areas of all landuse classes
+        in the parcelmap.
+
+        Parameters
+        ----------
+        year : int
+            Simulation year (used for output file naming).
+        catchment_name : str
+            Name of the catchment (used for output file naming).
+        scenario_label : int or str
+            Scenario label (used for output file naming).
         """
 
         if self.files["rst_prckrt"] is None:
@@ -3933,7 +4543,17 @@ class PostProcess(Factory):
         df.to_csv(f, sep=";")
 
     def make_facts(self, year, catchment_name, scenario_label):
-        """Make a textfile with a number of stats about the simulation"""
+        """Make a textfile with a number of stats about the simulation.
+
+        Parameters
+        ----------
+        year : int
+            Simulation year (used for output file naming and content).
+        catchment_name : str
+            Name of the catchment (used for output file naming).
+        scenario_label : int or str
+            Scenario label (used for output file naming).
+        """
         factsfile = self.postprocessing_folder / (
             f"facts_{catchment_name}_s{scenario_label}.csv"
         )
@@ -3969,6 +4589,16 @@ class PostProcess(Factory):
         """Split the sewerin raster with the sewer_id raster.
 
         See :func:`pywatemsedem.postprocess.split_endpoints_in_raster`
+
+        Parameters
+        ----------
+        scenario_label : int or str
+            Scenario label (used for output file naming).
+
+        Returns
+        -------
+        tuple
+            ``(rst_sewers, rst_ditches)`` file paths.
         """
 
         rst_sewers = (
@@ -4011,14 +4641,18 @@ class PostProcess(Factory):
         self._sinks = self.raster_factory(raster, flag_mask=True)
 
     def assign_filenames(self, fmap_results, year, catchment_name, scenario_label):
-        """Use filestructure defined in the package to appoint names of files
+        """Use filestructure defined in the package to appoint names of files.
 
         Parameters
         ----------
-        fmap_results: str or pathlib.Path
-            Folder path (scenario_XX)
-        year: int
-            Simulation year used for filename formatting.
+        fmap_results : str or pathlib.Path
+            Folder path (scenario_XX).
+        year : int
+            Simulation year (used for filename formatting).
+        catchment_name : str
+            Name of the catchment (used for filename formatting).
+        scenario_label : int or str
+            Scenario label (used for filename formatting).
         """
         files = {}
 
@@ -4073,6 +4707,9 @@ class PostProcess(Factory):
         condition
             Condition coupled when file is present (e.g. `Include buffers`,
             `Include sewers`, ..)
+        arguments_input: dict
+            Dictionary with input arguments for filename string formatting
+            (e.g. year, catchment_name, scenario).
 
         Returns
         -------
@@ -4207,7 +4844,13 @@ class PostProcess(Factory):
 
 
 def _unlink_vector_dataset_local(vector_path):
-    """Remove an existing vector dataset before re-writing it."""
+    """Remove an existing vector dataset before re-writing it.
+
+    Parameters
+    ----------
+    vector_path : str or pathlib.Path
+        Path to the vector file (shapefile or other format).
+    """
     vector_path = Path(vector_path)
     if vector_path.suffix.lower() == ".shp":
         for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix"]:
@@ -4219,7 +4862,20 @@ def _unlink_vector_dataset_local(vector_path):
 
 
 def _priority_valid_mask(arr_sedi_out, nodata):
-    """Return mask of valid source cells for priority selection."""
+    """Return mask of valid source cells for priority selection.
+
+    Parameters
+    ----------
+    arr_sedi_out : numpy.ndarray
+        Sediment output array.
+    nodata : float
+        Nodata value for the array.
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean mask of valid (non-nodata) cells.
+    """
     return ~np.isnan(arr_sedi_out) if pd.isna(nodata) else arr_sedi_out != nodata
 
 
@@ -4229,7 +4885,29 @@ def _validate_priority_selection_inputs(
     nmax,
     threshold_percentage,
 ):
-    """Validate selection arguments and return valid mask."""
+    """Validate selection arguments and return valid mask.
+
+    Parameters
+    ----------
+    arr_sedi_out : numpy.ndarray
+        Sediment output array.
+    nodata : float
+        Nodata value for the array.
+    nmax : int, optional
+        Maximum number of subcatchments to select.
+    threshold_percentage : float, optional
+        Cumulative percentage threshold (0, 100].
+
+    Returns
+    -------
+    numpy.ndarray
+        Boolean mask of valid cells.
+
+    Raises
+    ------
+    ValueError
+        If arguments are invalid or no valid cells are found.
+    """
     if nmax is None and threshold_percentage is None:
         msg = "Either 'nmax' or 'threshold_percentage' must be provided."
         raise ValueError(msg)
@@ -4249,7 +4927,26 @@ def _validate_priority_selection_inputs(
 
 
 def _create_poi_records(max_rows, max_cols, rst_profile, max_sedi_out, priority_id):
-    """Create POI records for all max-source pixels."""
+    """Create POI records for all max-source pixels.
+
+    Parameters
+    ----------
+    max_rows : numpy.ndarray
+        Row indices of max-value pixels.
+    max_cols : numpy.ndarray
+        Column indices of max-value pixels.
+    rst_profile : dict
+        Raster profile with spatial reference information.
+    max_sedi_out : float
+        Maximum sediment output value.
+    priority_id : int
+        Priority id to assign to the records.
+
+    Returns
+    -------
+    list of dict
+        POI records with geometry and attributes.
+    """
     minx, miny, _, _ = rst_profile["minmax"]
     res = rst_profile["res"]
     nrows = rst_profile["nrows"]
@@ -4278,7 +4975,28 @@ def _resolve_or_create_priority_subcatchment(
     tag,
     max_sedi_out,
 ):
-    """Return raster/vector paths for a priority subcatchment and annotate sedi_out."""
+    """Return raster/vector paths for a priority subcatchment and annotate sedi_out.
+
+    Parameters
+    ----------
+    rst_id : str or pathlib.Path
+        Raster file path with the target id.
+    txt_routing_non_river : str or pathlib.Path
+        Routing table file path (without river routing).
+    resmap : str or pathlib.Path
+        Results folder path.
+    rst_profile : dict
+        Raster profile.
+    tag : int or str
+        Tag for output file naming.
+    max_sedi_out : float
+        Maximum sediment output value to annotate.
+
+    Returns
+    -------
+    tuple
+        ``(rst_subcatch, vct_subcatch)`` file paths.
+    """
     template_name = resmap / f"subcatchments_{tag}.shp"
     if template_name.exists():
         return template_name.with_suffix(".sdat"), template_name
@@ -4297,7 +5015,24 @@ def _resolve_or_create_priority_subcatchment(
 
 
 def _selected_source_load(arr_sedi_out, arr_subcatch, nodata):
-    """Compute selected source load and mask for a subcatchment raster."""
+    """Compute selected source load and mask for a subcatchment raster.
+
+    Parameters
+    ----------
+    arr_sedi_out : numpy.ndarray
+        Sediment output array.
+    arr_subcatch : numpy.ndarray
+        Subcatchment id array.
+    nodata : float
+        Nodata value.
+
+    Returns
+    -------
+    tuple
+        ``(selected_source_load, subcatch_mask)`` where
+        ``selected_source_load`` is a float and ``subcatch_mask`` is a
+        boolean array.
+    """
     subcatch_mask = arr_subcatch != -99999.0
     valid_mask = _priority_valid_mask(arr_sedi_out, nodata)
     valid_subcatch = subcatch_mask & valid_mask
@@ -4310,7 +5045,19 @@ def _write_priority_load_attributes(
     total_source_load,
     cumulative_source_load,
 ):
-    """Write source-load columns to a priority subcatchment vector."""
+    """Write source-load columns to a priority subcatchment vector.
+
+    Parameters
+    ----------
+    vct_subcatch : str or pathlib.Path
+        Vector file path.
+    selected_source_load : float
+        Sediment load for this subcatchment.
+    total_source_load : float
+        Total sediment load across all valid source cells.
+    cumulative_source_load : float
+        Cumulative sediment load up to and including this subcatchment.
+    """
     gdf = gpd.read_file(vct_subcatch)
     gdf["source_load"] = selected_source_load
     if total_source_load != 0:
@@ -4329,7 +5076,26 @@ def _stop_priority_selection(
     cumulative_source_load,
     total_source_load,
 ):
-    """Return True if one of the priority stopping criteria is reached."""
+    """Return True if one of the priority stopping criteria is reached.
+
+    Parameters
+    ----------
+    index : int
+        Current priority index/count.
+    nmax : int, optional
+        Maximum number of subcatchments.
+    threshold_percentage : float, optional
+        Cumulative percentage threshold (0, 100].
+    cumulative_source_load : float
+        Cumulative sediment load up to this point.
+    total_source_load : float
+        Total sediment load.
+
+    Returns
+    -------
+    bool
+        ``True`` if a stopping criterion is met.
+    """
     return (nmax is not None and index >= nmax) or (
         threshold_percentage is not None
         and total_source_load != 0
@@ -4338,7 +5104,21 @@ def _stop_priority_selection(
 
 
 def _merge_priority_subcatchments(resmap, epsg):
-    """Merge all subcatchments_*.shp files into priority_subcatchments.shp."""
+    """Merge all ``subcatchments_*.shp`` files into ``priority_subcatchments.shp``.
+
+    Parameters
+    ----------
+    resmap : str or pathlib.Path
+        Folder path containing individual subcatchment shapefiles.
+    epsg : int or str
+        EPSG code or ``"EPSG:XXXXX"`` format.
+
+    Returns
+    -------
+    tuple
+        ``(gdf_subcatchmpriority, dst)`` where ``dst`` is the path to the
+        merged output.
+    """
     lst_gdf = [
         gpd.read_file(vector_path)
         for vector_path in resmap.iterdir()
@@ -4354,7 +5134,18 @@ def _merge_priority_subcatchments(resmap, epsg):
 
 
 def _cleanup_priority_subcatchment_shapefiles(resmap, dst, individual_paths):
-    """Remove intermediate subcatchments_* vectors while preserving aggregate output."""
+    """Remove intermediate ``subcatchments_*`` vectors while preserving
+    aggregate output.
+
+    Parameters
+    ----------
+    resmap : str or pathlib.Path
+        Folder path containing subcatchment shapefiles.
+    dst : str or pathlib.Path
+        Aggregated output shapefile path to preserve.
+    individual_paths : list of str or pathlib.Path
+        Individual subcatchment file paths to remove.
+    """
     for vct_subcatch in {Path(path) for path in individual_paths}:
         if vct_subcatch != dst:
             _unlink_vector_dataset_local(vct_subcatch)
@@ -4386,14 +5177,18 @@ def identify_individual_priority_subcatchments(
         rasterio profile of the sedout raster
     rstparams: dict
         dictionary with raster parameters (e.g. nodata value)
-    txt_routing_nonriver: str or pathlib.Path | str
-        File path of the WaTEM/SEDEM routing table
+    txt_routing_non_river: str or pathlib.Path
+        File path of the WaTEM/SEDEM routing table without river routing.
     nmax: int, optional
         Maximum number of subcatchments to select. Required when
         ``threshold_percentage`` is None.
     threshold_percentage: float, optional
         Stop once cumulative selected source load exceeds this percentage of
         total valid source load. Must be in (0, 100].
+    resmap: str or pathlib.Path, default Path.cwd()
+        Folder path to write results to.
+    epsg: int or str, default ""
+        EPSG code or ``"EPSG:XXXXX"`` format.
 
     Returns
     -------
@@ -5125,6 +5920,8 @@ def compute_netto_erosion_parcels(
         Output map
     flag_write: bool, default False
         Flag to indicate whether results should be written to disk
+    flag_join_vct_parcels: bool, default True
+        Join the results to the parcel shapefile.
 
     Returns
     -------
@@ -5459,6 +6256,9 @@ def compute_cdf_sediment_load(
         Column in 'df' to compute cdf for
     resmap: str or pathlib.Path
         Folder path to which write figure to
+    tag: str, optional
+        Tag appended to the output filename (e.g. ``"buffers"``,
+        ``"grass_strips"``).
     no_data: float, optional
         No_data value in 'column_value'
     ignore_negative_values: float, optional
@@ -5627,9 +6427,12 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     ----------
     rst_in: str or pathlib.Path
         Input raster subject to convert to shape
+    vct_out: str or pathlib.Path
+        File path of the output point vector shapefile.
     kind: str
         'sewer' or 'river'
-
+    epsg: str, default "EPSG:31370"
+        EPSG code for the output vector CRS.
     """
     if kind not in ["river", "sewer"]:
         raise KeyError(f"{kind} of sink not in known.")
