@@ -5675,59 +5675,6 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out.to_file(vct_out, spatial_index="YES")
 
 
-def compute_statistics_sedi_out_outside_domain(
-    arr_sedi_out, arr_id, df_routing, profile
-):
-    """Compute amount of sedi_out routing outside domain.
-
-    Parameters
-    ----------
-    arr_sedi_out: numpy.ndarray
-        WaTEM/SEDEM sedi_out raster.
-    arr_id: numpy.ndarray
-        An unique array id array, sedi_out outside domain is grouped by these id's.
-        Should be integers or floats!
-    df_routing: pandas.DataFrame
-        Loaded WaTEM/SEDEM routing dataframe
-    profile: rasterio.profile
-
-    Returns
-    -------
-    pandas.Series
-        Series holding sedi_out outside domain per id.
-    """
-    df_id = raster_array_to_pandas_dataframe(arr_id, profile)
-    df_id["sid"] = df_id["val"]
-    df_id["tid1"] = df_id["val"]
-    df_id["tid2"] = df_id["val"]
-    df_id["target1col"] = df_id["col"]
-    df_id["target2col"] = df_id["col"]
-    df_id["target1row"] = df_id["row"]
-    df_id["target2row"] = df_id["row"]
-
-    # couple rows and cols
-    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
-    col = ["col", "row"]
-    df_routing = df_routing.merge(df_id[col + ["sid"]], on=col, how="left")
-    col = ["target1col", "target1row"]
-    df_routing = df_routing.merge(df_id[col + ["tid1"]], on=col, how="left")
-    col = ["target2col", "target2row"]
-    df_routing = df_routing.merge(df_id[col + ["tid2"]], on=col, how="left")
-    # source id's that are not equal to target id's
-    df_routing = df_routing[
-        (df_routing["sid"] != df_routing["tid1"])
-        & (df_routing["sid"] != df_routing["tid2"])
-    ]
-    df_routing = df_routing.merge(df_sedi_out, on=["col", "row"], how="left")
-    df_routing["val1"] = df_routing["part1"] * df_routing["val"]
-    df_routing["val2"] = df_routing["part2"] * df_routing["val"]
-    # compute stats
-    t1 = df_routing.groupby("tid1").aggregate({"val1": np.sum})
-    t2 = df_routing.groupby("tid1").aggregate({"val2": np.sum})
-
-    return t1["val1"] + t2["val2"]
-
-
 def process_filename(
     fmap_results, subfolder, filename, extension, arguments, arguments_input
 ):
