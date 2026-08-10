@@ -2374,43 +2374,6 @@ class PostProcess(Factory):
 
         subcatchments_obj.plot = plot
 
-    def aggregate_subcatchments_for_points(
-        self, target_input, tag="subcatchments_to_targets"
-    ):
-        """Aggregate already computed dummy-point subcatchments to parent points.
-
-        This supports gradual workflows where points become available over time
-        and their subcatchments are delineated one-by-one.
-
-        Parameters
-        ----------
-        target_input : str, pathlib.Path, or object
-            Target point vector input (``vct_*`` property name, file path,
-            or vector object).
-        tag : str, default "subcatchments_to_targets"
-            Output tag for file naming.
-
-        Returns
-        -------
-        pathlib.Path
-            Path to the aggregated subcatchments vector.
-        """
-        points_vector_obj, target_name, _ = self._resolve_point_vector_target(
-            target_input
-        )
-        parent_property_name = (
-            target_input
-            if isinstance(target_input, str) and target_input.startswith("vct_")
-            else None
-        )
-        output_dir = self._point_target_output_dir(parent_property_name)
-        return self._aggregate_dummy_point_subcatchments(
-            points_vector_obj,
-            target_name,
-            tag,
-            output_dir=output_dir,
-        )
-
     def _unlink_vector_dataset(self, vector_path):
         """Remove an existing vector dataset before re-writing it.
 
@@ -2504,46 +2467,6 @@ class PostProcess(Factory):
                     keep_paths.add(p_sub)
 
         return keep_paths
-
-    def cleanup_postprocessing_shapefiles(self, dry_run=False, include_subfolders=True):
-        """Keep only active notebook shapefiles in postprocessing folder.
-
-        Parameters
-        ----------
-        dry_run: bool, default False
-            If True, do not delete files; only report what would be removed.
-        include_subfolders: bool, default True
-            Also scan subfolders (e.g. temporary priority folders).
-
-        Returns
-        -------
-        dict
-            Summary with keys ``kept`` and ``removed``.
-        """
-        root = self.postprocessing_folder
-        keep_paths = self._collect_notebook_vector_paths()
-
-        if include_subfolders:
-            candidates = list(root.rglob("*.shp"))
-        else:
-            candidates = list(root.glob("*.shp"))
-
-        removed = []
-        kept = []
-        for shp in candidates:
-            shp_resolved = shp.resolve()
-            if shp_resolved in keep_paths:
-                kept.append(str(shp_resolved))
-                continue
-
-            removed.append(str(shp_resolved))
-            if not dry_run:
-                self._unlink_vector_dataset(shp_resolved)
-
-        return {
-            "kept": sorted(kept),
-            "removed": sorted(removed),
-        }
 
     def _auto_cleanup_postprocessing_shapefiles(self):
         """Run automatic postprocessing shapefile cleanup when enabled."""
@@ -3901,6 +3824,118 @@ class PostProcess(Factory):
         vct_out = self.postprocessing_folder / "priority_subcatchments_merged.shp"
         gpd_priorities.to_file(vct_out, spatial_index="YES")
 
+    # ========================================================================
+    # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
+    # ========================================================================
+    # The following PostProcess class methods are implemented but not called
+    # (directly or indirectly) by postprocess.ipynb. These are reserved for
+    # future workflow extensions or advanced use cases.
+    #
+    # - cleanup_postprocessing_shapefiles
+    # - aggregate_subcatchments_for_points
+    # - identify_export_parcel
+    # - aggregate_sedout_parcel
+    # - couple_sedi_out_routing
+    # - intersect_sedi_outparcels_with_subcatchments
+    # - select_routing_to_outsidecatchment
+    # - get_total_sediment
+    # - read_total_sediment
+    # - assign_values_df_summary
+    # - process_buffers
+    # - compute_netto_erosion_parcels
+    # - merge_sedi_out_and_cumulative
+    # - convert_output_rsts_to_ton
+    # - add_sediment_to_subcatchments
+    # - add_segment_results_to_vct
+    # - compute_sewer_in_per_catchment
+    # - identify_sinks_in_routing
+    # - set_prckrt_nodata
+    # - calculate_areas_prckrt
+    # - make_facts
+    # - split_sewerin
+    # - write_erosion_deposition_raster
+    # - assign_filenames
+    # - process_and_check_filename
+    # - check_condition_files
+    # - compute_statistics_rasters_per_polygon_vector
+
+    def cleanup_postprocessing_shapefiles(self, dry_run=False, include_subfolders=True):
+        """Keep only active notebook shapefiles in postprocessing folder.
+
+        Parameters
+        ----------
+        dry_run: bool, default False
+            If True, do not delete files; only report what would be removed.
+        include_subfolders: bool, default True
+            Also scan subfolders (e.g. temporary priority folders).
+
+        Returns
+        -------
+        dict
+            Summary with keys ``kept`` and ``removed``.
+        """
+        root = self.postprocessing_folder
+        keep_paths = self._collect_notebook_vector_paths()
+
+        if include_subfolders:
+            candidates = list(root.rglob("*.shp"))
+        else:
+            candidates = list(root.glob("*.shp"))
+
+        removed = []
+        kept = []
+        for shp in candidates:
+            shp_resolved = shp.resolve()
+            if shp_resolved in keep_paths:
+                kept.append(str(shp_resolved))
+                continue
+
+            removed.append(str(shp_resolved))
+            if not dry_run:
+                self._unlink_vector_dataset(shp_resolved)
+
+        return {
+            "kept": sorted(kept),
+            "removed": sorted(removed),
+        }
+
+    def aggregate_subcatchments_for_points(
+        self, target_input, tag="subcatchments_to_targets"
+    ):
+        """Aggregate already computed dummy-point subcatchments to parent points.
+
+        This supports gradual workflows where points become available over time
+        and their subcatchments are delineated one-by-one.
+
+        Parameters
+        ----------
+        target_input : str, pathlib.Path, or object
+            Target point vector input (``vct_*`` property name, file path,
+            or vector object).
+        tag : str, default "subcatchments_to_targets"
+            Output tag for file naming.
+
+        Returns
+        -------
+        pathlib.Path
+            Path to the aggregated subcatchments vector.
+        """
+        points_vector_obj, target_name, _ = self._resolve_point_vector_target(
+            target_input
+        )
+        parent_property_name = (
+            target_input
+            if isinstance(target_input, str) and target_input.startswith("vct_")
+            else None
+        )
+        output_dir = self._point_target_output_dir(parent_property_name)
+        return self._aggregate_dummy_point_subcatchments(
+            points_vector_obj,
+            target_name,
+            tag,
+            output_dir=output_dir,
+        )
+
     def identify_export_parcel(self):
         """Identify total sediment leaving a parcel.
 
@@ -4861,6 +4896,473 @@ def _unlink_vector_dataset_local(vector_path):
         vector_path.unlink()
 
 
+def identify_individual_priority_subcatchments(
+    arr_sedi_out,
+    rst_profile,
+    rstparams,
+    txt_routing_non_river,
+    nmax=None,
+    threshold_percentage=None,
+    resmap=Path.cwd(),
+    epsg="",
+):
+    """
+    Identify the individual priority subcatchments and add them to rasters
+    and vector outputs.
+
+    Parameters
+    ----------
+    arr_sedi_out: numpy.ndarray
+        numpy array format of sedout raster
+    rst_profile: rasterio profile
+        rasterio profile of the sedout raster
+    rstparams: dict
+        dictionary with raster parameters (e.g. nodata value)
+    txt_routing_non_river: str or pathlib.Path
+        File path of the WaTEM/SEDEM routing table without river routing.
+    nmax: int, optional
+        Maximum number of subcatchments to select. Required when
+        ``threshold_percentage`` is None.
+    threshold_percentage: float, optional
+        Stop once cumulative selected source load exceeds this percentage of
+        total valid source load. Must be in (0, 100].
+    resmap: str or pathlib.Path, default Path.cwd()
+        Folder path to write results to.
+    epsg: int or str, default ""
+        EPSG code or ``"EPSG:XXXXX"`` format.
+
+    Returns
+    -------
+    subcatchmentpriority: geopandas.GeoDataFrame
+        Subcatchment shapes with number of subcatchment.
+    gdf_poi: geopandas.GeoDataFrame
+        Priority points-of-interest (POI) used as subcatchment seeds.
+    vct_priority_subcatchments: pathlib.Path
+        File path of the exported priority subcatchments shapefile.
+    vct_priority_points: pathlib.Path
+        File path of the exported POI shapefile.
+    """
+    nodata = rst_profile["nodata"]
+    total_source_load = arr_sedi_out[
+        _validate_priority_selection_inputs(
+            arr_sedi_out,
+            nodata,
+            nmax,
+            threshold_percentage,
+        )
+    ].sum()
+    cumulative_source_load = 0.0
+    poi_records = []
+    individual_subcatchment_paths = []
+
+    priority_id = 1
+    while True:
+        rst_id, max_sedi_out, max_rows, max_cols = (
+            create_id_raster_for_highest_value_arr(
+                arr_sedi_out,
+                1,
+                rstparams,
+                resmap=resmap,
+            )
+        )
+
+        poi_records.extend(
+            _create_poi_records(
+                max_rows,
+                max_cols,
+                rst_profile,
+                max_sedi_out,
+                priority_id,
+            )
+        )
+
+        rst_subcatch, vct_subcatch = _resolve_or_create_priority_subcatchment(
+            rst_id,
+            txt_routing_non_river,
+            resmap,
+            rst_profile,
+            tag=priority_id,
+            max_sedi_out=max_sedi_out,
+        )
+        individual_subcatchment_paths.append(Path(vct_subcatch))
+
+        arr_subcatch, _ = load_raster(rst_subcatch)
+        selected_source_load, subcatch_mask = _selected_source_load(
+            arr_sedi_out,
+            arr_subcatch,
+            nodata,
+        )
+        cumulative_source_load += selected_source_load
+
+        _write_priority_load_attributes(
+            vct_subcatch,
+            selected_source_load,
+            total_source_load,
+            cumulative_source_load,
+        )
+
+        if _stop_priority_selection(
+            priority_id,
+            nmax,
+            threshold_percentage,
+            cumulative_source_load,
+            total_source_load,
+        ):
+            break
+
+        arr_sedi_out[subcatch_mask] = nodata
+        if not np.any(_priority_valid_mask(arr_sedi_out, nodata)):
+            break
+
+        priority_id += 1
+
+    gdf_subcatchmpriority, dst = _merge_priority_subcatchments(resmap, epsg)
+
+    gdf_poi = gpd.GeoDataFrame(poi_records, geometry="geometry", crs=epsg)
+    vct_priority_points = resmap / "priority_points_of_interest.shp"
+    gdf_poi.to_file(vct_priority_points, spatial_index="YES")
+
+    _cleanup_priority_subcatchment_shapefiles(
+        resmap,
+        dst,
+        individual_subcatchment_paths,
+    )
+
+    return gdf_subcatchmpriority, gdf_poi, dst, vct_priority_points
+
+
+def compute_efficiency_grass_strips(
+    txt_routing, rst_grass_strips, rst_prckrt, rst_sedi_out
+):
+    """Compute statistics for grass strips:
+
+    1. Compute the individual sediment input and output per routing element
+    2. Compute the incoming and outgoing sediment per gras_id
+    3. Compute the total incoming and outgoing sediment aggregated over all
+       grass strips
+
+    Parameters
+    ----------
+    txt_routing: str or pathlib.Path
+        File path of the WaTEM/SEDEM routing table
+    rst_grass_strips: str or ppathlib.Path
+        raster grass strips with id's filename
+    rst_prckrt: str or pathlib.Path
+        raster WaTEM/SEDEM perceelskaart
+    rst_sedi_out: str or pathlib.Path
+        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
+
+    Returns
+    -------
+    sediment_load_grass_strips_in: float
+        Total sediment load streaming into all gras strips (kg)
+    sediment_load_grass_strips_out: float
+        Total sediment load streaming out of all gras strips (kg)
+    df_efficiency: pandas.DataFrame
+
+        Sediment load flowing in and flowing out grass strip with the columns:
+
+                - *id* (float): grass_id
+        - *npixels_t* (float: number of pixels of target grass strip
+        - *sedi_in* (float): total incoming sediment in grass strip (kg)
+        - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
+        - *eSTE* (float): estimated sediment trapping efficiency, see
+          :func:`pywatemsedem.grasstrips.estimate_ste` (%)
+        - sed (float): amount of sedimentation (kg)
+
+    Note
+    ----
+    The output uses a single grass strip identifier in column ``id``.
+    """
+    # load files
+    arr_prckrt, _ = load_raster(rst_prckrt)
+    arr_grass_strips_id, profile = load_raster(rst_grass_strips)
+
+    # Filter grass-strip ids directly on array level: only pixels that are
+    # grass strip land-use (-6) in the perceelskaart are retained.
+    arr_grass_strips_id = np.where(
+        arr_prckrt == -6,
+        arr_grass_strips_id,
+        profile["nodata"],
+    )
+    df_grass_strips = raster_array_to_pandas_dataframe(arr_grass_strips_id, profile)
+
+    arr_sedi_out, profile_sedi_out = load_raster(rst_sedi_out)
+    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile_sedi_out)
+    df_routing = open_txt_routing_file(txt_routing)
+
+    df_grass_strips["val"] = df_grass_strips["val"].astype(np.float64)
+
+    # merge grass strips with sedi_out raster
+    df_routing_grasid = merge_grass_strip_id_and_sedi_out_to_routing(
+        df_grass_strips, df_sedi_out, df_routing
+    )
+
+    # format df_routing_grass to a list format
+    df_routing_grass_T = reformat_routing_grass(df_routing_grasid)
+
+    # aggregate per grass strip
+    df_efficiency = aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass_T)
+
+    # compute counts
+    arr_id, arr_npixels_t = np.unique(arr_grass_strips_id, return_counts=True)
+    df_counts = pd.DataFrame()
+    df_counts["id"] = arr_id
+    df_counts["npixels_t"] = arr_npixels_t
+    df_efficiency = df_efficiency.merge(df_counts, on="id")
+    sediment_load_grass_strips_in = np.sum(df_efficiency["sedi_in"])
+    sediment_load_grass_strips_out = np.sum(df_efficiency["sedi_out"])
+
+    return sediment_load_grass_strips_in, sediment_load_grass_strips_out, df_efficiency
+
+
+def identify_subcatchments_to_target_ids(
+    rst_target_ids,
+    txt_routing_nonriver,
+    resmap,
+    profile,
+    tag="subcatchments_to_targets",
+):
+    """Identify subcatchments draining to positive target ids.
+
+    Parameters
+    ----------
+    rst_target_ids: str or pathlib.Path
+        File path of a raster holding positive target id values
+        (e.g. buffers, sinks). Non-target cells must be nodata or <= 0.
+    txt_routing_nonriver: str or pathlib.Path
+        File path of the WaTEM/SEDEM routing table without river routing included
+    resmap: str or pathlib.Path
+        Folder path of results folder
+    profile: rasterio.profiles
+        See :func:`rasterio.open`.
+    tag: str, default "subcatchments_to_targets"
+        Tag used by :func:`define_subcatchments_saga` for output naming.
+
+    Returns
+    -------
+    tuple
+        ``(rst_subcatchments, vct_subcatchments)`` as returned by
+        :func:`define_subcatchments_saga`.
+    """
+    rst_target_ids = Path(rst_target_ids)
+    arr_target_ids, _ = load_raster(rst_target_ids)
+
+    # Accept both legacy dict-like profiles and RasterProperties instances.
+    if isinstance(profile, dict):
+        gdal_profile = profile
+    elif hasattr(profile, "gdal_profile"):
+        gdal_profile = profile.gdal_profile
+    else:
+        msg = "'profile' must be a dict or provide a 'gdal_profile' attribute."
+        raise TypeError(msg)
+
+    nodata = gdal_profile["nodata"]
+
+    cond_valid = arr_target_ids > 0
+    if pd.isna(nodata):
+        cond_valid = cond_valid & (~np.isnan(arr_target_ids))
+    else:
+        cond_valid = cond_valid & (arr_target_ids != nodata)
+
+    target_ids = np.unique(arr_target_ids[cond_valid])
+    if target_ids.size == 0:
+        msg = f"No positive target ids found in raster '{rst_target_ids}'."
+        raise ValueError(msg)
+
+    mask = np.isin(arr_target_ids, target_ids)
+    arr_targets = np.where(mask, arr_target_ids, nodata).astype(np.float32)
+
+    rst_targets = resmap / (str(rst_target_ids.stem) + "_targets.rst")
+    rstparams = rasterprofile_to_rstparams(gdal_profile)
+
+    write_arr_as_rst(arr_targets, rst_targets, arr_targets.dtype, rstparams)
+
+    return define_subcatchments_saga(
+        rst_targets,
+        txt_routing_nonriver,
+        resmap,
+        gdal_profile,
+        tag=tag,
+    )
+
+
+def compute_cdf_sediment_load(
+    df,
+    column_value,
+    resmap,
+    tag=None,
+    no_data=None,
+    ignore_negative_values=False,
+    sort_ascending=True,
+    plot=False,
+):
+    """Compute the cdf of sediment load in 'column_value' in the dataframe df
+
+    Parameters
+    ----------
+    df: pandas.DataFrame
+        Dataframe to compute cdf for
+        - *column_value* (float): sediment load values
+    column_value: str
+        Column in 'df' to compute cdf for
+    resmap: str or pathlib.Path
+        Folder path to which write figure to
+    tag: str, optional
+        Tag appended to the output filename (e.g. ``"buffers"``,
+        ``"grass_strips"``).
+    no_data: float, optional
+        No_data value in 'column_value'
+    ignore_negative_values: float, optional
+        Ignore negative values in column_value
+    sort_ascending: bool, optional
+        Sort values in ascending order before cumulative aggregation.
+        If ``False``, the cumulative statistics are computed from highest
+        values to lowest values.
+    plot: str, optional
+        Write plot to disk (True/False)
+
+    Returns
+    -------
+    df: pandas.DataFrame
+        Updated dataframe with cdf
+
+        - *column_value* (float): sediment load values
+        - *cum_sum* (float): cumulative sum of sediment load
+        - *cdf* (float): cumulative distribution estimate
+
+    """
+    # calculate cumulative sum and cdf, normalized to total deposition across
+    # all valid rows (optionally only positive values).
+    df["value"] = df[column_value]
+    df = df.sort_values("value", ascending=sort_ascending)
+    df[["rank", "cum_sum", "cdf"]] = np.nan
+
+    cond_valid = df["value"] != no_data
+    if ignore_negative_values:
+        cond_contrib = cond_valid & (df["value"] > 0.0)
+    else:
+        cond_contrib = cond_valid
+
+    total_contrib = df.loc[cond_contrib, "value"].sum()
+
+    if np.any(cond_contrib):
+        df.loc[cond_contrib, "rank"] = np.arange(len(df.loc[cond_contrib]))
+        df.loc[cond_contrib, "cum_sum"] = df.loc[cond_contrib, "value"].cumsum()
+        if total_contrib > 0:
+            df.loc[cond_contrib, "cdf"] = (
+                100 * df.loc[cond_contrib, "cum_sum"] / total_contrib
+            )
+
+    if plot:
+        if tag is not None:
+            fname = resmap / f"cumulative_sedimentload_{tag}.png"
+        else:
+            fname = resmap / "cumulative_sedimentload.png"
+        plot_cumulative_sedimentload(df.loc[cond_contrib], fname)
+
+    return df
+
+
+def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
+    """Convert a sinks raster to a vector file.
+
+    A sinks raster is defined as a raster holding captured sediment loads
+    (i.e. rst_sewer_in, rst_sedi_export).
+
+    Parameters
+    ----------
+    rst_in: str or pathlib.Path
+        Input raster subject to convert to shape
+    vct_out: str or pathlib.Path
+        File path of the output point vector shapefile.
+    kind: str
+        'sewer' or 'river'
+    epsg: str, default "EPSG:31370"
+        EPSG code for the output vector CRS.
+    """
+    if kind not in ["river", "sewer"]:
+        raise KeyError(f"{kind} of sink not in known.")
+
+    rst_in = Path(rst_in)
+    basename = rst_in.stem
+    _, profile = load_raster(rst_in)
+    nodata = profile["nodata"]
+
+    cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "3"]
+    cmd_args += ["-GRIDS", str(rst_in)]
+    cmd_args += ["-POINTS", str(vct_out)]
+    execute_saga(cmd_args)
+
+    gdf_out = gpd.read_file(vct_out)
+    value_col = basename[:11]
+    if pd.isna(nodata):
+        cond_valid = (~gdf_out[value_col].isna()) & (gdf_out[value_col] != 0)
+    else:
+        cond_valid = (
+            (gdf_out[value_col] != nodata)
+            & (~gdf_out[value_col].isna())
+            & (gdf_out[value_col] != 0)
+        )
+    gdf_out = gdf_out.loc[cond_valid].copy()
+
+    gdf_out = gdf_out.set_crs(epsg, allow_override=True)
+    gdf_out["type"] = kind
+    gdf_out.rename(columns={basename[:11]: "sediment"}, inplace=True)
+    gdf_out["sediment"] = np.round(
+        gdf_out.sediment / 1000, 3
+    )  # convert from kg to tonnes
+    # Drop very small sink loads that round to near-zero ton values.
+    gdf_out = gdf_out.loc[gdf_out["sediment"] >= 0.001].copy()
+    gdf_out = gdf_out.sort_values("sediment", ascending=False)
+    gdf_out["cumsum"] = gdf_out["sediment"].cumsum()
+    if gdf_out.empty:
+        gdf_out["cumperc"] = pd.Series(dtype=float)
+    else:
+        gdf_out["cumperc"] = (gdf_out["cumsum"] / (gdf_out["sediment"].sum())) * 100
+    gdf_out = gdf_out.reset_index()
+    gdf_out.drop(columns=["index"], inplace=True)
+    gdf_out.to_file(vct_out, spatial_index="YES")
+
+
+# ============================================================================
+# TODO: MODULE-LEVEL FUNCTIONS NOT YET USED BY postprocess.ipynb
+# ============================================================================
+# The following module-level functions are implemented but not called
+# (directly or indirectly) by postprocess.ipynb. These are reserved for
+# future workflow extensions or advanced use cases.
+#
+# - _priority_valid_mask
+# - _validate_priority_selection_inputs
+# - _create_poi_records
+# - _resolve_or_create_priority_subcatchment
+# - _selected_source_load
+# - _write_priority_load_attributes
+# - _stop_priority_selection
+# - _merge_priority_subcatchments
+# - _cleanup_priority_subcatchment_shapefiles
+# - create_id_raster_for_highest_value_arr
+# - check_if_file_exists
+# - split_endpoints_in_raster
+# - convert_arr_from_kg_to_ton
+# - process_filename
+# - read_filestructure
+# - get_tuple_datastructure
+# - get_filename
+# - aggregate_sedi_in_and_sedi_out_grass_strips
+# - merge_grass_strip_id_and_sedi_out_to_routing
+# - reformat_routing_grass
+# - select_and_rename_cols_grass_routing
+# - filter_grass_strips_with_prckrt
+# - merge_grass_id_to_routing
+# - get_stats_ktc
+# - get_stats_cfactor
+# - compute_netto_ero_prckrt
+# - compute_netto_ero_parcel
+# - transform_dict_netto_erosion_to_df
+# - select_routing_out_of_parcel
+
+
 def _priority_valid_mask(arr_sedi_out, nodata):
     """Return mask of valid source cells for priority selection.
 
@@ -5155,141 +5657,6 @@ def _cleanup_priority_subcatchment_shapefiles(resmap, dst, individual_paths):
             _unlink_vector_dataset_local(shp)
 
 
-def identify_individual_priority_subcatchments(
-    arr_sedi_out,
-    rst_profile,
-    rstparams,
-    txt_routing_non_river,
-    nmax=None,
-    threshold_percentage=None,
-    resmap=Path.cwd(),
-    epsg="",
-):
-    """
-    Identify the individual priority subcatchments and add them to rasters
-    and vector outputs.
-
-    Parameters
-    ----------
-    arr_sedi_out: numpy.ndarray
-        numpy array format of sedout raster
-    rst_profile: rasterio profile
-        rasterio profile of the sedout raster
-    rstparams: dict
-        dictionary with raster parameters (e.g. nodata value)
-    txt_routing_non_river: str or pathlib.Path
-        File path of the WaTEM/SEDEM routing table without river routing.
-    nmax: int, optional
-        Maximum number of subcatchments to select. Required when
-        ``threshold_percentage`` is None.
-    threshold_percentage: float, optional
-        Stop once cumulative selected source load exceeds this percentage of
-        total valid source load. Must be in (0, 100].
-    resmap: str or pathlib.Path, default Path.cwd()
-        Folder path to write results to.
-    epsg: int or str, default ""
-        EPSG code or ``"EPSG:XXXXX"`` format.
-
-    Returns
-    -------
-    subcatchmentpriority: geopandas.GeoDataFrame
-        Subcatchment shapes with number of subcatchment.
-    gdf_poi: geopandas.GeoDataFrame
-        Priority points-of-interest (POI) used as subcatchment seeds.
-    vct_priority_subcatchments: pathlib.Path
-        File path of the exported priority subcatchments shapefile.
-    vct_priority_points: pathlib.Path
-        File path of the exported POI shapefile.
-    """
-    nodata = rst_profile["nodata"]
-    total_source_load = arr_sedi_out[
-        _validate_priority_selection_inputs(
-            arr_sedi_out,
-            nodata,
-            nmax,
-            threshold_percentage,
-        )
-    ].sum()
-    cumulative_source_load = 0.0
-    poi_records = []
-    individual_subcatchment_paths = []
-
-    priority_id = 1
-    while True:
-        rst_id, max_sedi_out, max_rows, max_cols = (
-            create_id_raster_for_highest_value_arr(
-                arr_sedi_out,
-                1,
-                rstparams,
-                resmap=resmap,
-            )
-        )
-
-        poi_records.extend(
-            _create_poi_records(
-                max_rows,
-                max_cols,
-                rst_profile,
-                max_sedi_out,
-                priority_id,
-            )
-        )
-
-        rst_subcatch, vct_subcatch = _resolve_or_create_priority_subcatchment(
-            rst_id,
-            txt_routing_non_river,
-            resmap,
-            rst_profile,
-            tag=priority_id,
-            max_sedi_out=max_sedi_out,
-        )
-        individual_subcatchment_paths.append(Path(vct_subcatch))
-
-        arr_subcatch, _ = load_raster(rst_subcatch)
-        selected_source_load, subcatch_mask = _selected_source_load(
-            arr_sedi_out,
-            arr_subcatch,
-            nodata,
-        )
-        cumulative_source_load += selected_source_load
-
-        _write_priority_load_attributes(
-            vct_subcatch,
-            selected_source_load,
-            total_source_load,
-            cumulative_source_load,
-        )
-
-        if _stop_priority_selection(
-            priority_id,
-            nmax,
-            threshold_percentage,
-            cumulative_source_load,
-            total_source_load,
-        ):
-            break
-
-        arr_sedi_out[subcatch_mask] = nodata
-        if not np.any(_priority_valid_mask(arr_sedi_out, nodata)):
-            break
-
-        priority_id += 1
-
-    gdf_subcatchmpriority, dst = _merge_priority_subcatchments(resmap, epsg)
-
-    gdf_poi = gpd.GeoDataFrame(poi_records, geometry="geometry", crs=epsg)
-    vct_priority_points = resmap / "priority_points_of_interest.shp"
-    gdf_poi.to_file(vct_priority_points, spatial_index="YES")
-
-    _cleanup_priority_subcatchment_shapefiles(
-        resmap,
-        dst,
-        individual_subcatchment_paths,
-    )
-
-    return gdf_subcatchmpriority, gdf_poi, dst, vct_priority_points
-
-
 def create_id_raster_for_highest_value_arr(arr, id_, profile, resmap):
     """Create a raster with an id value assigned to the highest value in the raster"
 
@@ -5430,91 +5797,6 @@ def split_endpoints_in_raster(
     sum_id2 = np.sum(arr[arr != profile["nodata"]])
 
     return sum_id1, sum_id2
-
-
-def compute_efficiency_grass_strips(
-    txt_routing, rst_grass_strips, rst_prckrt, rst_sedi_out
-):
-    """Compute statistics for grass strips:
-
-    1. Compute the individual sediment input and output per routing element
-    2. Compute the incoming and outgoing sediment per gras_id
-    3. Compute the total incoming and outgoing sediment aggregated over all
-       grass strips
-
-    Parameters
-    ----------
-    txt_routing: str or pathlib.Path
-        File path of the WaTEM/SEDEM routing table
-    rst_grass_strips: str or ppathlib.Path
-        raster grass strips with id's filename
-    rst_prckrt: str or pathlib.Path
-        raster WaTEM/SEDEM perceelskaart
-    rst_sedi_out: str or pathlib.Path
-        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
-
-    Returns
-    -------
-    sediment_load_grass_strips_in: float
-        Total sediment load streaming into all gras strips (kg)
-    sediment_load_grass_strips_out: float
-        Total sediment load streaming out of all gras strips (kg)
-    df_efficiency: pandas.DataFrame
-
-        Sediment load flowing in and flowing out grass strip with the columns:
-
-                - *id* (float): grass_id
-        - *npixels_t* (float: number of pixels of target grass strip
-        - *sedi_in* (float): total incoming sediment in grass strip (kg)
-        - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
-        - *eSTE* (float): estimated sediment trapping efficiency, see
-          :func:`pywatemsedem.grasstrips.estimate_ste` (%)
-        - sed (float): amount of sedimentation (kg)
-
-    Note
-    ----
-    The output uses a single grass strip identifier in column ``id``.
-    """
-    # load files
-    arr_prckrt, _ = load_raster(rst_prckrt)
-    arr_grass_strips_id, profile = load_raster(rst_grass_strips)
-
-    # Filter grass-strip ids directly on array level: only pixels that are
-    # grass strip land-use (-6) in the perceelskaart are retained.
-    arr_grass_strips_id = np.where(
-        arr_prckrt == -6,
-        arr_grass_strips_id,
-        profile["nodata"],
-    )
-    df_grass_strips = raster_array_to_pandas_dataframe(arr_grass_strips_id, profile)
-
-    arr_sedi_out, profile_sedi_out = load_raster(rst_sedi_out)
-    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile_sedi_out)
-    df_routing = open_txt_routing_file(txt_routing)
-
-    df_grass_strips["val"] = df_grass_strips["val"].astype(np.float64)
-
-    # merge grass strips with sedi_out raster
-    df_routing_grasid = merge_grass_strip_id_and_sedi_out_to_routing(
-        df_grass_strips, df_sedi_out, df_routing
-    )
-
-    # format df_routing_grass to a list format
-    df_routing_grass_T = reformat_routing_grass(df_routing_grasid)
-
-    # aggregate per grass strip
-    df_efficiency = aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass_T)
-
-    # compute counts
-    arr_id, arr_npixels_t = np.unique(arr_grass_strips_id, return_counts=True)
-    df_counts = pd.DataFrame()
-    df_counts["id"] = arr_id
-    df_counts["npixels_t"] = arr_npixels_t
-    df_efficiency = df_efficiency.merge(df_counts, on="id")
-    sediment_load_grass_strips_in = np.sum(df_efficiency["sedi_in"])
-    sediment_load_grass_strips_out = np.sum(df_efficiency["sedi_out"])
-
-    return sediment_load_grass_strips_in, sediment_load_grass_strips_out, df_efficiency
 
 
 def aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass):
@@ -6164,154 +6446,6 @@ def transform_dict_netto_erosion_to_df(dict_netto_ero):
     return df_netto_erosion
 
 
-def identify_subcatchments_to_target_ids(
-    rst_target_ids,
-    txt_routing_nonriver,
-    resmap,
-    profile,
-    tag="subcatchments_to_targets",
-):
-    """Identify subcatchments draining to positive target ids.
-
-    Parameters
-    ----------
-    rst_target_ids: str or pathlib.Path
-        File path of a raster holding positive target id values
-        (e.g. buffers, sinks). Non-target cells must be nodata or <= 0.
-    txt_routing_nonriver: str or pathlib.Path
-        File path of the WaTEM/SEDEM routing table without river routing included
-    resmap: str or pathlib.Path
-        Folder path of results folder
-    profile: rasterio.profiles
-        See :func:`rasterio.open`.
-    tag: str, default "subcatchments_to_targets"
-        Tag used by :func:`define_subcatchments_saga` for output naming.
-
-    Returns
-    -------
-    tuple
-        ``(rst_subcatchments, vct_subcatchments)`` as returned by
-        :func:`define_subcatchments_saga`.
-    """
-    rst_target_ids = Path(rst_target_ids)
-    arr_target_ids, _ = load_raster(rst_target_ids)
-
-    # Accept both legacy dict-like profiles and RasterProperties instances.
-    if isinstance(profile, dict):
-        gdal_profile = profile
-    elif hasattr(profile, "gdal_profile"):
-        gdal_profile = profile.gdal_profile
-    else:
-        msg = "'profile' must be a dict or provide a 'gdal_profile' attribute."
-        raise TypeError(msg)
-
-    nodata = gdal_profile["nodata"]
-
-    cond_valid = arr_target_ids > 0
-    if pd.isna(nodata):
-        cond_valid = cond_valid & (~np.isnan(arr_target_ids))
-    else:
-        cond_valid = cond_valid & (arr_target_ids != nodata)
-
-    target_ids = np.unique(arr_target_ids[cond_valid])
-    if target_ids.size == 0:
-        msg = f"No positive target ids found in raster '{rst_target_ids}'."
-        raise ValueError(msg)
-
-    mask = np.isin(arr_target_ids, target_ids)
-    arr_targets = np.where(mask, arr_target_ids, nodata).astype(np.float32)
-
-    rst_targets = resmap / (str(rst_target_ids.stem) + "_targets.rst")
-    rstparams = rasterprofile_to_rstparams(gdal_profile)
-
-    write_arr_as_rst(arr_targets, rst_targets, arr_targets.dtype, rstparams)
-
-    return define_subcatchments_saga(
-        rst_targets,
-        txt_routing_nonriver,
-        resmap,
-        gdal_profile,
-        tag=tag,
-    )
-
-
-def compute_cdf_sediment_load(
-    df,
-    column_value,
-    resmap,
-    tag=None,
-    no_data=None,
-    ignore_negative_values=False,
-    sort_ascending=True,
-    plot=False,
-):
-    """Compute the cdf of sediment load in 'column_value' in the dataframe df
-
-    Parameters
-    ----------
-    df: pandas.DataFrame
-        Dataframe to compute cdf for
-        - *column_value* (float): sediment load values
-    column_value: str
-        Column in 'df' to compute cdf for
-    resmap: str or pathlib.Path
-        Folder path to which write figure to
-    tag: str, optional
-        Tag appended to the output filename (e.g. ``"buffers"``,
-        ``"grass_strips"``).
-    no_data: float, optional
-        No_data value in 'column_value'
-    ignore_negative_values: float, optional
-        Ignore negative values in column_value
-    sort_ascending: bool, optional
-        Sort values in ascending order before cumulative aggregation.
-        If ``False``, the cumulative statistics are computed from highest
-        values to lowest values.
-    plot: str, optional
-        Write plot to disk (True/False)
-
-    Returns
-    -------
-    df: pandas.DataFrame
-        Updated dataframe with cdf
-
-        - *column_value* (float): sediment load values
-        - *cum_sum* (float): cumulative sum of sediment load
-        - *cdf* (float): cumulative distribution estimate
-
-    """
-    # calculate cumulative sum and cdf, normalized to total deposition across
-    # all valid rows (optionally only positive values).
-    df["value"] = df[column_value]
-    df = df.sort_values("value", ascending=sort_ascending)
-    df[["rank", "cum_sum", "cdf"]] = np.nan
-
-    cond_valid = df["value"] != no_data
-    if ignore_negative_values:
-        cond_contrib = cond_valid & (df["value"] > 0.0)
-    else:
-        cond_contrib = cond_valid
-
-    total_contrib = df.loc[cond_contrib, "value"].sum()
-
-    if np.any(cond_contrib):
-        df.loc[cond_contrib, "rank"] = np.arange(len(df.loc[cond_contrib]))
-        df.loc[cond_contrib, "cum_sum"] = df.loc[cond_contrib, "value"].cumsum()
-        if total_contrib > 0:
-            df.loc[cond_contrib, "cdf"] = (
-                100 * df.loc[cond_contrib, "cum_sum"] / total_contrib
-            )
-
-    if plot:
-        if tag is not None:
-            fname = resmap / f"cumulative_sedimentload_{tag}.png"
-        else:
-            fname = resmap / "cumulative_sedimentload.png"
-        plot_cumulative_sedimentload(df.loc[cond_contrib], fname)
-
-    return df
-
-
 def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
     """Couple the sedi_out raster values to the vector routing file
 
@@ -6372,33 +6506,6 @@ def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
     return gdf_routing
 
 
-def select_routing_out_of_parcel(gdf_routing):
-    """Select routing vectors defined over borders parcel
-
-    Only select the routing vector which cross the parcel border.
-
-    Parameters
-    ----------
-    gdf_routing: geopandas.GeoDataFrame
-        Loaded routing vector file (with or without sedi_out coupled to it).
-        See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-
-    Returns
-    -------
-    gdf_routing: geopandas.GeoDataFrame
-        Selected routing vector file (with or without sedi_out coupled to it).
-        See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-    """
-    cond = gdf_routing["lnduSource"] != gdf_routing["lnduTarg"]
-    gdf_routing = gdf_routing.loc[cond]
-    cond = (gdf_routing["lnduSource"] > 0) & (
-        gdf_routing["lnduTarg"] != np.max(gdf_routing["lnduSource"])
-    )
-    gdf_routing = gdf_routing.loc[cond]
-
-    return gdf_routing
-
-
 def convert_arr_from_kg_to_ton(rst_in, rst_out):
     """Set values of all pixels of a raster divided by 1000 (kg -> ton)
 
@@ -6415,67 +6522,6 @@ def convert_arr_from_kg_to_ton(rst_in, rst_out):
     profile["driver"] = "GTiff"
     profile["compress"] = "DEFLATE"
     write_arr_as_rst(arr_out, rst_out, "float32", profile)
-
-
-def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
-    """Convert a sinks raster to a vector file.
-
-    A sinks raster is defined as a raster holding captured sediment loads
-    (i.e. rst_sewer_in, rst_sedi_export).
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        Input raster subject to convert to shape
-    vct_out: str or pathlib.Path
-        File path of the output point vector shapefile.
-    kind: str
-        'sewer' or 'river'
-    epsg: str, default "EPSG:31370"
-        EPSG code for the output vector CRS.
-    """
-    if kind not in ["river", "sewer"]:
-        raise KeyError(f"{kind} of sink not in known.")
-
-    rst_in = Path(rst_in)
-    basename = rst_in.stem
-    _, profile = load_raster(rst_in)
-    nodata = profile["nodata"]
-
-    cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "3"]
-    cmd_args += ["-GRIDS", str(rst_in)]
-    cmd_args += ["-POINTS", str(vct_out)]
-    execute_saga(cmd_args)
-
-    gdf_out = gpd.read_file(vct_out)
-    value_col = basename[:11]
-    if pd.isna(nodata):
-        cond_valid = (~gdf_out[value_col].isna()) & (gdf_out[value_col] != 0)
-    else:
-        cond_valid = (
-            (gdf_out[value_col] != nodata)
-            & (~gdf_out[value_col].isna())
-            & (gdf_out[value_col] != 0)
-        )
-    gdf_out = gdf_out.loc[cond_valid].copy()
-
-    gdf_out = gdf_out.set_crs(epsg, allow_override=True)
-    gdf_out["type"] = kind
-    gdf_out.rename(columns={basename[:11]: "sediment"}, inplace=True)
-    gdf_out["sediment"] = np.round(
-        gdf_out.sediment / 1000, 3
-    )  # convert from kg to tonnes
-    # Drop very small sink loads that round to near-zero ton values.
-    gdf_out = gdf_out.loc[gdf_out["sediment"] >= 0.001].copy()
-    gdf_out = gdf_out.sort_values("sediment", ascending=False)
-    gdf_out["cumsum"] = gdf_out["sediment"].cumsum()
-    if gdf_out.empty:
-        gdf_out["cumperc"] = pd.Series(dtype=float)
-    else:
-        gdf_out["cumperc"] = (gdf_out["cumsum"] / (gdf_out["sediment"].sum())) * 100
-    gdf_out = gdf_out.reset_index()
-    gdf_out.drop(columns=["index"], inplace=True)
-    gdf_out.to_file(vct_out, spatial_index="YES")
 
 
 def process_filename(
@@ -6723,3 +6769,30 @@ def get_filename(df_datastructure_files, index, subfolder, year, simulations, sc
     mandatory = g[-2]
 
     return filename, mandatory
+
+
+def select_routing_out_of_parcel(gdf_routing):
+    """Select routing vectors defined over borders parcel
+
+    Only select the routing vector which cross the parcel border.
+
+    Parameters
+    ----------
+    gdf_routing: geopandas.GeoDataFrame
+        Loaded routing vector file (with or without sedi_out coupled to it).
+        See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
+
+    Returns
+    -------
+    gdf_routing: geopandas.GeoDataFrame
+        Selected routing vector file (with or without sedi_out coupled to it).
+        See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
+    """
+    cond = gdf_routing["lnduSource"] != gdf_routing["lnduTarg"]
+    gdf_routing = gdf_routing.loc[cond]
+    cond = (gdf_routing["lnduSource"] > 0) & (
+        gdf_routing["lnduTarg"] != np.max(gdf_routing["lnduSource"])
+    )
+    gdf_routing = gdf_routing.loc[cond]
+
+    return gdf_routing
