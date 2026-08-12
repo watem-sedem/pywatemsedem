@@ -47,6 +47,12 @@ COLORMAP_WATEREROS = colors.LinearSegmentedColormap.from_list(
 )
 
 
+warnings.filterwarnings(
+    "ignore",
+    message=r"Warning: converting a masked element to nan\.",
+    category=UserWarning,
+)
+
 @dataclass
 class Modeloutput(Factory):
     """Class with model outputs as attributes.
