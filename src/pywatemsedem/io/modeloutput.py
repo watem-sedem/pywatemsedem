@@ -53,6 +53,7 @@ warnings.filterwarnings(
     category=UserWarning,
 )
 
+
 @dataclass
 class Modeloutput(Factory):
     """Class with model outputs as attributes.
