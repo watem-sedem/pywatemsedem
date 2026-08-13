@@ -1,4 +1,5 @@
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -88,6 +89,7 @@ def test_rasterfile():
     raster = RasterFile(geodata.rst_example, rp=rp)
     assert raster.arr.shape[0] == 188
     assert raster.arr.shape[1] == 263
+    assert raster.file_path == Path("tests/geo/data/example_input_raster.tif")
 
     # clip with extent outside rasters extent
     rp = RasterProperties([230, 760, 560, 1000], 20, -9999, 31370)

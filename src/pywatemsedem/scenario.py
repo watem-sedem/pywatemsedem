@@ -374,7 +374,7 @@ class Scenario:
         self.sfolder = ScenarioFolders(
             self.catchm.folder, str(self.scenario_nr), self.year
         )
-        self.sfolder.create_all()
+        self.sfolder.check_all(create=True)
 
     def temporal_resolution(self):
         """Calculates for which years and seasons the scenario needs data.

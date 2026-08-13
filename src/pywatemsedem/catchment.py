@@ -258,7 +258,7 @@ class Catchment(Factory):
             msg = f"Setting results folder to {(results_folder / name)}"
             warnings.warn(msg)
         self.folder = CatchmentFolder(Path(results_folder) / name, resolution)
-        self.folder.create_all()
+        self.folder.check_all(create=True)
         self.name = name
 
         # initiate factory
@@ -1311,4 +1311,4 @@ class Catchment(Factory):
         """
         logger.info("Aanmaken folderstructuur bekken...")
         self.folder = CatchmentFolder(Path(self.name), self.rp.resolution)
-        self.folder.create_all()
+        self.folder.check_all(create=True)
