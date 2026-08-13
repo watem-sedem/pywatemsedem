@@ -1,4 +1,5 @@
 # separate plotting function
+import logging
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -52,6 +53,8 @@ warnings.filterwarnings(
     message=r"Warning: converting a masked element to nan\.",
     category=UserWarning,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -2020,7 +2023,13 @@ def _parse_epsg_from_value(crs_value):
         return crs_value
 
     if hasattr(crs_value, "to_epsg"):
-        epsg = crs_value.to_epsg()
+        try:
+            epsg = crs_value.to_epsg()
+        except Exception as exc:
+            logger.warning(
+                "Error parsing CRS value %r with to_epsg(): %s", crs_value, exc
+            )
+            return None
         if epsg is not None:
             return int(epsg)
 
@@ -2030,6 +2039,8 @@ def _parse_epsg_from_value(crs_value):
             value = value.split(":")[-1]
         if value.isdigit():
             return int(value)
+
+    logger.warning("Could not parse CRS value %r to EPSG code.", crs_value)
 
     return None
 

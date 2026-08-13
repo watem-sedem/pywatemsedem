@@ -8,10 +8,20 @@ from pytest import approx
 from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
     Modeloutput,
+    _parse_epsg_from_value,
     check_segment_edges,
     compute_efficiency_buffers,
     identify_rank_sediment_loads,
 )
+
+
+def test_parse_epsg_from_value_logs_warning_on_unparseable_string(caplog):
+    """Unparseable non-empty CRS strings should emit a warning and return None."""
+    with caplog.at_level("WARNING"):
+        epsg = _parse_epsg_from_value("not-a-valid-crs")
+
+    assert epsg is None
+    assert "Could not parse CRS value" in caplog.text
 
 
 def test_modeloutput_all():
