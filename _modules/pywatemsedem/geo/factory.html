@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.factory &mdash; pywatemsedem 1.2.0 documentation</title>
+  <title>pywatemsedem.geo.factory &mdash; pywatemsedem 1.3.0.post1.dev0+ge1b11cb9c.d20260813 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6efca38a"></script>
+      <script src="../../../_static/documentation_options.js?v=938ca03b"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -400,25 +400,49 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">vector_factory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">vector_input</span><span class="p">,</span> <span class="n">geometry_type</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flag_clip</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vector factory to load vectors in memory</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create and load a vector dataset into memory.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vector_input: str, pathlib.Path or geopandas.GeoDataFrame</span>
-<span class="sd">            Input vector file or geopandas dataframe</span>
-<span class="sd">        mask: bool, default True</span>
-<span class="sd">            Mask vector (True), nodata value will be that one of</span>
-<span class="sd">            `pywatemsedem.geo.factory.Factory.rp`.</span>
-<span class="sd">        allow_empty: bool, default False</span>
-<span class="sd">            Allow vector to be empty, see</span>
-<span class="sd">            :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
-<span class="sd">        flag_clip: bool, default True</span>
-<span class="sd">            Clip vector to mask</span>
+<span class="sd">        vector_input : str, pathlib.Path, or geopandas.GeoDataFrame</span>
+<span class="sd">            Input vector source. Can be:</span>
+
+<span class="sd">            * Path to a vector file (e.g. ESRI Shapefile, GeoPackage).</span>
+<span class="sd">            * A ``geopandas.GeoDataFrame`` already loaded in memory.</span>
+
+<span class="sd">        geometry_type : str</span>
+<span class="sd">            Expected geometry type for the vector dataset. Passed to</span>
+<span class="sd">            :class:`pywatemsedem.geo.vectors.VectorFile` or</span>
+<span class="sd">            :class:`pywatemsedem.geo.vectors.VectorMemory` for validation.</span>
+
+<span class="sd">        allow_empty : bool, default=False</span>
+<span class="sd">            If ``True``, allow the resulting vector dataset to contain no</span>
+<span class="sd">            geometries. See</span>
+<span class="sd">            :class:`pywatemsedem.geo.vectors.AbstractVector`.</span>
+
+<span class="sd">        flag_clip : bool, default=True</span>
+<span class="sd">            If ``True``, clip the input vector to the factory mask</span>
+<span class="sd">            (``self.vct_mask``). If ``False``, no clipping is applied.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        vector: pywatemsedem.geo.rasters.AbstractVector</span>
-<span class="sd">            See :class:`pywatemsedem.geo.vectors.AbstractVector`</span>
+<span class="sd">        pywatemsedem.geo.vectors.AbstractVector</span>
+<span class="sd">            A vector object loaded from disk</span>
+<span class="sd">            (:class:`pywatemsedem.geo.vectors.VectorFile`) or memory</span>
+<span class="sd">            (:class:`pywatemsedem.geo.vectors.VectorMemory`).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IOError</span>
+<span class="sd">            If ``vector_input`` is not a valid vector file, cannot be read,</span>
+<span class="sd">            or is not a ``pathlib.Path``, ``str``, or</span>
+<span class="sd">            ``geopandas.GeoDataFrame`` instance.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Input vector files are validated using ``pyogrio.read_info`` before</span>
+<span class="sd">        loading. The resulting vector is reprojected or validated against</span>
+<span class="sd">        the factory EPSG code (``self.rp.epsg``).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vector_input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>

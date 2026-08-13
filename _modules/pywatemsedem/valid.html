@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.valid &mdash; pywatemsedem 1.2.0 documentation</title>
+  <title>pywatemsedem.valid &mdash; pywatemsedem 1.3.0.post1.dev0+ge1b11cb9c.d20260813 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6efca38a"></script>
+      <script src="../../_static/documentation_options.js?v=938ca03b"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -93,9 +93,32 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.valid</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="valid_routing_vector">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.valid.valid_routing_vector">[docs]</a>
+<span></span><span class="k">def</span><span class="w"> </span><span class="nf">valid_routing_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether a routing vector has been created.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No routing vector created, please first run &#39;make_routing_vct&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="valid_routing_sedi_out_vector">
+<a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.valid.valid_routing_sedi_out_vector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_routing_sedi_out_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether a routing vector with sedi_out has been created.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vct_routing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;No routing vector (with sedi_out) created, please first run &quot;</span>
+            <span class="s2">&quot;&#39;couple_sediout_routing.&#39;&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="valid_req_property">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.valid.valid_req_property">[docs]</a>
-<span></span><span class="k">def</span><span class="w"> </span><span class="nf">valid_req_property</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">valid_req_property</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">current_property</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">req_property_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mandatory</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check for required property</span>

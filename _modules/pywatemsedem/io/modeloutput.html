@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 1.2.0 documentation</title>
+  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 1.3.0.post1.dev0+ge1b11cb9c.d20260813 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6efca38a"></script>
+      <script src="../../../_static/documentation_options.js?v=938ca03b"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -94,6 +94,7 @@
              
   <h1>Source code for pywatemsedem.io.modeloutput</h1><div class="highlight"><pre>
 <span></span><span class="c1"># separate plotting function</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -113,6 +114,7 @@
     <span class="n">create_filename</span><span class="p">,</span>
     <span class="n">create_spatial_index</span><span class="p">,</span>
     <span class="n">execute_saga</span><span class="p">,</span>
+    <span class="n">get_rstparams</span><span class="p">,</span>
     <span class="n">load_raster</span><span class="p">,</span>
     <span class="n">mask_array_with_val</span><span class="p">,</span>
     <span class="n">raster_array_to_pandas_dataframe</span><span class="p">,</span>
@@ -139,6 +141,15 @@
 <span class="n">COLORMAP_WATEREROS</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
     <span class="s2">&quot;watereroscmap&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;#bd0026&quot;</span><span class="p">,</span> <span class="s2">&quot;#ff8c00&quot;</span><span class="p">,</span> <span class="s2">&quot;#ffffff&quot;</span><span class="p">,</span> <span class="s2">&quot;#4292c6&quot;</span><span class="p">,</span> <span class="s2">&quot;#08306b&quot;</span><span class="p">]</span>
 <span class="p">)</span>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
+    <span class="s2">&quot;ignore&quot;</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Warning: converting a masked element to nan\.&quot;</span><span class="p">,</span>
+    <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Modeloutput">
@@ -198,23 +209,23 @@
 <span class="sd">        RUSLE raster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini</span><span class="p">,</span> <span class="n">epsg</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Modeloutput instance.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        ini : pathlib.Path</span>
 <span class="sd">            Path to the ini file.</span>
-<span class="sd">        resolution : int</span>
-<span class="sd">            See :class:`pywatemsedem.geo.RasterProperties`.</span>
 <span class="sd">        epsg : int</span>
-<span class="sd">            See :class:`pywatemsedem.geo.RasterProperties`.</span>
-<span class="sd">        nodata : int</span>
 <span class="sd">            See :class:`pywatemsedem.geo.RasterProperties`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># inifile and modeloutput folder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ini</span> <span class="o">=</span> <span class="n">ini</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rstparams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">get_rstparams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ini</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">)</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rstparams</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsg</span> <span class="o">=</span> <span class="n">epsg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rstparams</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelinputfolder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
             <span class="n">get_item_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s2">&quot;Working directories&quot;</span><span class="p">,</span> <span class="s2">&quot;input directory&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="p">)</span>
@@ -223,7 +234,7 @@
         <span class="p">)</span>
 
         <span class="c1"># apply factory and set mask</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeloutputfolder</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeloutputfolder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelinputfolder</span> <span class="o">/</span> <span class="n">get_item_from_ini</span><span class="p">(</span>
             <span class="n">ini</span><span class="p">,</span> <span class="s2">&quot;Files&quot;</span><span class="p">,</span> <span class="s2">&quot;shapefile catchment&quot;</span><span class="p">,</span> <span class="nb">str</span>
         <span class="p">)</span>
@@ -251,6 +262,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tileros_mm</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rusle</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">aspect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -294,7 +306,7 @@
 
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aspect</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aspect</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">ticks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
                 <span class="n">fig</span><span class="p">,</span>
@@ -311,6 +323,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_aspect</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aspect</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">routing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -376,6 +389,7 @@
             <span class="c1"># Future implementation: try to draw arrow in correct direction</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_routing</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">text</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">routing_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -453,6 +467,7 @@
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gdf_routing_missing</span><span class="o">.</span><span class="n">explore</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_routing_missing</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_routing_missing</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">text</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -483,7 +498,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">segments</span><span class="o">.</span><span class="n">arr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">segments</span><span class="o">.</span><span class="n">arr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)],</span>
             <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
@@ -510,7 +525,7 @@
 
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
                 <span class="n">fig</span><span class="p">,</span>
                 <span class="n">ax</span><span class="p">,</span>
@@ -526,6 +541,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ls</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ls</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">slope</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -550,7 +566,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
@@ -575,7 +591,7 @@
 
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
                 <span class="n">fig</span><span class="p">,</span>
                 <span class="n">ax</span><span class="p">,</span>
@@ -591,6 +607,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_slope</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_slope</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">uparea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -615,7 +632,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uparea</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uparea</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uparea</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
@@ -645,7 +662,7 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Assign ls to Modeloutput before plotting uparea&quot;</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uparea</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uparea</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
                 <span class="n">fig</span><span class="p">,</span>
                 <span class="n">ax</span><span class="p">,</span>
@@ -661,6 +678,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_uparea</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uparea</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">total_sediment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -684,6 +702,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">dict</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">text</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">total_sediment_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -709,6 +728,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df_total_sediment_segments</span> <span class="o">=</span> <span class="n">load_sediment_segments_file</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment_segments</span> <span class="o">=</span> <span class="n">df_total_sediment_segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_sediment_segments</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">text</span>
 
         <span class="n">segment_ids</span> <span class="o">=</span> <span class="n">df_total_sediment_segments</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
         <span class="n">sediment_values</span> <span class="o">=</span> <span class="n">df_total_sediment_segments</span><span class="p">[</span><span class="s2">&quot;Sediment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
@@ -743,6 +763,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df_cumulative_sediment_segments</span> <span class="o">=</span> <span class="n">load_sediment_segments_file</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cumulative_sediment_segments</span> <span class="o">=</span> <span class="n">df_cumulative_sediment_segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cumulative_sediment_segments</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">text</span>
 
         <span class="n">segment_ids</span> <span class="o">=</span> <span class="n">df_cumulative_sediment_segments</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
         <span class="n">sediment_values</span> <span class="o">=</span> <span class="n">df_cumulative_sediment_segments</span><span class="p">[</span><span class="s2">&quot;Sediment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
@@ -776,7 +797,10 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span>
+            <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;sewer in [kg/year]&quot;</span>
@@ -803,9 +827,7 @@
 
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span>
-            <span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
                 <span class="n">fig</span><span class="p">,</span>
@@ -823,6 +845,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sewer_in</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sewer_in</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sedi_export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -846,7 +869,10 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span>
+            <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;sedi_export [kg/year]&quot;</span>
@@ -876,14 +902,14 @@
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span>
             <span class="p">)</span>
             <span class="c1"># mask where the river is not present</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Assign ls to Modeloutput before plotting sedi_export&quot;</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ticks</span><span class="p">:</span>
                 <span class="n">arr_nozeros</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="n">arr_nozeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">arr_nozeros</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
@@ -907,6 +933,110 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_export</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_export</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the sinks raster.</span>
+
+<span class="sd">        Sinks is computed as the sum of sewer_in and sedi_export.</span>
+<span class="sd">        This represents the total sediment load reaching sink points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sinks</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span>
+
+    <span class="nd">@sinks</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raster</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the sinks raster.</span>
+
+<span class="sd">        If raster is None, sinks is computed from sewer_in and sedi_export,</span>
+<span class="sd">        written to a temporary GeoTIFF, and loaded as a raster factory object.</span>
+<span class="sd">        Otherwise, sinks is loaded from the provided raster path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        raster: pathlib.Path | str | None</span>
+<span class="sd">            Path to a sinks raster file, or None to compute from sewer_in +</span>
+<span class="sd">            sedi_export.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">raster</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Sum endpoints (for now only sewer_in) and sedi_export</span>
+            <span class="n">arr_sewer_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sewer_in</span><span class="o">.</span><span class="n">arr</span>
+            <span class="p">)</span>
+            <span class="n">arr_sedi_export</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sedi_export</span><span class="o">.</span><span class="n">arr</span>
+            <span class="p">)</span>
+            <span class="n">arr_sinks</span> <span class="o">=</span> <span class="n">arr_sewer_in</span> <span class="o">+</span> <span class="n">arr_sedi_export</span>
+            <span class="n">arr_sinks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span>
+
+            <span class="n">rst_sinks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeloutputfolder</span> <span class="o">/</span> <span class="s2">&quot;sinks.rst&quot;</span>
+            <span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">arr_sinks</span><span class="p">,</span> <span class="n">rst_sinks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rstparams</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">rst_sinks</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">raster_used</span> <span class="o">=</span> <span class="n">rst_sinks</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raster_factory</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">flag_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">raster_used</span> <span class="o">=</span> <span class="n">raster</span>
+
+        <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sinks</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">valid_boundaries</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sinks</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span>
+            <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster_used</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span>
+        <span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;sinks [kg/year]&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Plot the sinks raster with a non-linear colormap.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            fig: matplotlib.figure.Figure, default = None</span>
+<span class="sd">                if not given, defaults to generating new figure</span>
+<span class="sd">            ax: matplotlib.pyplot.axis, default = None</span>
+<span class="sd">                if not given, defaults to generating new axis</span>
+<span class="sd">            ticks: list, default = None</span>
+<span class="sd">                Possibility to supply a list of 5 values for ticks of colorscale.</span>
+<span class="sd">                Default is 0th, 25th, 50th, 75th and 100th percentile</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            fig: matplotlib.figure.Figure</span>
+
+<span class="sd">            ax: matplotlib.axes.Axes</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sinks</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sinks</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sinks</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ticks</span><span class="p">:</span>
+                <span class="n">arr_nozeros</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">arr_nozeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">arr_nozeros</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">arr_nozeros</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+                <span class="n">ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
+                <span class="n">fig</span><span class="p">,</span>
+                <span class="n">ax</span><span class="p">,</span>
+                <span class="n">arr</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+                <span class="n">title</span><span class="p">,</span>
+                <span class="n">ticks</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">COLORMAP_SEDI_OUT</span><span class="p">,</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sinks</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster_used</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sedi_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -930,7 +1060,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedi_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sedi_in</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sedi_in</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span>
             <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
@@ -975,6 +1105,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_in</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_in</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sedi_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -998,7 +1129,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedi_out</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sedi_out</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sedi_out</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span>
             <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
@@ -1043,6 +1174,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_out</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sedi_out</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sedtil_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1066,7 +1198,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedtil_in</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sedtil_in</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sedtil_in</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;sedtil_in [kg/year]&quot;</span>
@@ -1108,6 +1240,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedtil_in</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sedtil_in</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sedtil_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1131,7 +1264,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedtil_out</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sedtil_out</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sedtil_out</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;sedtil_out [kg/year]&quot;</span>
@@ -1173,6 +1306,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sedtil_out</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sedtil_out</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1196,7 +1330,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sedi_out</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cumulative</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cumulative</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;cumulative [kg/year]&quot;</span>
@@ -1221,7 +1355,7 @@
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumulative</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumulative</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">lower</span> <span class="o">=</span> <span class="n">log_scale_enabler</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cnorm</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
             <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
@@ -1240,6 +1374,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cumulative</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cumulative</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">watereros_kg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1304,6 +1439,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_watereros_kg</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_watereros_kg</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">watereros_mm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1366,6 +1502,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_watereros_mm</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_watereros_mm</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tileros_kg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1428,6 +1565,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tileros_kg</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tileros_kg</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tileros_mm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1488,6 +1626,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tileros_mm</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tileros_mm</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1512,7 +1651,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
@@ -1538,7 +1677,7 @@
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes_creator</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">lower</span> <span class="o">=</span> <span class="n">log_scale_enabler</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cnorm</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
             <span class="n">norm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_continuous_raster</span><span class="p">(</span>
@@ -1557,6 +1696,7 @@
             <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capacity</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rusle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1581,7 +1721,7 @@
 
         <span class="n">valid_array_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">valid_boundaries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rusle</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rusle</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">],</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="n">check_raster_properties_raster_with_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="p">,</span> <span class="n">raster</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="p">)</span>
 
@@ -1607,7 +1747,7 @@
 
 <span class="sd">            ax: matplotlib.axes.Axes</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rusle</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodata</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">mask_array_with_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rusle</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">)</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_output_raster</span><span class="p">(</span>
                 <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
                 <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
@@ -1622,6 +1762,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightgray&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_rusle</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rusle</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">raster</span>
 
 <div class="viewcode-block" id="Modeloutput.make_routing_vector">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.Modeloutput.make_routing_vector">[docs]</a>
@@ -1851,8 +1992,13 @@
         <span class="c1"># if condition True, run, if False (no routing segments available in</span>
         <span class="c1"># routing table) don&#39;t run</span>
         <span class="k">if</span> <span class="n">condition</span><span class="p">:</span>
-            <span class="n">run_saga_make_routing_shp_cmd</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">vct_out</span>
+            <span class="n">run_saga_make_routing_shp_cmd</span><span class="p">(</span>
+                <span class="n">txt_routing</span><span class="p">,</span>
+                <span class="n">rst_prckrt</span><span class="p">,</span>
+                <span class="n">vct_temp</span><span class="p">,</span>
+                <span class="n">rstparams</span><span class="o">=</span><span class="n">rstparams</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">vct_temp</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No valid extent to clip routing &quot;</span>
             <span class="k">raise</span> <span class="ne">Warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -1915,9 +2061,6 @@
 
     <span class="k">if</span> <span class="n">extent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">df_routing</span> <span class="o">=</span> <span class="n">open_txt_routing_file</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">df_routing</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">txt_routing</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is empty&quot;</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">df_routing</span> <span class="o">=</span> <span class="n">condition_routing_dataframe_on_extent</span><span class="p">(</span>
             <span class="n">df_routing</span><span class="p">,</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">extent</span>
         <span class="p">)</span>
@@ -1935,9 +2078,6 @@
         <span class="n">vct_temp</span> <span class="o">=</span> <span class="n">vct_out</span>
         <span class="n">condition</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">df_routing</span> <span class="o">=</span> <span class="n">open_txt_routing_file</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">df_routing</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">txt_routing</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is empty&quot;</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">separator</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">:</span>
             <span class="n">df_routing</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -1987,9 +2127,74 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_epsg_from_value</span><span class="p">(</span><span class="n">crs_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract EPSG code as int from multiple CRS representations.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">crs_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crs_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">crs_value</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">crs_value</span><span class="p">,</span> <span class="s2">&quot;to_epsg&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">epsg</span> <span class="o">=</span> <span class="n">crs_value</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Error parsing CRS value </span><span class="si">%r</span><span class="s2"> with to_epsg(): </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">crs_value</span><span class="p">,</span> <span class="n">exc</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">epsg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crs_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">crs_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;EPSG:&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not parse CRS value </span><span class="si">%r</span><span class="s2"> to EPSG code.&quot;</span><span class="p">,</span> <span class="n">crs_value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_epsg_for_routing_vector</span><span class="p">(</span><span class="n">rstparams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the EPSG code for routing vectors.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rstparams</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">epsg</span> <span class="o">=</span> <span class="n">_parse_epsg_from_value</span><span class="p">(</span><span class="n">rstparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crs&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">epsg</span>
+        <span class="n">epsg</span> <span class="o">=</span> <span class="n">_parse_epsg_from_value</span><span class="p">(</span><span class="n">rstparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;epsg&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">epsg</span>
+
+    <span class="k">if</span> <span class="n">rst_prckrt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">rst_prckrt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_parse_epsg_from_value</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;crs&quot;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_vector_epsg</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">epsg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set CRS on a vector file and overwrite with explicit EPSG metadata.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not determine EPSG for routing vector &#39;</span><span class="si">{</span><span class="n">vct_out</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
+    <span class="n">current_epsg</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">gdf_out</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">gdf_out</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">gdf_out</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="s2">&quot;to_epsg&quot;</span><span class="p">))</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_epsg</span> <span class="o">!=</span> <span class="n">epsg</span><span class="p">:</span>
+        <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">,</span> <span class="n">allow_override</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">gdf_out</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="run_saga_make_routing_shp_cmd">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.run_saga_make_routing_shp_cmd">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_saga_make_routing_shp_cmd</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_saga_make_routing_shp_cmd</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">,</span> <span class="n">rstparams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run the saga make routing shape command. This command makes from a pywatemsedem</span>
 <span class="sd">    routing table and a pywatemsedem &#39;perceelskaart&#39; a routing shapfile</span>
@@ -2030,6 +2235,10 @@
     <span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-OUTPUTLINES&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)]</span>
     <span class="n">execute_saga</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
+
+    <span class="n">epsg</span> <span class="o">=</span> <span class="n">_get_epsg_for_routing_vector</span><span class="p">(</span><span class="n">rstparams</span><span class="o">=</span><span class="n">rstparams</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="o">=</span><span class="n">rst_prckrt</span><span class="p">)</span>
+    <span class="n">_set_vector_epsg</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span>
+
     <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span></div>
 
 
@@ -2102,130 +2311,6 @@
         <span class="p">(</span><span class="n">rst_subcatchments</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="p">(</span><span class="n">rst_subcatchments</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;.sdat&quot;</span><span class="p">)),</span>
         <span class="n">vct_subcatchments</span><span class="p">,</span>
     <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="identify_individual_priority_catchments">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.identify_individual_priority_catchments">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">identify_individual_priority_catchments</span><span class="p">(</span>
-    <span class="n">arr_sedi_out</span><span class="p">,</span>
-    <span class="n">rst_profile</span><span class="p">,</span>
-    <span class="n">txt_routing_non_river</span><span class="p">,</span>
-    <span class="n">nmax</span><span class="p">,</span>
-    <span class="n">resmap</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
-    <span class="n">epsg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    identify the individual priority catchments and add them to a raster</span>
-<span class="sd">    and shapes dictionary</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    arr_sedi_out: numpy.ndarray</span>
-<span class="sd">        numpy array format of sedout raster</span>
-<span class="sd">    rst_profile: rasterio profile</span>
-<span class="sd">        rasterio profile of the sedout raster</span>
-<span class="sd">    txt_routing_nonriver: str or pathlib.Path | str</span>
-<span class="sd">        File path of the WaTEM/SEDEM routing table</span>
-<span class="sd">    nmax: int</span>
-<span class="sd">        maximum number of catchment</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    subcatchmentpriority: geopandas.GeoDataFrame</span>
-<span class="sd">        catchment shapes with number of catchment</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">id_</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="c1"># loop until break is encountered (no more pixels to cluster,</span>
-    <span class="c1"># or a maximum number of clusters is reached)</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-
-        <span class="c1"># identify point with highest sediment load</span>
-        <span class="n">id_</span><span class="p">,</span> <span class="n">max_sedi_out</span> <span class="o">=</span> <span class="n">create_id_raster_for_highest_value_arr</span><span class="p">(</span>
-            <span class="n">arr_sedi_out</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">rst_profile</span><span class="p">,</span> <span class="n">resmap</span><span class="o">=</span><span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;priority_catchments&quot;</span>
-        <span class="p">)</span>
-
-        <span class="c1"># identify subcatchment/cluster coupled to this point</span>
-        <span class="n">template_name</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;priority_catchments&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;subcatchments_priority_</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">.shp&quot;</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">template_name</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">rst_subcatch</span><span class="p">,</span> <span class="n">vct_subcatch</span> <span class="o">=</span> <span class="n">define_subcatchments_saga</span><span class="p">(</span>
-                <span class="n">id_</span><span class="p">,</span> <span class="n">txt_routing_non_river</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">template_name</span>
-            <span class="p">)</span>
-            <span class="c1"># assign sedi_out value to self.subcatchmprioritSHP</span>
-            <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_subcatch</span><span class="p">)</span>
-            <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;sedi_out&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_sedi_out</span>
-            <span class="n">gdf</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_subcatch</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">vct_subcatch</span> <span class="o">=</span> <span class="n">template_name</span>
-            <span class="n">rst_subcatch</span> <span class="o">=</span> <span class="n">vct_subcatch</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.sdat&quot;</span><span class="p">)</span>
-
-        <span class="c1"># condition: if a max number of clusters is identified</span>
-        <span class="c1"># OR all pixels are classified: stop</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="n">nmax</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">arr_sedi_out</span> <span class="o">!=</span> <span class="n">rst_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="n">nmax</span> <span class="o">=</span> <span class="n">n</span>
-            <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">arr_subcatch</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">rst_subcatch</span><span class="p">)</span>
-            <span class="n">arr_sedi_out</span><span class="p">[</span><span class="n">arr_subcatch</span> <span class="o">!=</span> <span class="o">-</span><span class="mf">99999.0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rst_profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
-            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="c1"># merge different subcatchments to one file</span>
-    <span class="n">lst_gdf</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;priority_catchments&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.shp&quot;</span><span class="p">:</span>
-            <span class="n">lst_gdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-    <span class="n">gdf_subcatchmpriority</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">lst_gdf</span><span class="p">)</span>
-
-    <span class="n">gdf_subcatchmpriority</span><span class="o">.</span><span class="n">crs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">epsg</span><span class="p">}</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="s2">&quot;priority_catchments.shp&quot;</span>
-    <span class="n">gdf_subcatchmpriority</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">gdf_subcatchmpriority</span></div>
-
-
-
-<div class="viewcode-block" id="create_id_raster_for_highest_value_arr">
-<a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.create_id_raster_for_highest_value_arr">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_id_raster_for_highest_value_arr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="n">resmap</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a raster with an id value assigned to the highest value in the raster&quot;</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    arr: str or pathlib.Path | str</span>
-<span class="sd">        with floats</span>
-<span class="sd">    id_: int</span>
-<span class="sd">        Sequential number of the catchment</span>
-<span class="sd">    profile: rasterio profile</span>
-<span class="sd">        Rasterio profile of the sedout raster</span>
-<span class="sd">    resmap: str or pathlib.Path | str, optional</span>
-<span class="sd">        Folder path to write results to</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    rst_id: str</span>
-<span class="sd">        File path of the raster with id for highest value in raster</span>
-<span class="sd">    val: float</span>
-<span class="sd">        Maximum value in raster</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">resmap</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">resmap</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">resmap</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="p">(</span><span class="n">resmap</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">arr_id</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">max_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">cond</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">==</span> <span class="n">max_val</span>
-    <span class="n">arr_id</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_</span>
-    <span class="n">arr_id</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
-
-    <span class="c1"># write to disk</span>
-    <span class="n">rst_id</span> <span class="o">=</span> <span class="n">resmap</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;id_</span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2">.rst&quot;</span>
-    <span class="n">write_arr_as_rst</span><span class="p">(</span><span class="n">arr_id</span><span class="p">,</span> <span class="n">rst_id</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">profile</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">rst_id</span><span class="p">,</span> <span class="n">max_val</span></div>
 
 
 
@@ -2335,20 +2420,45 @@
 <span class="sd">        - *target2row* (int): second target row in rasters</span>
 <span class="sd">        - *part2* (float): Part that flows to target2</span>
 <span class="sd">        - *distance2* (float): Distance of 2nd vector</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">first_line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span> <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_line</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
-        <span class="n">df_routing</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">separator</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">df_routing</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">txt_routing</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is empty&quot;</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">txt_routing</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span>
-        <span class="k">return</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">df_routing</span></div>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If file does not exist</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If file exists but is empty or invalid</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        For other reading/parsing issues</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">txt_routing</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">)</span>
+
+    <span class="c1"># 1. File does not exist</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">txt_routing</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Routing file does not exist: &#39;</span><span class="si">{</span><span class="n">txt_routing</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 2. Check if empty</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">first_line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">first_line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Routing file is empty: &#39;</span><span class="si">{</span><span class="n">txt_routing</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span> <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_line</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+
+        <span class="n">df_routing</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">txt_routing</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">separator</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">df_routing</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Routing file has no data rows: &#39;</span><span class="si">{</span><span class="n">txt_routing</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_routing</span>
+
+    <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">EmptyDataError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Routing file contains no readable data: &#39;</span><span class="si">{</span><span class="n">txt_routing</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading routing file &#39;</span><span class="si">{</span><span class="n">txt_routing</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
 
@@ -2416,7 +2526,7 @@
 <div class="viewcode-block" id="map_rank_sediment_loads">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.modeloutput.map_rank_sediment_loads">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">map_rank_sediment_loads</span><span class="p">(</span>
-    <span class="n">rst_sedi_export</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">vct_out</span><span class="o">=</span><span class="s2">&quot;rank.shp&quot;</span><span class="p">,</span> <span class="n">rst_endpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;kg&quot;</span>
+    <span class="n">rst_sedi_export</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">epsg</span><span class="p">,</span> <span class="n">vct_out</span><span class="o">=</span><span class="s2">&quot;rank.shp&quot;</span><span class="p">,</span> <span class="n">rst_endpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;kg&quot;</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rank the sediment loads in sedi_export (and sewer_in) from high to low</span>
 
@@ -2433,6 +2543,8 @@
 <span class="sd">        File path of WaTEM/SEDEM sedi_export raster.</span>
 <span class="sd">    threshold: float</span>
 <span class="sd">        See :func:`pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks`</span>
+<span class="sd">    epsg: int</span>
+<span class="sd">        EPSG code</span>
 <span class="sd">    vct_out: str or pathlib.Path | str</span>
 <span class="sd">        File path of output vector.</span>
 <span class="sd">    rst_endpoints: str or pathlib.Path | str, default None</span>
@@ -2454,13 +2566,15 @@
     <span class="p">)</span>
     <span class="n">rst_to_vct_points</span><span class="p">(</span><span class="n">rst_out</span><span class="p">,</span> <span class="n">vct_out</span><span class="p">)</span>
     <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
-    <span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span>
+    <span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="p">[</span><span class="n">gdf_out</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
     <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_sedi_export</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;rank&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;ton&quot;</span><span class="p">:</span>
         <span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;sedi_export&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="p">[</span><span class="s2">&quot;sedi_export&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
-    <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">rst_out</span><span class="p">),</span> <span class="s2">&quot;rst&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">gdf_out</span></div>
+    <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">)</span>
+    <span class="n">gdf_out</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span>
+    <span class="n">clean_up_tempfiles</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">rst_out</span><span class="p">),</span> <span class="s2">&quot;rst&quot;</span><span class="p">)</span></div>
 
 
 
@@ -2591,19 +2705,23 @@
             <span class="s2">&quot;cumulative_sedi_export.png&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="c1"># hotfix on percentage: if the first percentage is higher than the</span>
-    <span class="c1"># user-predefined percentage, adjust it (small catchments)!</span>
-    <span class="n">threshold</span> <span class="o">=</span> <span class="n">verify_highest_load_with_threshold</span><span class="p">(</span><span class="n">df_sedi_export</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
-
     <span class="c1"># prepare ids for subcatchment delineation</span>
     <span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
     <span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
 
-    <span class="c1"># assign unique id&#39;s - in order of importance - to records</span>
-    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
-        <span class="o">~</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cond</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="c1"># assign unique ids using &quot;net over threshold&quot; logic:</span>
+    <span class="c1"># all rows below threshold + first row reaching/exceeding threshold</span>
+    <span class="n">cond_valid</span> <span class="o">=</span> <span class="o">~</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
+    <span class="n">cond_below_threshold</span> <span class="o">=</span> <span class="n">cond_valid</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">)</span>
+    <span class="n">cond_at_or_above_threshold</span> <span class="o">=</span> <span class="n">cond_valid</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cond_at_or_above_threshold</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">first_exceeding_idx</span> <span class="o">=</span> <span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond_at_or_above_threshold</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cond_selected</span> <span class="o">=</span> <span class="n">cond_below_threshold</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">cond_selected</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">first_exceeding_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cond_selected</span> <span class="o">=</span> <span class="n">cond_valid</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond_selected</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cond_selected</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="c1"># calculate percentage</span>
     <span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -2615,19 +2733,31 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_sedi_export</span><span class="p">))</span>
     <span class="p">]</span>
 
-    <span class="c1"># chekc if begin percentage is below delta_perc</span>
+    <span class="c1"># check if begin percentage is below delta_perc</span>
     <span class="n">bperc</span> <span class="o">=</span> <span class="n">delta</span>
     <span class="n">eperc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">threshold</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">bperc</span><span class="p">:</span>
         <span class="n">bperc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
 
+    <span class="c1"># make sure classing includes the selected sink that crosses threshold</span>
+    <span class="k">if</span> <span class="n">cond_selected</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">max_selected_cum_perc</span> <span class="o">=</span> <span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond_selected</span><span class="p">,</span> <span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">eperc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">eperc</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">max_selected_cum_perc</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bperc</span><span class="p">,</span> <span class="n">eperc</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
         <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">i</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span>
             <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">)</span>
-            <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span>
+            <span class="o">&amp;</span> <span class="n">cond_selected</span>
         <span class="p">)</span>
         <span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+    <span class="c1"># Fallback: ensure every selected sink receives a class.</span>
+    <span class="n">cond_missing_class</span> <span class="o">=</span> <span class="n">cond_selected</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_sedi_export</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">profile</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">cond_missing_class</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond_missing_class</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">df_sedi_export</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cond_missing_class</span><span class="p">,</span> <span class="s2">&quot;cum_perc&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">df_sedi_export</span><span class="p">[</span>

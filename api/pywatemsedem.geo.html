@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo package &mdash; pywatemsedem 1.2.0 documentation</title>
+  <title>pywatemsedem.geo package &mdash; pywatemsedem 1.3.0.post1.dev0+ge1b11cb9c.d20260813 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6efca38a"></script>
+      <script src="../_static/documentation_options.js?v=938ca03b"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -228,25 +228,44 @@ see <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.geo.factory.Factory.vector_factory">
 <span class="sig-name descname"><span class="pre">vector_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/geo/factory.html#Factory.vector_factory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.geo.factory.Factory.vector_factory" title="Link to this definition"></a></dt>
-<dd><p>Vector factory to load vectors in memory</p>
+<dd><p>Create and load a vector dataset into memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoDataFrame</em></a>) – Input vector file or geopandas dataframe</p></li>
-<li><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default True</em>) – Mask vector (True), nodata value will be that one of
-<cite>pywatemsedem.geo.factory.Factory.rp</cite>.</p></li>
-<li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default False</em>) – Allow vector to be empty, see
-<a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p></li>
-<li><p><strong>flag_clip</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default True</em>) – Clip vector to mask</p></li>
+<li><p><strong>vector_input</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em>, or </em><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoDataFrame</em></a>) – <p>Input vector source. Can be:</p>
+<ul>
+<li><p>Path to a vector file (e.g. ESRI Shapefile, GeoPackage).</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code> already loaded in memory.</p></li>
+</ul>
+</p></li>
+<li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Expected geometry type for the vector dataset. Passed to
+<a class="reference internal" href="#pywatemsedem.geo.vectors.VectorFile" title="pywatemsedem.geo.vectors.VectorFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorFile</span></code></a> or
+<a class="reference internal" href="#pywatemsedem.geo.vectors.VectorMemory" title="pywatemsedem.geo.vectors.VectorMemory"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorMemory</span></code></a> for validation.</p></li>
+<li><p><strong>allow_empty</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=False</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, allow the resulting vector dataset to contain no
+geometries. See
+<a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a>.</p></li>
+<li><p><strong>flag_clip</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=True</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, clip the input vector to the factory mask
+(<code class="docutils literal notranslate"><span class="pre">self.vct_mask</span></code>). If <code class="docutils literal notranslate"><span class="pre">False</span></code>, no clipping is applied.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>vector</strong> – See <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector</span></code></a></p>
+<dd class="field-even"><p>A vector object loaded from disk
+(<a class="reference internal" href="#pywatemsedem.geo.vectors.VectorFile" title="pywatemsedem.geo.vectors.VectorFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorFile</span></code></a>) or memory
+(<a class="reference internal" href="#pywatemsedem.geo.vectors.VectorMemory" title="pywatemsedem.geo.vectors.VectorMemory"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorMemory</span></code></a>).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pywatemsedem.geo.rasters.AbstractVector</p>
+<dd class="field-odd"><p><a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector" title="pywatemsedem.geo.vectors.AbstractVector">pywatemsedem.geo.vectors.AbstractVector</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#IOError" title="(in Python v3.13)"><strong>IOError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">vector_input</span></code> is not a valid vector file, cannot be read,
+    or is not a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, or
+    <code class="docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code> instance.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Input vector files are validated using <code class="docutils literal notranslate"><span class="pre">pyogrio.read_info</span></code> before
+loading. The resulting vector is reprojected or validated against
+the factory EPSG code (<code class="docutils literal notranslate"><span class="pre">self.rp.epsg</span></code>).</p>
 </dd></dl>
 
 </dd></dl>
@@ -839,6 +858,17 @@ is used.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pywatemsedem.geo.rasters.RasterFile.file_path">
+<span class="sig-name descname"><span class="pre">file_path</span></span><a class="headerlink" href="#pywatemsedem.geo.rasters.RasterFile.file_path" title="Link to this definition"></a></dt>
+<dd><p>File path to user input raster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <p class="rubric">Notes</p>
 <p>If rasterproperties are provided by the user, clipping is automatically done.
 Inherits from <a class="reference internal" href="#pywatemsedem.geo.rasters.AbstractRaster" title="pywatemsedem.geo.rasters.AbstractRaster"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.AbstractRaster</span></code></a>.</p>
@@ -1018,8 +1048,8 @@ validation and type checking to ensure that the functions are used correctly.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoSeries</em></a>)</p></li>
-<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_left</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoseries_right</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoSeries</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1161,7 +1191,7 @@ inputs in <a class="reference internal" href="#pywatemsedem.geo.utils.grid_stati
 <dd class="field-even"><p>GeoDataFrame with computed statistics.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1579,7 +1609,7 @@ raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoSeries</em></a>)</p></li>
+<li><p><strong>geoms</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoSeries.html#geopandas.GeoSeries" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoSeries</em></a>)</p></li>
 <li><p><strong>p</strong> (<em>shapely.Geometry</em>)</p></li>
 </ul>
 </dd>
@@ -1639,7 +1669,7 @@ raster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
+<li><p><strong>gdf_catchment</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoDataFrame</em></a>) – dataframe holding the mask , possible in multiple polygons (rows)</p></li>
 <li><p><strong>catchment_value</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>default 1</em>) – value that is used to define catchment</p></li>
 </ul>
 </dd>
@@ -1647,7 +1677,7 @@ raster.</p>
 <dd class="field-even"><p><strong>gdf_catchment</strong> – dissolved dataframe holding mask, in one polygon (row)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1899,7 +1929,7 @@ outside domain is equal to zero.</p></li>
 <dd class="field-even"><p>Geopandas representation of tiff raster.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2301,7 +2331,7 @@ and None (i.e. don’t check).</p></li>
 <dd><p>Vector data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2355,7 +2385,7 @@ and None (i.e. don’t check).</p></li>
 <dd class="field-odd"><p>Vector data.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2367,7 +2397,7 @@ and None (i.e. don’t check).</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoDataFrame</em></a>) – Input data set.</p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoDataFrame</em></a>) – Input data set.</p></li>
 <li><p><strong>geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Geometry type of input dataset.</p></li>
 <li><p><strong>req_geometry_type</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>default None</em>) – Geometry type, for implemented types, see
 <a class="reference internal" href="#pywatemsedem.geo.vectors.AbstractVector.check_type" title="pywatemsedem.geo.vectors.AbstractVector.check_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.AbstractVector.check_type()</span></code></a>.</p></li>
@@ -2471,7 +2501,7 @@ in raster.</p></li>
 <dd><p>Vector data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2501,7 +2531,7 @@ in raster.</p></li>
 <dd class="field-even"><p>Clipped geodataframe.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2519,7 +2549,7 @@ in raster.</p></li>
 <dd><p>Vector data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2533,15 +2563,15 @@ in raster.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoDataFrame</em></a>) – Geodataframe of input data.</p></li>
-<li><p><strong>clip_mask</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)"><em>geopandas.GeoDataFrame</em></a>) – Mask vector.</p></li>
+<li><p><strong>geodata</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoDataFrame</em></a>) – Geodataframe of input data.</p></li>
+<li><p><strong>clip_mask</strong> (<a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)"><em>geopandas.GeoDataFrame</em></a>) – Mask vector.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Clipped geodataframe.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev111.dev+g225183856)">geopandas.GeoDataFrame</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
