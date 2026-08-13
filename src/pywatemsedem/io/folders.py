@@ -85,16 +85,6 @@ class CatchmentFolder:
         """Return the resolution-specific raster directory."""
         return self.catchment_folder / f"Rst_{self.resolution}m"
 
-    def create_all(self):
-        """Create all catchment-level directories if they do not exist."""
-        for folder in (
-            self.home_folder,
-            self.catchment_folder,
-            self.vct_folder,
-            self.rst_folder,
-        ):
-            folder.mkdir(parents=True, exist_ok=True)
-
     def check_all(self, **options):
         """Validate all catchment-level directories.
 
@@ -154,19 +144,6 @@ class ScenarioFolders:
     def year_folder(self) -> Path:
         """Return the year-specific scenario directory."""
         return self.scenario_folder / str(self.year)
-
-    def create_all(self):
-        """Create catchment and scenario directories when missing."""
-        self.cfolder.create_all()
-
-        for folder in (
-            self.scenario_folder,
-            self.wsinput_folder,
-            self.wsoutput_folder,
-            self.postprocessing_folder,
-            self.year_folder,
-        ):
-            folder.mkdir(parents=True, exist_ok=True)
 
     def check_all(self, **options):
         """Validate catchment and scenario directories.
