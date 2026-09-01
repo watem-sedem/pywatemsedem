@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-affine==2.4.0
+affine==3.0.1
     # via rasterio
 attrs==26.1.0
     # via rasterio
