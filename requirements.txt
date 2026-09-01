@@ -49,7 +49,7 @@ numpy==2.5.1
     #   scikit-learn
     #   scipy
     #   shapely
-packaging==26.2
+packaging==26.3
     # via
     #   geopandas
     #   matplotlib
