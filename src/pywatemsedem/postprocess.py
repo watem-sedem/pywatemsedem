@@ -477,7 +477,7 @@ class PostProcess(Factory):
             self.postprocessing_folder
             / f"{self.modeloutput.sedi_export.file_path.stem}.shp"
         )
-        convert_rst_sinks_to_vct(
+        _convert_rst_sinks_to_vct(
             self.modeloutput.sedi_export.file_path, vct_out, "river", self.epsg
         )
         return vct_out
@@ -524,7 +524,7 @@ class PostProcess(Factory):
             self.postprocessing_folder
             / f"{self.modeloutput.sewer_in.file_path.stem}.shp"
         )
-        convert_rst_sinks_to_vct(
+        _convert_rst_sinks_to_vct(
             self.modeloutput.sewer_in.file_path, vct_out, "sewer", self.epsg
         )
         return vct_out
@@ -662,7 +662,7 @@ class PostProcess(Factory):
         Notes
         -----
         This method updates ``self.vct_grass_strips.geodata`` in place with
-        columns from :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips`
+        columns from :func:`pywatemsedem.postprocess._compute_efficiency_grass_strips`
         and, if ``compute_priority=True``, additional cumulative metrics.
         """
         logger.info("Calculating in- and output of sediment for every grass strip...")
@@ -728,7 +728,7 @@ class PostProcess(Factory):
             self.rp.rasterio_profile,
         )
 
-        _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
+        _, _, df_grass_strips_eff = _compute_efficiency_grass_strips(
             self.modeloutput.routing.file_path,
             rst_grass_strips_id,
             self.modelinput.compositelanduse.file_path,
@@ -741,7 +741,7 @@ class PostProcess(Factory):
             how="left",
         )
         if compute_priority:
-            gdf_grass_strips = compute_cdf_sediment_load(
+            gdf_grass_strips = _compute_cdf_sediment_load(
                 gdf_grass_strips,
                 "sed",
                 grass_dir,
@@ -1106,7 +1106,7 @@ class PostProcess(Factory):
     def identify_subcatchments_to_buffers(self):
         """Define the separate subcatchments to the buffer outlets.
 
-        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_target_ids`
+        See :func:`pywatemsedem.postprocess._identify_subcatchments_to_target_ids`
         """
         vct_buffers = self.vct_buffers
 
@@ -1145,7 +1145,7 @@ class PostProcess(Factory):
             self.rp.rasterio_profile,
         )
 
-        _, vct_subcatchments = identify_subcatchments_to_target_ids(
+        _, vct_subcatchments = _identify_subcatchments_to_target_ids(
             rst_buffer_outlets,
             routing_nonriver,
             buffer_dir,
@@ -2601,7 +2601,7 @@ class PostProcess(Factory):
             self.rp.rasterio_profile,
         )
 
-        _, vct_subcatchments = identify_subcatchments_to_target_ids(
+        _, vct_subcatchments = _identify_subcatchments_to_target_ids(
             rst_target_ids,
             routing_nonriver,
             out_dir,
@@ -2894,7 +2894,7 @@ class PostProcess(Factory):
                 # pool until enough retained priorities remain after applying
                 # the enclosure replacement rule.
                 gdf_subcatchmpriority, _, _, vct_priority_points = (
-                    identify_individual_priority_subcatchments(
+                    _identify_individual_priority_subcatchments(
                         arr_priority.copy(),
                         priority_profile,
                         self.rp.rasterio_profile,
@@ -2951,7 +2951,7 @@ class PostProcess(Factory):
 
                 # Delineate subcatchments based on top values in the source raster.
                 gdf_subcatchmpriority, _, _, vct_priority_points = (
-                    identify_individual_priority_subcatchments(
+                    _identify_individual_priority_subcatchments(
                         arr_priority.copy(),
                         priority_profile,
                         self.rp.rasterio_profile,
@@ -4213,7 +4213,7 @@ class PostProcess(Factory):
             )
             gdf_buffer["area"] = gdf_buffer.area
             if compute_priority:
-                gdf_buffer = compute_cdf_sediment_load(
+                gdf_buffer = _compute_cdf_sediment_load(
                     gdf_buffer,
                     "buff_sed",
                     self.postprocessing_folder,
@@ -4888,7 +4888,7 @@ def _unlink_vector_dataset_local(vector_path):
         vector_path.unlink()
 
 
-def identify_individual_priority_subcatchments(
+def _identify_individual_priority_subcatchments(
     arr_sedi_out,
     rst_profile,
     rstparams,
@@ -5023,7 +5023,7 @@ def identify_individual_priority_subcatchments(
     return gdf_subcatchmpriority, gdf_poi, dst, vct_priority_points
 
 
-def compute_efficiency_grass_strips(
+def _compute_efficiency_grass_strips(
     txt_routing, rst_grass_strips, rst_prckrt, rst_sedi_out
 ):
     """Compute statistics for grass strips:
@@ -5108,7 +5108,7 @@ def compute_efficiency_grass_strips(
     return sediment_load_grass_strips_in, sediment_load_grass_strips_out, df_efficiency
 
 
-def identify_subcatchments_to_target_ids(
+def _identify_subcatchments_to_target_ids(
     rst_target_ids,
     txt_routing_nonriver,
     resmap,
@@ -5181,7 +5181,7 @@ def identify_subcatchments_to_target_ids(
     )
 
 
-def compute_cdf_sediment_load(
+def _compute_cdf_sediment_load(
     df,
     column_value,
     resmap,
@@ -5258,7 +5258,7 @@ def compute_cdf_sediment_load(
     return df
 
 
-def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
+def _convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     """Convert a sinks raster to a vector file.
 
     A sinks raster is defined as a raster holding captured sediment loads
@@ -5497,7 +5497,7 @@ def _resolve_or_create_priority_subcatchment(
     if template_name.exists():
         return template_name.with_suffix(".sdat"), template_name
 
-    rst_subcatch, vct_subcatch = identify_subcatchments_to_target_ids(
+    rst_subcatch, vct_subcatch = _identify_subcatchments_to_target_ids(
         rst_id,
         txt_routing_non_river,
         resmap,
