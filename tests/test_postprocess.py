@@ -216,6 +216,42 @@ def test_vct_sinks_property(postprocess_obj):
     np.testing.assert_allclose(gdf["cumperc"].iloc[-1], 100.0)
 
 
+def test_convert_output_rsts_to_ton(postprocess_obj):
+    """Test convert_output_rsts_to_ton writes ton rasters and exposes them on self."""
+
+    result = postprocess_obj.convert_output_rsts_to_ton()
+
+    assert result is None
+
+    expected_attrs = {
+        "sedi_out_ton": postprocess_obj.modeloutput.sedi_out,
+        "sedi_in_ton": postprocess_obj.modeloutput.sedi_in,
+        "watereros_ton": postprocess_obj.modeloutput.watereros_kg,
+        "sedi_export_ton": postprocess_obj.modeloutput.sedi_export,
+    }
+
+    for attr_name, src in expected_attrs.items():
+        assert hasattr(postprocess_obj, attr_name)
+        ton_raster = getattr(postprocess_obj, attr_name)
+
+        assert ton_raster.file_path.exists()
+        assert ton_raster.file_path.parent == postprocess_obj.postprocessing_folder
+
+        src_stem = src.file_path.stem
+        if "_kg" in src_stem:
+            assert ton_raster.file_path.name == src.file_path.name.replace(
+                "_kg", "_ton"
+            )
+        else:
+            assert ton_raster.file_path.stem == f"{src_stem}_ton"
+
+        nodata = postprocess_obj.rp.nodata
+        arr_src = src.arr
+        arr_ton = ton_raster.arr
+        valid = arr_src != nodata
+        np.testing.assert_allclose(arr_ton[valid], arr_src[valid] / 1000.0, atol=1e-6)
+
+
 @pytest.mark.parametrize(
     "compute_priority",
     [

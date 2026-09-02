@@ -3814,6 +3814,49 @@ class PostProcess(Factory):
         vct_out = self.postprocessing_folder / "priority_subcatchments_merged.shp"
         gpd_priorities.to_file(vct_out, spatial_index="YES")
 
+    def convert_output_rsts_to_ton(self):
+        """Convert kg-unit modeloutput rasters to ton and expose them on ``self``.
+
+        Converts ``sedi_out``, ``sedi_in``, ``watereros_kg`` and ``sedi_export``
+        from kg to ton (divide by 1000). Output rasters are written to
+        ``self.postprocessing_folder`` and each is exposed as a raster-factory
+        wrapped attribute:
+
+        - ``self.sedi_out_ton``
+        - ``self.sedi_in_ton``
+        - ``self.watereros_ton``
+        - ``self.sedi_export_ton``
+
+        If a source filename contains ``_kg`` it is replaced with ``_ton``;
+        otherwise ``_ton`` is appended to the stem.
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        sources = {
+            "sedi_out_ton": self.modeloutput.sedi_out,
+            "sedi_in_ton": self.modeloutput.sedi_in,
+            "watereros_ton": self.modeloutput.watereros_kg,
+            "sedi_export_ton": self.modeloutput.sedi_export,
+        }
+        nodata = self.rp.nodata
+        for attr_name, src in sources.items():
+            src_path = Path(src.file_path)
+            if not src_path.exists():
+                logger.warning("Skipping missing raster: %s", src_path)
+                continue
+
+            arr_ton = np.where(src.arr == nodata, src.arr, src.arr / 1000.0)
+
+            if "_kg" in src_path.stem:
+                out_name = src_path.name.replace("_kg", "_ton")
+            else:
+                out_name = f"{src_path.stem}_ton{src_path.suffix}"
+            rst_out = self.postprocessing_folder / out_name
+
+            write_arr_as_rst(arr_ton, rst_out, "float32", self.rp.rasterio_profile)
+            setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
+
     # ========================================================================
     # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
     # ========================================================================
@@ -3834,7 +3877,6 @@ class PostProcess(Factory):
     # - process_buffers
     # - compute_netto_erosion_parcels
     # - merge_sedi_out_and_cumulative
-    # - convert_output_rsts_to_ton
     # - add_sediment_to_subcatchments
     # - add_segment_results_to_vct
     # - compute_sewer_in_per_catchment
@@ -4295,22 +4337,6 @@ class PostProcess(Factory):
         write_arr_as_rst(
             arr_sedi_out_total, rst_out, "float32", self.rp.rasterio_profile
         )
-
-    def convert_output_rsts_to_ton(self):
-        """Convert the units for rasters sedi_out, sedi_in, sediexport and
-        watereros from kg to ton.
-        """
-        rsts = [
-            self.files["rst_sedi_out"],
-            self.files["rst_sedi_in"],
-            self.files["rst_watereros"],
-            self.files["rst_sediexport"],
-        ]
-        new_rsts = [Path(str(x).replace("_kg", "_ton")) for x in rsts]
-
-        for i in range(0, len(rsts)):
-            if rsts[i].exists():
-                convert_arr_from_kg_to_ton(rsts[i], new_rsts[i])
 
     def add_sediment_to_subcatchments(self, vct_subcatchments):
         """Adds the sediment input of every river segment to the corresponding
@@ -5338,7 +5364,6 @@ def _convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
 # - create_id_raster_for_highest_value_arr
 # - check_if_file_exists
 # - split_endpoints_in_raster
-# - convert_arr_from_kg_to_ton
 # - process_filename
 # - read_filestructure
 # - get_tuple_datastructure
@@ -6498,24 +6523,6 @@ def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
         gdf_routing = gdf_routing[cols_out]
 
     return gdf_routing
-
-
-def convert_arr_from_kg_to_ton(rst_in, rst_out):
-    """Set values of all pixels of a raster divided by 1000 (kg -> ton)
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path of input raster to set no data values
-    rst_out: str or pathlib.Path
-        File path of output raster with no data values
-    """
-
-    arr_in, profile = load_raster(rst_in)
-    arr_out = np.where(arr_in == profile["nodata"], arr_in, arr_in / 1000)
-    profile["driver"] = "GTiff"
-    profile["compress"] = "DEFLATE"
-    write_arr_as_rst(arr_out, rst_out, "float32", profile)
 
 
 def process_filename(
