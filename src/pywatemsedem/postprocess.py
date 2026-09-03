@@ -36,7 +36,6 @@ from pywatemsedem.scenario import WSException
 from pywatemsedem.tools import package_resource
 from pywatemsedem.valid import (
     valid_routing_sedi_out_vector,
-    valid_routing_vector,
 )
 
 logger = logging.getLogger(__name__)
@@ -84,8 +83,11 @@ class PostProcess(Factory):
 
         # DATA
         self._routing_non_river = None
+        self._routing_river = None
         self._vct_routing = None
         self._vct_routing_missing = None
+        self._vct_routing_non_river = None
+        self._vct_routing_river = None
         self._vct_sedi_export = None
         self._vct_sewer_in = None
         self._vct_sinks = None
@@ -300,6 +302,34 @@ class PostProcess(Factory):
         )
 
     @property
+    def routing_river(self):
+        """Return the routing table with only river routing."""
+        if self._routing_river is None:
+            self.keep_river_routing()
+        return self._routing_river
+
+    def keep_river_routing(self):
+        """Keep only river routing from routing file."""
+
+        rows, cols = np.where(self.modelinput.compositelanduse.arr == -1)
+        river_coords = list(
+            zip(rows + 1, cols + 1)
+        )  # +1 as routing file is 1-based and not 0-based
+
+        df = self.modeloutput.routing.copy()
+        to_keep = set(river_coords)
+        df_filtered = df[df[["row", "col"]].apply(tuple, axis=1).isin(to_keep)]
+
+        self._routing_river = df_filtered.copy()
+
+        self._routing_river.file_path = self.postprocessing_folder / "routing_river.txt"
+        self._routing_river.to_csv(
+            self._routing_river.file_path,
+            sep="\t",
+            index=False,
+        )
+
+    @property
     def vct_routing(self):
         """Return the routing vector object.
 
@@ -333,6 +363,10 @@ class PostProcess(Factory):
     def make_routing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing vector file based on routingfile
 
+        Sediment output values from ``modeloutput.sedi_out`` are coupled
+        to each routing line via :func:`couple_sedi_out_routing`, adding the
+        ``sedi_out`` column (sediment carried by this specific arrow).
+
         Parameters
         ----------
         extent: list
@@ -360,9 +394,15 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        # Set EPSG code to the shapefile
         gdf = gpd.read_file(file_path)
         gdf = gdf.set_crs(self.epsg)
+        gdf.to_file(file_path)
+
+        gdf = couple_sedi_out_routing(
+            file_path,
+            self.modeloutput.sedi_out.file_path,
+            self.epsg,
+        )
         gdf.to_file(file_path)
 
         return file_path
@@ -409,6 +449,9 @@ class PostProcess(Factory):
     def make_routing_missing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing missing vector file based on routing missing file
 
+        Same column enrichment as :meth:`make_routing_vct`: a per-arrow
+        ``sedi_out`` column derived from ``modeloutput.sedi_out``.
+
         Parameters
         ----------
         extent: list
@@ -436,9 +479,151 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        # Set EPSG code to the shapefile
         gdf = gpd.read_file(file_path)
         gdf = gdf.set_crs(self.epsg)
+        gdf.to_file(file_path)
+
+        gdf = couple_sedi_out_routing(
+            file_path,
+            self.modeloutput.sedi_out.file_path,
+            self.epsg,
+        )
+        gdf.to_file(file_path)
+
+        return file_path
+
+    @property
+    def vct_routing_non_river(self):
+        """Return the non-river routing vector object.
+
+        If the vector does not exist yet, it is created via
+        :meth:`make_routing_non_river_vct`.
+        """
+        if self._vct_routing_non_river is None:
+            self.vct_routing_non_river = self.make_routing_non_river_vct()
+        return self._vct_routing_non_river
+
+    @vct_routing_non_river.setter
+    def vct_routing_non_river(self, vector_input):
+        """Set the non-river routing vector object from a file path."""
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_routing_non_river",
+            "LineString",
+            "vct_routing_non_river",
+            plot_title="Catchment mask + rivers + non-river routing",
+        )
+
+    def make_routing_non_river_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing vector file that excludes river routing.
+
+        Uses :attr:`routing_non_river` as input. Sediment output values from
+        ``modeloutput.sedi_out`` are coupled to each routing line via
+        :func:`couple_sedi_out_routing`, adding the ``sedi_out`` column.
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tile_number: int
+            id of tile
+        tag: str
+            tag to add to filename
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing vector shapefile.
+        """
+        txt_routing = self.routing_non_river.file_path
+        file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
+
+        make_routing_vct_saga(
+            txt_routing,
+            self.modelinput.compositelanduse.file_path,
+            file_path,
+            self.rp.gdal_profile,
+            extent=extent,
+            tile_number=tile_number,
+        )
+
+        gdf = gpd.read_file(file_path)
+        gdf = gdf.set_crs(self.epsg)
+        gdf.to_file(file_path)
+
+        gdf = couple_sedi_out_routing(
+            file_path,
+            self.modeloutput.sedi_out.file_path,
+            self.epsg,
+        )
+        gdf.to_file(file_path)
+
+        return file_path
+
+    @property
+    def vct_routing_river(self):
+        """Return the river-only routing vector object.
+
+        If the vector does not exist yet, it is created via
+        :meth:`make_routing_river_vct`.
+        """
+        if self._vct_routing_river is None:
+            self.vct_routing_river = self.make_routing_river_vct()
+        return self._vct_routing_river
+
+    @vct_routing_river.setter
+    def vct_routing_river(self, vector_input):
+        """Set the river-only routing vector object from a file path."""
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_routing_river",
+            "LineString",
+            "vct_routing_river",
+            plot_title="Catchment mask + rivers + river routing",
+        )
+
+    def make_routing_river_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing vector file that contains only river routing.
+
+        Uses :attr:`routing_river` as input. Sediment output values from
+        ``modeloutput.sedi_out`` are coupled to each routing line via
+        :func:`couple_sedi_out_routing`, adding the ``sedi_out`` column.
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tile_number: int
+            id of tile
+        tag: str
+            tag to add to filename
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing vector shapefile.
+        """
+        txt_routing = self.routing_river.file_path
+        file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
+
+        make_routing_vct_saga(
+            txt_routing,
+            self.modelinput.compositelanduse.file_path,
+            file_path,
+            self.rp.gdal_profile,
+            extent=extent,
+            tile_number=tile_number,
+        )
+
+        gdf = gpd.read_file(file_path)
+        gdf = gdf.set_crs(self.epsg)
+        gdf.to_file(file_path)
+
+        gdf = couple_sedi_out_routing(
+            file_path,
+            self.modeloutput.sedi_out.file_path,
+            self.epsg,
+        )
         gdf.to_file(file_path)
 
         return file_path
@@ -2449,6 +2634,8 @@ class PostProcess(Factory):
         top_level_vectors = [
             self._vct_routing,
             self._vct_routing_missing,
+            self._vct_routing_non_river,
+            self._vct_routing_river,
             self._vct_sedi_export,
             self._vct_sewer_in,
             self._vct_sinks,
@@ -3876,7 +4063,6 @@ class PostProcess(Factory):
     # - aggregate_subcatchments_for_points
     # - identify_export_parcel
     # - aggregate_sedout_parcel
-    # - couple_sedi_out_routing
     # - intersect_sedi_outparcels_with_subcatchments
     # - select_routing_to_outsidecatchment
     # - get_total_sediment
@@ -4036,33 +4222,6 @@ class PostProcess(Factory):
         df_prckrt = df_prckrt.drop(["val"], axis=1)
 
         return df_prckrt
-
-    def couple_sedi_out_routing(self, cols_out=None):
-        """Couple sedi_out of raster map values to routing file.
-
-        See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
-
-        Parameters
-        ----------
-        cols_out : list of str, optional
-            Columns to include in the output GeoDataFrame.
-
-        Returns
-        -------
-        gdf_routing_sedi_out: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
-        """
-        logger.info("Coupling amount of sediment to routing vectors...")
-        valid_routing_vector(self)
-        gdf_routing_sedi_out = couple_sedi_out_routing(
-            self.vct_routing, self.files["rst_sedi_out"], self.epsg, cols_out
-        )
-        self.vct_routing_sedi_out = self.vct_routing.parent / Path(
-            self.vct_routing.stem + "_sedi_out.shp"
-        )
-        gdf_routing_sedi_out.to_file(self.vct_routing_sedi_out, spatial_index="YES")
-
-        return gdf_routing_sedi_out
 
     def intersect_sedi_outparcels_with_subcatchments(
         self, rst_subcatchment_sinks, df_sedi_out_parcel
@@ -5353,6 +5512,56 @@ def _convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out.to_file(vct_out, spatial_index="YES")
 
 
+def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
+    """Couple the sedi_out raster values to the vector routing file
+
+    Parameters
+    ----------
+    vct_routing: str or pathlib.Path
+        File path of vector routing, see
+        :func:`pywatemsedem.io.modeloutput.make_routing_vct`
+    rst_sedi_out: str or pathlib.Path
+        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
+    epsg: str
+        Format "EPSG:XXXXX"
+    cols_out: list, optional
+        Columns to output
+
+    Returns
+    -------
+    gdf_routing: geopandas.GeoDataFrame
+        Loaded vector file, for format
+        see :func:`pywatemsedem.io.modeloutput.make_routing_vct`. Columns
+        added:
+
+        - *sedi_out* (float): sediment carried by this specific arrow, i.e. the
+          total sediment leaving the source pixel multiplied by ``part``.
+    """
+    gdf_routing = gpd.read_file(vct_routing)
+
+    # load sedOut
+    arr_sedi_out, profile = load_raster(rst_sedi_out)
+    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
+    df_sedi_out["sedi_out"] = df_sedi_out["val"].values
+
+    # merge sedi_out to routing
+    gdf_routing = gdf_routing.merge(
+        df_sedi_out[["col", "row", "sedi_out"]], on=["col", "row"], how="left"
+    )
+
+    # Each row is a single (source -> target) arrow; sedi_out on the raster is
+    # the total leaving the source pixel, so multiply by 'part' to get the
+    # amount carried by this arrow specifically.
+    gdf_routing["sedi_out"] = gdf_routing["sedi_out"] * gdf_routing["part"]
+
+    gdf_routing = gdf_routing.set_crs(epsg, allow_override=True)
+
+    if cols_out is not None:
+        gdf_routing = gdf_routing[cols_out]
+
+    return gdf_routing
+
+
 # ============================================================================
 # TODO: MODULE-LEVEL FUNCTIONS NOT YET USED BY postprocess.ipynb
 # ============================================================================
@@ -6471,66 +6680,6 @@ def transform_dict_netto_erosion_to_df(dict_netto_ero):
     df_netto_erosion.index.name = "prc_id"
 
     return df_netto_erosion
-
-
-def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
-    """Couple the sedi_out raster values to the vector routing file
-
-    Parameters
-    ----------
-    vct_routing: str or pathlib.Path
-        File path of vector routing, see
-        :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-    rst_sedi_out: str or pathlib.Path
-        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
-    epsg: str
-        Format "EPSG:XXXXX"
-    cols_out: list, optional
-        Columns to output
-
-    Returns
-    -------
-    gdf_routing: geopandas.GeoDataFrame
-        Loaded vector file, for format
-        see :func:`pywatemsedem.io.modeloutput.make_routing_vct`. Columns
-        added:
-
-        - *sedi_out* (float): Total Sediment output (scale:parcel) from pixel
-        - *sedi_out1* (float): Sediment output coupled to arrow current pixel
-        - *sedi_out2* (float): Sedimout output coupled to other output arrow current
-          pixel
-        - *cum_sum* (float): Cumulative sediment output based on sedi_out1
-        - *cum_perc* (float): Cumulative percentage (%)
-    """
-    gdf_routing = gpd.read_file(vct_routing)
-
-    # load sedOut
-    arr_sedi_out, profile = load_raster(rst_sedi_out)
-    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
-    df_sedi_out["sedi_out"] = df_sedi_out["val"].values
-
-    # merge sedi_out to routing
-    gdf_routing = gdf_routing.merge(
-        df_sedi_out[["col", "row", "sedi_out"]], on=["col", "row"], how="left"
-    )
-
-    # (DR) sedi_out correction with part (%): sedi_out is total amount that goes out a
-    # pixel (derived over two pixels).
-    gdf_routing["sedi_out1"] = gdf_routing["sedi_out"] * gdf_routing["part"]
-    gdf_routing["sedi_out2"] = gdf_routing["sedi_out"] * (1 - gdf_routing["part"])
-
-    # (DR) Write cumulative percentage (descending)
-    gdf_routing = gdf_routing.sort_values("sedi_out1", ascending=False)
-    gdf_routing["cum_sum"] = gdf_routing["sedi_out1"].cumsum().astype(int)
-    gdf_routing["cum_perc"] = (
-        gdf_routing.cum_sum / gdf_routing["sedi_out1"].sum()
-    ) * 100
-    gdf_routing = gdf_routing.set_crs(epsg, allow_override=True)
-
-    if cols_out is not None:
-        gdf_routing = gdf_routing[cols_out]
-
-    return gdf_routing
 
 
 def process_filename(

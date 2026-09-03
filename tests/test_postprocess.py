@@ -105,6 +105,26 @@ def test_routing_non_river_property(postprocess_obj):
     assert routing_non_river.file_path.exists()
 
 
+def test_routing_river_property(postprocess_obj):
+    """Test routing_river keeps only river-source rows from real test data."""
+
+    routing = postprocess_obj.modeloutput.routing
+    rows, cols = np.where(postprocess_obj.modelinput.compositelanduse.arr == -1)
+    river_coords = set(zip(rows + 1, cols + 1))
+    routing_coords = set(zip(routing["row"], routing["col"]))
+    expected_kept = routing_coords.intersection(river_coords)
+
+    routing_river = postprocess_obj.routing_river
+    kept_coords = set(zip(routing_river["row"], routing_river["col"]))
+
+    assert expected_kept
+    assert kept_coords.issubset(river_coords)
+    assert kept_coords == expected_kept
+    assert len(routing_river) + len(postprocess_obj.routing_non_river) == len(routing)
+    assert routing_river is postprocess_obj.routing_river
+    assert routing_river.file_path.exists()
+
+
 def test_vct_routing_property(postprocess_obj):
     """Test vct_routing property access and resulting vector object."""
 
@@ -114,12 +134,57 @@ def test_vct_routing_property(postprocess_obj):
     assert routing.file_path.exists()
     assert routing.file_path.suffix == ".shp"
     assert not routing.geodata.empty
+    assert "sedi_out" in routing.geodata.columns
     ax = routing.plot(
         show_mask=True,
         show_river=True,
         show_labels=False,
     )
     assert ax is not None
+
+
+def test_vct_routing_missing_property(postprocess_obj):
+    """Test vct_routing_missing property; None when routing_missing is empty."""
+
+    if postprocess_obj.modeloutput.routing_missing.empty:
+        assert postprocess_obj.vct_routing_missing is None
+        return
+
+    missing = postprocess_obj.vct_routing_missing
+
+    assert missing is postprocess_obj.vct_routing_missing
+    assert missing.file_path.exists()
+    assert missing.file_path.suffix == ".shp"
+    assert not missing.geodata.empty
+    assert "sedi_out" in missing.geodata.columns
+
+
+def test_vct_routing_non_river_property(postprocess_obj):
+    """Test vct_routing_non_river property; sources are land pixels only."""
+
+    non_river = postprocess_obj.vct_routing_non_river
+
+    assert non_river is postprocess_obj.vct_routing_non_river
+    assert non_river.file_path.exists()
+    assert non_river.file_path.suffix == ".shp"
+    assert not non_river.geodata.empty
+    assert "sedi_out" in non_river.geodata.columns
+    # every source pixel must be a land pixel (lnduSource != -1)
+    assert (non_river.geodata["lnduSource"] != -1).all()
+
+
+def test_vct_routing_river_property(postprocess_obj):
+    """Test vct_routing_river property; sources are river pixels only."""
+
+    river = postprocess_obj.vct_routing_river
+
+    assert river is postprocess_obj.vct_routing_river
+    assert river.file_path.exists()
+    assert river.file_path.suffix == ".shp"
+    assert not river.geodata.empty
+    assert "sedi_out" in river.geodata.columns
+    # every source pixel must be a river pixel (lnduSource == -1)
+    assert (river.geodata["lnduSource"] == -1).all()
 
 
 def _assert_sink_vector_properties(vector_obj, raster_path, expected_type):
