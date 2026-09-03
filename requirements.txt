@@ -74,7 +74,7 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-dotenv==1.2.3
     # via pywatemsedem (setup.py)
-pytz==2026.2
+pytz==2026.3.post1
     # via pandas
 rasterio==1.4.3
     # via pywatemsedem (setup.py)
