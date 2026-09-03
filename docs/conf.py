@@ -82,6 +82,12 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting"
 ]
 
+# Include both the class docstring and the __init__ docstring
+autoclass_content = "both"
+
+# Render attributes sections as field-list entries inside the class description
+napoleon_use_ivar = True
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
