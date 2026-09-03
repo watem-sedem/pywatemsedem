@@ -374,8 +374,16 @@ class PostProcess(Factory):
         If the routing missing vector does not exist yet, it is created with default
         settings (full extent, no tile selection, no tag) via
         :meth:`make_routing_missing_vct`.
+
+        If the underlying ``routing_missing`` table has no rows, no vector is
+        generated and ``None`` is returned.
         """
         if self._vct_routing_missing is None:
+            if self.modeloutput.routing_missing.empty:
+                logger.warning(
+                    "routing_missing table has no lines, no vector generated."
+                )
+                return None
             self.vct_routing_missing = self.make_routing_missing_vct()
         return self._vct_routing_missing
 
