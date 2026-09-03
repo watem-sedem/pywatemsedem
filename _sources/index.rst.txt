@@ -3,8 +3,6 @@
 Welcome to pywatemsedem's documentation!
 ========================================
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.21722831.svg
-  :target: https://doi.org/10.5281/zenodo.21722831
 .. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci_pinned.yml/badge.svg?branch=master
     :target: https://github.com/watem-sedem/pywatemsedem
 .. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci_nonpinned.yml/badge.svg?branch=master

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.templates &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem.templates &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -96,40 +96,40 @@
 <div class="viewcode-block" id="InputFileName">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.templates.InputFileName">[docs]</a>
 <span></span><span class="k">class</span><span class="w"> </span><span class="nc">InputFileName</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Holds template inputfile names for WaTEM/SEDEM input</span>
+<span class="w">    </span><span class="sd">"""Holds template inputfile names for WaTEM/SEDEM input</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    format: str | pathlib.Path</span>
 <span class="sd">        Database format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;filebased&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"filebased"</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;filebased&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kfactor_file</span> <span class="o">=</span> <span class="s2">&quot;kfactor.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dtm_file</span> <span class="o">=</span> <span class="s2">&quot;dtm.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pfactor_file</span> <span class="o">=</span> <span class="s2">&quot;pfactor.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">segments_file</span> <span class="o">=</span> <span class="s2">&quot;segments.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">routing_file</span> <span class="o">=</span> <span class="s2">&quot;routing.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parcelmosaic_file</span> <span class="o">=</span> <span class="s2">&quot;parcels_landuse.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfactor_file</span> <span class="o">=</span> <span class="s2">&quot;cfactor.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">outlet_file</span> <span class="o">=</span> <span class="s2">&quot;outlet.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ktc_file</span> <span class="o">=</span> <span class="s2">&quot;ktc_map.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ktil_file</span> <span class="o">=</span> <span class="s2">&quot;ktil_map.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mask_file</span> <span class="o">=</span> <span class="s2">&quot;mask.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ditches_file</span> <span class="o">=</span> <span class="s2">&quot;ditches.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conductivedams_file</span> <span class="o">=</span> <span class="s2">&quot;conductivedams.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_file</span> <span class="o">=</span> <span class="s2">&quot;sewers.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_id_file</span> <span class="o">=</span> <span class="s2">&quot;sewers_id.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffers_file</span> <span class="o">=</span> <span class="s2">&quot;buffers.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cn_file</span> <span class="o">=</span> <span class="s2">&quot;cn.rst&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_file</span> <span class="o">=</span> <span class="s2">&quot;rainfall.txt&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">adjacentedges_file</span> <span class="o">=</span> <span class="s2">&quot;adjacent_edges.txt&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">upedges_file</span> <span class="o">=</span> <span class="s2">&quot;up_edges.txt&quot;</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">"filebased"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kfactor_file</span> <span class="o">=</span> <span class="s2">"kfactor.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtm_file</span> <span class="o">=</span> <span class="s2">"dtm.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pfactor_file</span> <span class="o">=</span> <span class="s2">"pfactor.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">segments_file</span> <span class="o">=</span> <span class="s2">"segments.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">routing_file</span> <span class="o">=</span> <span class="s2">"routing.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parcelmosaic_file</span> <span class="o">=</span> <span class="s2">"parcels_landuse.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfactor_file</span> <span class="o">=</span> <span class="s2">"cfactor.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outlet_file</span> <span class="o">=</span> <span class="s2">"outlet.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ktc_file</span> <span class="o">=</span> <span class="s2">"ktc_map.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ktil_file</span> <span class="o">=</span> <span class="s2">"ktil_map.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask_file</span> <span class="o">=</span> <span class="s2">"mask.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ditches_file</span> <span class="o">=</span> <span class="s2">"ditches.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conductivedams_file</span> <span class="o">=</span> <span class="s2">"conductivedams.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_file</span> <span class="o">=</span> <span class="s2">"sewers.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">endpoints_id_file</span> <span class="o">=</span> <span class="s2">"sewers_id.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffers_file</span> <span class="o">=</span> <span class="s2">"buffers.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cn_file</span> <span class="o">=</span> <span class="s2">"cn.rst"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rainfall_file</span> <span class="o">=</span> <span class="s2">"rainfall.txt"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adjacentedges_file</span> <span class="o">=</span> <span class="s2">"adjacent_edges.txt"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">upedges_file</span> <span class="o">=</span> <span class="s2">"up_edges.txt"</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Database format &#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2"> not implemented.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Database format '</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2"> not implemented."</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 </pre></div>

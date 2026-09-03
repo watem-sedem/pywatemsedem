@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.compare_scenario &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem.compare_scenario &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -106,7 +106,7 @@
 <div class="viewcode-block" id="DeltaScenario">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DeltaScenario</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a DeltaScenario instance with two instances of PostProcess</span>
+<span class="w">    </span><span class="sd">"""Construct a DeltaScenario instance with two instances of PostProcess</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -121,16 +121,16 @@
 <span class="sd">    --------</span>
 <span class="sd">        &gt;&gt;&gt; # Define inputs</span>
 <span class="sd">        &gt;&gt;&gt; from pywatemsedem.postprocess import PostProcess</span>
-<span class="sd">        &gt;&gt;&gt; pp1 = PostProcess(&quot;molenbeek&quot;, 1, 2019, 20, 31370)</span>
-<span class="sd">        &gt;&gt;&gt; pp2 = PostProcess(&quot;molenbeek&quot;, 2, 2019, 20, 31370)</span>
+<span class="sd">        &gt;&gt;&gt; pp1 = PostProcess("molenbeek", 1, 2019, 20, 31370)</span>
+<span class="sd">        &gt;&gt;&gt; pp2 = PostProcess("molenbeek", 2, 2019, 20, 31370)</span>
 <span class="sd">        &gt;&gt;&gt; # run</span>
 <span class="sd">        &gt;&gt;&gt; from pywatemsedem.compare_scenario import DeltaScenario</span>
 <span class="sd">        &gt;&gt;&gt; delta_scenario = DeltaScenario(pp1,pp2)</span>
 <span class="sd">        &gt;&gt;&gt; delta_scenario.comparison_total_sediment_file()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pp1</span><span class="p">,</span> <span class="n">pp2</span><span class="p">,</span> <span class="n">resmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -140,7 +140,7 @@
 <span class="sd">            See class:`pywatemsedem.postprocess.PostProcess`</span>
 <span class="sd">        resmap: str or pathlib.Path, default None</span>
 <span class="sd">            Folder path of results map</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_input</span><span class="p">(</span><span class="n">pp1</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span> <span class="o">=</span> <span class="n">pp1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_input</span><span class="p">(</span><span class="n">pp2</span><span class="p">):</span>
@@ -149,7 +149,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
                 <span class="o">/</span> <span class="n">pp1</span><span class="o">.</span><span class="n">catchment_name</span>
-                <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;compare_scenario</span><span class="si">{</span><span class="n">pp1</span><span class="o">.</span><span class="n">scenario</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">pp2</span><span class="o">.</span><span class="n">scenario</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="o">/</span> <span class="sa">f</span><span class="s2">"compare_scenario</span><span class="si">{</span><span class="n">pp1</span><span class="o">.</span><span class="n">scenario</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">pp2</span><span class="o">.</span><span class="n">scenario</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">resmap</span><span class="p">)</span>
@@ -161,17 +161,17 @@
 <div class="viewcode-block" id="DeltaScenario.check_input">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pp</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the type of input given to DeltaScenario class</span>
+<span class="w">        </span><span class="sd">"""Check the type of input given to DeltaScenario class</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        pp : pywatemsedem.postproces.PostProcess</span>
 <span class="sd">            A PostProcess instance of scenario used for the comparison.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">PostProcess</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pp</span><span class="si">}</span><span class="s2"> is not an instance of the class PostProcess, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;see ~:class:pywatemsedem.postprocess.PostProcess&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pp</span><span class="si">}</span><span class="s2"> is not an instance of the class PostProcess, "</span>
+                <span class="sa">f</span><span class="s2">"see ~:class:pywatemsedem.postprocess.PostProcess"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -181,7 +181,7 @@
 <div class="viewcode-block" id="DeltaScenario.check_rasterprop">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.check_rasterprop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_rasterprop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the raster properties are equal for both scenario&#39;s&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Check if the raster properties are equal for both scenario's"""</span>
         <span class="n">rstparams1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">rstparams</span>
         <span class="n">rstparams2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">rstparams</span>
         <span class="k">if</span> <span class="n">rstparams1</span> <span class="o">==</span> <span class="n">rstparams2</span><span class="p">:</span>
@@ -193,7 +193,7 @@
 <div class="viewcode-block" id="DeltaScenario.zip_files">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.zip_files">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">zip_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zip output folder of deltascenario&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Zip output folder of deltascenario"""</span>
 
         <span class="n">zip_folder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resmap</span><span class="p">)</span></div>
 
@@ -201,7 +201,7 @@
 <div class="viewcode-block" id="DeltaScenario.comparison_total_sediment_file">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.comparison_total_sediment_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">comparison_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare the values in the total sediments file</span>
+<span class="w">        </span><span class="sd">"""Compare the values in the total sediments file</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -213,14 +213,14 @@
 <span class="sd">            - *sc2*: values for general statistics scenario 2</span>
 <span class="sd">            - *difference*: difference between statistics scenario 1 and 2</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df_1</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;txt_total_sediment&quot;</span><span class="p">])</span>
-        <span class="n">df_2</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;txt_total_sediment&quot;</span><span class="p">])</span>
+<span class="sd">        """</span>
+        <span class="n">df_1</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">"txt_total_sediment"</span><span class="p">])</span>
+        <span class="n">df_2</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s2">"txt_total_sediment"</span><span class="p">])</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">df_1</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sc1&quot;</span><span class="p">,</span> <span class="s2">&quot;sc2&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">])</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_1</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_2</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;difference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc1&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sc2&quot;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">df_1</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"sc1"</span><span class="p">,</span> <span class="s2">"sc2"</span><span class="p">,</span> <span class="s2">"difference"</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"sc1"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_1</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"sc2"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_2</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"difference"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"sc1"</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">"sc2"</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">df</span></div>
 
@@ -228,18 +228,18 @@
 <div class="viewcode-block" id="DeltaScenario.difference_grids">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.difference_grids">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">difference_grids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make difference grids for a number of files&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Make difference grids for a number of files"""</span>
         <span class="n">difference_grids</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;rst_sediout&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;rst_sediin&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;rst_sediexport&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;rst_watereros&quot;</span><span class="p">,</span>
+            <span class="s2">"rst_sediout"</span><span class="p">,</span>
+            <span class="s2">"rst_sediin"</span><span class="p">,</span>
+            <span class="s2">"rst_sediexport"</span><span class="p">,</span>
+            <span class="s2">"rst_watereros"</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">difference_grids</span><span class="p">:</span>
             <span class="n">rst_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">grid</span><span class="p">]</span>
             <span class="n">rst_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">grid</span><span class="p">]</span>
-            <span class="n">rst_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span> <span class="o">+</span> <span class="s2">&quot;_difference.rst&quot;</span><span class="p">)</span>
+            <span class="n">rst_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resmap</span> <span class="o">/</span> <span class="p">(</span><span class="n">grid</span> <span class="o">+</span> <span class="s2">"_difference.rst"</span><span class="p">)</span>
             <span class="n">grid_difference</span><span class="p">(</span><span class="n">rst_1</span><span class="p">,</span> <span class="n">rst_2</span><span class="p">,</span> <span class="n">rst_out</span><span class="p">)</span></div>
 </div>
 

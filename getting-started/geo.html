@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Geo-module &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>Geo-module &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,18 +124,18 @@ case Lambert72, i.e. EPSG:31370) of your model:</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="c1"># input file</span>
-<span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
-<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;example_input_raster.tif&quot;</span>
+<span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$YOURINPUTFOLDER"</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">"example_input_raster.tif"</span>
 
 <span class="c1"># load raster and rasterio profile</span>
 <span class="n">arr</span><span class="p">,</span> <span class="n">rasterio_profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 
 <span class="c1"># define rasterproperties with rasterio profile</span>
 <span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">rasterio_profile</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bounds: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsg: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nodata: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"bounds: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"epsg: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"resolution: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nodata: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The instance <code class="docutils literal notranslate"><span class="pre">rp</span></code> of the class
@@ -152,10 +152,10 @@ system Lambert72 and a resolution of 20 m):</p>
 <span class="n">nodata</span><span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
 <span class="n">epsg</span> <span class="o">=</span> <span class="mi">31370</span>
 <span class="n">rp</span> <span class="o">=</span> <span class="n">RasterProperties</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bounds: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsg: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nodata: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"bounds: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">bounds</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"epsg: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">epsg</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"resolution: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">resolution</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nodata: </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">nodata</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -198,7 +198,7 @@ espg: EPSG:31370).</p>
 <p>Masking with a (1, 0)-array is also available. The ones indicate no masking,
 the zeros indicate masking.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">vct_to_rst_field</span>
-<span class="n">rst_mask</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;mask.tif&quot;</span>
+<span class="n">rst_mask</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"mask.tif"</span>
 <span class="n">mask</span> <span class="o">=</span> <span class="n">RasterFile</span><span class="p">(</span><span class="n">rst_mask</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -212,15 +212,15 @@ the zeros indicate masking.</p>
 </pre></div>
 </div>
 <p>We want to write our result to disk (note that the raster format should be defined):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;output.tif&quot;</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"output.tif"</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">"tiff)</span>
 </pre></div>
 </div>
 <p>You can write it to an idrisi raster:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;output.rst&quot;</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;idrisis&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"output.rst"</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">"idrisis"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also raise an error when format and extension do not overlap:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;output.rst&quot;</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;tiff&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raster</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"output.rst"</span><span class="p">,</span><span class="nb">format</span><span class="o">=</span><span class="s2">"tiff"</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition error">
@@ -264,17 +264,17 @@ implemented in the current version.</p>
 <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile" title="pywatemsedem.geo.vectors.VectorFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.vectors.VectorFile</span></code></a> to define vector data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorFile</span>
 
-<span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
-<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;Wlas_langegracht.shp&quot;</span>
+<span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$YOURINPUTFOLDER"</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">"Wlas_langegracht.shp"</span>
 
 <span class="n">vector</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="n">vector</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>and clip:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
-<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;Wlas_langegracht.shp&quot;</span>
-<span class="n">file_path_clip</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;catchm_langegracht.shp&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$YOURINPUTFOLDER"</span><span class="p">)</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">"Wlas_langegracht.shp"</span>
+<span class="n">file_path_clip</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">"catchm_langegracht.shp"</span>
 
 <span class="n">vector</span> <span class="o">=</span> <span class="n">VectorFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="n">vct_clip</span><span class="o">=</span><span class="n">file_path_clip</span><span class="p">)</span>
 <span class="n">vector</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -282,8 +282,8 @@ implemented in the current version.</p>
 </div>
 <p>with the option to rasterize to a <a class="reference internal" href="../api/pywatemsedem.geo.html#pywatemsedem.geo.rasters.RasterFile" title="pywatemsedem.geo.rasters.RasterFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.rasters.RasterFile</span></code></a>-class
 (using the mask as reference raster):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$YOURINPUTFOLDER&quot;</span><span class="p">)</span>
-<span class="n">reference_raster</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">&quot;mask.tif&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">input_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$YOURINPUTFOLDER"</span><span class="p">)</span>
+<span class="n">reference_raster</span> <span class="o">=</span> <span class="n">input_folder</span> <span class="o">/</span> <span class="s2">"mask.tif"</span>
 <span class="n">raster</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span><span class="n">reference_raster</span><span class="p">)</span>
 </pre></div>
 </div>

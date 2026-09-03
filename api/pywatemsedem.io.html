@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io package &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem.io package &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -181,21 +181,34 @@ including paths for vector and raster files.</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="id0">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">catchment_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
-<dd><p>Return the main catchment data folder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.check_catchment_folder">
+<span class="sig-name descname"><span class="pre">check_catchment_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.check_catchment_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.check_catchment_folder" title="Link to this definition"></a></dt>
+<dd><p>Create ‘Data_bekken’ folder</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.check_all">
-<span class="sig-name descname"><span class="pre">check_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.check_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.check_all" title="Link to this definition"></a></dt>
-<dd><p>Validate all catchment-level directories.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**options</strong> – Keyword arguments forwarded to <a class="reference internal" href="#pywatemsedem.io.folders.ensure_folder" title="pywatemsedem.io.folders.ensure_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">ensure_folder()</span></code></a>.</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.check_home_folder">
+<span class="sig-name descname"><span class="pre">check_home_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.check_home_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.check_home_folder" title="Link to this definition"></a></dt>
+<dd><p>Create home folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.check_rst_folder">
+<span class="sig-name descname"><span class="pre">check_rst_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.check_rst_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.check_rst_folder" title="Link to this definition"></a></dt>
+<dd><p>Create ‘Data_bekken’ folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.check_vct_folder">
+<span class="sig-name descname"><span class="pre">check_vct_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.check_vct_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.check_vct_folder" title="Link to this definition"></a></dt>
+<dd><p>Create home folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.create_all">
+<span class="sig-name descname"><span class="pre">create_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.create_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.create_all" title="Link to this definition"></a></dt>
+<dd><p>Create all folders in the catchment folder structure.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -208,31 +221,18 @@ including paths for vector and raster files.</p>
 <span class="sig-name descname"><span class="pre">resolution</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.resolution" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="id1">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rst_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
-<dd><p>Return the resolution-specific raster directory.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="id2">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">vct_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
-<dd><p>Return the directory containing vector shapefiles.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">ScenarioFolders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfolder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pywatemsedem.io.folders.CatchmentFolder" title="pywatemsedem.io.folders.CatchmentFolder"><span class="pre">CatchmentFolder</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.13/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Path container for scenario-specific model input/output folders.</p>
+<p>Class for keeping track of Scenario folder names</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cfolder</strong> (<a class="reference internal" href="#pywatemsedem.io.folders.CatchmentFolder" title="pywatemsedem.io.folders.CatchmentFolder"><em>CatchmentFolder</em></a>) – Catchment-level folder definition.</p></li>
-<li><p><strong>scenario_label</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scenario identifier used in the scenario folder name.</p></li>
-<li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Simulation year used for the year-specific subfolder.</p></li>
+<li><p><strong>cfolder</strong> (<a class="reference internal" href="#pywatemsedem.io.folders.CatchmentFolder" title="pywatemsedem.io.folders.CatchmentFolder"><em>CatchmentFolder</em></a>) – See <a class="reference internal" href="#pywatemsedem.io.folders.CatchmentFolder" title="pywatemsedem.io.folders.CatchmentFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.CatchmentFolder</span></code></a></p></li>
+<li><p><strong>scenario_label</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Specific label for scenario.</p></li>
 </ul>
 </dd>
 </dl>
@@ -242,26 +242,39 @@ including paths for vector and raster files.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_all">
-<span class="sig-name descname"><span class="pre">check_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_all" title="Link to this definition"></a></dt>
-<dd><p>Validate catchment and scenario directories.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**options</strong> – Keyword arguments forwarded to <a class="reference internal" href="#pywatemsedem.io.folders.ensure_folder" title="pywatemsedem.io.folders.ensure_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">ensure_folder()</span></code></a>.</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_postprocessing">
+<span class="sig-name descname"><span class="pre">check_postprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_postprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_postprocessing" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x/postprocess’ folder</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.postprocessing_folder">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">postprocessing_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.postprocessing_folder" title="Link to this definition"></a></dt>
-<dd><p>Return the postprocessing output directory.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_scenario">
+<span class="sig-name descname"><span class="pre">check_scenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_scenario" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x’ folder</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.scenario_folder">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">scenario_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.scenario_folder" title="Link to this definition"></a></dt>
-<dd><p>Return the root folder for the selected scenario.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_wsinput">
+<span class="sig-name descname"><span class="pre">check_wsinput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_wsinput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_wsinput" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x/modelinput’ folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_wsoutput">
+<span class="sig-name descname"><span class="pre">check_wsoutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_wsoutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_wsoutput" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x/modeloutput’ folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.check_years">
+<span class="sig-name descname"><span class="pre">check_years</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.check_years"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.check_years" title="Link to this definition"></a></dt>
+<dd><p>Create ‘scenario_x/year’ folder</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.create_all">
+<span class="sig-name descname"><span class="pre">create_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ScenarioFolders.create_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.create_all" title="Link to this definition"></a></dt>
+<dd><p>Create all folders in the scenario folder structure.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -269,49 +282,182 @@ including paths for vector and raster files.</p>
 <span class="sig-name descname"><span class="pre">scenario_label</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.scenario_label" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.wsinput_folder">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wsinput_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.wsinput_folder" title="Link to this definition"></a></dt>
-<dd><p>Return the model input directory for this scenario.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.wsoutput_folder">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wsoutput_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.wsoutput_folder" title="Link to this definition"></a></dt>
-<dd><p>Return the model output directory for this scenario.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.year">
 <span class="sig-name descname"><span class="pre">year</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.year" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ScenarioFolders.year_folder">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">year_folder</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><a class="headerlink" href="#pywatemsedem.io.folders.ScenarioFolders.year_folder" title="Link to this definition"></a></dt>
-<dd><p>Return the year-specific scenario directory.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.ensure_folder">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">ensure_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">create</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_if_empty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#ensure_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.ensure_folder" title="Link to this definition"></a></dt>
-<dd><p>Validate that a folder exists and optionally create it.</p>
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_catchment_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_catchment_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">home_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_catchment_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_catchment_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/catchment folder</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>folder</strong> (<em>Path</em>) – Directory to validate.</p></li>
-<li><p><strong>create</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=False</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, create <code class="docutils literal notranslate"><span class="pre">folder</span></code> (including parents) when it does not
-exist.</p></li>
-<li><p><strong>error_if_empty</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>default=False</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, raise an error when the directory exists but contains no
-files or subdirectories.</p></li>
+<li><p><strong>home_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path of home.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#FileNotFoundError" title="(in Python v3.13)"><strong>FileNotFoundError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">folder</span></code> does not exist and <code class="docutils literal notranslate"><span class="pre">create</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#IOError" title="(in Python v3.13)"><strong>IOError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">error_if_empty</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and the directory is empty.</p></li>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg_subject</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Folder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_if_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create pywatemsedem folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path of pywatemsedem folder</p></li>
+<li><p><strong>msg_subject</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Custom message used be to complete message</p></li>
+<li><p><strong>create</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Indicate whether you want to create the folder</p></li>
+<li><p><strong>error_if_empty</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.folders.error_if_folder_empty()</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_home_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_home_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">home_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_home_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_home_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>home_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path of home.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_postprocessing_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_postprocessing_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_postprocessing_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_postprocessing_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x/postprocessing folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_rst_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_rst_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catchment_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_rst_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_rst_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/catchment/vct folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catchment_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.folders.check_and_create_catchment_folder()</span></code></p></li>
+<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Spatial resolution</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_scenario_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_scenario_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">home_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_label</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_scenario_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_scenario_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>home_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path of home.</p></li>
+<li><p><strong>scenario_label</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scenario label, can be string format of a numeric (e.g. 1, 2, …) or
+string (e.g. A, B, …)</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_vct_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_vct_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catchment_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_vct_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_vct_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/catchment/vct folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>catchment_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.folders.check_and_create_catchment_folder()</span></code></p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_vctyears_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_vctyears_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vct_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_vctyears_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_vctyears_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/catchment/shps/year folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vct_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – See <code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.pywatemsedem.folders.check_and_create_vct_folder()</span></code></p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_wsinput_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_wsinput_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_wsinput_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_wsinput_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x/modelinput folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_wsoutput_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_wsoutput_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_wsoutput_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_wsoutput_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x/modeloutput folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.check_and_create_years_folder">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">check_and_create_years_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#check_and_create_years_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.check_and_create_years_folder" title="Link to this definition"></a></dt>
+<dd><p>Check and create home/scenario_x/year folder</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scenario_folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Folder path subfolder <em>scenario_x</em> in home folder.</p></li>
+<li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Years of simulation</p></li>
+<li><p><strong>options</strong> – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.folders.throw_error_if_folder_empty">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.folders.</span></span><span class="sig-name descname"><span class="pre">throw_error_if_folder_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_if_empty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#throw_error_if_folder_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.throw_error_if_folder_empty" title="Link to this definition"></a></dt>
+<dd><p>Check if pywatemsedem folder is empty</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – See <a class="reference internal" href="#pywatemsedem.io.folders.check_and_create_folder" title="pywatemsedem.io.folders.check_and_create_folder"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.folders.check_and_create_folder()</span></code></a></p></li>
+<li><p><strong>error_if_empty</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Check if folder is empty</p></li>
 </ul>
 </dd>
 </dl>
@@ -341,7 +487,7 @@ ini-file, together with some useful functions to handle ini-files.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">choices</span> <span class="o">=</span> <span class="n">Choices</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">forced_routing</span> <span class="o">=</span> <span class="o">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">buffers</span> <span class="o">=</span> <span class="o">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span> <span class="o">=</span> <span class="n">IniFile</span><span class="p">(</span><span class="s2">&quot;modelinput&quot;</span><span class="p">,</span><span class="s2">&quot;modeloutput&quot;</span><span class="p">,</span><span class="n">choices</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span> <span class="o">=</span> <span class="n">IniFile</span><span class="p">(</span><span class="s2">"modelinput"</span><span class="p">,</span><span class="s2">"modeloutput"</span><span class="p">,</span><span class="n">choices</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">add_model_information</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">add_working_directories</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">add_files</span><span class="p">()</span>
@@ -349,9 +495,19 @@ ini-file, together with some useful functions to handle ini-files.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">add_options</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">add_output</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">add_extensions</span><span class="p">(</span><span class="n">buffers</span><span class="p">,</span> <span class="n">forced_routing</span><span class="p">,</span> <span class="n">river_underground</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;modelinput/ini_file.ini&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inifile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"modelinput/ini_file.ini"</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Creates an ini-file for the scenario</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputfolder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – file path of the folder with input data</p></li>
+<li><p><strong>outputfolder</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – file path of the folder where the output files will be stored</p></li>
+<li><p><strong>choices</strong> (<a class="reference internal" href="pywatemsedem.html#pywatemsedem.choices.Choices" title="pywatemsedem.choices.Choices"><em>pywatemsedem.choices.Choices</em></a>) – instance of the class containing the user choices</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.io.ini.IniFile.add_clay_content_extension">
 <span class="sig-name descname"><span class="pre">add_clay_content_extension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/ini.html#IniFile.add_clay_content_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.ini.IniFile.add_clay_content_extension" title="Link to this definition"></a></dt>
@@ -685,7 +841,7 @@ Output , Variables, Calibration, Buffer $id and Forced Routing $id.</p></li>
 <span id="pywatemsedem-io-modelinput-module"></span><h2>pywatemsedem.io.modelinput module<a class="headerlink" href="#module-pywatemsedem.io.modelinput" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modelinput.</span></span><span class="sig-name descname"><span class="pre">Modelinput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modelinput.html#Modelinput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modelinput.</span></span><span class="sig-name descname"><span class="pre">Modelinput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modelinput.html#Modelinput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory" title="pywatemsedem.geo.factory.Factory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Factory</span></code></a></p>
 <p>Raster class with model inputs as attributes.</p>
 <p>Modelinput class serves the goal of automating the reading in, checking and
@@ -943,127 +1099,139 @@ visualisation of the input data of the WaTEM/SEDEM model.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize the Modelinput instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Path to the ini file with model settings and input file paths of
+WaTEM-SEDEM.</p></li>
+<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – See <code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.RasterProperties</span></code>.</p></li>
+<li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – See <code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.RasterProperties</span></code>.</p></li>
+<li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – See <code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.RasterProperties</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="id3">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adjacent_segments</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adjacent_segments</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>Return the adjacent_segments table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#adjsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id4">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id1">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
 <dd><p>Return the buffers raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#buffermap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id5">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cfactor</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id2">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cfactor</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
 <dd><p>Return the C-factor raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#cmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id6">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id3">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
 <dd><p>Return the CN raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#cnmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id7">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">compositelanduse</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id4">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">compositelanduse</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
 <dd><p>Return the compositelanduse raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#prcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id8">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dams</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id5">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dams</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
 <dd><p>Return the dams raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#dammap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id9">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ditches</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id6">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ditches</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
 <dd><p>Return the ditches raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ditchmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id10">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dtm</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id7">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dtm</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
 <dd><p>Return the DTM raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#dtmmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id11">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">kfactor</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id8">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">kfactor</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
 <dd><p>Return the K-factor raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#kmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id12">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc</span></span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id9">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
 <dd><p>Return the kTC raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id13">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil</span></span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id10">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
 <dd><p>Return the ktil raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktilmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id14">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
 <dd><p>Return mask raster.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id15">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">orientedroughness</span></span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id12">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">orientedroughness</span></span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
 <dd><p>Return the orientedroughness raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#orientedroughnessmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id16">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">outlet</span></span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id13">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">outlet</span></span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
 <dd><p>Return the outlet raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#outletmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id17">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pfactor</span></span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id14">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pfactor</span></span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
 <dd><p>Return the P-factor raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#pmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id18">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ptef</span></span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id15">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ptef</span></span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
 <dd><p>Return the PTEF raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrapppingcrop" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id19">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rainfall</span></span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id16">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rainfall</span></span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
 <dd><p>Return the rainfall table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#rainfallfile" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id20">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rivermask</span></span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id17">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rivermask</span></span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
 <dd><p>Return the river mask raster.
 Not an actual input of the model,
 but a raster that can be derived from the river segments raster,
@@ -1071,36 +1239,36 @@ useful for visualisation purposes.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id21">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riverrouting</span></span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id18">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riverrouting</span></span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
 <dd><p>Return the riverrouting raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#routingmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id22">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riversegments</span></span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id19">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riversegments</span></span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
 <dd><p>Return the riversegments raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#riversegmentfile" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id23">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewers</span></span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id20">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewers</span></span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
 <dd><p>Return the sewers raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#sewermapfile" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id24">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tillagedirection</span></span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id21">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tillagedirection</span></span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
 <dd><p>Return the tillagedirection raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#tildirmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id25">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upstream_segments</span></span><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id22">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upstream_segments</span></span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
 <dd><p>Return the upstream_segments table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#upstrsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
@@ -1112,7 +1280,7 @@ useful for visualisation purposes.</p>
 <span id="pywatemsedem-io-modeloutput-module"></span><h2>pywatemsedem.io.modeloutput module<a class="headerlink" href="#module-pywatemsedem.io.modeloutput" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">Modeloutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#Modeloutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">Modeloutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#Modeloutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="pywatemsedem.geo.html#pywatemsedem.geo.factory.Factory" title="pywatemsedem.geo.factory.Factory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Factory</span></code></a></p>
 <p>Class with model outputs as attributes.</p>
 <p>Modeloutput class serves the goal of automating the reading in, checking and
@@ -1359,30 +1527,41 @@ visualisation of the output data of the WaTEM/SEDEM model.</p>
 </dl>
 </dd></dl>
 
+<p>Initialize the Modeloutput instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – Path to the ini file.</p></li>
+<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – See <code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.RasterProperties</span></code>.</p></li>
+<li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – See <code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.RasterProperties</span></code>.</p></li>
+<li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – See <code class="xref py py-class docutils literal notranslate"><span class="pre">pywatemsedem.geo.RasterProperties</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="id26">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">aspect</span></span><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id23">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">aspect</span></span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
 <dd><p>Return the aspect raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#aspectmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id27">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">capacity</span></span><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id24">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">capacity</span></span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
 <dd><p>Return the capacity raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#capacityrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id28">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative</span></span><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id25">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative</span></span><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
 <dd><p>Return the cumulative raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#cumulativerst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id29">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative_sediment_segments</span></span><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id26">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative_sediment_segments</span></span><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
 <dd><p>Return the cumulative_sediment_segments table.</p>
 <p>For documentation, see <span class="xref std std-ref">here</span>.
 For explanation on column variables of dataframe: see
@@ -1390,8 +1569,8 @@ For explanation on column variables of dataframe: see
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id30">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ls</span></span><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id27">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ls</span></span><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
 <dd><p>Return the LS raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#lsmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
@@ -1411,106 +1590,98 @@ of routing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev120.dev+g57c0531b7)">geopandas.GeoDataFrame</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev138.dev+gf8fa2d710)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id31">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing</span></span><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id28">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing</span></span><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
 <dd><p>Return the routing table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#routingtxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id32">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing_missing</span></span><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id29">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing_missing</span></span><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
 <dd><p>Return the routing_missing table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#missingroutingtxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id33">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rusle</span></span><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id30">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rusle</span></span><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
 <dd><p>Return the RUSLE raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#ruslerst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id34">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_export</span></span><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id31">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_export</span></span><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
 <dd><p>Return the sedi_export raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sediexportrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id35">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_in</span></span><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id32">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_in</span></span><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
 <dd><p>Return the sedi_in raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sediinrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id36">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_out</span></span><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id33">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_out</span></span><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
 <dd><p>Return the sedi_out raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sedioutrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id37">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_in</span></span><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id34">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_in</span></span><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
 <dd><p>Return the sedtil_in raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sedtilinrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id38">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_out</span></span><a class="headerlink" href="#id38" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id35">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_out</span></span><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
 <dd><p>Return the sedtil_out raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sedtiloutrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id39">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewer_in</span></span><a class="headerlink" href="#id39" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id36">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewer_in</span></span><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
 <dd><p>Return the sewer_in raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sewerinrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sinks">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sinks</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sinks" title="Link to this definition"></a></dt>
-<dd><p>Return the sinks raster.</p>
-<p>Sinks is computed as the sum of sewer_in and sedi_export.
-This represents the total sediment load reaching sink points.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="id40">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#id40" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id37">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
 <dd><p>Return the slope raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#slopemap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id41">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_kg</span></span><a class="headerlink" href="#id41" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id38">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_kg</span></span><a class="headerlink" href="#id38" title="Link to this definition"></a></dt>
 <dd><p>Return the tileros_kg raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#tileroskgrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id42">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_mm</span></span><a class="headerlink" href="#id42" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id39">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_mm</span></span><a class="headerlink" href="#id39" title="Link to this definition"></a></dt>
 <dd><p>Return the tileros_mm raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#tilerosmmrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id43">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment</span></span><a class="headerlink" href="#id43" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id40">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment</span></span><a class="headerlink" href="#id40" title="Link to this definition"></a></dt>
 <dd><p>Return the total_sediment table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#totalsedimenttxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.
 For explanation on column variables of dataframe: see
@@ -1518,8 +1689,8 @@ For explanation on column variables of dataframe: see
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id44">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment_segments</span></span><a class="headerlink" href="#id44" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id41">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment_segments</span></span><a class="headerlink" href="#id41" title="Link to this definition"></a></dt>
 <dd><p>Return the total_sediment_segments table.</p>
 <p>For documentation, see <span class="xref std std-ref">here</span>.
 For explanation on column variables of dataframe: see
@@ -1527,22 +1698,22 @@ For explanation on column variables of dataframe: see
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id45">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">uparea</span></span><a class="headerlink" href="#id45" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id42">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">uparea</span></span><a class="headerlink" href="#id42" title="Link to this definition"></a></dt>
 <dd><p>Return the uparea raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#upareamap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id46">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_kg</span></span><a class="headerlink" href="#id46" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id43">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_kg</span></span><a class="headerlink" href="#id43" title="Link to this definition"></a></dt>
 <dd><p>Return the watereros_kg raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#watereroskgrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id47">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_mm</span></span><a class="headerlink" href="#id47" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id44">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_mm</span></span><a class="headerlink" href="#id44" title="Link to this definition"></a></dt>
 <dd><p>Return the watereros_mm raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#watererosmmrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
@@ -1697,6 +1868,29 @@ values in this raster are positive (inverse of watereros)</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.create_id_raster_for_highest_value_arr">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">create_id_raster_for_highest_value_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resmap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#create_id_raster_for_highest_value_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.create_id_raster_for_highest_value_arr" title="Link to this definition"></a></dt>
+<dd><p>Create a raster with an id value assigned to the highest value in the raster”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – with floats</p></li>
+<li><p><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Sequential number of the catchment</p></li>
+<li><p><strong>profile</strong> (<em>rasterio profile</em>) – Rasterio profile of the sedout raster</p></li>
+<li><p><strong>resmap</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Folder path to write results to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>rst_id</strong> (<em>str</em>) – File path of the raster with id for highest value in raster</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – Maximum value in raster</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.define_subcatchments_saga">
 <span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">define_subcatchments_saga</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">txt_routing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rasterprop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#define_subcatchments_saga"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.define_subcatchments_saga" title="Link to this definition"></a></dt>
 <dd><p>Define subcatchment for several points defined with a unique id in the
@@ -1759,6 +1953,29 @@ id equal         to id sink in rst_in</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a>,</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.identify_individual_priority_catchments">
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">identify_individual_priority_catchments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr_sedi_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">txt_routing_non_river</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/pywatemsedem/pywatemsedem')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#identify_individual_priority_catchments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.identify_individual_priority_catchments" title="Link to this definition"></a></dt>
+<dd><p>identify the individual priority catchments and add them to a raster
+and shapes dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr_sedi_out</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – numpy array format of sedout raster</p></li>
+<li><p><strong>rst_profile</strong> (<em>rasterio profile</em>) – rasterio profile of the sedout raster</p></li>
+<li><p><strong>txt_routing_nonriver</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File path of the WaTEM/SEDEM routing table</p></li>
+<li><p><strong>nmax</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – maximum number of catchment</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>subcatchmentpriority</strong> – catchment shapes with number of catchment</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v1.1.2.dev138.dev+gf8fa2d710)">geopandas.GeoDataFrame</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1891,7 +2108,7 @@ certain extent</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.map_rank_sediment_loads">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">map_rank_sediment_loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_sedi_export</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rank.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_endpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#map_rank_sediment_loads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.map_rank_sediment_loads" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">map_rank_sediment_loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rst_sedi_export</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rank.shp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_endpoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#map_rank_sediment_loads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.map_rank_sediment_loads" title="Link to this definition"></a></dt>
 <dd><p>Rank the sediment loads in sedi_export (and sewer_in) from high to low</p>
 <p>This function uses the rank output raster/dataframe of
 <a class="reference internal" href="#pywatemsedem.io.modeloutput.identify_rank_sediment_loads" title="pywatemsedem.io.modeloutput.identify_rank_sediment_loads"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.identify_rank_sediment_loads()</span></code></a>
@@ -1903,7 +2120,6 @@ to map a vector point file with information on rank, sediment output.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rst_sedi_export</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File path of WaTEM/SEDEM sedi_export raster.</p></li>
 <li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – See <a class="reference internal" href="#pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks" title="pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks"><code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.io.modeloutput.compute_cumulative_loads_in_sinks()</span></code></a></p></li>
-<li><p><strong>epsg</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – EPSG code</p></li>
 <li><p><strong>vct_out</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File path of output vector.</p></li>
 <li><p><strong>rst_endpoints</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>default None</em>) – File path to WaTEM/SEDEM sewer_in raster (endpoints in pywatemsedem).</p></li>
 <li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – “kg” or “ton”</p></li>
@@ -1943,13 +2159,6 @@ x is determined by threshold.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.5)">pandas.DataFrame</a></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#FileNotFoundError" title="(in Python v3.13)"><strong>FileNotFoundError</strong></a> – If file does not exist</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If file exists but is empty or invalid</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#RuntimeError" title="(in Python v3.13)"><strong>RuntimeError</strong></a> – For other reading/parsing issues</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -2016,7 +2225,7 @@ this rectangular geographical extent</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.run_saga_make_routing_shp_cmd">
-<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">run_saga_make_routing_shp_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt_routing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_prckrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rstparams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#run_saga_make_routing_shp_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.run_saga_make_routing_shp_cmd" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pywatemsedem.io.modeloutput.</span></span><span class="sig-name descname"><span class="pre">run_saga_make_routing_shp_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt_routing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rst_prckrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vct_out</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/modeloutput.html#run_saga_make_routing_shp_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.modeloutput.run_saga_make_routing_shp_cmd" title="Link to this definition"></a></dt>
 <dd><p>Run the saga make routing shape command. This command makes from a pywatemsedem
 routing table and a pywatemsedem ‘perceelskaart’ a routing shapfile
 representation.</p>

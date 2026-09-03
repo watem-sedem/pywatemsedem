@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.testing &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem.testing &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -105,11 +105,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_compare_folder</span><span class="p">(</span>
     <span class="n">folder_benchmark</span><span class="p">,</span>
     <span class="n">folder_output</span><span class="p">,</span>
-    <span class="n">year</span><span class="o">=</span><span class="s2">&quot;2018&quot;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;molenbeek&quot;</span><span class="p">,</span>
-    <span class="n">scenario</span><span class="o">=</span><span class="s2">&quot;scenario_1&quot;</span><span class="p">,</span>
+    <span class="n">year</span><span class="o">=</span><span class="s2">"2018"</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"molenbeek"</span><span class="p">,</span>
+    <span class="n">scenario</span><span class="o">=</span><span class="s2">"scenario_1"</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare the setup of the folder/file structure</span>
+<span class="w">    </span><span class="sd">"""Compare the setup of the folder/file structure</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -119,7 +119,7 @@
 <span class="sd">    checks</span>
 <span class="sd">    which files/folders, specific functions are defined to test the data</span>
 <span class="sd">    content.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Check main folder is user defined name</span>
     <span class="k">assert</span> <span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_benchmark</span><span class="p">)</span> <span class="o">==</span> <span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_output</span><span class="p">)</span>
@@ -128,28 +128,28 @@
     <span class="k">assert</span> <span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">issuperset</span><span class="p">(</span>
         <span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="p">{</span><span class="s2">&quot;Data_Bekken&quot;</span><span class="p">,</span> <span class="n">scenario</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="p">{</span><span class="s2">"Data_Bekken"</span><span class="p">,</span> <span class="n">scenario</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span><span class="p">))</span>
 
     <span class="c1"># Check scenario subfolders</span>
     <span class="k">assert</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_subdir_names</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span><span class="p">))</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span>
-        <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">),</span> <span class="s2">&quot;modelinput&quot;</span><span class="p">,</span> <span class="s2">&quot;modeloutput&quot;</span><span class="p">,</span> <span class="s2">&quot;postprocessing&quot;</span><span class="p">}</span>
+        <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">),</span> <span class="s2">"modelinput"</span><span class="p">,</span> <span class="s2">"modeloutput"</span><span class="p">,</span> <span class="s2">"postprocessing"</span><span class="p">}</span>
     <span class="p">)</span>
 
-    <span class="c1"># check &#39;modelinput&#39; files</span>
+    <span class="c1"># check 'modelinput' files</span>
     <span class="k">assert</span> <span class="nb">sorted</span><span class="p">(</span>
-        <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">&quot;modelinput&quot;</span><span class="p">)</span>
-    <span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">&quot;modelinput&quot;</span><span class="p">))</span>
+        <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">"modelinput"</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">"modelinput"</span><span class="p">))</span>
 
-    <span class="c1"># check &#39;modeloutput&#39; files</span>
+    <span class="c1"># check 'modeloutput' files</span>
     <span class="k">assert</span> <span class="nb">sorted</span><span class="p">(</span>
-        <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">&quot;modeloutput&quot;</span><span class="p">)</span>
-    <span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">&quot;modeloutput&quot;</span><span class="p">))</span>
+        <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">"modeloutput"</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="s2">"modeloutput"</span><span class="p">))</span>
 
-    <span class="c1"># check &#39;Data_bekken&#39; files</span>
-    <span class="k">assert</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">&quot;Data_Bekken&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span>
-        <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">&quot;Data_Bekken&quot;</span><span class="p">)</span>
+    <span class="c1"># check 'Data_bekken' files</span>
+    <span class="k">assert</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">"Data_Bekken"</span><span class="p">))</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="s2">"Data_Bekken"</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="c1"># check &#39;year&#39; files</span>
+    <span class="c1"># check 'year' files</span>
     <span class="k">assert</span> <span class="nb">sorted</span><span class="p">(</span>
         <span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">))</span>
     <span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_get_filenames</span><span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)))</span>
@@ -158,13 +158,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_compare_rst</span><span class="p">(</span>
     <span class="n">folder_benchmark</span><span class="p">,</span>
     <span class="n">folder_output</span><span class="p">,</span>
-    <span class="n">year</span><span class="o">=</span><span class="s2">&quot;2018&quot;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;molenbeek&quot;</span><span class="p">,</span>
-    <span class="n">scenario</span><span class="o">=</span><span class="s2">&quot;scenario_1&quot;</span><span class="p">,</span>
-    <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">,</span>
-    <span class="n">to_check_folders</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;modelinput&quot;</span><span class="p">,</span> <span class="s2">&quot;modeloutput&quot;</span><span class="p">],</span>
+    <span class="n">year</span><span class="o">=</span><span class="s2">"2018"</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"molenbeek"</span><span class="p">,</span>
+    <span class="n">scenario</span><span class="o">=</span><span class="s2">"scenario_1"</span><span class="p">,</span>
+    <span class="n">ext</span><span class="o">=</span><span class="s2">".rst"</span><span class="p">,</span>
+    <span class="n">to_check_folders</span><span class="o">=</span><span class="p">[</span><span class="s2">"modelinput"</span><span class="p">,</span> <span class="s2">"modeloutput"</span><span class="p">],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;rst files in input and outfolder should be the same&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""rst files in input and outfolder should be the same"""</span>
     <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">to_check_folders</span><span class="p">:</span>
         <span class="n">_compare_rst_folder</span><span class="p">(</span>
             <span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="n">folder</span><span class="p">,</span>
@@ -173,32 +173,32 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_compare_rst_folder</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare RST files in two folders&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_rst_folder</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">".rst"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compare RST files in two folders"""</span>
 
-    <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">ref</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">"*</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">):</span>
 
         <span class="c1"># adjust the numerical tolerance as function of the data; cumulative</span>
         <span class="c1"># data need to have more relative tolerance</span>
         <span class="c1"># TODO sgobeyn/daanr - revise these categories</span>
         <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;WATEREROS (mm per gridcel)</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;RUSLE</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;Capacity</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SediExport_kg</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SediIn_kg</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SLOPE</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"WATEREROS (mm per gridcel)</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"RUSLE</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Capacity</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SediExport_kg</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SediIn_kg</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SLOPE</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-3</span>
-        <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;WATEREROS (kg per gridcel)</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"WATEREROS (kg per gridcel)</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">]:</span>
             <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-3</span>
         <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;LS</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;AspectMap</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;sewer_in</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;cumulative</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;UPAREA</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SediOut_kg</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"LS</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"AspectMap</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"sewer_in</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"cumulative</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"UPAREA</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SediOut_kg</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-8</span>
         <span class="k">else</span><span class="p">:</span>
@@ -214,23 +214,23 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_compare_table</span><span class="p">(</span>
     <span class="n">folder_benchmark</span><span class="p">,</span>
     <span class="n">folder_output</span><span class="p">,</span>
-    <span class="n">year</span><span class="o">=</span><span class="s2">&quot;2018&quot;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;molenbeek&quot;</span><span class="p">,</span>
-    <span class="n">scenario</span><span class="o">=</span><span class="s2">&quot;scenario_1&quot;</span><span class="p">,</span>
-    <span class="n">to_check_folders</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;modelinput&quot;</span><span class="p">,</span> <span class="s2">&quot;modeloutput&quot;</span><span class="p">],</span>
+    <span class="n">year</span><span class="o">=</span><span class="s2">"2018"</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"molenbeek"</span><span class="p">,</span>
+    <span class="n">scenario</span><span class="o">=</span><span class="s2">"scenario_1"</span><span class="p">,</span>
+    <span class="n">to_check_folders</span><span class="o">=</span><span class="p">[</span><span class="s2">"modelinput"</span><span class="p">,</span> <span class="s2">"modeloutput"</span><span class="p">],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;rst files in input and outfolder should be the same&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""rst files in input and outfolder should be the same"""</span>
 
     <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">to_check_folders</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.txt&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Total sediment.txt&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="p">(</span><span class="n">folder_benchmark</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">"*.txt"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"Total sediment.txt"</span><span class="p">:</span>
                 <span class="n">equal_total_sediment</span><span class="p">(</span>
                     <span class="n">file_name</span><span class="p">,</span>
                     <span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="n">folder</span> <span class="o">/</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
                     <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
                     <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Total sediment VHA.txt&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"Total sediment VHA.txt"</span><span class="p">:</span>
                 <span class="n">equal_table</span><span class="p">(</span>
                     <span class="n">file_name</span><span class="p">,</span>
                     <span class="p">(</span><span class="n">folder_output</span> <span class="o">/</span> <span class="n">name</span> <span class="o">/</span> <span class="n">scenario</span> <span class="o">/</span> <span class="n">folder</span> <span class="o">/</span> <span class="n">file_name</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
@@ -251,7 +251,7 @@
 <div class="viewcode-block" id="serialize_process_raster">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.serialize_process_raster">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">serialize_process_raster</span><span class="p">(</span><span class="n">rst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Serializer function for rasters</span>
+<span class="w">    </span><span class="sd">"""Serializer function for rasters</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -262,8 +262,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    function:</span>
 <span class="sd">        Return function that processes numpy array of pywatemsedem raster.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="s2">&quot;perceelskaart&quot;</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="s2">"perceelskaart"</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">rst</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">process_arr_wsperceelskaart</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">process_arr_default</span></div>
@@ -273,7 +273,7 @@
 <div class="viewcode-block" id="process_arr_wsperceelskaart">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.process_arr_wsperceelskaart">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_arr_wsperceelskaart</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove unique parcels id&#39;s before comparing rasters</span>
+<span class="w">    </span><span class="sd">"""Remove unique parcels id's before comparing rasters</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -286,7 +286,7 @@
 <span class="sd">    arr: np.ndarray</span>
 <span class="sd">        Processed WaTEM/SEDEM perceelskaart array to preprocess before moving to an</span>
 <span class="sd">        assert statement.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">arr</span></div>
 
@@ -295,7 +295,7 @@
 <div class="viewcode-block" id="process_arr_default">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.process_arr_default">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_arr_default</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy function for processing arr</span>
+<span class="w">    </span><span class="sd">"""Dummy function for processing arr</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -306,7 +306,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    arr: np.ndarray</span>
 <span class="sd">        Equal to input.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">arr</span></div>
 
 
@@ -314,7 +314,7 @@
 <div class="viewcode-block" id="equal_ini">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_ini">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">equal_ini</span><span class="p">(</span><span class="n">inifile_1</span><span class="p">,</span> <span class="n">inifile_2</span><span class="p">,</span> <span class="n">skip_lines</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if settings.ini files are the same.</span>
+<span class="w">    </span><span class="sd">"""Check if settings.ini files are the same.</span>
 
 <span class="sd">    Ignore difference in filepath and date</span>
 <span class="sd">    lines [1, 4, 5, 10] contain paths and dates which are not compared</span>
@@ -326,7 +326,7 @@
 <span class="sd">    inifile_2: str or pathlib.Path</span>
 <span class="sd">        File path of first ini-file.</span>
 <span class="sd">    skip_lines: list</span>
-<span class="sd">        Lines to skip in ini-file&quot;&quot;&quot;</span>
+<span class="sd">        Lines to skip in ini-file"""</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inifile_1</span><span class="p">)</span> <span class="k">as</span> <span class="n">ini_1</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inifile_2</span><span class="p">)</span> <span class="k">as</span> <span class="n">ini_2</span><span class="p">:</span>
             <span class="n">ini_content_1</span> <span class="o">=</span> <span class="p">[</span>
@@ -347,7 +347,7 @@
 <div class="viewcode-block" id="equal_table">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_table">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">equal_table</span><span class="p">(</span><span class="n">txt_table_file_1</span><span class="p">,</span> <span class="n">txt_table_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">skiplines</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if table data are the same</span>
+<span class="w">    </span><span class="sd">"""Check if table data are the same</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -361,9 +361,9 @@
 <span class="sd">        See :func:`numpy.testing.assert_allclose`.</span>
 <span class="sd">    skiplines: int</span>
 <span class="sd">        See :func:`pandas.read_csv`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tbl_1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">txt_table_file_1</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiplines</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">tbl_2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">txt_table_file_2</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiplines</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">tbl_1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">txt_table_file_1</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiplines</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">tbl_2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">txt_table_file_2</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="n">skiplines</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">pd</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_frame_equal</span><span class="p">(</span><span class="n">tbl_1</span><span class="p">,</span> <span class="n">tbl_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span></div>
 
 
@@ -373,7 +373,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">equal_total_sediment</span><span class="p">(</span>
     <span class="n">txt_total_sediment_file_1</span><span class="p">,</span> <span class="n">txt_total_sediment_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if total sediment output data of two files are the same</span>
+<span class="w">    </span><span class="sd">"""Check if total sediment output data of two files are the same</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -385,7 +385,7 @@
 <span class="sd">        See :func:`numpy.testing.assert_allclose`.</span>
 <span class="sd">    atol: float</span>
 <span class="sd">        See :func:`numpy.testing.assert_allclose`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">sed1</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="n">txt_total_sediment_file_1</span><span class="p">)</span>
     <span class="n">sed2</span> <span class="o">=</span> <span class="n">load_total_sediment_file</span><span class="p">(</span><span class="n">txt_total_sediment_file_2</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sed1</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">sed2</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
@@ -396,7 +396,7 @@
 <div class="viewcode-block" id="equal_rst">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.equal_rst">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if content of raster files are equal.</span>
+<span class="w">    </span><span class="sd">"""Check if content of raster files are equal.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -408,11 +408,11 @@
 <span class="sd">        See :func:`numpy.testing.assert_allclose`.</span>
 <span class="sd">    atol: float</span>
 <span class="sd">        See :func:`numpy.testing.assert_allclose`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">condition</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">check_equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Content </span><span class="si">{</span><span class="n">rst_file_1</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2"> not equal to content &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rst_file_2</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Content </span><span class="si">{</span><span class="n">rst_file_1</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2"> not equal to content "</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rst_file_2</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">."</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
@@ -420,7 +420,7 @@
 <div class="viewcode-block" id="check_equal_rst">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.check_equal_rst">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_equal_rst</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">,</span> <span class="n">rst_file_2</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if content of raster files are equal.</span>
+<span class="w">    </span><span class="sd">"""Check if content of raster files are equal.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -433,7 +433,7 @@
 <span class="sd">    atol: float</span>
 <span class="sd">        See :func:`numpy.testing.assert_allclose`.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">arr1</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">rst_file_1</span><span class="p">)</span>
     <span class="n">arr2</span><span class="p">,</span> <span class="n">profile</span> <span class="o">=</span> <span class="n">load_raster</span><span class="p">(</span><span class="n">rst_file_2</span><span class="p">)</span>
 
@@ -444,17 +444,17 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_subdir_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
     <span class="k">return</span> <span class="nb">set</span><span class="p">([</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()])</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_filenames</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
     <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="n">item</span><span class="o">.</span><span class="n">name</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="s2">&quot;.rst&quot;</span><span class="p">,</span> <span class="s2">&quot;.shp&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">".tif"</span><span class="p">,</span> <span class="s2">".rst"</span><span class="p">,</span> <span class="s2">".shp"</span><span class="p">])</span>
         <span class="p">]</span>
     <span class="p">)</span>
 
@@ -466,7 +466,7 @@
     <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two WaTEM/SEDEM rasters</span>
+<span class="w">    </span><span class="sd">"""Compare two WaTEM/SEDEM rasters</span>
 
 <span class="sd">    Check if they are equal, and if not, raise an Assertion with relevant statistics</span>
 <span class="sd">    about difference. The statistics are dependent on the substansive content of the</span>
@@ -481,24 +481,24 @@
 <span class="sd">        File path of raster from benchmark simulation</span>
 <span class="sd">    rtol: float</span>
 <span class="sd">    atol: float</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">condition</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span> <span class="o">=</span> <span class="n">check_equal_rst</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">rst_benchmark</span><span class="p">,</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;perceelskaart&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"perceelskaart"</span><span class="p">]:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">compute_difference_table_ws_prckrt_rasters</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;c-factor&quot;</span><span class="p">,</span> <span class="s2">&quot;ktc&quot;</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"c-factor"</span><span class="p">,</span> <span class="s2">"ktc"</span><span class="p">]:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">compute_difference_table_ws_rasters</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;buffers&quot;</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"buffers"</span><span class="p">]:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">compute_difference_table_ws_buffers</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;``tag`` </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> not known.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"``tag`` </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> not known."</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;WaTEM/SEDEM &#39;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&#39; rasters are not equal. Difference statistics table: &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"WaTEM/SEDEM '</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">' rasters are not equal. Difference statistics table: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -506,7 +506,7 @@
 <div class="viewcode-block" id="compute_difference_table_ws_buffers">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.compute_difference_table_ws_buffers">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_difference_table_ws_buffers</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">buf_idext</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">14</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute table whcih indicates difference between two WaTEM/SEDEM buffer raster</span>
+<span class="w">    </span><span class="sd">"""Compute table whcih indicates difference between two WaTEM/SEDEM buffer raster</span>
 <span class="sd">    files.</span>
 
 
@@ -522,7 +522,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    str:</span>
 <span class="sd">        String format of difference dataframe table.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n_buffers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">arr</span> <span class="o">&lt;=</span> <span class="n">buf_idext</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">n_buffers_benchmark</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr_benchmark</span><span class="p">[</span><span class="n">arr_benchmark</span> <span class="o">&lt;=</span> <span class="n">buf_idext</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -536,8 +536,8 @@
             <span class="p">[</span><span class="n">n_buffers</span><span class="p">,</span> <span class="n">n_buffers_benchmark</span><span class="p">],</span>
             <span class="p">[</span><span class="n">n_buffers_exid</span><span class="p">,</span> <span class="n">n_buffers_exid_benchmark</span><span class="p">],</span>
         <span class="p">],</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;benchmark&quot;</span><span class="p">],</span>
-        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;n_buf_id&quot;</span><span class="p">,</span> <span class="s2">&quot;n_buf_exid&quot;</span><span class="p">],</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"test"</span><span class="p">,</span> <span class="s2">"benchmark"</span><span class="p">],</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"n_buf_id"</span><span class="p">,</span> <span class="s2">"n_buf_exid"</span><span class="p">],</span>
     <span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span></div>
 
 
@@ -545,7 +545,7 @@
 <div class="viewcode-block" id="compute_difference_table_ws_rasters">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.testing.compute_difference_table_ws_rasters">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_difference_table_ws_rasters</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">arr_benchmark</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute table whcih indicates difference between two WaTEM/SEDEM raster files.</span>
+<span class="w">    </span><span class="sd">"""Compute table whcih indicates difference between two WaTEM/SEDEM raster files.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -556,11 +556,11 @@
 <span class="sd">    -------</span>
 <span class="sd">    str:</span>
 <span class="sd">        String format of difference dataframe table.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">arr_diff</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">-</span> <span class="n">arr_benchmark</span>
 
     <span class="k">return</span> <span class="p">(</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr_diff</span><span class="p">[</span><span class="n">arr_diff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;diff_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr_diff</span><span class="p">[</span><span class="n">arr_diff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">"diff_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">"</span><span class="p">])</span>
         <span class="o">.</span><span class="n">describe</span><span class="p">()</span>
         <span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
     <span class="p">)</span></div>
@@ -573,18 +573,18 @@
     <span class="n">arr</span><span class="p">,</span>
     <span class="n">arr_benchmark</span><span class="p">,</span>
     <span class="n">dict_translation</span><span class="o">=</span><span class="p">{</span>
-        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;grass strips&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;pool&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;meadow&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;forest&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;infrastructure&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;river&quot;</span><span class="p">,</span>
-        <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;outside_domain&quot;</span><span class="p">,</span>
-        <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;agriculture&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">"grass strips"</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">5</span><span class="p">:</span> <span class="s2">"pool"</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">4</span><span class="p">:</span> <span class="s2">"meadow"</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">"forest"</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="s2">"infrastructure"</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">"river"</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="s2">"outside_domain"</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s2">"agriculture"</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="n">res</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute table whcih indicates difference between two WaTEM/SEDEM</span>
+<span class="w">    </span><span class="sd">"""Compute table whcih indicates difference between two WaTEM/SEDEM</span>
 <span class="sd">    perceelskaart raster files.</span>
 
 <span class="sd">    Parameters</span>
@@ -596,17 +596,17 @@
 <span class="sd">    -------</span>
 <span class="sd">    str:</span>
 <span class="sd">        String format of difference dataframe table.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;benchmark&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr_benchmark</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;benchmark&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;benchmark&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="sd">    """</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"left"</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"test"</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"benchmark"</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr_benchmark</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"test"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"benchmark"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"benchmark"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dict_translation</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;area (ha)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">100</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;benchmark&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s2">&quot;area (ha)&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">})</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"area (ha)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">100</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">"test"</span><span class="p">,</span> <span class="s2">"benchmark"</span><span class="p">])</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s2">"area (ha)"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">})</span>
 
-    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;area (ha)&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"area (ha)"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span></div>
 
 </pre></div>
 

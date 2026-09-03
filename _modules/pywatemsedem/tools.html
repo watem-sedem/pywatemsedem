@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.tools &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem.tools &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -93,11 +93,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.tools</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;tools.py</span>
+<span></span><span class="sd">"""tools.py</span>
 
 <span class="sd">This module contains some general purpose functions.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
@@ -112,7 +112,7 @@
 <div class="viewcode-block" id="format_forced_routing">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.format_forced_routing">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">format_forced_routing</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">minmax</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">trajectory_routing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format forced routing LineString geometry in a dataframe writable to the ini-file</span>
+<span class="w">    </span><span class="sd">"""Format forced routing LineString geometry in a dataframe writable to the ini-file</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -140,7 +140,7 @@
 <span class="sd">        - fromrow (int): source row</span>
 <span class="sd">        - tocol (int): target column</span>
 <span class="sd">        - torow (int): target row</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">lst_df</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">:</span>
@@ -150,11 +150,11 @@
             <span class="p">)</span>
         <span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">lst_df</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromcol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromrow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromY&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;tocol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;torow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toY&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromcol&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;tocol&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromrow&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;torow&quot;</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"fromcol"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">"fromX"</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"fromrow"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">"fromY"</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"tocol"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">"toX"</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"torow"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">"toY"</span><span class="p">])</span> <span class="o">/</span> <span class="n">resolution</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"fromcol"</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">"tocol"</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"fromrow"</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s2">"torow"</span><span class="p">])</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">cond</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
@@ -163,7 +163,7 @@
 <div class="viewcode-block" id="reformat_LineString_to_source_targetf">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.reformat_LineString_to_source_targetf">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reformat_LineString_to_source_targetf</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">trajectory_routing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reformat single LineString-routing to source/target dataframe format</span>
+<span class="w">    </span><span class="sd">"""Reformat single LineString-routing to source/target dataframe format</span>
 
 <span class="sd">    The routing can be organised via a trajectory or a jump:</span>
 
@@ -187,19 +187,19 @@
 <span class="sd">        - fromY (float): source Y-coordinate</span>
 <span class="sd">        - toX (float): target X-coordinate</span>
 <span class="sd">        - toY (float): target Y-coordinate</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">trajectory_routing</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;fromX&quot;</span><span class="p">,</span> <span class="s2">&quot;fromY&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">]</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;toY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;fromY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[[</span><span class="s2">"fromX"</span><span class="p">,</span> <span class="s2">"fromY"</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">coordinates</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"toX"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"toY"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"toX"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"fromX"</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"toY"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"fromY"</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">,</span> <span class="s2">&quot;fromY&quot;</span><span class="p">,</span> <span class="s2">&quot;toX&quot;</span><span class="p">,</span> <span class="s2">&quot;toY&quot;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fromX&quot;</span><span class="p">,</span> <span class="s2">&quot;fromY&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;toX&quot;</span><span class="p">,</span> <span class="s2">&quot;toY&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"fromX"</span><span class="p">,</span> <span class="s2">"fromY"</span><span class="p">,</span> <span class="s2">"toX"</span><span class="p">,</span> <span class="s2">"toY"</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s2">"fromX"</span><span class="p">,</span> <span class="s2">"fromY"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s2">"toX"</span><span class="p">,</span> <span class="s2">"toY"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">coordinates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
 
@@ -208,7 +208,7 @@
 <div class="viewcode-block" id="zip_folder">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.zip_folder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">zip_folder</span><span class="p">(</span><span class="n">folder2zip</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Zip a folder</span>
+<span class="w">    </span><span class="sd">"""Zip a folder</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -218,17 +218,17 @@
 <span class="sd">        File path and name of the output zip-file (optional). If not given the zip</span>
 <span class="sd">        file will have the same name as the folder and it will be stored in</span>
 <span class="sd">        the same place.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="n">folder2zip</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;zip&quot;</span><span class="p">,</span> <span class="n">folder2zip</span><span class="p">)</span></div>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">make_archive</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">"zip"</span><span class="p">,</span> <span class="n">folder2zip</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="get_df_area_unique_values_array">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.get_df_area_unique_values_array">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_df_area_unique_values_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the total area for every value in an array</span>
+<span class="w">    </span><span class="sd">"""Calculate the total area for every value in an array</span>
 
 <span class="sd">    The area for a value is calculated as the amount of cells with</span>
 <span class="sd">    a certain value * cellsize * cellsize.</span>
@@ -248,12 +248,12 @@
 <span class="sd">        - *values* (float): all values within the raster</span>
 <span class="sd">        - *area* (float): the area of every value in the raster</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">vals</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">areas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">resolution</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">areas</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"values"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"area"</span><span class="p">]</span> <span class="o">=</span> <span class="n">areas</span>
     <span class="k">return</span> <span class="n">df</span></div>
 
 
@@ -261,7 +261,7 @@
 <div class="viewcode-block" id="check_courant_criterium">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.check_courant_criterium">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_courant_criterium</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.75</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the courant criterium, see</span>
+<span class="w">    </span><span class="sd">"""Check the courant criterium, see</span>
 <span class="sd">    https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition</span>
 
 <span class="sd">    Parameters</span>
@@ -281,15 +281,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    time_step_posterior: float</span>
 <span class="sd">        Posterior time step of calculations (s)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dist_per_calc_step</span> <span class="o">=</span> <span class="n">velocity</span> <span class="o">*</span> <span class="n">time_step</span>
     <span class="k">if</span> <span class="n">dist_per_calc_step</span> <span class="o">&gt;</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">:</span>
         <span class="n">time_step_posterior</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">resolution</span> <span class="o">/</span> <span class="n">velocity</span><span class="p">))</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Time step of </span><span class="si">{</span><span class="n">time_step</span><span class="si">}</span><span class="s2"> seconds too large for a&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;stream velocity of </span><span class="si">{</span><span class="n">velocity</span><span class="si">}</span><span class="s2"> &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;m/s (Courant criterium) lowering to resolution divided by &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;the velocity (</span><span class="si">{</span><span class="n">time_step_posterior</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="sa">f</span><span class="s2">"Time step of </span><span class="si">{</span><span class="n">time_step</span><span class="si">}</span><span class="s2"> seconds too large for a"</span>
+            <span class="sa">f</span><span class="s2">"stream velocity of </span><span class="si">{</span><span class="n">velocity</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="sa">f</span><span class="s2">"m/s (Courant criterium) lowering to resolution divided by "</span>
+            <span class="sa">f</span><span class="s2">"the velocity (</span><span class="si">{</span><span class="n">time_step_posterior</span><span class="si">}</span><span class="s2">)."</span>
         <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -301,7 +301,7 @@
 <div class="viewcode-block" id="package_resource">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.tools.package_resource">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">package_resource</span><span class="p">(</span><span class="n">folder_paths</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide backward compatible package resources load function</span>
+<span class="w">    </span><span class="sd">"""Provide backward compatible package resources load function</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -309,17 +309,17 @@
 <span class="sd">        List of folders and subfolders to get resources from.</span>
 <span class="sd">    file_path : str</span>
 <span class="sd">        File name of the package resource.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">pkg_resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">resource_filename</span>
 
         <span class="k">return</span> <span class="n">resource_filename</span><span class="p">(</span>
-            <span class="s2">&quot;pywatemsedem&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_paths</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="s2">"pywatemsedem"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_paths</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
 
-        <span class="k">return</span> <span class="n">files</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pywatemsedem.</span><span class="si">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_paths</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">files</span><span class="p">(</span><span class="sa">f</span><span class="s2">"pywatemsedem.</span><span class="si">{</span><span class="s1">'.'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_paths</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></div>
 
 </pre></div>
 

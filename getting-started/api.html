@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem API &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem API &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -152,7 +152,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">inputdata_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;..&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;tests&quot;</span> <span class="o">/</span>  <span class="s2">&quot;data&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">inputdata_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">".."</span><span class="p">)</span> <span class="o">/</span> <span class="s2">".."</span> <span class="o">/</span> <span class="s2">"tests"</span> <span class="o">/</span>  <span class="s2">"data"</span>
 </pre></div>
 </div>
 </div>
@@ -181,8 +181,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WATEMSEDEM&quot;</span><span class="p">))</span>
-<span class="n">watem_sedem_binary</span> <span class="o">=</span> <span class="s2">&quot;watem_sedem&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">watem_sedem_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"WATEMSEDEM"</span><span class="p">))</span>
+<span class="n">watem_sedem_binary</span> <span class="o">=</span> <span class="s2">"watem_sedem"</span>
 </pre></div>
 </div>
 </div>
@@ -210,7 +210,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">name_catchment</span> <span class="o">=</span> <span class="s1">&#39;langegracht&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">name_catchment</span> <span class="o">=</span> <span class="s1">'langegracht'</span>
 </pre></div>
 </div>
 </div>
@@ -219,7 +219,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rst_dtm</span> <span class="o">=</span> <span class="n">inputdata_folder</span>  <span class="o">/</span> <span class="s2">&quot;dtm.tif&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rst_dtm</span> <span class="o">=</span> <span class="n">inputdata_folder</span>  <span class="o">/</span> <span class="s2">"dtm.tif"</span>
 </pre></div>
 </div>
 </div>
@@ -227,7 +227,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vct_catchment</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;catchm_langegracht.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vct_catchment</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"catchm_langegracht.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -281,8 +281,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rst_kfactor</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;K3.tif&quot;</span>
-<span class="n">rst_landuse</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;basemap_landuse.tif&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rst_kfactor</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"K3.tif"</span>
+<span class="n">rst_landuse</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"basemap_landuse.tif"</span>
 </pre></div>
 </div>
 </div>
@@ -315,7 +315,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catchment</span><span class="o">.</span><span class="n">landuse</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;landuse.rst&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catchment</span><span class="o">.</span><span class="n">landuse</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"landuse.rst"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -327,10 +327,10 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vct_river</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;river.shp&quot;</span>
-<span class="n">vct_infra_poly</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;infrastructure.shp&quot;</span>
-<span class="n">vct_infra_line</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;roads.shp&quot;</span>
-<span class="n">vct_water</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;water.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vct_river</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"river.shp"</span>
+<span class="n">vct_infra_poly</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"infrastructure.shp"</span>
+<span class="n">vct_infra_line</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"roads.shp"</span>
+<span class="n">vct_water</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"water.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -428,7 +428,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">default_choices</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;userchoices.ini&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">default_choices</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"userchoices.ini"</span>
 </pre></div>
 </div>
 </div>
@@ -523,7 +523,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"parcels.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -629,7 +629,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">catchment</span><span class="p">,</span> <span class="mi">2019</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">choices</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"parcels.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -638,7 +638,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_grass_strips</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;grass_strips.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_grass_strips</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"grass_strips.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -646,7 +646,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;width&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">"width"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -705,7 +705,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">catchment</span><span class="p">,</span> <span class="mi">2019</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">choices</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"parcels.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -721,7 +721,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_buffers</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;buffers.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_buffers</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"buffers.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -779,10 +779,10 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
 
-<span class="n">f_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<span class="n">f_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"parcels.shp"</span>
 <span class="n">gdf_parcels</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">f_parcels</span><span class="p">)</span>
 
-<span class="n">gdf_parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf_parcels</span><span class="p">[</span><span class="s2">&quot;LANDUSE&quot;</span><span class="p">]</span><span class="o">==-</span><span class="mi">9999</span><span class="p">,</span> <span class="s2">&quot;C_reduct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">gdf_parcels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf_parcels</span><span class="p">[</span><span class="s2">"LANDUSE"</span><span class="p">]</span><span class="o">==-</span><span class="mi">9999</span><span class="p">,</span> <span class="s2">"C_reduct"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.8</span>
 </pre></div>
 </div>
 </div>
@@ -828,7 +828,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">catchment</span><span class="p">,</span> <span class="mi">2019</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">choices</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"parcels.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -844,7 +844,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_force_routing</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;force_routing.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_force_routing</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"force_routing.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -880,7 +880,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario_nr</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">catchment</span><span class="p">,</span> <span class="mi">2019</span><span class="p">,</span> <span class="n">scenario_nr</span><span class="p">,</span> <span class="n">choices</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">&quot;parcels.shp&quot;</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">vct_parcels</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="sa">r</span><span class="s2">"parcels.shp"</span>
 </pre></div>
 </div>
 </div>
@@ -896,7 +896,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_outlets</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">&quot;outlets.shp&quot;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scenario</span><span class="o">.</span><span class="n">vct_outlets</span> <span class="o">=</span> <span class="n">inputdata_folder</span> <span class="o">/</span> <span class="s2">"outlets.shp"</span>
 </pre></div>
 </div>
 </div>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.valid &mdash; pywatemsedem 1.3.0 documentation</title>
+  <title>pywatemsedem.io.valid &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=1f29e9d3"></script>
+      <script src="../../../_static/documentation_options.js?v=8f42358a"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -101,7 +101,7 @@
 <div class="viewcode-block" id="valid_boundaries">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_boundaries">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_boundaries</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if values are within specified boundaries.</span>
+<span class="w">    </span><span class="sd">"""Checks if values are within specified boundaries.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -122,43 +122,43 @@
 <span class="sd">    -------</span>
 <span class="sd">    bool</span>
 <span class="sd">        True if all values are within allowed boundaries.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">lower</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">upper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No lower or upper boundaries are defined, omitting boundary check&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"No lower or upper boundaries are defined, omitting boundary check"</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">tolerance</span> <span class="o">=</span> <span class="mf">0.0</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Tolerance should be numeric.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Tolerance should be numeric."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">tolerance</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Tolerance should be &gt;= 0.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Tolerance should be &gt;= 0."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">upper</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Upper boundary should be numeric.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Upper boundary should be numeric."</span><span class="p">)</span>
 
         <span class="n">effective_upper</span> <span class="o">=</span> <span class="n">upper</span> <span class="o">+</span> <span class="n">tolerance</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="n">effective_upper</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Values are higher than upper bound &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="n">upper</span><span class="si">}</span><span class="s2">&#39;) with tolerance (&#39;</span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+                <span class="sa">f</span><span class="s2">"Values are higher than upper bound "</span>
+                <span class="sa">f</span><span class="s2">"('</span><span class="si">{</span><span class="n">upper</span><span class="si">}</span><span class="s2">') with tolerance ('</span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">')"</span>
             <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Lower boundary should be numeric.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Lower boundary should be numeric."</span><span class="p">)</span>
 
         <span class="n">effective_lower</span> <span class="o">=</span> <span class="n">lower</span> <span class="o">-</span> <span class="n">tolerance</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">&lt;</span> <span class="n">effective_lower</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Values are lower than lower bound &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="n">lower</span><span class="si">}</span><span class="s2">&#39;) with tolerance (&#39;</span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+                <span class="sa">f</span><span class="s2">"Values are lower than lower bound "</span>
+                <span class="sa">f</span><span class="s2">"('</span><span class="si">{</span><span class="n">lower</span><span class="si">}</span><span class="s2">') with tolerance ('</span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">')"</span>
             <span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
@@ -168,7 +168,7 @@
 <div class="viewcode-block" id="valid_values">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_values">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_values</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">unique_values</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if values in an array are within the set of unique values</span>
+<span class="w">    </span><span class="sd">"""Checks if values in an array are within the set of unique values</span>
 
 <span class="sd">    The input array can only have the input values defined in unique_values.</span>
 
@@ -182,10 +182,10 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">unique_values</span><span class="p">))):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The array contains values that are not present in unique_values&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The array contains values that are not present in unique_values"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
@@ -195,7 +195,7 @@
 <div class="viewcode-block" id="valid_non_nan">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_non_nan">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_non_nan</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if Nan are present in the array</span>
+<span class="w">    </span><span class="sd">"""Checks if Nan are present in the array</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -205,10 +205,10 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr</span><span class="p">)):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Input array can not contain nan values&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Input array can not contain nan values"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
@@ -218,7 +218,7 @@
 <div class="viewcode-block" id="valid_array_type">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_array_type">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_array_type</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">required_type</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if arr is</span>
+<span class="w">    </span><span class="sd">"""Checks if arr is</span>
 <span class="sd">    1) a numpy.dtype</span>
 <span class="sd">    2) the desired numpy.dtype</span>
 
@@ -232,18 +232,18 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">required_type</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No valid numpy dtype chosen for arr! Change to &#39;</span><span class="si">{</span><span class="n">required_type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"No valid numpy dtype chosen for arr! Change to '</span><span class="si">{</span><span class="n">required_type</span><span class="si">}</span><span class="s2">'"</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;. Use numpy dtype as required type.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s2">". Use numpy dtype as required type."</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">required_type</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;numpy.dtype (`np.</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">`) is not required type</span>
-<span class="s2">        (&#39;</span><span class="si">{</span><span class="n">required_type</span><span class="si">}</span><span class="s2">&#39;)&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""numpy.dtype (`np.</span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">`) is not required type</span>
+<span class="s2">        ('</span><span class="si">{</span><span class="n">required_type</span><span class="si">}</span><span class="s2">')"""</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span></div>
@@ -253,7 +253,7 @@
 <div class="viewcode-block" id="valid_nodata">
 <a class="viewcode-back" href="../../../api/pywatemsedem.io.html#pywatemsedem.io.valid.valid_nodata">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_nodata</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">nodata_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if a nodata value is present in arr</span>
+<span class="w">    </span><span class="sd">"""Checks if a nodata value is present in arr</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    --------</span>
@@ -265,9 +265,9 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="n">nodata_value</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A nodata value (</span><span class="si">{</span><span class="n">nodata_value</span><span class="si">}</span><span class="s2">) is present, check if allowed&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"A nodata value (</span><span class="si">{</span><span class="n">nodata_value</span><span class="si">}</span><span class="s2">) is present, check if allowed"</span>
         <span class="k">raise</span> <span class="ne">Warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 </pre></div>
