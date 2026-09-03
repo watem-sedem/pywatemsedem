@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io package &mdash; pywatemsedem 1.2.0.post1.dev1+g0aa8bd8e1 documentation</title>
+  <title>pywatemsedem.io package &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8f42358a"></script>
+      <script src="../_static/documentation_options.js?v=e461b786"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -147,40 +147,14 @@ including paths for vector and raster files.</p>
 <li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Spatial resolution in meters, used to name the raster folder.</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.catchment_folder">
-<span class="sig-name descname"><span class="pre">catchment_folder</span></span><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.catchment_folder" title="Link to this definition"></a></dt>
-<dd><p>Path to the ‘Data_Bekken’ subfolder.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path</p>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>catchment_folder</strong> (<em>Path</em>) – Path to the ‘Data_Bekken’ subfolder.</p></li>
+<li><p><strong>vct_folder</strong> (<em>Path</em>) – Path to the vector files folder (‘Shps’).</p></li>
+<li><p><strong>rst_folder</strong> (<em>Path</em>) – Path to the raster files folder (‘Rst_{resolution}m’).</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.vct_folder">
-<span class="sig-name descname"><span class="pre">vct_folder</span></span><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.vct_folder" title="Link to this definition"></a></dt>
-<dd><p>Path to the vector files folder (‘Shps’).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.rst_folder">
-<span class="sig-name descname"><span class="pre">rst_folder</span></span><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.rst_folder" title="Link to this definition"></a></dt>
-<dd><p>Path to the raster files folder (‘Rst_{resolution}m’).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Path</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="pywatemsedem.io.folders.CatchmentFolder.check_catchment_folder">
 <span class="sig-name descname"><span class="pre">check_catchment_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pywatemsedem/io/folders.html#CatchmentFolder.check_catchment_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pywatemsedem.io.folders.CatchmentFolder.check_catchment_folder" title="Link to this definition"></a></dt>
@@ -846,259 +820,35 @@ Output , Variables, Calibration, Buffer $id and Forced Routing $id.</p></li>
 <p>Raster class with model inputs as attributes.</p>
 <p>Modelinput class serves the goal of automating the reading in, checking and
 visualisation of the input data of the WaTEM/SEDEM model.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.mask">
-<span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.mask" title="Link to this definition"></a></dt>
-<dd><p>Catchment mask raster or polygon.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Catchment mask raster or polygon.</p></li>
+<li><p><strong>rivermask</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – River mask raster.</p></li>
+<li><p><strong>cfactor</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – C-factor raster.</p></li>
+<li><p><strong>buffers</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Buffers raster.</p></li>
+<li><p><strong>dtm</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Digital terrain model raster.</p></li>
+<li><p><strong>kfactor</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – K-factor raster.</p></li>
+<li><p><strong>ktc</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – kTC raster.</p></li>
+<li><p><strong>outlet</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Outlet raster.</p></li>
+<li><p><strong>pfactor</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – P-factor raster.</p></li>
+<li><p><strong>compositelanduse</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Composite landuse raster.</p></li>
+<li><p><strong>ptef</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Parcel trapping efficiency raster.</p></li>
+<li><p><strong>riversegments</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – River segments raster.</p></li>
+<li><p><strong>riverrouting</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – River routing raster.</p></li>
+<li><p><strong>sewers</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Sewers raster.</p></li>
+<li><p><strong>upstream_segments</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Upstream segments table.</p></li>
+<li><p><strong>adjacent_segments</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Adjacent segments table.</p></li>
+<li><p><strong>ktil</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – kTil raster.</p></li>
+<li><p><strong>tillagedirection</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Tillage direction raster.</p></li>
+<li><p><strong>orientedroughness</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Oriented roughness raster.</p></li>
+<li><p><strong>ditches</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Ditches raster.</p></li>
+<li><p><strong>dams</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Dams raster.</p></li>
+<li><p><strong>cn</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Curve number raster.</p></li>
+<li><p><strong>rainfall</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Rainfall table.</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.rivermask">
-<span class="sig-name descname"><span class="pre">rivermask</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.rivermask" title="Link to this definition"></a></dt>
-<dd><p>River mask raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.cfactor">
-<span class="sig-name descname"><span class="pre">cfactor</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.cfactor" title="Link to this definition"></a></dt>
-<dd><p>C-factor raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.buffers">
-<span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.buffers" title="Link to this definition"></a></dt>
-<dd><p>Buffers raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.dtm">
-<span class="sig-name descname"><span class="pre">dtm</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.dtm" title="Link to this definition"></a></dt>
-<dd><p>Digital terrain model raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.kfactor">
-<span class="sig-name descname"><span class="pre">kfactor</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.kfactor" title="Link to this definition"></a></dt>
-<dd><p>K-factor raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ktc">
-<span class="sig-name descname"><span class="pre">ktc</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ktc" title="Link to this definition"></a></dt>
-<dd><p>kTC raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.outlet">
-<span class="sig-name descname"><span class="pre">outlet</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.outlet" title="Link to this definition"></a></dt>
-<dd><p>Outlet raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.pfactor">
-<span class="sig-name descname"><span class="pre">pfactor</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.pfactor" title="Link to this definition"></a></dt>
-<dd><p>P-factor raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.compositelanduse">
-<span class="sig-name descname"><span class="pre">compositelanduse</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.compositelanduse" title="Link to this definition"></a></dt>
-<dd><p>Composite landuse raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ptef">
-<span class="sig-name descname"><span class="pre">ptef</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ptef" title="Link to this definition"></a></dt>
-<dd><p>Parcel trapping efficiency raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.riversegments">
-<span class="sig-name descname"><span class="pre">riversegments</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.riversegments" title="Link to this definition"></a></dt>
-<dd><p>River segments raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.riverrouting">
-<span class="sig-name descname"><span class="pre">riverrouting</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.riverrouting" title="Link to this definition"></a></dt>
-<dd><p>River routing raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.sewers">
-<span class="sig-name descname"><span class="pre">sewers</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.sewers" title="Link to this definition"></a></dt>
-<dd><p>Sewers raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.upstream_segments">
-<span class="sig-name descname"><span class="pre">upstream_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.upstream_segments" title="Link to this definition"></a></dt>
-<dd><p>Upstream segments table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.adjacent_segments">
-<span class="sig-name descname"><span class="pre">adjacent_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.adjacent_segments" title="Link to this definition"></a></dt>
-<dd><p>Adjacent segments table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ktil">
-<span class="sig-name descname"><span class="pre">ktil</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ktil" title="Link to this definition"></a></dt>
-<dd><p>kTil raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.tillagedirection">
-<span class="sig-name descname"><span class="pre">tillagedirection</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.tillagedirection" title="Link to this definition"></a></dt>
-<dd><p>Tillage direction raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.orientedroughness">
-<span class="sig-name descname"><span class="pre">orientedroughness</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.orientedroughness" title="Link to this definition"></a></dt>
-<dd><p>Oriented roughness raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ditches">
-<span class="sig-name descname"><span class="pre">ditches</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ditches" title="Link to this definition"></a></dt>
-<dd><p>Ditches raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.dams">
-<span class="sig-name descname"><span class="pre">dams</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.dams" title="Link to this definition"></a></dt>
-<dd><p>Dams raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.cn">
-<span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.cn" title="Link to this definition"></a></dt>
-<dd><p>Curve number raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.rainfall">
-<span class="sig-name descname"><span class="pre">rainfall</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.rainfall" title="Link to this definition"></a></dt>
-<dd><p>Rainfall table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize the Modelinput instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1112,126 +862,126 @@ WaTEM-SEDEM.</p></li>
 </dd>
 </dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="id0">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adjacent_segments</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.adjacent_segments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adjacent_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.adjacent_segments" title="Link to this definition"></a></dt>
 <dd><p>Return the adjacent_segments table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#adjsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id1">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.buffers">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">buffers</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.buffers" title="Link to this definition"></a></dt>
 <dd><p>Return the buffers raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#buffermap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id2">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cfactor</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.cfactor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cfactor</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.cfactor" title="Link to this definition"></a></dt>
 <dd><p>Return the C-factor raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#cmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id3">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.cn">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.cn" title="Link to this definition"></a></dt>
 <dd><p>Return the CN raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#cnmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id4">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">compositelanduse</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.compositelanduse">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">compositelanduse</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.compositelanduse" title="Link to this definition"></a></dt>
 <dd><p>Return the compositelanduse raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#prcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id5">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dams</span></span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.dams">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dams</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.dams" title="Link to this definition"></a></dt>
 <dd><p>Return the dams raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#dammap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id6">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ditches</span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ditches">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ditches</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ditches" title="Link to this definition"></a></dt>
 <dd><p>Return the ditches raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ditchmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id7">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dtm</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.dtm">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dtm</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.dtm" title="Link to this definition"></a></dt>
 <dd><p>Return the DTM raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#dtmmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id8">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">kfactor</span></span><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.kfactor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">kfactor</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.kfactor" title="Link to this definition"></a></dt>
 <dd><p>Return the K-factor raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#kmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id9">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc</span></span><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ktc">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktc</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ktc" title="Link to this definition"></a></dt>
 <dd><p>Return the kTC raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktcmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id10">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil</span></span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ktil">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ktil</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ktil" title="Link to this definition"></a></dt>
 <dd><p>Return the ktil raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#ktilmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id11">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.mask">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.mask" title="Link to this definition"></a></dt>
 <dd><p>Return mask raster.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id12">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">orientedroughness</span></span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.orientedroughness">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">orientedroughness</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.orientedroughness" title="Link to this definition"></a></dt>
 <dd><p>Return the orientedroughness raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#orientedroughnessmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id13">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">outlet</span></span><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.outlet">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">outlet</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.outlet" title="Link to this definition"></a></dt>
 <dd><p>Return the outlet raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#outletmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id14">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pfactor</span></span><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.pfactor">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pfactor</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.pfactor" title="Link to this definition"></a></dt>
 <dd><p>Return the P-factor raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#pmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id15">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ptef</span></span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.ptef">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ptef</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.ptef" title="Link to this definition"></a></dt>
 <dd><p>Return the PTEF raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#parceltrapppingcrop" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id16">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rainfall</span></span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.rainfall">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rainfall</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.rainfall" title="Link to this definition"></a></dt>
 <dd><p>Return the rainfall table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#rainfallfile" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id17">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rivermask</span></span><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.rivermask">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rivermask</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.rivermask" title="Link to this definition"></a></dt>
 <dd><p>Return the river mask raster.
 Not an actual input of the model,
 but a raster that can be derived from the river segments raster,
@@ -1239,36 +989,36 @@ useful for visualisation purposes.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id18">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riverrouting</span></span><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.riverrouting">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riverrouting</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.riverrouting" title="Link to this definition"></a></dt>
 <dd><p>Return the riverrouting raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#routingmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id19">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riversegments</span></span><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.riversegments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">riversegments</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.riversegments" title="Link to this definition"></a></dt>
 <dd><p>Return the riversegments raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#riversegmentfile" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id20">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewers</span></span><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.sewers">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewers</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.sewers" title="Link to this definition"></a></dt>
 <dd><p>Return the sewers raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#sewermapfile" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id21">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tillagedirection</span></span><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.tillagedirection">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tillagedirection</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.tillagedirection" title="Link to this definition"></a></dt>
 <dd><p>Return the tillagedirection raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#tildirmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id22">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upstream_segments</span></span><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modelinput.Modelinput.upstream_segments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upstream_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modelinput.Modelinput.upstream_segments" title="Link to this definition"></a></dt>
 <dd><p>Return the upstream_segments table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#upstrsegments" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
@@ -1285,248 +1035,34 @@ useful for visualisation purposes.</p>
 <p>Class with model outputs as attributes.</p>
 <p>Modeloutput class serves the goal of automating the reading in, checking and
 visualisation of the output data of the WaTEM/SEDEM model.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.aspect">
-<span class="sig-name descname"><span class="pre">aspect</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.aspect" title="Link to this definition"></a></dt>
-<dd><p>Aspect raster.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aspect</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Aspect raster.</p></li>
+<li><p><strong>routing</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Routing table.</p></li>
+<li><p><strong>routing_missing</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Routing missing table.</p></li>
+<li><p><strong>ls</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – LS-factor raster.</p></li>
+<li><p><strong>slope</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Slope raster.</p></li>
+<li><p><strong>uparea</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Upstream area raster.</p></li>
+<li><p><strong>total_sediment</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Total sediment table.</p></li>
+<li><p><strong>total_sediment_segments</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Total sediment per segment table.</p></li>
+<li><p><strong>cumulative_sediment_segments</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Cumulative sediment per segment table.</p></li>
+<li><p><strong>sewer_in</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Sewer in raster.</p></li>
+<li><p><strong>sedi_export</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Sediment export raster.</p></li>
+<li><p><strong>sedi_in</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Sediment in raster.</p></li>
+<li><p><strong>sedi_out</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Sediment out raster.</p></li>
+<li><p><strong>sedtil_in</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Tillage sediment in raster.</p></li>
+<li><p><strong>sedtil_out</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Tillage sediment out raster.</p></li>
+<li><p><strong>cumulative</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Cumulative sediment raster.</p></li>
+<li><p><strong>watereros_kg</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Water erosion raster (kg).</p></li>
+<li><p><strong>watereros_mm</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Water erosion raster (mm).</p></li>
+<li><p><strong>tileros_kg</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Tillage erosion raster (kg).</p></li>
+<li><p><strong>tileros_mm</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Tillage erosion raster (mm).</p></li>
+<li><p><strong>capacity</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Capacity raster.</p></li>
+<li><p><strong>rusle</strong> (<a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – RUSLE raster.</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.routing">
-<span class="sig-name descname"><span class="pre">routing</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.routing" title="Link to this definition"></a></dt>
-<dd><p>Routing table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.routing_missing">
-<span class="sig-name descname"><span class="pre">routing_missing</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.routing_missing" title="Link to this definition"></a></dt>
-<dd><p>Routing missing table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.ls">
-<span class="sig-name descname"><span class="pre">ls</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.ls" title="Link to this definition"></a></dt>
-<dd><p>LS-factor raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.slope">
-<span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.slope" title="Link to this definition"></a></dt>
-<dd><p>Slope raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.uparea">
-<span class="sig-name descname"><span class="pre">uparea</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.uparea" title="Link to this definition"></a></dt>
-<dd><p>Upstream area raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.total_sediment">
-<span class="sig-name descname"><span class="pre">total_sediment</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.total_sediment" title="Link to this definition"></a></dt>
-<dd><p>Total sediment table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.total_sediment_segments">
-<span class="sig-name descname"><span class="pre">total_sediment_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.total_sediment_segments" title="Link to this definition"></a></dt>
-<dd><p>Total sediment per segment table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.cumulative_sediment_segments">
-<span class="sig-name descname"><span class="pre">cumulative_sediment_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.cumulative_sediment_segments" title="Link to this definition"></a></dt>
-<dd><p>Cumulative sediment per segment table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sewer_in">
-<span class="sig-name descname"><span class="pre">sewer_in</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sewer_in" title="Link to this definition"></a></dt>
-<dd><p>Sewer in raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedi_export">
-<span class="sig-name descname"><span class="pre">sedi_export</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedi_export" title="Link to this definition"></a></dt>
-<dd><p>Sediment export raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedi_in">
-<span class="sig-name descname"><span class="pre">sedi_in</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedi_in" title="Link to this definition"></a></dt>
-<dd><p>Sediment in raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedi_out">
-<span class="sig-name descname"><span class="pre">sedi_out</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedi_out" title="Link to this definition"></a></dt>
-<dd><p>Sediment out raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedtil_in">
-<span class="sig-name descname"><span class="pre">sedtil_in</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedtil_in" title="Link to this definition"></a></dt>
-<dd><p>Tillage sediment in raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedtil_out">
-<span class="sig-name descname"><span class="pre">sedtil_out</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedtil_out" title="Link to this definition"></a></dt>
-<dd><p>Tillage sediment out raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.cumulative">
-<span class="sig-name descname"><span class="pre">cumulative</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.cumulative" title="Link to this definition"></a></dt>
-<dd><p>Cumulative sediment raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.watereros_kg">
-<span class="sig-name descname"><span class="pre">watereros_kg</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.watereros_kg" title="Link to this definition"></a></dt>
-<dd><p>Water erosion raster (kg).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.watereros_mm">
-<span class="sig-name descname"><span class="pre">watereros_mm</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.watereros_mm" title="Link to this definition"></a></dt>
-<dd><p>Water erosion raster (mm).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.tileros_kg">
-<span class="sig-name descname"><span class="pre">tileros_kg</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.tileros_kg" title="Link to this definition"></a></dt>
-<dd><p>Tillage erosion raster (kg).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.tileros_mm">
-<span class="sig-name descname"><span class="pre">tileros_mm</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.tileros_mm" title="Link to this definition"></a></dt>
-<dd><p>Tillage erosion raster (mm).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.capacity">
-<span class="sig-name descname"><span class="pre">capacity</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.capacity" title="Link to this definition"></a></dt>
-<dd><p>Capacity raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.rusle">
-<span class="sig-name descname"><span class="pre">rusle</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.rusle" title="Link to this definition"></a></dt>
-<dd><p>RUSLE raster.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)">pathlib.Path</a> or <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize the Modeloutput instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1539,29 +1075,29 @@ visualisation of the output data of the WaTEM/SEDEM model.</p>
 </dd>
 </dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="id23">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">aspect</span></span><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.aspect">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">aspect</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.aspect" title="Link to this definition"></a></dt>
 <dd><p>Return the aspect raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#aspectmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id24">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">capacity</span></span><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.capacity">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">capacity</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.capacity" title="Link to this definition"></a></dt>
 <dd><p>Return the capacity raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#capacityrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id25">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative</span></span><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.cumulative">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.cumulative" title="Link to this definition"></a></dt>
 <dd><p>Return the cumulative raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#cumulativerst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id26">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative_sediment_segments</span></span><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.cumulative_sediment_segments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">cumulative_sediment_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.cumulative_sediment_segments" title="Link to this definition"></a></dt>
 <dd><p>Return the cumulative_sediment_segments table.</p>
 <p>For documentation, see <span class="xref std std-ref">here</span>.
 For explanation on column variables of dataframe: see
@@ -1569,8 +1105,8 @@ For explanation on column variables of dataframe: see
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id27">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ls</span></span><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.ls">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ls</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.ls" title="Link to this definition"></a></dt>
 <dd><p>Return the LS raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#lsmap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
@@ -1596,92 +1132,92 @@ of routing</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id28">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing</span></span><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.routing">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.routing" title="Link to this definition"></a></dt>
 <dd><p>Return the routing table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#routingtxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id29">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing_missing</span></span><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.routing_missing">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">routing_missing</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.routing_missing" title="Link to this definition"></a></dt>
 <dd><p>Return the routing_missing table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#missingroutingtxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id30">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rusle</span></span><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.rusle">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rusle</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.rusle" title="Link to this definition"></a></dt>
 <dd><p>Return the RUSLE raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#ruslerst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id31">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_export</span></span><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedi_export">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_export</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedi_export" title="Link to this definition"></a></dt>
 <dd><p>Return the sedi_export raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sediexportrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id32">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_in</span></span><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedi_in">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_in</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedi_in" title="Link to this definition"></a></dt>
 <dd><p>Return the sedi_in raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sediinrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id33">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_out</span></span><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedi_out">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedi_out</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedi_out" title="Link to this definition"></a></dt>
 <dd><p>Return the sedi_out raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sedioutrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id34">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_in</span></span><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedtil_in">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_in</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedtil_in" title="Link to this definition"></a></dt>
 <dd><p>Return the sedtil_in raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sedtilinrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id35">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_out</span></span><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sedtil_out">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sedtil_out</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sedtil_out" title="Link to this definition"></a></dt>
 <dd><p>Return the sedtil_out raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sedtiloutrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id36">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewer_in</span></span><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.sewer_in">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sewer_in</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.sewer_in" title="Link to this definition"></a></dt>
 <dd><p>Return the sewer_in raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#sewerinrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id37">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.slope">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.slope" title="Link to this definition"></a></dt>
 <dd><p>Return the slope raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#slopemap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id38">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_kg</span></span><a class="headerlink" href="#id38" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.tileros_kg">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_kg</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.tileros_kg" title="Link to this definition"></a></dt>
 <dd><p>Return the tileros_kg raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#tileroskgrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id39">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_mm</span></span><a class="headerlink" href="#id39" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.tileros_mm">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">tileros_mm</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.tileros_mm" title="Link to this definition"></a></dt>
 <dd><p>Return the tileros_mm raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#tilerosmmrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id40">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment</span></span><a class="headerlink" href="#id40" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.total_sediment">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.total_sediment" title="Link to this definition"></a></dt>
 <dd><p>Return the total_sediment table.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#totalsedimenttxt" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a>.
 For explanation on column variables of dataframe: see
@@ -1689,8 +1225,8 @@ For explanation on column variables of dataframe: see
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id41">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment_segments</span></span><a class="headerlink" href="#id41" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.total_sediment_segments">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_sediment_segments</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.total_sediment_segments" title="Link to this definition"></a></dt>
 <dd><p>Return the total_sediment_segments table.</p>
 <p>For documentation, see <span class="xref std std-ref">here</span>.
 For explanation on column variables of dataframe: see
@@ -1698,22 +1234,22 @@ For explanation on column variables of dataframe: see
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id42">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">uparea</span></span><a class="headerlink" href="#id42" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.uparea">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">uparea</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.uparea" title="Link to this definition"></a></dt>
 <dd><p>Return the uparea raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#upareamap" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id43">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_kg</span></span><a class="headerlink" href="#id43" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.watereros_kg">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_kg</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.watereros_kg" title="Link to this definition"></a></dt>
 <dd><p>Return the watereros_kg raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#watereroskgrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id44">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_mm</span></span><a class="headerlink" href="#id44" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pywatemsedem.io.modeloutput.Modeloutput.watereros_mm">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">watereros_mm</span></span><a class="headerlink" href="#pywatemsedem.io.modeloutput.Modeloutput.watereros_mm" title="Link to this definition"></a></dt>
 <dd><p>Return the watereros_mm raster.</p>
 <p>For documentation, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/output.html#watererosmmrst" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </dd></dl>
