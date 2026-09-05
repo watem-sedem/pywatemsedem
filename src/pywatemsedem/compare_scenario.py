@@ -80,9 +80,15 @@ class DeltaScenario:
 
     def check_rasterprop(self):
         """Check if the raster properties are equal for both scenario's"""
-        rstparams1 = self.pp1.rstparams
-        rstparams2 = self.pp2.rstparams
-        if rstparams1 == rstparams2:
+        rp1 = self.pp1.rp
+        rp2 = self.pp2.rp
+        # Compare key raster properties
+        if (
+            rp1.bounds == rp2.bounds
+            and rp1.resolution == rp2.resolution
+            and rp1.epsg == rp2.epsg
+            and rp1.nodata == rp2.nodata
+        ):
             return True
         else:
             return False

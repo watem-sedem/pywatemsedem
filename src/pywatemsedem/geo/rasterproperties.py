@@ -215,6 +215,28 @@ class RasterProperties:
             epsg=epsg,
         )
 
+    @classmethod
+    def from_template(cls, template, epsg: int):
+        """Create RasterProperties from a template raster file.
+
+        Parameters
+        ----------
+        template : pathlib.Path or str
+            File path to a template raster.
+        epsg : int
+            EPSG code should be a numeric value, see https://epsg.io/.
+        """
+        import rasterio
+
+        try:
+            with rasterio.open(template) as src:
+                rasterio_profile = src.profile
+        except IOError:
+            msg = f"Template file '{template}' not found for getting spatial metadata."
+            raise IOError(msg)
+
+        return cls.from_rasterio(rasterio_profile, epsg=epsg)
+
     @property
     def rasterio_profile(self) -> dict:
         """Return rasterio profile
