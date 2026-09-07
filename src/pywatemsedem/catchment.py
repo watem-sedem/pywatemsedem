@@ -180,40 +180,6 @@ def valid_vct_infra_poly(func):
     return wrapper
 
 
-def valid_vct_parcels(func):
-    """Decorator to check if parcel vectors are defined.
-
-    Guard applied to :class:`Catchment` methods that require parcels. The
-    decorated method is only executed when a non-empty parcels polygon vector
-    (``_vct_parcels``) is available.
-
-    Parameters
-    ----------
-    func : callable
-        The function to wrap.
-
-    Returns
-    -------
-    callable
-        Wrapped function that checks for parcel vector definition.
-
-    Raises
-    ------
-    IOError
-        If the parcels vector is empty or not defined.
-    """
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """Execute the wrapped function after validating parcels vector is defined."""
-        if self._vct_parcels.is_empty():
-            msg = "Please define non_empty parcels polygon vector!"
-            raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 class Catchment(Factory):
     """Construct a new Catchment instance.
 
