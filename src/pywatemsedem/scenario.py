@@ -159,24 +159,6 @@ def valid_infrastructure(func):
     return wrapper
 
 
-def valid_vct_grass_strips(func):
-    """Check if grass strips vector is defined"""
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """wrapper"""
-        if self.choices.dict_ecm_options["UseGras"] == 1:
-            if self._vct_grass_strips.is_empty():
-                msg = (
-                    "No (or empty) grass strips defined, but option 'UseGras' equal "
-                    "to 1."
-                )
-                raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 def valid_vct_buffers(func):
     """Check if buffers vector is defined"""
 
@@ -654,7 +636,6 @@ class Scenario:
         self.grass_strips = arr
 
     @property
-    # @valid_vct_grass_strips
     def grass_strips(self):
         """Grass strips raster getter"""
         return self._grass_strips
