@@ -58,7 +58,18 @@ class UserChoice:
         return "\n".join(print_)
 
     def validate_type(self, value):
-        """Validate if the value has the correct dtype"""
+        """Validate that a value matches the expected dtype of this user choice.
+
+        Parameters
+        ----------
+        value : object
+            The candidate value to validate against :attr:`dtype`.
+
+        Raises
+        ------
+        TypeError
+            If ``value`` is not an instance of the expected :attr:`dtype`.
+        """
         if not isinstance(value, self.dtype):
             msg = (
                 f"Value ('{value}') assigned to key '{self.key}' should be dtype "
@@ -67,7 +78,22 @@ class UserChoice:
             raise TypeError(msg)
 
     def validate_value(self, value):
-        """Validate if the value is within the allowed values"""
+        """Validate that a value is within the allowed values of this user choice.
+
+        When :attr:`allowed_values` is ``None`` no restriction applies and the
+        value is accepted.
+
+        Parameters
+        ----------
+        value : object
+            The candidate value to validate against :attr:`allowed_values`.
+
+        Raises
+        ------
+        ValueError
+            If :attr:`allowed_values` is defined and ``value`` is not one of
+            them.
+        """
         if self.allowed_values is not None:
             if value not in self.allowed_values:
                 msg = f"Value ('{value}') should be one of: {self.allowed_values}."

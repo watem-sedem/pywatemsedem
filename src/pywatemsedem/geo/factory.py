@@ -113,8 +113,14 @@ class Factory:
 
     @rp.setter
     def rp(self, rasterproperties):
-        """RasterProperties. See
-        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"""
+        """Set the raster properties.
+
+        Parameters
+        ----------
+        rasterproperties : pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties (bounds, resolution, epsg, nodata, ...) to assign,
+            see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
+        """
         self._rp = rasterproperties
 
     @property
