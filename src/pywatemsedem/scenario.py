@@ -364,9 +364,6 @@ class Scenario:
         self.rst_outlet = AbstractRaster()
         self.ini = None
 
-        # initialisation functionalities
-        # self.temporal_resolution()
-
         # Create folder structure
         self.scenario_folder_init = (
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
@@ -375,25 +372,6 @@ class Scenario:
             self.catchm.folder, str(self.scenario_nr), self.year
         )
         self.sfolder.check_all(create=True)
-
-    def temporal_resolution(self):
-        """Calculates for which years and seasons the scenario needs data.
-
-        Based on the defined choices in the
-        :py:class:`CNWS.UserChoices <pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
-        'begin_maand' and, in case of CNWS, 'Endtime model'.
-        """
-        if self.choices.extensions.curve_number.value:
-            if self.choices.dict_variables["begin_maand"] in [1, 2, 3]:
-                self.season = "winter"
-            elif self.choices.dict_variables["begin_maand"] in [4, 5, 6]:
-                self.season = "spring"
-            elif self.choices.dict_variables["begin_maand"] in [7, 8, 9]:
-                self.season = "summer"
-            elif self.choices.dict_variables["begin_maand"] in [10, 11, 12]:
-                self.season = "fall"
-        else:
-            self.season = "spring"
 
     @property
     def vct_parcels(self):
