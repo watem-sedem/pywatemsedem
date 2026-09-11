@@ -2401,7 +2401,11 @@ class PostProcess(Factory):
         self._unlink_vector_dataset(points_path)
         gdf_points.to_file(points_path, spatial_index="YES")
 
-        self.vct_priority_points = points_path
+        # The file write above is required as input for the SAGA-based
+        # subcatchment delineation that follows. The in-memory object can be
+        # updated directly, avoiding a full reload (read + CRS/geometry checks)
+        # of the file we just wrote.
+        points_obj.geodata = gdf_points
 
     def _aggregate_dummy_point_subcatchments(
         self,
@@ -3210,9 +3214,42 @@ class PostProcess(Factory):
 
                 search_threshold = min(100.0, search_threshold + 5.0)
 
+        # The filtering/renumbering steps above only mutate the in-memory
+        # points/subcatchments GeoDataFrames (see e.g. `_limit_priority_pairs_to_n`);
+        # write the final result to disk once here instead of after every step.
+        self._persist_priority_pair(
+            self.vct_priority_points,
+            getattr(self.vct_priority_points, "vct_subcatchments", None),
+        )
+
         # merge overlapping subcatchments into joint subcatchments
         self.merge_overlapping_subcatchments(gdf_subcatchmpriority, merge=flag_merge)
         self._auto_cleanup_postprocessing_shapefiles()
+
+    def _persist_priority_pair(self, points_obj, subcatchments_obj=None):
+        """Write the current in-memory priority points/subcatchments to disk.
+
+        Several priority-selection steps mutate ``points_obj.geodata`` and
+        ``subcatchments_obj.geodata`` in place without touching disk (to avoid
+        repeated write/reload cycles for pure bookkeeping operations). This
+        writes the final in-memory state back to the existing ``file_path`` of
+        each object, so the shapefiles on disk match what ``.geodata`` holds.
+
+        Parameters
+        ----------
+        points_obj : object
+            Points vector object exposing ``.geodata`` and ``.file_path``.
+        subcatchments_obj : object, optional
+            Coupled subcatchments vector object, if any.
+        """
+        points_path = Path(points_obj.file_path)
+        self._unlink_vector_dataset(points_path)
+        points_obj.write(points_path)
+
+        if subcatchments_obj is not None:
+            subcatchments_path = Path(subcatchments_obj.file_path)
+            self._unlink_vector_dataset(subcatchments_path)
+            subcatchments_obj.write(subcatchments_path)
 
     def _select_priority_source_column(self, gdf_points):
         """Return first available source-value column for priority points.
@@ -3407,7 +3444,7 @@ class PostProcess(Factory):
         sub_id_column,
         contrib_by_id,
     ):
-        """Persist mapped ``cumperc`` values to points and subcatchments layers.
+        """Apply mapped ``cumperc`` values to points and subcatchments layers.
 
         Parameters
         ----------
@@ -3437,23 +3474,10 @@ class PostProcess(Factory):
         gdf_points = gdf_points.drop(columns=["_map_id"])
         gdf_sub = gdf_sub.drop(columns=["_map_id"])
 
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
+        # See `_limit_priority_pairs_to_n`: mutate in place, persist once at
+        # the end of `identify_priority_subcatchments`.
+        points_obj.geodata = gdf_points
+        subcatchments_obj.geodata = gdf_sub
 
     def _annotate_priority_cumulative_contribution(
         self, gdf_subcatchmpriority, source=None
@@ -3599,23 +3623,12 @@ class PostProcess(Factory):
             columns=[c for c in ["_order_val"] if c in gdf_points.columns]
         )
 
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
+        # Update the already-cached objects in place. No SAGA/external-tool
+        # step follows within this pass, so persisting to disk here would be
+        # wasted I/O; the final state is written once at the end of
+        # `identify_priority_subcatchments`.
+        points_obj.geodata = gdf_points
+        subcatchments_obj.geodata = gdf_sub
 
     def _limit_priority_pairs_to_percentage(self, threshold_percentage):
         """Trim priority pairs up to and including first threshold crossing.
@@ -3677,23 +3690,10 @@ class PostProcess(Factory):
             columns=[c for c in ["_id", "_cumperc"] if c in gdf_points.columns]
         )
 
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
+        # See `_limit_priority_pairs_to_n`: mutate in place, persist once at
+        # the end of `identify_priority_subcatchments`.
+        points_obj.geodata = gdf_points
+        subcatchments_obj.geodata = gdf_sub
 
         return keep_ids
 
@@ -3771,23 +3771,10 @@ class PostProcess(Factory):
         )
         gdf_sub = gdf_sub.drop(columns=[c for c in ["_old_id"] if c in gdf_sub.columns])
 
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
+        # See `_limit_priority_pairs_to_n`: mutate in place, persist once at
+        # the end of `identify_priority_subcatchments`.
+        points_obj.geodata = gdf_points
+        subcatchments_obj.geodata = gdf_sub
 
     def _apply_priority_enclosure_filter(self):
         """Apply overlap-then-enclosure replacement on priority pairs.
@@ -3921,24 +3908,10 @@ class PostProcess(Factory):
             columns=[c for c in ["_sub_id"] if c in gdf_sub_kept.columns]
         )
 
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points_kept.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub_kept.to_file(subcatchments_path, spatial_index="YES")
-
-        # Reload and re-couple vectors so in-memory objects reflect filtered files.
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
+        # See `_limit_priority_pairs_to_n`: mutate in place, persist once at
+        # the end of `identify_priority_subcatchments`.
+        points_obj.geodata = gdf_points_kept
+        subcatchments_obj.geodata = gdf_sub_kept
 
     def merge_overlapping_subcatchments(self, gdf_subcatchmpriority, merge=True):
         """Merge overlapping subcatchments and reassign priorities for
