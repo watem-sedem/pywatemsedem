@@ -129,8 +129,12 @@ def create_parcels_landuse_degerick2015(
     if landuse_parcels is not None:
         arr = map_input_array_on_array(arr, landuse_parcels, nodata)
     if parcels is not None:
-        # avoid too many parcel ids in integer 16 raster (int16 max = 2**15 - 1 = 32767)
-        parcels = np.where(parcels != nodata, (parcels % 2**15), nodata)
+        # avoid too many parcel ids in integer 16 raster (int16 max = 2**15 - 1 =
+        # 32767). Cast to a wider dtype first: 2**15 itself does not fit in an
+        # int16 array, and numpy no longer silently upcasts in that case.
+        parcels = np.where(
+            parcels != nodata, (parcels.astype(np.int32) % 2**15), nodata
+        )
         arr = map_input_array_on_array(arr, parcels, nodata)
     if landuse_core is not None:
         arr = map_input_array_on_array(arr, landuse_core, nodata)
