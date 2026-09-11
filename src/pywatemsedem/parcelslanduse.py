@@ -129,8 +129,8 @@ def create_parcels_landuse_degerick2015(
     if landuse_parcels is not None:
         arr = map_input_array_on_array(arr, landuse_parcels, nodata)
     if parcels is not None:
-        # avoid too many parcel ids in integer 16 raster
-        parcels = np.where(parcels != nodata, (parcels % 32757), nodata)
+        # avoid too many parcel ids in integer 16 raster (int16 max = 2**15 - 1 = 32767)
+        parcels = np.where(parcels != nodata, (parcels % 2**15), nodata)
         arr = map_input_array_on_array(arr, parcels, nodata)
     if landuse_core is not None:
         arr = map_input_array_on_array(arr, landuse_core, nodata)

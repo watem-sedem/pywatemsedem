@@ -454,7 +454,7 @@ class TestParcels:
             dummy_scenario.parcels.arr, dummy_scenario.parcels_ids.arr
         )
 
-        # manipulate parcels_ids and set above 32757 to test difference parcels_ids
+        # manipulate parcels_ids and set above 32767 to test difference parcels_ids
         # and parcels getter
         df = gpd.read_file(scenario_data.parcels)
         df["NR"] = 1000**2
