@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from pyproj import CRS
 from pyproj.exceptions import CRSError
@@ -84,3 +86,29 @@ def test_rasterproperties():
 
     with pytest.raises(IOError, match="Raster property driver"):
         RasterProperties(bounds, resolution, nodata, epsg, driver="tsjaarbomb32")
+
+
+def test_rasterproperties_from_template():
+    """Test RasterProperties.from_template with a real IDRISI raster file."""
+    template = Path("tests/io/data/modelinput/pfactor.rst")
+    epsg = 31370
+
+    rp = RasterProperties.from_template(template, epsg=epsg)
+
+    assert rp.bounds == [162300.0, 165760.0, 167560.0, 169520.0]
+    assert rp.resolution == 20.0
+    assert rp.nodata == -9999.0
+    assert rp.epsg == epsg
+    assert rp.gdal_profile == {
+        "nodata": -9999.0,
+        "epsg": "EPSG:31370",
+        "res": 20.0,
+        "minmax": [162300.0, 165760.0, 167560.0, 169520.0],
+        "ncols": 263,
+        "nrows": 188,
+    }
+
+    # test with a template file that does not exist
+    missing_template = Path("tests/io/data/modelinput/does_not_exist.rst")
+    with pytest.raises(IOError, match="not found for getting spatial metadata"):
+        RasterProperties.from_template(missing_template, epsg=epsg)
