@@ -1,3 +1,20 @@
+def valid_routing_vector(self):
+    """Check whether a routing vector has been created."""
+    if self.vct_routing is None:
+        msg = "No routing vector created, please first run 'make_routing_vct'."
+        raise IOError(msg)
+
+
+def valid_routing_sedi_out_vector(self):
+    """Check whether a routing vector with sedi_out has been created."""
+    if self.vct_routing is None:
+        msg = (
+            "No routing vector (with sedi_out) created, please first run "
+            "'couple_sediout_routing.'"
+        )
+        raise IOError(msg)
+
+
 def valid_req_property(
     self, current_property=None, req_property_name=None, mandatory=False
 ):

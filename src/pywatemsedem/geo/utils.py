@@ -529,7 +529,7 @@ def rst_to_vct_points(rst_in, vct_out):
     """
     cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "3"]
     cmd_args += ["-GRIDS", str(rst_in)]
-    cmd_args += ["-SHAPES", str(vct_out)]
+    cmd_args += ["-POINTS", str(vct_out)]
     execute_saga(cmd_args)
 
 

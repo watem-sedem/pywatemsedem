@@ -246,7 +246,7 @@ class Catchment(Factory):
             msg = f"Setting results folder to {(results_folder / name)}"
             warnings.warn(msg)
         self.folder = CatchmentFolder(Path(results_folder) / name, resolution)
-        self.folder.create_all()
+        self.folder.check_all(create=True)
         self.name = name
 
         # initiate factory
@@ -539,7 +539,17 @@ class Catchment(Factory):
         )
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the landuse raster with standardized landuse colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._landuse.plot = plot
@@ -1249,7 +1259,18 @@ class Catchment(Factory):
         self._infrastructure = RasterMemory(arr, self.rp)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the infrastructure raster.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; when given, cells are converted to a binary
+                infrastructure/no-infrastructure mask before plotting. When
+                ``None`` the raster is plotted as-is.
+            *args, **kwargs
+                Additional arguments passed to
+                ``matplotlib.axes.Axes.imshow``.
+            """
             fig, ax = plt.subplots(figsize=[10, 10])
             """Plot infrastructure"""
             arr_plot = self._infrastructure.arr.copy().astype(np.float32)
@@ -1299,4 +1320,4 @@ class Catchment(Factory):
         """
         logger.info("Aanmaken folderstructuur bekken...")
         self.folder = CatchmentFolder(Path(self.name), self.rp.resolution)
-        self.folder.create_all()
+        self.folder.check_all(create=True)

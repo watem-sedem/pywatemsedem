@@ -319,49 +319,6 @@ def valid_infrastructure(func):
     return wrapper
 
 
-def valid_vct_grass_strips(func):
-    """Guard a :class:`Scenario` method that requires the grass strips vector.
-
-    This decorator validates, prior to executing ``func``, that a non-empty
-    grass strips vector has been assigned (see
-    :attr:`~pywatemsedem.scenario.Scenario.vct_grass_strips`) whenever the
-    ``UseGras`` option is enabled. When ``UseGras`` is disabled the guard is a
-    no-op. It is meant to be applied to :class:`Scenario` methods that rely on
-    grass strips.
-
-    Parameters
-    ----------
-    func : callable
-        The (bound) :class:`Scenario` method to wrap.
-
-    Returns
-    -------
-    callable
-        A wrapper that first validates the grass strips vector and then
-        delegates to ``func``.
-
-    Raises
-    ------
-    IOError
-        If ``UseGras`` is enabled but the grass strips vector is empty or
-        undefined.
-    """
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """Validate grass strips vector, then call the wrapped method."""
-        if self.choices.dict_ecm_options["UseGras"] == 1:
-            if self._vct_grass_strips.is_empty():
-                msg = (
-                    "No (or empty) grass strips defined, but option 'UseGras' equal "
-                    "to 1."
-                )
-                raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 def valid_vct_buffers(func):
     """Guard a :class:`Scenario` method that expects the buffers vector.
 
@@ -685,9 +642,6 @@ class Scenario:
         self.rst_outlet = AbstractRaster()
         self.ini = None
 
-        # initialisation functionalities
-        # self.temporal_resolution()
-
         # Create folder structure
         self.scenario_folder_init = (
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
@@ -695,26 +649,7 @@ class Scenario:
         self.sfolder = ScenarioFolders(
             self.catchm.folder, str(self.scenario_nr), self.year
         )
-        self.sfolder.create_all()
-
-    def temporal_resolution(self):
-        """Calculates for which years and seasons the scenario needs data.
-
-        Based on the defined choices in the
-        :py:class:`CNWS.UserChoices <pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
-        'begin_maand' and, in case of CNWS, 'Endtime model'.
-        """
-        if self.choices.extensions.curve_number.value:
-            if self.choices.dict_variables["begin_maand"] in [1, 2, 3]:
-                self.season = "winter"
-            elif self.choices.dict_variables["begin_maand"] in [4, 5, 6]:
-                self.season = "spring"
-            elif self.choices.dict_variables["begin_maand"] in [7, 8, 9]:
-                self.season = "summer"
-            elif self.choices.dict_variables["begin_maand"] in [10, 11, 12]:
-                self.season = "fall"
-        else:
-            self.season = "spring"
+        self.sfolder.check_all(create=True)
 
     @property
     def vct_parcels(self):
@@ -997,7 +932,6 @@ class Scenario:
         self.grass_strips = arr
 
     @property
-    # @valid_vct_grass_strips
     def grass_strips(self):
         """Grass strips raster getter"""
         return self._grass_strips
@@ -1495,7 +1429,17 @@ class Scenario:
         )
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the composite landuse raster with standardized colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._composite_landuse.arr, nodata, *args, **kwargs)
 
         self._composite_landuse.plot = plot

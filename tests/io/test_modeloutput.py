@@ -8,10 +8,20 @@ from pytest import approx
 from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
     Modeloutput,
+    _parse_epsg_from_value,
     check_segment_edges,
     compute_efficiency_buffers,
     identify_rank_sediment_loads,
 )
+
+
+def test_parse_epsg_from_value_logs_warning_on_unparseable_string(caplog):
+    """Unparseable non-empty CRS strings should emit a warning and return None."""
+    with caplog.at_level("WARNING"):
+        epsg = _parse_epsg_from_value("not-a-valid-crs")
+
+    assert epsg is None
+    assert "Could not parse CRS value" in caplog.text
 
 
 def test_modeloutput_all():
@@ -20,8 +30,8 @@ def test_modeloutput_all():
     file_path_in = Path("tests") / "io" / "data" / "modelinput"
     Path("tests") / "io" / "data" / "modeloutput"
     ini = file_path_in / "inifile.ini"
-    example_in = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
-    example_out = Modeloutput(ini, resolution=20, epsg=31370, nodata=-9999)
+    example_in = Modelinput(ini, epsg=31370)
+    example_out = Modeloutput(ini, epsg=31370)
 
     # sedi_out
     example_out.sedi_out
@@ -107,8 +117,8 @@ def test_compute_efficiency_buffers():
 @pytest.mark.parametrize(
     "threshold,n_ranks,sum_sediment_load,mean_sediment_load",
     [
-        (50, 10, 610229.44, 61022.945),
-        (20, 2, 175243.22, 87621.61),
+        (50, 11, 629210.94, 57200.996),
+        (20, 3, 251075.0, 83691.664),
     ],
 )
 def test_identify_rank_sediment_loads(

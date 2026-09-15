@@ -11,7 +11,7 @@ def test_modelinput_all():
     # Initialization
     file_path = Path("tests") / "io" / "data" / "modelinput"
     ini = file_path / "inifile.ini"
-    example = Modelinput(ini, resolution=20, epsg=31370, nodata=-9999)
+    example = Modelinput(ini, epsg=31370)
 
     # C-factor
     example.cfactor

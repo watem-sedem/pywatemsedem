@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-affine==2.4.0
+affine==3.0.1
     # via rasterio
 attrs==26.1.0
     # via rasterio
@@ -13,7 +13,7 @@ certifi==2026.7.22
     #   pyogrio
     #   pyproj
     #   rasterio
-click==8.4.2
+click==8.5.0
     # via
     #   click-plugins
     #   cligj
@@ -38,7 +38,7 @@ kiwisolver==1.5.0
     # via matplotlib
 matplotlib==3.11.1
     # via pywatemsedem (setup.py)
-numpy==2.5.1
+numpy==2.5.2
     # via
     #   contourpy
     #   geopandas
@@ -49,12 +49,12 @@ numpy==2.5.1
     #   scikit-learn
     #   scipy
     #   shapely
-packaging==26.2
+packaging==26.3
     # via
     #   geopandas
     #   matplotlib
     #   pyogrio
-pandas==3.0.3
+pandas==3.0.5
     # via geopandas
 pillow==12.3.0
     # via matplotlib
@@ -72,15 +72,15 @@ python-dateutil==2.9.0.post0
     # via
     #   matplotlib
     #   pandas
-python-dotenv==1.2.2
+python-dotenv==1.2.3
     # via pywatemsedem (setup.py)
-pytz==2026.2
+pytz==2026.3.post1
     # via pandas
 rasterio==1.4.3
     # via pywatemsedem (setup.py)
 scikit-learn==1.9.0
     # via pywatemsedem (setup.py)
-scipy==1.18.0
+scipy==1.18.1
     # via scikit-learn
 shapely==2.1.2
     # via geopandas
