@@ -453,6 +453,34 @@ class PostProcess(Factory):
             plot_title="Catchment mask + rivers + routing",
         )
 
+    def _finalize_routing_vct(self, file_path):
+        """Couple ``sedi_out`` onto a freshly SAGA-written routing vector.
+
+        Reads the SAGA output once via :func:`couple_sedi_out_routing`
+        (which also resolves the CRS, so no separate read/set_crs/write
+        round-trip is needed beforehand), and writes the enriched result
+        back once.
+
+        Parameters
+        ----------
+        file_path : pathlib.Path
+            Routing vector file path, as just written by
+            :func:`pywatemsedem.io.modeloutput.make_routing_vct_saga`.
+
+        Returns
+        -------
+        pathlib.Path
+            Same ``file_path``, now enriched with ``sedi_out`` and a
+            resolved CRS.
+        """
+        gdf = couple_sedi_out_routing(
+            file_path,
+            self.modeloutput.sedi_out.file_path,
+            self.epsg,
+        )
+        gdf.to_file(file_path)
+        return file_path
+
     def make_routing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing vector file based on routingfile
 
@@ -487,18 +515,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
-
-        gdf = couple_sedi_out_routing(
-            file_path,
-            self.modeloutput.sedi_out.file_path,
-            self.epsg,
-        )
-        gdf.to_file(file_path)
-
-        return file_path
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_routing_missing(self):
@@ -572,18 +589,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
-
-        gdf = couple_sedi_out_routing(
-            file_path,
-            self.modeloutput.sedi_out.file_path,
-            self.epsg,
-        )
-        gdf.to_file(file_path)
-
-        return file_path
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_routing_non_river(self):
@@ -640,18 +646,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
-
-        gdf = couple_sedi_out_routing(
-            file_path,
-            self.modeloutput.sedi_out.file_path,
-            self.epsg,
-        )
-        gdf.to_file(file_path)
-
-        return file_path
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_routing_non_sinks(self):
@@ -708,18 +703,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
-
-        gdf = couple_sedi_out_routing(
-            file_path,
-            self.modeloutput.sedi_out.file_path,
-            self.epsg,
-        )
-        gdf.to_file(file_path)
-
-        return file_path
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_routing_river(self):
@@ -776,18 +760,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
-
-        gdf = couple_sedi_out_routing(
-            file_path,
-            self.modeloutput.sedi_out.file_path,
-            self.epsg,
-        )
-        gdf.to_file(file_path)
-
-        return file_path
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_sedi_export(self):
