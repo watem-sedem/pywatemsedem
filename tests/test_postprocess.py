@@ -544,37 +544,34 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
 
 
 @pytest.mark.parametrize(
-    "source, approach, nmax, threshold, flag_merge",
+    "source, approach, nmax, threshold",
     [
-        pytest.param("sedi_out", "n", 2, None, False, id="top2_from_sedi_out"),
-        pytest.param("sedi_export", "n", 2, None, True, id="top2_from_sedi_export"),
+        pytest.param("sedi_out", "n", 2, None, id="top2_from_sedi_out"),
+        pytest.param("sedi_export", "n", 2, None, id="top2_from_sedi_export"),
         pytest.param(
             "sedi_export + sewer_in",
             "percentage",
             None,
             5,
-            True,
-            id="percentage_5_merge",
+            id="percentage_5",
         ),
         pytest.param(
             "sedi_export + sewer_in",
             "percentage",
             None,
             10,
-            False,
-            id="percentage_10_no_merge",
+            id="percentage_10",
         ),
     ],
 )
-def test_identify_priority_subcatchments(
+def test_identify_priority_areas(
     postprocess_obj,
     source,
     approach,
     nmax,
     threshold,
-    flag_merge,
 ):
-    """Test identify_priority_subcatchments across supported input scenarios.
+    """Test identify_priority_areas across supported input scenarios.
 
     Parameters
     ----------
@@ -591,22 +588,18 @@ def test_identify_priority_subcatchments(
         Maximum number of selected priorities for ``approach="n"``.
     threshold: float | None
         Cumulative percentage target for ``approach="percentage"``.
-    flag_merge: bool
-        Controls creation of merged overlapping priority subcatchments
-        (``priority_subcatchments_merged.shp``).
     """
 
     kwargs = {
         "source": source,
         "approach": approach,
-        "flag_merge": flag_merge,
     }
     if nmax is not None:
         kwargs["nmax"] = nmax
     if threshold is not None:
         kwargs["threshold"] = threshold
 
-    out = postprocess_obj.identify_priority_subcatchments(**kwargs)
+    out = postprocess_obj.identify_priority_areas(**kwargs)
 
     assert out is None
 
@@ -614,23 +607,33 @@ def test_identify_priority_subcatchments(
     priority_subcatchments = postprocess_obj.vct_priority_points.vct_subcatchments
 
     assert priority_points.file_path.exists()
-    assert priority_points.file_path.name == "priority_points_of_interest.shp"
+    assert priority_points.file_path.name == "priority_points.shp"
     assert not priority_points.geodata.empty
     assert "id" in priority_points.geodata.columns
+    assert "source_val" in priority_points.geodata.columns
     assert "target_id" not in priority_points.geodata.columns
     assert "priority_i" not in priority_points.geodata.columns
     assert "priority_id" not in priority_points.geodata.columns
 
     assert priority_subcatchments.file_path.exists()
-    assert priority_subcatchments.file_path.name.endswith("priority_subcatchments.shp")
+    assert priority_subcatchments.file_path.name == "priority_points_subcatchments.shp"
     assert not priority_subcatchments.geodata.empty
     assert "id" in priority_subcatchments.geodata.columns
+    assert "source_val" in priority_subcatchments.geodata.columns
     assert "target_id" not in priority_subcatchments.geodata.columns
     assert "VALUE" not in priority_subcatchments.geodata.columns
 
     point_ids = sorted(priority_points.geodata["id"].astype(int).tolist())
     subcatchment_ids = sorted(priority_subcatchments.geodata["id"].astype(int).tolist())
     assert subcatchment_ids == point_ids
+
+    # Both outputs are sorted from highest to lowest selection value.
+    point_values = priority_points.geodata["source_val"].astype(float).tolist()
+    assert point_values == sorted(point_values, reverse=True)
+    subcatchment_values = (
+        priority_subcatchments.geodata["source_val"].astype(float).tolist()
+    )
+    assert subcatchment_values == sorted(subcatchment_values, reverse=True)
 
     if approach == "n":
         assert len(priority_points.geodata) == nmax
