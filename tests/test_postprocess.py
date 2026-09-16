@@ -356,14 +356,19 @@ def test_process_grass_strips(postprocess_obj, compute_priority):
     }
     assert expected_columns.issubset(gdf_grass.columns)
 
-    rst_grass_ids = (
-        postprocess_obj.postprocessing_folder / "grass_strips" / "grass_strips_id.rst"
-    )
-    assert rst_grass_ids.exists()
+    # "grass_strips" only ever held the intermediate raster used internally
+    # and is removed once processing completes.
+    assert not (postprocess_obj.postprocessing_folder / "grass_strips").exists()
 
     if compute_priority:
         for col in ["cum_sum", "cdf"]:
             assert col in gdf_grass.columns
+
+        cdf_plot = (
+            postprocess_obj.postprocessing_folder
+            / "cumulative_sedimentload_grass_strips.png"
+        )
+        assert cdf_plot.exists()
 
         cdf = pd.to_numeric(gdf_grass["cdf"], errors="coerce").dropna()
         if not cdf.empty:
@@ -466,7 +471,7 @@ def test_add_poi(
     )
 
     assert poi_path.exists()
-    assert poi_path.parent.name == "poi"
+    assert poi_path.parent == postprocess_obj.postprocessing_folder
 
     poi_vector = postprocess_obj.vct_poi
     assert poi_vector.file_path == poi_path
@@ -494,8 +499,12 @@ def test_identify_subcatchments_to_buffers(postprocess_obj):
     out = postprocess_obj.identify_subcatchments_to_buffers()
 
     assert out.exists()
-    assert out.parent.name == "buffers"
-    assert out.name.endswith("_subcatchments_to_buffers.shp")
+    assert out.parent == postprocess_obj.postprocessing_folder
+    assert out.name == f"{postprocess_obj.vct_buffers.file_path.stem}_subcatchments.shp"
+    # The "buffers" working subfolder only ever held intermediate
+    # delineation helper files and is removed once the final result has
+    # been copied to the main postprocessing folder.
+    assert not (postprocess_obj.postprocessing_folder / "buffers").exists()
 
     subcatchments = postprocess_obj.vct_buffers.vct_subcatchments
     assert subcatchments.file_path == out
@@ -512,10 +521,10 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
     """Test identify_subcatchments workflow for multiple POIs.
 
     This test validates argument usage for
-    ``identify_subcatchments(target_input, id_column, tag)``:
+    ``identify_subcatchments(target_input, id_column)``:
     - ``target_input="vct_poi"`` to use the POI vector
     - ``id_column="id"`` to map each delineated polygon to input POI ids
-    - ``tag="subcatchments"`` for deterministic output naming
+    - the output is always named ``<points vector stem>_subcatchments.shp``
     """
 
     postprocess_obj.add_poi(
@@ -528,12 +537,15 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
     out = postprocess_obj.identify_subcatchments(
         "vct_poi",
         id_column="id",
-        tag="subcatchments",
     )
 
     assert out.exists()
-    assert out.name == "vct_poi_subcatchments.shp"
-    assert out.parent.name == "poi"
+    assert out.name == "poi_subcatchments_test_subcatchments.shp"
+    assert out.parent == postprocess_obj.postprocessing_folder
+    # The "poi" working subfolder only ever held intermediate delineation
+    # helper files and is removed once the final result has been copied
+    # to the main postprocessing folder.
+    assert not (postprocess_obj.postprocessing_folder / "poi").exists()
 
     subcatchments = postprocess_obj.vct_poi.vct_subcatchments
     assert subcatchments.file_path == out

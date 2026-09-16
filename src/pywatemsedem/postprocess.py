@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from pathlib import Path
 
 import geopandas as gpd
@@ -163,6 +164,49 @@ class PostProcess(Factory):
         if parent_property_name == "vct_priority_points":
             return self._workflow_subdir("priority")
         return self.postprocessing_folder
+
+    def _relocate_vector(self, vector_obj, target_dir, filename=None):
+        """Write a vector object's file to ``target_dir``, optionally renamed.
+
+        Copies ``vector_obj``'s current geodata to ``target_dir`` (as
+        ``filename``, or its current file name if not given), removes the
+        old file, and returns a freshly-loaded vector object pointing at
+        the new location. A no-op if the vector is already there.
+
+        Parameters
+        ----------
+        vector_obj : object
+            Vector object exposing ``.geodata`` and ``.file_path``.
+        target_dir : str or pathlib.Path
+            Directory the vector should end up in.
+        filename : str, optional
+            New file name. If ``None``, keeps the current file name.
+
+        Returns
+        -------
+        object
+            Vector object loaded from the new, relocated file path.
+        """
+        old_path = Path(vector_obj.file_path)
+        new_path = Path(target_dir) / (filename or old_path.name)
+        if new_path.resolve() == old_path.resolve():
+            return vector_obj
+
+        geom_type_map = {
+            "Point": "Point",
+            "MultiPoint": "Point",
+            "LineString": "LineString",
+            "MultiLineString": "LineString",
+            "Polygon": "Polygon",
+            "MultiPolygon": "Polygon",
+        }
+        geometry_type = geom_type_map[vector_obj.geodata.geom_type.iloc[0]]
+
+        self._unlink_vector_dataset(new_path)
+        vector_obj.geodata.to_file(new_path, spatial_index="YES")
+        self._unlink_vector_dataset(old_path)
+
+        return self.vector_factory(new_path, geometry_type, flag_clip=False)
 
     def _set_vector_from_input(
         self,
@@ -1051,10 +1095,13 @@ class PostProcess(Factory):
             how="left",
         )
         if compute_priority:
+            # `grass_dir` only holds the intermediate raster used above; the
+            # cdf plot is a final result and is written directly to the main
+            # postprocessing folder.
             gdf_grass_strips = _compute_cdf_sediment_load(
                 gdf_grass_strips,
                 "sed",
-                grass_dir,
+                self.postprocessing_folder,
                 ignore_negative_values=True,
                 sort_ascending=False,
                 tag="grass_strips",
@@ -1064,6 +1111,8 @@ class PostProcess(Factory):
         # Keep grass-strip statistics on the active vector object so downstream
         # calls can directly use ``pp.vct_grass_strips.geodata``.
         self._vct_grass_strips.geodata = gdf_grass_strips
+
+        shutil.rmtree(grass_dir, ignore_errors=True)
 
     def add_poi(
         self,
@@ -1171,8 +1220,7 @@ class PostProcess(Factory):
             )
             raise ValueError(msg)
 
-        poi_dir = self._workflow_subdir("poi")
-        vct_poi = poi_dir / Path(filename).name
+        vct_poi = self.postprocessing_folder / Path(filename).name
         if vct_poi.suffix.lower() == ".shp":
             for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg"]:
                 part = vct_poi.with_suffix(suffix)
@@ -1404,8 +1452,7 @@ class PostProcess(Factory):
             gdf_buffers = gdf_buffers.copy()
             gdf_buffers["id"] = np.arange(1, len(gdf_buffers) + 1)
 
-        buffer_dir = self._workflow_subdir("buffers")
-        vct_buffers = buffer_dir / Path(filename).name
+        vct_buffers = self.postprocessing_folder / Path(filename).name
         self._unlink_vector_dataset(vct_buffers)
         gdf_buffers.to_file(vct_buffers, spatial_index="YES")
 
@@ -1463,12 +1510,7 @@ class PostProcess(Factory):
             tag="subcatchments_to_buffers",
         )
 
-        vct_buffers.vct_subcatchments = self.vector_factory(
-            Path(vct_subcatchments),
-            "Polygon",
-            flag_clip=False,
-        )
-        gdf_subcatchments = vct_buffers.vct_subcatchments.geodata.copy()
+        gdf_subcatchments = gpd.read_file(vct_subcatchments)
         if "VALUE" in gdf_subcatchments.columns:
             gdf_subcatchments["id"] = pd.to_numeric(
                 gdf_subcatchments["VALUE"],
@@ -1479,7 +1521,14 @@ class PostProcess(Factory):
             msg = "Buffer subcatchments output does not contain 'VALUE' or 'id'."
             raise ValueError(msg)
 
-        self._unlink_vector_dataset(Path(vct_subcatchments))
+        # `buffer_dir` only ever holds intermediate delineation helper files
+        # (the raster of outlet ids, SAGA outputs): the final result is
+        # written directly to the main postprocessing folder, named after
+        # the buffers vector, and the now-empty (of anything meaningful)
+        # helper folder is removed.
+        subcatchments_name = f"{vct_buffers.file_path.stem}_subcatchments.shp"
+        vct_subcatchments = self.postprocessing_folder / subcatchments_name
+        self._unlink_vector_dataset(vct_subcatchments)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
         vct_buffers.vct_subcatchments = self.vector_factory(
             Path(vct_subcatchments),
@@ -1487,10 +1536,7 @@ class PostProcess(Factory):
             flag_clip=False,
         )
         self._attach_buffer_subcatchments_plot(vct_buffers)
-        self._remove_individual_subcatchment_shapefiles(
-            buffer_dir,
-            keep_paths=[vct_subcatchments],
-        )
+        shutil.rmtree(buffer_dir, ignore_errors=True)
         self._auto_cleanup_postprocessing_shapefiles()
 
         return vct_subcatchments
@@ -2961,8 +3007,8 @@ class PostProcess(Factory):
         target_input,
         target_type="points",
         id_column=None,
-        tag="subcatchments_to_targets",
         routing_table=None,
+        cleanup_workspace=True,
     ):
         """Identify subcatchments draining to point targets.
 
@@ -2976,17 +3022,22 @@ class PostProcess(Factory):
             supported in this method.
         id_column: str, optional
             Field name in point vector used as subcatchment id.
-        tag: str, default "subcatchments_to_targets"
-            Base output tag.
         routing_table: str or pathlib.Path, optional
             Routing table to delineate with. If ``None``, uses
             ``routing_non_river``.
+        cleanup_workspace: bool, default True
+            If ``True``, move the final aggregated subcatchments to the main
+            postprocessing folder and delete the per-workflow working
+            subfolder (holding intermediate delineation files) once done.
+            Set to ``False`` when calling repeatedly against the same
+            workspace (e.g. priority-area delineation's retry loop), which
+            handles its own, single final cleanup instead.
 
         Returns
         -------
         pathlib.Path
-            Path to ``vct_subcatchments``. For multi-point input this is the
-            aggregated vector path.
+            Path to ``vct_subcatchments``, named
+            ``<points vector stem>_subcatchments.shp``.
 
         Notes
         -----
@@ -3004,6 +3055,10 @@ class PostProcess(Factory):
             )
             raise ValueError(msg)
 
+        # Only used to name intermediate/per-point staging files (which live
+        # in a working subfolder removed at the end); irrelevant to callers.
+        tag = "subcatchments_to_targets"
+
         points_vector_obj, target_name, parent_property_name = (
             self._resolve_point_vector_target(target_input)
         )
@@ -3013,59 +3068,79 @@ class PostProcess(Factory):
         )
 
         if len(points_vector_obj.geodata) == 1:
-            return self.identify_subcatchment(
+            self.identify_subcatchment(
                 points_vector_obj,
                 id_column=target_id_column,
                 tag=tag,
                 output_dir=output_dir,
                 routing_table=routing_table,
             )
+        else:
+            point_vectors = []
+            registered_dummy_attrs = []
 
-        point_vectors = []
-        registered_dummy_attrs = []
+            try:
+                for point_index in range(len(points_vector_obj.geodata)):
+                    vct_point = self._make_dummy_point_vector(
+                        points_vector_obj,
+                        point_index,
+                        target_id_column,
+                        tag,
+                        output_dir=output_dir,
+                    )
+                    point_id = int(vct_point.geodata.iloc[0][target_id_column])
+                    point_tag = f"{tag}_{point_id}"
 
-        try:
-            for point_index in range(len(points_vector_obj.geodata)):
-                vct_point = self._make_dummy_point_vector(
+                    self.identify_subcatchment(
+                        vct_point,
+                        id_column=target_id_column,
+                        tag=point_tag,
+                        output_dir=output_dir,
+                        routing_table=routing_table,
+                    )
+
+                    attr_name = self._register_dummy_point_on_self(
+                        parent_property_name,
+                        point_id,
+                        vct_point,
+                    )
+                    registered_dummy_attrs.append(attr_name)
+                    point_vectors.append(vct_point)
+
+                points_vector_obj.vct_points_individual = point_vectors
+                self._aggregate_dummy_point_subcatchments(
                     points_vector_obj,
-                    point_index,
-                    target_id_column,
+                    target_name,
                     tag,
+                    point_vectors=point_vectors,
                     output_dir=output_dir,
                 )
-                point_id = int(vct_point.geodata.iloc[0][target_id_column])
-                point_tag = f"{tag}_{point_id}"
 
-                self.identify_subcatchment(
-                    vct_point,
-                    id_column=target_id_column,
-                    tag=point_tag,
-                    output_dir=output_dir,
-                    routing_table=routing_table,
-                )
+                self._auto_cleanup_postprocessing_shapefiles()
+            finally:
+                self._cleanup_dummy_point_properties(registered_dummy_attrs)
 
-                attr_name = self._register_dummy_point_on_self(
-                    parent_property_name,
-                    point_id,
-                    vct_point,
-                )
-                registered_dummy_attrs.append(attr_name)
-                point_vectors.append(vct_point)
+        # The subcatchments vector is always named after its points vector,
+        # regardless of `tag` (which only affects intermediate file names).
+        subcatchments_name = (
+            f"{Path(points_vector_obj.file_path).stem}_subcatchments.shp"
+        )
+        target_dir = self.postprocessing_folder if cleanup_workspace else output_dir
+        points_vector_obj.vct_subcatchments = self._relocate_vector(
+            points_vector_obj.vct_subcatchments, target_dir, filename=subcatchments_name
+        )
+        self._attach_subcatchments_plot(points_vector_obj)
 
-            points_vector_obj.vct_points_individual = point_vectors
-            vct_subcatchments = self._aggregate_dummy_point_subcatchments(
-                points_vector_obj,
-                target_name,
-                tag,
-                point_vectors=point_vectors,
-                output_dir=output_dir,
-            )
+        if cleanup_workspace:
+            if output_dir.resolve() != self.postprocessing_folder.resolve():
+                shutil.rmtree(output_dir, ignore_errors=True)
+            else:
+                # Ad hoc (non-`vct_*`) input: the result already lives in
+                # the main folder, but multi-point delineation may still
+                # have staged per-point dummy vectors under it.
+                shutil.rmtree(output_dir / "point_targets", ignore_errors=True)
 
-            self._auto_cleanup_postprocessing_shapefiles()
-
-            return vct_subcatchments
-        finally:
-            self._cleanup_dummy_point_properties(registered_dummy_attrs)
+        return points_vector_obj.vct_subcatchments.file_path
 
     def _select_priority_subcatchment_raster(self, source):
         """Return raster array used to identify priority subcatchments.
@@ -3324,8 +3399,8 @@ class PostProcess(Factory):
                 "vct_priority_points",
                 target_type="points",
                 id_column="id",
-                tag="priority_subcatchments",
                 routing_table=priority_routing_table,
+                cleanup_workspace=False,
             )
 
             if approach_key != "n":
@@ -3357,6 +3432,11 @@ class PostProcess(Factory):
 
         self._finalize_priority_outputs()
         self._auto_cleanup_postprocessing_shapefiles()
+
+        # `tempfolder` only ever holds intermediate delineation helper
+        # files: everything meaningful has just been copied out to the
+        # main postprocessing folder by `_finalize_priority_outputs`.
+        shutil.rmtree(tempfolder, ignore_errors=True)
 
     def _drop_nested_priority_duplicates(self, value_column):
         """Drop priorities whose subcatchment is nested inside another's.
