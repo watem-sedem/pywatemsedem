@@ -13,13 +13,13 @@ from matplotlib import colors
 from shapely.geometry import LineString
 
 from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
     clean_up_tempfiles,
     create_filename,
     create_spatial_index,
     execute_saga,
-    get_rstparams,
     load_raster,
     mask_array_with_val,
     raster_array_to_pandas_dataframe,
@@ -125,10 +125,6 @@ class Modeloutput(Factory):
 
         # inifile and modeloutput folder
         self.ini = ini
-        self.rstparams, self.rp = get_rstparams(self.ini, epsg=epsg)
-        resolution = int(abs(self.rstparams["transform"][0]))
-        self.epsg = epsg
-        self.nodata = self.rstparams["nodata"]
         self.modelinputfolder = Path(
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
@@ -136,8 +132,17 @@ class Modeloutput(Factory):
             get_item_from_ini(ini, "Working directories", "output directory", str)
         )
 
+        template = self.modelinputfolder / get_item_from_ini(
+            ini, "Files", "p factor map filename", str
+        )
+        rp = RasterProperties.from_template(template, epsg=epsg)
+
         # apply factory and set mask
-        super().__init__(resolution, epsg, self.nodata, self.modeloutputfolder)
+        super().__init__(rp.resolution, epsg, rp.nodata, self.modeloutputfolder)
+
+        # Set rp AFTER super().__init__() since Factory.__init__ resets self._rp
+        self.rp = rp
+
         self.mask = self.modelinputfolder / get_item_from_ini(
             ini, "Files", "shapefile catchment", str
         )
@@ -166,6 +171,11 @@ class Modeloutput(Factory):
         self._capacity = None
         self._rusle = None
         self._sinks = None
+
+    @property
+    def nodata(self):
+        """Nodata value (proxy to ``self.rp.nodata``)."""
+        return self.rp.nodata
 
     @property
     def aspect(self):
@@ -876,7 +886,7 @@ class Modeloutput(Factory):
             arr_sinks[self.mask.arr == self.nodata] = self.nodata
 
             rst_sinks = self.modeloutputfolder / "sinks.rst"
-            write_arr_as_rst(arr_sinks, rst_sinks, np.float32, self.rstparams)
+            write_arr_as_rst(arr_sinks, rst_sinks, np.float32, self.rp.rasterio_profile)
             self._sinks = self.raster_factory(rst_sinks, flag_mask=False)
             raster_used = rst_sinks
         else:

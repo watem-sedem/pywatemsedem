@@ -7,9 +7,9 @@ import pandas as pd
 from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
-    get_rstparams,
     mask_array_with_val,
 )
 from pywatemsedem.io.ini import get_item_from_ini
@@ -106,12 +106,19 @@ class Modelinput(Factory):
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
 
-        rstparams, _ = get_rstparams(ini, epsg=epsg)
-        resolution = int(abs(rstparams["transform"][0]))
-        nodata = rstparams["nodata"]
+        template = self.modelinputfolder / get_item_from_ini(
+            ini, "Files", "p factor map filename", str
+        )
+        rp = RasterProperties.from_template(template, epsg=epsg)
+        resolution = rp.resolution
+        nodata = rp.nodata
 
         # apply factory and set mask
         super().__init__(resolution, epsg, nodata, self.modelinputfolder)
+
+        # Set rp AFTER super().__init__() since Factory.__init__ resets self._rp
+        self.rp = rp
+
         self.mask = self.modelinputfolder / get_item_from_ini(
             ini, "Files", "shapefile catchment", str
         )

@@ -45,7 +45,6 @@ from pywatemsedem.geo.valid import (
     valid_rasterlist,
     valid_vector,
 )
-from pywatemsedem.io.ini import get_item_from_ini
 
 logger = logging.getLogger(__name__)
 
@@ -1198,83 +1197,6 @@ def grid_statistics(
     execute_saga(cmd_args)
 
 
-def rasterprofile_to_rstparams(profile):
-    """Transform rasterprofile to rstparams
-
-    Parameters
-    ----------
-    profile: rasterio.profiles
-        See :class:`rasterio.profiles.Profile`
-
-    Returns
-    -------
-    rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
-
-    """
-    rstparams = {}
-
-    rstparams["driver"] = "GTiff"
-    minmax = profile["minmax"]
-    rstparams["height"] = int(round((minmax[3] - minmax[1]) / profile["res"]))
-    rstparams["width"] = int(round((minmax[2] - minmax[0]) / profile["res"]))
-    rstparams["crs"] = profile["epsg"]
-    rstparams["transform"] = rasterio.Affine(
-        profile["res"],
-        0,
-        minmax[0],
-        0,
-        -profile["res"],
-        minmax[3],
-    )
-    rstparams["count"] = 1
-    rstparams["nodata"] = profile["nodata"]
-    rstparams["compress"] = "DEFLATE"
-
-    return rstparams
-
-
-def rstparams_to_rasterprofile(rstparams, epsg=None):
-    """Transform rstparams dictionary to rasterio raster profile dictionary
-
-    Parameters
-    ----------
-    rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
-    epsg: str, default None
-        The epsg code defining the coordinate system of the raster,
-        format = "EPSG:XXXXX"
-
-    Returns
-    -------
-    profile: rasterio.profiles
-        See :class:`rasterio.profiles.Profile`
-
-    """
-    profile = {"nodata": rstparams["nodata"]}
-
-    if "init" in list(rstparams["crs"].to_dict().keys()):
-        profile["epsg"] = rstparams["crs"].to_dict()["init"]
-    else:
-        if epsg is not None:
-            profile["epsg"] = epsg
-        else:
-            raise IOError("Cannot get epsg-code from rstparams, and no epsg defined!")
-
-    profile["res"] = rstparams["transform"][0]
-
-    xmin = rstparams["transform"][2]
-    xmax = xmin + rstparams["transform"][0] * rstparams["width"]
-    ymax = rstparams["transform"][5]
-    ymin = ymax + rstparams["transform"][4] * rstparams["height"]
-
-    profile["minmax"] = [xmin, ymin, xmax, ymax]
-    profile["ncols"] = rstparams["width"]
-    profile["nrows"] = rstparams["height"]
-
-    return profile
-
-
 @valid_input(dict={"rst_in": valid_raster})
 def set_no_data_rst(
     rst_in, rst_out, arr_bindomain, profile, dtype=None, nodata_val=-9999
@@ -1394,55 +1316,6 @@ def set_dtype_arr_rst(arr, profile, dtype=None):
         profile["dtype"] = dtype
 
     return arr, profile
-
-
-def get_rstparams(ini, epsg=None, template=None):
-    """Get rstparams and rasterprofile from template raster (default:pkaart)
-
-    Parameters
-    ----------
-    ini: pathlib.Path
-        file path to ini-file of WaTEM-SEDEM
-    epsg: str, default None
-        the epsg code defining the coordinate system of the raster,
-        format = "EPSG:XXXXX"
-    template: str or pathlib.Path, default None
-        File path to a template file that can be used as template for
-        geodata and bin mask. Default the "P" raster is used.
-
-    Returns
-    -------
-    profile: rasterio.profiles
-        See :class:`rasterio.profiles.Profile`
-    rstparams: dict
-        gdal dictionary holding all metadata for idrisi rasters
-    arr_bindomain: numpy.ndarray
-        binary mask of modelling domain
-
-    """
-    # this template is used to generate binair mask
-    if template is None:
-        modelinputfolder = Path(
-            get_item_from_ini(ini, "Working directories", "input directory", str)
-        )
-        template = modelinputfolder / get_item_from_ini(
-            ini, "Files", "p factor map filename", str
-        )
-
-    # open and assign profile to rstparams
-    try:
-        src = rasterio.open(template)
-    except IOError:
-        msg = (
-            f"Templatefile '{template}' not known for getting spatial metadata "
-            f"'rstparams' and 'profile'."
-        )
-        raise IOError(msg)
-    rstparams = src.profile
-    rstparams["compress"] = "DEFLATE"
-    profile = rstparams_to_rasterprofile(rstparams, epsg=epsg)
-
-    return rstparams, profile
 
 
 def get_mask_template(modelinputfolder, catchmentname, rst_template=None):

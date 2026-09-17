@@ -9,14 +9,13 @@ import shapely
 
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     compute_statistics_rasters_per_polygon_vector,
     execute_saga,
-    get_rstparams,
     load_raster,
     raster_array_to_pandas_dataframe,
     raster_dataframe_to_arr,
-    rasterprofile_to_rstparams,
     set_no_data_rst,
     write_arr_as_rst,
 )
@@ -101,27 +100,31 @@ class PostProcess(Factory):
 
         # general
         self.ini = Path(ini)
-        self.epsg = epsg
 
         self.postprocessing_folder = Path(postprocessing_folder)
         self.postprocessing_folder.mkdir(parents=True, exist_ok=True)
 
-        self.rstparams, self.rp = get_rstparams(self.ini, epsg=self.epsg)
-        self.resolution = int(abs(self.rstparams["transform"][0]))
-        self.nodata = self.rp["nodata"]
+        # Build modelinput/modeloutput
+        self.modelinput = Modelinput(self.ini, epsg)
+        self.modeloutput = Modeloutput(self.ini, epsg)
 
         super().__init__(
-            self.resolution,
-            self.epsg,
-            self.nodata,
+            self.modelinput.rp.resolution,
+            epsg,
+            self.modelinput.rp.nodata,
             self.postprocessing_folder,
         )
 
-        self.modelinput = Modelinput(self.ini, self.epsg)
-        self.modeloutput = Modeloutput(self.ini, self.epsg)
+        # Set rp AFTER super().__init__() since Factory.__init__ resets self._rp
+        self.rp = self.modelinput.rp
 
         # Enable automatic cleanup of stale postprocessing shapefiles.
         self.auto_cleanup_postprocessing_shapefiles = True
+
+    @property
+    def epsg(self):
+        """EPSG code (proxy to ``self.rp.epsg``)."""
+        return self.rp.epsg
 
     def _workflow_subdir(self, workflow):
         """Return (and create) a dedicated workflow folder in postprocessing."""
@@ -352,7 +355,7 @@ class PostProcess(Factory):
             self.modeloutput.routing.file_path,
             self.modelinput.compositelanduse.file_path,
             file_path,
-            self.rstparams,
+            self.rp.gdal_profile,
             extent=extent,
             tile_number=tile_number,
         )
@@ -420,7 +423,7 @@ class PostProcess(Factory):
             self.modeloutput.routing_missing.file_path,
             self.modelinput.compositelanduse.file_path,
             file_path,
-            self.rstparams,
+            self.rp.gdal_profile,
             extent=extent,
             tile_number=tile_number,
         )
@@ -722,7 +725,7 @@ class PostProcess(Factory):
             arr_grass_strips_id,
             rst_grass_strips_id,
             np.int32,
-            self.rstparams,
+            self.rp.rasterio_profile,
         )
 
         _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
@@ -1043,7 +1046,7 @@ class PostProcess(Factory):
         buffers_obj = self.modelinput.buffers
 
         arr_buffers = np.asarray(buffers_obj.arr)
-        nodata = self.rstparams["nodata"]
+        nodata = self.rp.nodata
 
         if pd.isna(nodata):
             valid_mask = ~np.isnan(arr_buffers)
@@ -1058,7 +1061,7 @@ class PostProcess(Factory):
         shape_generator = shapes(
             arr_buffers.astype(np.int32),
             mask=valid_mask,
-            transform=self.rstparams["transform"],
+            transform=self.rp.rasterio_profile["transform"],
         )
         records = [
             {"VALUE": int(value), "geometry": shape(geom)}
@@ -1126,7 +1129,7 @@ class PostProcess(Factory):
             msg = "No buffer outlet ids found in modelinput buffers raster."
             raise ValueError(msg)
 
-        nodata = self.rstparams["nodata"]
+        nodata = self.rp.nodata
         arr_buffer_outlets = np.where(
             np.isin(arr_buffers, outlet_ids),
             arr_buffers,
@@ -1139,7 +1142,7 @@ class PostProcess(Factory):
             arr_buffer_outlets,
             rst_buffer_outlets,
             arr_buffer_outlets.dtype,
-            self.rstparams,
+            self.rp.rasterio_profile,
         )
 
         _, vct_subcatchments = identify_subcatchments_to_target_ids(
@@ -2053,8 +2056,8 @@ class PostProcess(Factory):
                 xmin, ymin, xmax, ymax = subcatchments_for_plot.geodata.total_bounds
                 width = xmax - xmin
                 height = ymax - ymin
-                margin_x = max(width * 0.2, float(self.resolution) * 10.0)
-                margin_y = max(height * 0.2, float(self.resolution) * 10.0)
+                margin_x = max(width * 0.2, float(self.rp.resolution) * 10.0)
+                margin_y = max(height * 0.2, float(self.rp.resolution) * 10.0)
                 ax.set_xlim(xmin - margin_x, xmax + margin_x)
                 ax.set_ylim(ymin - margin_y, ymax + margin_y)
 
@@ -2587,7 +2590,7 @@ class PostProcess(Factory):
             self.epsg,
             col=target_id_column,
             dtype_raster="integer",
-            nodata=self.rstparams["nodata"],
+            nodata=self.rp.nodata,
             gdal=False,
         )
         rst_target_ids = out_dir / f"{target_name}_{tag}_ids.rst"
@@ -2595,7 +2598,7 @@ class PostProcess(Factory):
             arr_target_ids,
             rst_target_ids,
             np.int32,
-            self.rstparams,
+            self.rp.rasterio_profile,
         )
 
         _, vct_subcatchments = identify_subcatchments_to_target_ids(
@@ -2757,7 +2760,7 @@ class PostProcess(Factory):
             return self.modeloutput.sedi_export.arr.copy()
 
         if source_key in ["sedi_export+sewer_in", "sediexport+sewerin"]:
-            nodata = self.rstparams["nodata"]
+            nodata = self.rp.nodata
 
             try:
                 arr_sedi_export = self.modeloutput.sedi_export.arr.astype(np.float64)
@@ -2847,27 +2850,14 @@ class PostProcess(Factory):
 
         arr_priority = self._select_priority_subcatchment_raster(source)
 
-        priority_profile = dict(self.rstparams)
-        transform = priority_profile["transform"]
-        res = float(abs(transform.a))
-        nrows = int(priority_profile["height"])
-        ncols = int(priority_profile["width"])
-        minx = float(transform.c)
-        ymax = float(transform.f)
-        xmax = minx + ncols * res
-        miny = ymax - nrows * res
-        priority_profile["res"] = res
-        priority_profile["nrows"] = nrows
-        priority_profile["ncols"] = ncols
-        priority_profile["minmax"] = [minx, miny, xmax, ymax]
-        priority_profile["epsg"] = int(self.epsg)
+        priority_profile = dict(self.rp.gdal_profile)
 
         approach_key = approach.replace(" ", "").lower()
         if approach_key not in ["n", "percentage"]:
             msg = "Unknown approach. Use one of: 'n', 'percentage'."
             raise ValueError(msg)
 
-        nodata = priority_profile["nodata"]
+        nodata = self.rp.nodata
         if pd.isna(nodata):
             valid_mask = ~np.isnan(arr_priority)
         else:
@@ -2907,7 +2897,7 @@ class PostProcess(Factory):
                     identify_individual_priority_subcatchments(
                         arr_priority.copy(),
                         priority_profile,
-                        self.rstparams,
+                        self.rp.rasterio_profile,
                         self.routing_non_river.file_path,
                         nmax=candidate_n,
                         threshold_percentage=None,
@@ -2964,7 +2954,7 @@ class PostProcess(Factory):
                     identify_individual_priority_subcatchments(
                         arr_priority.copy(),
                         priority_profile,
-                        self.rstparams,
+                        self.rp.rasterio_profile,
                         self.routing_non_river.file_path,
                         nmax=None,
                         threshold_percentage=search_threshold,
@@ -3087,7 +3077,7 @@ class PostProcess(Factory):
         arr_priority = self._select_priority_subcatchment_raster(source).astype(
             np.float64
         )
-        nodata = self.rstparams["nodata"]
+        nodata = self.rp.nodata
         if pd.isna(nodata):
             valid_mask = ~np.isnan(arr_priority)
         else:
@@ -3132,7 +3122,7 @@ class PostProcess(Factory):
             sub_mask = _rasterize(
                 [(geom, 1)],
                 out_shape=arr_priority.shape,
-                transform=self.rstparams["transform"],
+                transform=self.rp.rasterio_profile["transform"],
                 fill=0,
                 dtype="uint8",
             ).astype(bool)
@@ -4256,7 +4246,7 @@ class PostProcess(Factory):
             self.files["rst_prckrt"],
             self.files["rst_watereros"],
             self.files["rst_percelen_prcid"],
-            resolution=self.resolution,
+            resolution=self.rp.resolution,
             fmap=self.postprocessing_folder,
             flag_write=True,
             flag_join_vct_parcels=join,
@@ -4302,7 +4292,9 @@ class PostProcess(Factory):
             profile["nodata"],
         )
         rst_out = self.postprocessing_folder / f"SediOut_merged_{catchment_name}.tif"
-        write_arr_as_rst(arr_sedi_out_total, rst_out, "float32", self.rstparams)
+        write_arr_as_rst(
+            arr_sedi_out_total, rst_out, "float32", self.rp.rasterio_profile
+        )
 
     def convert_output_rsts_to_ton(self):
         """Convert the units for rasters sedi_out, sedi_in, sediexport and
@@ -4558,7 +4550,7 @@ class PostProcess(Factory):
 
         arr_prckrt, _ = load_raster(self.files["rst_prckrt"])
 
-        res = self.rp["res"]
+        res = self.rp.resolution
         arr_prckrt = np.where(arr_prckrt >= 1, 1, arr_prckrt)
         vals, counts = np.unique(arr_prckrt, return_counts=True)
         areas = np.multiply(counts, res**2)
@@ -4596,8 +4588,8 @@ class PostProcess(Factory):
             f.write(f";{catchment_name}\n")
 
             opp_catch = np.sum(
-                self.arr_bindomain[self.arr_bindomain != self.rstparams["nodata"]]
-            ) * (self.rp["res"] ** 2)
+                self.arr_bindomain[self.arr_bindomain != self.rp.nodata]
+            ) * (self.rp.resolution**2)
             opp_catch_ha = opp_catch / 10000.0
 
             f.write(f"Oppervlakte bekken (ha);{opp_catch_ha}\n")
@@ -5174,9 +5166,11 @@ def identify_subcatchments_to_target_ids(
     arr_targets = np.where(mask, arr_target_ids, nodata).astype(np.float32)
 
     rst_targets = resmap / (str(rst_target_ids.stem) + "_targets.rst")
-    rstparams = rasterprofile_to_rstparams(gdal_profile)
+    rp_temp = RasterProperties.from_gdal(gdal_profile)
 
-    write_arr_as_rst(arr_targets, rst_targets, arr_targets.dtype, rstparams)
+    write_arr_as_rst(
+        arr_targets, rst_targets, arr_targets.dtype, rp_temp.rasterio_profile
+    )
 
     return define_subcatchments_saga(
         rst_targets,
