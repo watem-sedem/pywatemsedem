@@ -3634,19 +3634,16 @@ class PostProcess(Factory):
         tmp_id_col = self._infer_subcatchment_label_column(
             gdf_subcatchmpriority, preferred="VALUE"
         )
-        if (
-            tmp_id_col is None
-            or "source_load_cumperc" not in gdf_subcatchmpriority.columns
-        ):
+        if tmp_id_col is None or "src_cperc" not in gdf_subcatchmpriority.columns:
             return
 
-        tmp = gdf_subcatchmpriority[[tmp_id_col, "source_load_cumperc"]].apply(
+        tmp = gdf_subcatchmpriority[[tmp_id_col, "src_cperc"]].apply(
             pd.to_numeric, errors="coerce"
         )
         tmp = tmp.dropna()
         if tmp.empty:
             return
-        contrib_by_id = tmp.groupby(tmp_id_col)["source_load_cumperc"].max()
+        contrib_by_id = tmp.groupby(tmp_id_col)["src_cperc"].max()
 
         points_obj = self.vct_priority_points
         subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
@@ -5467,6 +5464,14 @@ def _write_priority_load_attributes(
 ):
     """Write source-load columns to a priority subcatchment vector.
 
+    Column names are kept within the 10-character ESRI Shapefile/DBF field
+    name limit (``src_load``, ``src_perc``, ``src_cperc``) so they survive
+    the ``.to_file``/``.read_file`` round-trip unchanged. Longer names such
+    as ``source_load_perc``/``source_load_cumperc`` would be silently
+    truncated and disambiguated by fiona/pyogrio (e.g. into
+    ``source_l_1``/``source_l_2``), breaking any later lookup by name (see
+    :func:`PostProcess._map_priority_cumperc`).
+
     Parameters
     ----------
     vct_subcatch : str or pathlib.Path
@@ -5479,13 +5484,13 @@ def _write_priority_load_attributes(
         Cumulative sediment load up to and including this subcatchment.
     """
     gdf = gpd.read_file(vct_subcatch)
-    gdf["source_load"] = selected_source_load
+    gdf["src_load"] = selected_source_load
     if total_source_load != 0:
-        gdf["source_load_perc"] = 100 * selected_source_load / total_source_load
-        gdf["source_load_cumperc"] = 100 * cumulative_source_load / total_source_load
+        gdf["src_perc"] = 100 * selected_source_load / total_source_load
+        gdf["src_cperc"] = 100 * cumulative_source_load / total_source_load
     else:
-        gdf["source_load_perc"] = np.nan
-        gdf["source_load_cumperc"] = np.nan
+        gdf["src_perc"] = np.nan
+        gdf["src_cperc"] = np.nan
     gdf.to_file(vct_subcatch, spatial_index="YES")
 
 
