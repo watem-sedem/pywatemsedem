@@ -3184,6 +3184,7 @@ class PostProcess(Factory):
             ``(source_key, approach_key, arr_priority, max_subcatchments,
             threshold_percentage)``.
         """
+
         source_key = source.replace(" ", "").lower()
         approach_key = approach.replace(" ", "").lower()
         if approach_key not in ["n", "percentage"]:

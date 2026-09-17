@@ -44,6 +44,10 @@ logger = logging.getLogger(__name__)
 def valid_dtm(func):
     """Decorator to check if a DTM is defined before executing the function.
 
+    Guard applied to :class:`Catchment` methods that require a digital terrain
+    model. The decorated method is only executed when a non-empty DTM raster is
+    available (see :attr:`~pywatemsedem.catchment.Catchment.dtm`).
+
     Parameters
     ----------
     func : callable
@@ -75,6 +79,10 @@ def valid_dtm(func):
 def valid_vct_river(func):
     """Decorator to check if a river vector is defined before executing the function.
 
+    Guard applied to :class:`Catchment` methods that require a river vector. The
+    decorated method is only executed when a non-empty river vector is available
+    (see :attr:`~pywatemsedem.catchment.Catchment.vct_river`).
+
     Parameters
     ----------
     func : callable
@@ -104,6 +112,11 @@ def valid_vct_river(func):
 
 def valid_vct_infra_line(func):
     """Decorator to check if infrastructure line vectors are defined.
+
+    Guard applied to :class:`Catchment` methods that require infrastructure line
+    features. The decorated method is only executed when a non-empty
+    infrastructure roads vector is available (see
+    :attr:`~pywatemsedem.catchment.Catchment.vct_infrastructure_roads`).
 
     Parameters
     ----------
@@ -135,6 +148,11 @@ def valid_vct_infra_line(func):
 def valid_vct_infra_poly(func):
     """Decorator to check if infrastructure polygon vectors are defined.
 
+    Guard applied to :class:`Catchment` methods that require infrastructure
+    polygon features. The decorated method is only executed when a non-empty
+    infrastructure buildings vector is available (see
+    :attr:`~pywatemsedem.catchment.Catchment.vct_infrastructure_buildings`).
+
     Parameters
     ----------
     func : callable
@@ -156,36 +174,6 @@ def valid_vct_infra_poly(func):
         """Execute wrapped function after validating infrastructure polygon vector."""
         if self._vct_infrastructure_buildings.is_empty():
             msg = "Please define non-empty infrastructure polygon vector!"
-            raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
-def valid_vct_parcels(func):
-    """Decorator to check if parcel vectors are defined.
-
-    Parameters
-    ----------
-    func : callable
-        The function to wrap.
-
-    Returns
-    -------
-    callable
-        Wrapped function that checks for parcel vector definition.
-
-    Raises
-    ------
-    IOError
-        If the parcels vector is empty or not defined.
-    """
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """Execute the wrapped function after validating parcels vector is defined."""
-        if self._vct_parcels.is_empty():
-            msg = "Please define non_empty parcels polygon vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
