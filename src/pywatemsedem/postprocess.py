@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from pathlib import Path
 
 import geopandas as gpd
@@ -36,7 +37,6 @@ from pywatemsedem.scenario import WSException
 from pywatemsedem.tools import package_resource
 from pywatemsedem.valid import (
     valid_routing_sedi_out_vector,
-    valid_routing_vector,
 )
 
 logger = logging.getLogger(__name__)
@@ -84,8 +84,13 @@ class PostProcess(Factory):
 
         # DATA
         self._routing_non_river = None
+        self._routing_river = None
+        self._routing_non_sinks = None
         self._vct_routing = None
         self._vct_routing_missing = None
+        self._vct_routing_non_river = None
+        self._vct_routing_river = None
+        self._vct_routing_non_sinks = None
         self._vct_sedi_export = None
         self._vct_sewer_in = None
         self._vct_sinks = None
@@ -159,6 +164,49 @@ class PostProcess(Factory):
         if parent_property_name == "vct_priority_points":
             return self._workflow_subdir("priority")
         return self.postprocessing_folder
+
+    def _relocate_vector(self, vector_obj, target_dir, filename=None):
+        """Write a vector object's file to ``target_dir``, optionally renamed.
+
+        Copies ``vector_obj``'s current geodata to ``target_dir`` (as
+        ``filename``, or its current file name if not given), removes the
+        old file, and returns a freshly-loaded vector object pointing at
+        the new location. A no-op if the vector is already there.
+
+        Parameters
+        ----------
+        vector_obj : object
+            Vector object exposing ``.geodata`` and ``.file_path``.
+        target_dir : str or pathlib.Path
+            Directory the vector should end up in.
+        filename : str, optional
+            New file name. If ``None``, keeps the current file name.
+
+        Returns
+        -------
+        object
+            Vector object loaded from the new, relocated file path.
+        """
+        old_path = Path(vector_obj.file_path)
+        new_path = Path(target_dir) / (filename or old_path.name)
+        if new_path.resolve() == old_path.resolve():
+            return vector_obj
+
+        geom_type_map = {
+            "Point": "Point",
+            "MultiPoint": "Point",
+            "LineString": "LineString",
+            "MultiLineString": "LineString",
+            "Polygon": "Polygon",
+            "MultiPolygon": "Polygon",
+        }
+        geometry_type = geom_type_map[vector_obj.geodata.geom_type.iloc[0]]
+
+        self._unlink_vector_dataset(new_path)
+        vector_obj.geodata.to_file(new_path, spatial_index="YES")
+        self._unlink_vector_dataset(old_path)
+
+        return self.vector_factory(new_path, geometry_type, flag_clip=False)
 
     def _set_vector_from_input(
         self,
@@ -300,6 +348,81 @@ class PostProcess(Factory):
         )
 
     @property
+    def routing_river(self):
+        """Return the routing table with only river routing."""
+        if self._routing_river is None:
+            self.keep_river_routing()
+        return self._routing_river
+
+    def keep_river_routing(self):
+        """Keep only river routing from routing file."""
+
+        rows, cols = np.where(self.modelinput.compositelanduse.arr == -1)
+        river_coords = list(
+            zip(rows + 1, cols + 1)
+        )  # +1 as routing file is 1-based and not 0-based
+
+        df = self.modeloutput.routing.copy()
+        to_keep = set(river_coords)
+        df_filtered = df[df[["row", "col"]].apply(tuple, axis=1).isin(to_keep)]
+
+        self._routing_river = df_filtered.copy()
+
+        self._routing_river.file_path = self.postprocessing_folder / "routing_river.txt"
+        self._routing_river.to_csv(
+            self._routing_river.file_path,
+            sep="\t",
+            index=False,
+        )
+
+    @property
+    def routing_non_sinks(self):
+        """Return the routing table without river or sewer routing."""
+        if self._routing_non_sinks is None:
+            self.remove_sink_routing()
+        return self._routing_non_sinks
+
+    def remove_sink_routing(self):
+        """Remove river and sewer routing from routing file.
+
+        Sediment that reaches a river or a sewer pixel does not continue
+        draining onward from there, so both are treated as sinks: routing
+        rows sourced from either are removed, on top of what
+        :meth:`remove_river_routing` already removes.
+        """
+        # Identify the rows and columns of the routing file that are river
+        # routing (lnduSource == -1).
+        rows, cols = np.where(self.modelinput.compositelanduse.arr == -1)
+        river_coords = set(zip(rows + 1, cols + 1))
+
+        # Identify the rows and columns of the routing file that are sewer
+        # routing (non-zero, valid sewer_in cells).
+        arr_sewer_in = self.modeloutput.sewer_in.arr
+        nodata = self.rp.nodata
+        if pd.isna(nodata):
+            sewer_mask = ~np.isnan(arr_sewer_in) & (arr_sewer_in != 0)
+        else:
+            sewer_mask = (arr_sewer_in != nodata) & (arr_sewer_in != 0)
+        sewer_rows, sewer_cols = np.where(sewer_mask)
+        sewer_coords = set(zip(sewer_rows + 1, sewer_cols + 1))
+
+        # Remove these rows and columns from the routing file
+        df = self.modeloutput.routing.copy()
+        to_remove = river_coords | sewer_coords
+        df_filtered = df[~df[["row", "col"]].apply(tuple, axis=1).isin(to_remove)]
+
+        self._routing_non_sinks = df_filtered.copy()
+
+        self._routing_non_sinks.file_path = (
+            self.postprocessing_folder / "routing_non_sinks.txt"
+        )
+        self._routing_non_sinks.to_csv(
+            self._routing_non_sinks.file_path,
+            sep="\t",
+            index=False,
+        )
+
+    @property
     def vct_routing(self):
         """Return the routing vector object.
 
@@ -330,8 +453,40 @@ class PostProcess(Factory):
             plot_title="Catchment mask + rivers + routing",
         )
 
+    def _finalize_routing_vct(self, file_path):
+        """Couple ``sedi_out`` onto a freshly SAGA-written routing vector.
+
+        Reads the SAGA output once via :func:`couple_sedi_out_routing`
+        (which also resolves the CRS, so no separate read/set_crs/write
+        round-trip is needed beforehand), and writes the enriched result
+        back once.
+
+        Parameters
+        ----------
+        file_path : pathlib.Path
+            Routing vector file path, as just written by
+            :func:`pywatemsedem.io.modeloutput.make_routing_vct_saga`.
+
+        Returns
+        -------
+        pathlib.Path
+            Same ``file_path``, now enriched with ``sedi_out`` and a
+            resolved CRS.
+        """
+        gdf = couple_sedi_out_routing(
+            file_path,
+            self.modeloutput.sedi_out.file_path,
+            self.epsg,
+        )
+        gdf.to_file(file_path)
+        return file_path
+
     def make_routing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing vector file based on routingfile
+
+        Sediment output values from ``modeloutput.sedi_out`` are coupled
+        to each routing line via :func:`couple_sedi_out_routing`, adding the
+        ``sedi_out`` column (sediment carried by this specific arrow).
 
         Parameters
         ----------
@@ -360,12 +515,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        # Set EPSG code to the shapefile
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
-
-        return file_path
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_routing_missing(self):
@@ -374,8 +524,16 @@ class PostProcess(Factory):
         If the routing missing vector does not exist yet, it is created with default
         settings (full extent, no tile selection, no tag) via
         :meth:`make_routing_missing_vct`.
+
+        If the underlying ``routing_missing`` table has no rows, no vector is
+        generated and ``None`` is returned.
         """
         if self._vct_routing_missing is None:
+            if self.modeloutput.routing_missing.empty:
+                logger.warning(
+                    "routing_missing table has no lines, no vector generated."
+                )
+                return None
             self.vct_routing_missing = self.make_routing_missing_vct()
         return self._vct_routing_missing
 
@@ -400,6 +558,9 @@ class PostProcess(Factory):
 
     def make_routing_missing_vct(self, extent=None, tile_number=None, tag=""):
         """Make a routing missing vector file based on routing missing file
+
+        Same column enrichment as :meth:`make_routing_vct`: a per-arrow
+        ``sedi_out`` column derived from ``modeloutput.sedi_out``.
 
         Parameters
         ----------
@@ -428,12 +589,178 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        # Set EPSG code to the shapefile
-        gdf = gpd.read_file(file_path)
-        gdf = gdf.set_crs(self.epsg)
-        gdf.to_file(file_path)
+        return self._finalize_routing_vct(file_path)
 
-        return file_path
+    @property
+    def vct_routing_non_river(self):
+        """Return the non-river routing vector object.
+
+        If the vector does not exist yet, it is created via
+        :meth:`make_routing_non_river_vct`.
+        """
+        if self._vct_routing_non_river is None:
+            self.vct_routing_non_river = self.make_routing_non_river_vct()
+        return self._vct_routing_non_river
+
+    @vct_routing_non_river.setter
+    def vct_routing_non_river(self, vector_input):
+        """Set the non-river routing vector object from a file path."""
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_routing_non_river",
+            "LineString",
+            "vct_routing_non_river",
+            plot_title="Catchment mask + rivers + non-river routing",
+        )
+
+    def make_routing_non_river_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing vector file that excludes river routing.
+
+        Uses :attr:`routing_non_river` as input. Sediment output values from
+        ``modeloutput.sedi_out`` are coupled to each routing line via
+        :func:`couple_sedi_out_routing`, adding the ``sedi_out`` column.
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tile_number: int
+            id of tile
+        tag: str
+            tag to add to filename
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing vector shapefile.
+        """
+        txt_routing = self.routing_non_river.file_path
+        file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
+
+        make_routing_vct_saga(
+            txt_routing,
+            self.modelinput.compositelanduse.file_path,
+            file_path,
+            self.rp.gdal_profile,
+            extent=extent,
+            tile_number=tile_number,
+        )
+
+        return self._finalize_routing_vct(file_path)
+
+    @property
+    def vct_routing_non_sinks(self):
+        """Return the non-sinks (non-river, non-sewer) routing vector object.
+
+        If the vector does not exist yet, it is created via
+        :meth:`make_routing_non_sinks_vct`.
+        """
+        if self._vct_routing_non_sinks is None:
+            self.vct_routing_non_sinks = self.make_routing_non_sinks_vct()
+        return self._vct_routing_non_sinks
+
+    @vct_routing_non_sinks.setter
+    def vct_routing_non_sinks(self, vector_input):
+        """Set the non-sinks routing vector object from a file path."""
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_routing_non_sinks",
+            "LineString",
+            "vct_routing_non_sinks",
+            plot_title="Catchment mask + rivers + non-sinks routing",
+        )
+
+    def make_routing_non_sinks_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing vector file that excludes river and sewer routing.
+
+        Uses :attr:`routing_non_sinks` as input. Sediment output values from
+        ``modeloutput.sedi_out`` are coupled to each routing line via
+        :func:`couple_sedi_out_routing`, adding the ``sedi_out`` column.
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tile_number: int
+            id of tile
+        tag: str
+            tag to add to filename
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing vector shapefile.
+        """
+        txt_routing = self.routing_non_sinks.file_path
+        file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
+
+        make_routing_vct_saga(
+            txt_routing,
+            self.modelinput.compositelanduse.file_path,
+            file_path,
+            self.rp.gdal_profile,
+            extent=extent,
+            tile_number=tile_number,
+        )
+
+        return self._finalize_routing_vct(file_path)
+
+    @property
+    def vct_routing_river(self):
+        """Return the river-only routing vector object.
+
+        If the vector does not exist yet, it is created via
+        :meth:`make_routing_river_vct`.
+        """
+        if self._vct_routing_river is None:
+            self.vct_routing_river = self.make_routing_river_vct()
+        return self._vct_routing_river
+
+    @vct_routing_river.setter
+    def vct_routing_river(self, vector_input):
+        """Set the river-only routing vector object from a file path."""
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_routing_river",
+            "LineString",
+            "vct_routing_river",
+            plot_title="Catchment mask + rivers + river routing",
+        )
+
+    def make_routing_river_vct(self, extent=None, tile_number=None, tag=""):
+        """Make a routing vector file that contains only river routing.
+
+        Uses :attr:`routing_river` as input. Sediment output values from
+        ``modeloutput.sedi_out`` are coupled to each routing line via
+        :func:`couple_sedi_out_routing`, adding the ``sedi_out`` column.
+
+        Parameters
+        ----------
+        extent: list
+            list holding value of extent to consider, xmin,ymin,xmax,ymax
+        tile_number: int
+            id of tile
+        tag: str
+            tag to add to filename
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing vector shapefile.
+        """
+        txt_routing = self.routing_river.file_path
+        file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
+
+        make_routing_vct_saga(
+            txt_routing,
+            self.modelinput.compositelanduse.file_path,
+            file_path,
+            self.rp.gdal_profile,
+            extent=extent,
+            tile_number=tile_number,
+        )
+
+        return self._finalize_routing_vct(file_path)
 
     @property
     def vct_sedi_export(self):
@@ -477,7 +804,7 @@ class PostProcess(Factory):
             self.postprocessing_folder
             / f"{self.modeloutput.sedi_export.file_path.stem}.shp"
         )
-        convert_rst_sinks_to_vct(
+        _convert_rst_sinks_to_vct(
             self.modeloutput.sedi_export.file_path, vct_out, "river", self.epsg
         )
         return vct_out
@@ -524,7 +851,7 @@ class PostProcess(Factory):
             self.postprocessing_folder
             / f"{self.modeloutput.sewer_in.file_path.stem}.shp"
         )
-        convert_rst_sinks_to_vct(
+        _convert_rst_sinks_to_vct(
             self.modeloutput.sewer_in.file_path, vct_out, "sewer", self.epsg
         )
         return vct_out
@@ -662,7 +989,7 @@ class PostProcess(Factory):
         Notes
         -----
         This method updates ``self.vct_grass_strips.geodata`` in place with
-        columns from :func:`pywatemsedem.postprocess.compute_efficiency_grass_strips`
+        columns from :func:`pywatemsedem.postprocess._compute_efficiency_grass_strips`
         and, if ``compute_priority=True``, additional cumulative metrics.
         """
         logger.info("Calculating in- and output of sediment for every grass strip...")
@@ -728,7 +1055,7 @@ class PostProcess(Factory):
             self.rp.rasterio_profile,
         )
 
-        _, _, df_grass_strips_eff = compute_efficiency_grass_strips(
+        _, _, df_grass_strips_eff = _compute_efficiency_grass_strips(
             self.modeloutput.routing.file_path,
             rst_grass_strips_id,
             self.modelinput.compositelanduse.file_path,
@@ -741,10 +1068,13 @@ class PostProcess(Factory):
             how="left",
         )
         if compute_priority:
-            gdf_grass_strips = compute_cdf_sediment_load(
+            # `grass_dir` only holds the intermediate raster used above; the
+            # cdf plot is a final result and is written directly to the main
+            # postprocessing folder.
+            gdf_grass_strips = _compute_cdf_sediment_load(
                 gdf_grass_strips,
                 "sed",
-                grass_dir,
+                self.postprocessing_folder,
                 ignore_negative_values=True,
                 sort_ascending=False,
                 tag="grass_strips",
@@ -754,6 +1084,8 @@ class PostProcess(Factory):
         # Keep grass-strip statistics on the active vector object so downstream
         # calls can directly use ``pp.vct_grass_strips.geodata``.
         self._vct_grass_strips.geodata = gdf_grass_strips
+
+        shutil.rmtree(grass_dir, ignore_errors=True)
 
     def add_poi(
         self,
@@ -861,8 +1193,7 @@ class PostProcess(Factory):
             )
             raise ValueError(msg)
 
-        poi_dir = self._workflow_subdir("poi")
-        vct_poi = poi_dir / Path(filename).name
+        vct_poi = self.postprocessing_folder / Path(filename).name
         if vct_poi.suffix.lower() == ".shp":
             for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg"]:
                 part = vct_poi.with_suffix(suffix)
@@ -1094,8 +1425,7 @@ class PostProcess(Factory):
             gdf_buffers = gdf_buffers.copy()
             gdf_buffers["id"] = np.arange(1, len(gdf_buffers) + 1)
 
-        buffer_dir = self._workflow_subdir("buffers")
-        vct_buffers = buffer_dir / Path(filename).name
+        vct_buffers = self.postprocessing_folder / Path(filename).name
         self._unlink_vector_dataset(vct_buffers)
         gdf_buffers.to_file(vct_buffers, spatial_index="YES")
 
@@ -1106,7 +1436,7 @@ class PostProcess(Factory):
     def identify_subcatchments_to_buffers(self):
         """Define the separate subcatchments to the buffer outlets.
 
-        See :func:`pywatemsedem.postprocess.identify_subcatchments_to_target_ids`
+        See :func:`pywatemsedem.postprocess._identify_subcatchments_to_target_ids`
         """
         vct_buffers = self.vct_buffers
 
@@ -1145,7 +1475,7 @@ class PostProcess(Factory):
             self.rp.rasterio_profile,
         )
 
-        _, vct_subcatchments = identify_subcatchments_to_target_ids(
+        _, vct_subcatchments = _identify_subcatchments_to_target_ids(
             rst_buffer_outlets,
             routing_nonriver,
             buffer_dir,
@@ -1153,12 +1483,7 @@ class PostProcess(Factory):
             tag="subcatchments_to_buffers",
         )
 
-        vct_buffers.vct_subcatchments = self.vector_factory(
-            Path(vct_subcatchments),
-            "Polygon",
-            flag_clip=False,
-        )
-        gdf_subcatchments = vct_buffers.vct_subcatchments.geodata.copy()
+        gdf_subcatchments = gpd.read_file(vct_subcatchments)
         if "VALUE" in gdf_subcatchments.columns:
             gdf_subcatchments["id"] = pd.to_numeric(
                 gdf_subcatchments["VALUE"],
@@ -1169,7 +1494,14 @@ class PostProcess(Factory):
             msg = "Buffer subcatchments output does not contain 'VALUE' or 'id'."
             raise ValueError(msg)
 
-        self._unlink_vector_dataset(Path(vct_subcatchments))
+        # `buffer_dir` only ever holds intermediate delineation helper files
+        # (the raster of outlet ids, SAGA outputs): the final result is
+        # written directly to the main postprocessing folder, named after
+        # the buffers vector, and the now-empty (of anything meaningful)
+        # helper folder is removed.
+        subcatchments_name = f"{vct_buffers.file_path.stem}_subcatchments.shp"
+        vct_subcatchments = self.postprocessing_folder / subcatchments_name
+        self._unlink_vector_dataset(vct_subcatchments)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
         vct_buffers.vct_subcatchments = self.vector_factory(
             Path(vct_subcatchments),
@@ -1177,10 +1509,7 @@ class PostProcess(Factory):
             flag_clip=False,
         )
         self._attach_buffer_subcatchments_plot(vct_buffers)
-        self._remove_individual_subcatchment_shapefiles(
-            buffer_dir,
-            keep_paths=[vct_subcatchments],
-        )
+        shutil.rmtree(buffer_dir, ignore_errors=True)
         self._auto_cleanup_postprocessing_shapefiles()
 
         return vct_subcatchments
@@ -2208,7 +2537,11 @@ class PostProcess(Factory):
         self._unlink_vector_dataset(points_path)
         gdf_points.to_file(points_path, spatial_index="YES")
 
-        self.vct_priority_points = points_path
+        # The file write above is required as input for the SAGA-based
+        # subcatchment delineation that follows. The in-memory object can be
+        # updated directly, avoiding a full reload (read + CRS/geometry checks)
+        # of the file we just wrote.
+        points_obj.geodata = gdf_points
 
     def _aggregate_dummy_point_subcatchments(
         self,
@@ -2441,6 +2774,8 @@ class PostProcess(Factory):
         top_level_vectors = [
             self._vct_routing,
             self._vct_routing_missing,
+            self._vct_routing_non_river,
+            self._vct_routing_river,
             self._vct_sedi_export,
             self._vct_sewer_in,
             self._vct_sinks,
@@ -2545,6 +2880,7 @@ class PostProcess(Factory):
         id_column=None,
         tag="subcatchment_to_target",
         output_dir=None,
+        routing_table=None,
     ):
         """Identify one subcatchment draining to one point target.
 
@@ -2559,15 +2895,21 @@ class PostProcess(Factory):
             Output tag used for naming intermediate and output files.
         output_dir: str or pathlib.Path, optional
             Output directory. If ``None``, uses ``postprocessing_folder``.
+        routing_table: str or pathlib.Path, optional
+            Routing table to delineate with. If ``None``, uses
+            ``routing_non_river``.
 
         Returns
         -------
         pathlib.Path
             Path to ``vct_subcatchments``.
         """
-        routing_nonriver = self.routing_non_river.file_path
-        if not routing_nonriver.exists():
-            self.remove_river_routing()
+        if routing_table is not None:
+            routing_nonriver = Path(routing_table)
+        else:
+            routing_nonriver = self.routing_non_river.file_path
+            if not routing_nonriver.exists():
+                self.remove_river_routing()
 
         target_vector_obj, target_name, _ = self._resolve_point_vector_target(
             target_input
@@ -2601,7 +2943,7 @@ class PostProcess(Factory):
             self.rp.rasterio_profile,
         )
 
-        _, vct_subcatchments = identify_subcatchments_to_target_ids(
+        _, vct_subcatchments = _identify_subcatchments_to_target_ids(
             rst_target_ids,
             routing_nonriver,
             out_dir,
@@ -2638,7 +2980,8 @@ class PostProcess(Factory):
         target_input,
         target_type="points",
         id_column=None,
-        tag="subcatchments_to_targets",
+        routing_table=None,
+        cleanup_workspace=True,
     ):
         """Identify subcatchments draining to point targets.
 
@@ -2652,14 +2995,22 @@ class PostProcess(Factory):
             supported in this method.
         id_column: str, optional
             Field name in point vector used as subcatchment id.
-        tag: str, default "subcatchments_to_targets"
-            Base output tag.
+        routing_table: str or pathlib.Path, optional
+            Routing table to delineate with. If ``None``, uses
+            ``routing_non_river``.
+        cleanup_workspace: bool, default True
+            If ``True``, move the final aggregated subcatchments to the main
+            postprocessing folder and delete the per-workflow working
+            subfolder (holding intermediate delineation files) once done.
+            Set to ``False`` when calling repeatedly against the same
+            workspace (e.g. priority-area delineation's retry loop), which
+            handles its own, single final cleanup instead.
 
         Returns
         -------
         pathlib.Path
-            Path to ``vct_subcatchments``. For multi-point input this is the
-            aggregated vector path.
+            Path to ``vct_subcatchments``, named
+            ``<points vector stem>_subcatchments.shp``.
 
         Notes
         -----
@@ -2677,6 +3028,10 @@ class PostProcess(Factory):
             )
             raise ValueError(msg)
 
+        # Only used to name intermediate/per-point staging files (which live
+        # in a working subfolder removed at the end); irrelevant to callers.
+        tag = "subcatchments_to_targets"
+
         points_vector_obj, target_name, parent_property_name = (
             self._resolve_point_vector_target(target_input)
         )
@@ -2686,57 +3041,79 @@ class PostProcess(Factory):
         )
 
         if len(points_vector_obj.geodata) == 1:
-            return self.identify_subcatchment(
+            self.identify_subcatchment(
                 points_vector_obj,
                 id_column=target_id_column,
                 tag=tag,
                 output_dir=output_dir,
+                routing_table=routing_table,
             )
+        else:
+            point_vectors = []
+            registered_dummy_attrs = []
 
-        point_vectors = []
-        registered_dummy_attrs = []
+            try:
+                for point_index in range(len(points_vector_obj.geodata)):
+                    vct_point = self._make_dummy_point_vector(
+                        points_vector_obj,
+                        point_index,
+                        target_id_column,
+                        tag,
+                        output_dir=output_dir,
+                    )
+                    point_id = int(vct_point.geodata.iloc[0][target_id_column])
+                    point_tag = f"{tag}_{point_id}"
 
-        try:
-            for point_index in range(len(points_vector_obj.geodata)):
-                vct_point = self._make_dummy_point_vector(
+                    self.identify_subcatchment(
+                        vct_point,
+                        id_column=target_id_column,
+                        tag=point_tag,
+                        output_dir=output_dir,
+                        routing_table=routing_table,
+                    )
+
+                    attr_name = self._register_dummy_point_on_self(
+                        parent_property_name,
+                        point_id,
+                        vct_point,
+                    )
+                    registered_dummy_attrs.append(attr_name)
+                    point_vectors.append(vct_point)
+
+                points_vector_obj.vct_points_individual = point_vectors
+                self._aggregate_dummy_point_subcatchments(
                     points_vector_obj,
-                    point_index,
-                    target_id_column,
+                    target_name,
                     tag,
-                    output_dir=output_dir,
-                )
-                point_id = int(vct_point.geodata.iloc[0][target_id_column])
-                point_tag = f"{tag}_{point_id}"
-
-                self.identify_subcatchment(
-                    vct_point,
-                    id_column=target_id_column,
-                    tag=point_tag,
+                    point_vectors=point_vectors,
                     output_dir=output_dir,
                 )
 
-                attr_name = self._register_dummy_point_on_self(
-                    parent_property_name,
-                    point_id,
-                    vct_point,
-                )
-                registered_dummy_attrs.append(attr_name)
-                point_vectors.append(vct_point)
+                self._auto_cleanup_postprocessing_shapefiles()
+            finally:
+                self._cleanup_dummy_point_properties(registered_dummy_attrs)
 
-            points_vector_obj.vct_points_individual = point_vectors
-            vct_subcatchments = self._aggregate_dummy_point_subcatchments(
-                points_vector_obj,
-                target_name,
-                tag,
-                point_vectors=point_vectors,
-                output_dir=output_dir,
-            )
+        # The subcatchments vector is always named after its points vector,
+        # regardless of `tag` (which only affects intermediate file names).
+        subcatchments_name = (
+            f"{Path(points_vector_obj.file_path).stem}_subcatchments.shp"
+        )
+        target_dir = self.postprocessing_folder if cleanup_workspace else output_dir
+        points_vector_obj.vct_subcatchments = self._relocate_vector(
+            points_vector_obj.vct_subcatchments, target_dir, filename=subcatchments_name
+        )
+        self._attach_subcatchments_plot(points_vector_obj)
 
-            self._auto_cleanup_postprocessing_shapefiles()
+        if cleanup_workspace:
+            if output_dir.resolve() != self.postprocessing_folder.resolve():
+                shutil.rmtree(output_dir, ignore_errors=True)
+            else:
+                # Ad hoc (non-`vct_*`) input: the result already lives in
+                # the main folder, but multi-point delineation may still
+                # have staged per-point dummy vectors under it.
+                shutil.rmtree(output_dir / "point_targets", ignore_errors=True)
 
-            return vct_subcatchments
-        finally:
-            self._cleanup_dummy_point_properties(registered_dummy_attrs)
+        return points_vector_obj.vct_subcatchments.file_path
 
     def _select_priority_subcatchment_raster(self, source):
         """Return raster array used to identify priority subcatchments.
@@ -2793,492 +3170,481 @@ class PostProcess(Factory):
         )
         raise ValueError(msg)
 
-    def identify_priority_subcatchments(
-        self,
-        nmax=10,
-        flag_merge=True,
-        source="sedi_out",
-        approach="n",
-        threshold=50,
-    ):
-        """Identify priority subcatchments
+    def _resolve_priority_area_params(self, source, approach, nmax, threshold):
+        """Validate arguments and resolve derived parameters.
 
         Parameters
         ----------
-        nmax: int, default 10
-            Maximum number of priority subcatchments for approach "n".
-        flag_merge: bool, default True
-            Merge the separate priority subcatchments to one shapefile.
+        source, approach, nmax, threshold
+            See :meth:`identify_priority_areas`.
+
+        Returns
+        -------
+        tuple
+            ``(source_key, approach_key, arr_priority, max_subcatchments,
+            threshold_percentage)``.
+        """
+
+        source_key = source.replace(" ", "").lower()
+        approach_key = approach.replace(" ", "").lower()
+        if approach_key not in ["n", "percentage"]:
+            msg = "Unknown approach. Use one of: 'n', 'percentage'."
+            raise ValueError(msg)
+        if source_key in ["sedi_out", "sediout"] and approach_key != "n":
+            msg = "source='sedi_out' only supports approach='n'."
+            raise ValueError(msg)
+
+        arr_priority = self._select_priority_subcatchment_raster(source)
+        nodata = self.rp.nodata
+        valid_mask = (
+            ~np.isnan(arr_priority) if pd.isna(nodata) else arr_priority != nodata
+        )
+        if not np.any(valid_mask):
+            msg = "No valid source values found for identifying priority subcatchments."
+            raise ValueError(msg)
+
+        if approach_key == "n":
+            if nmax is None or int(nmax) <= 0:
+                msg = "For approach 'n', 'nmax' must be a positive integer."
+                raise ValueError(msg)
+            max_subcatchments = int(nmax)
+            threshold_percentage = None
+        else:
+            max_subcatchments = None
+            threshold_percentage = float(threshold)
+            if threshold_percentage <= 0 or threshold_percentage > 100:
+                msg = "For approach 'percentage', 'threshold' must be in (0, 100]."
+                raise ValueError(msg)
+
+        return (
+            source_key,
+            approach_key,
+            arr_priority,
+            max_subcatchments,
+            threshold_percentage,
+        )
+
+    def _priority_value_column(self, gdf):
+        """Return the column holding the raster value used to rank priorities.
+
+        ``source_value`` is truncated to ``source_val`` the moment it
+        round-trips through an ESRI Shapefile (10-character field name
+        limit); both are checked so this resolves correctly regardless of
+        whether ``gdf`` has been through such a round-trip yet.
+        """
+        return next(
+            (c for c in ("source_value", "source_val") if c in gdf.columns), None
+        )
+
+    def identify_priority_areas(
+        self,
+        source="sedi_out",
+        approach="n",
+        nmax=10,
+        threshold=50,
+    ):
+        """Identify priority areas
+
+        Parameters
+        ----------
         source: str, default "sedi_out"
             Raster source used to rank priority subcatchments. Supported values:
-            "sedi_out", "sedi_export", "sedi_export + sewer_in".
+            "sedi_out", "sedi_export", "sedi_export + sewer_in". ``source="sedi_out"``
+            only supports ``approach="n"`` (see ``approach``).
         approach: str, default "n"
             Selection approach for priority subcatchments.
 
             - "n": select top ``nmax`` subcatchments.
             - "percentage": select subcatchments until cumulative selected load
-              exceeds ``threshold`` (%).
+              exceeds ``threshold`` (%). Not available for ``source="sedi_out"``.
+        nmax: int, default 10
+            Maximum number of priority subcatchments for approach "n".
         threshold: float, default 50
             Target cumulative percentage (0-100] of total source raster load
             for approach "percentage".
 
         Note
         ----
-        Algorithm to identify priority subcatchments:
+        Algorithm to identify priority areas:
 
-        1. Load source raster as an array
-        2. Identify pixel with highest source value i.
-        3. Identify subcatchment j coupled to this highest source value i.
-        4. Set all source values within subcatchment j to no_value.
-                5. Stop based on ``approach``:
-                     - "n": stop after ``nmax`` subcatchments.
+        1. Load source raster as an array.
+        2. Identify the pixel with the highest remaining source value.
+        3. Identify the subcatchment draining to that pixel.
+        4. Set all source values within that subcatchment to no_value, so it
+           cannot be picked again.
+        5. Repeat 2-4 until ``approach`` says to stop:
+
+           - "n": stop after ``nmax`` subcatchments.
            - "percentage": stop once cumulative selected load exceeds
              ``threshold`` (%).
 
-                Outputs
-                -------
-                - Priority points-of-interest (POI) in
-                    ``<postprocessing>/priority_subcatchments/priority_points_of_interest.shp``.
-                    The POI vector is exposed via ``self.vct_priority_points``.
-                - Coupled priority subcatchments on
-                    ``self.vct_priority_points.vct_subcatchments``.
+        Subcatchments are delineated on ``routing_non_river`` (always
+        excludes river-sourced routing), or on ``routing_non_sinks`` (also
+        excludes sewer-sourced routing) when ``sewer_in`` is part of
+        ``source``. Since routing is single-direction (never dichotomous
+        for this delineation), two subcatchments can then only ever be
+        disjoint or nested, never partially overlapping.
+        For ``source="sedi_export"``/``"sedi_export + sewer_in"`` this means
+        priority subcatchments can never nest at all, so
+        ``approach="percentage"`` (only usable with those sources) never
+        needs to check for it.
+
+        For ``source="sedi_out"`` (``approach="n"`` only), nesting can still
+        happen -- and not just from pixels tying on the exact same value:
+        since each priority's subcatchment is delineated as its own full
+        upstream contributing area, independent of what other rounds
+        already claimed, a *later*-found (lower-value) priority can turn
+        out to be hydrologically downstream of an *earlier*-found one,
+        making its subcatchment the parent of that earlier one's.
+        Whenever one priority's subcatchment (nearly) fully contains
+        another's, only the parent (outermost) subcatchment is kept, and
+        it is re-attributed to whichever point -- its own, or one of the
+        ones absorbed into it -- has the highest ranking value (ties
+        broken by the most downstream point); that value is also what the
+        final outputs are sorted on. See
+        :meth:`_drop_nested_priority_duplicates`. Dropping nested
+        duplicates can leave fewer than ``nmax`` priorities, so steps 2-4
+        are repeated with a higher round count until exactly ``nmax``
+        non-nested priorities are found or no more valid source cells
+        remain.
+
+        Outputs
+        -------
+        - Priority points-of-interest (POI) in
+          ``<postprocessing>/priority_points.shp``, exposed via
+          ``self.vct_priority_points``.
+        - Coupled priority subcatchments in
+          ``<postprocessing>/priority_points_subcatchments.shp``, exposed via
+          ``self.vct_priority_points.vct_subcatchments``.
+
+        Both outputs carry the raster value that made each priority a
+        priority (highest remaining source value at the time it was picked)
+        in a ``source_val`` column, and are sorted from highest to lowest
+        ``source_val``.
         """
-        # Generate temporary folder to write maps
         tempfolder = self._workflow_subdir("priority")
         if not tempfolder.exists():
             os.makedirs(tempfolder)
 
-        arr_priority = self._select_priority_subcatchment_raster(source)
-
+        (
+            source_key,
+            approach_key,
+            arr_priority,
+            max_subcatchments,
+            threshold_percentage,
+        ) = self._resolve_priority_area_params(source, approach, nmax, threshold)
         priority_profile = dict(self.rp.gdal_profile)
 
-        approach_key = approach.replace(" ", "").lower()
-        if approach_key not in ["n", "percentage"]:
-            msg = "Unknown approach. Use one of: 'n', 'percentage'."
-            raise ValueError(msg)
+        include_sewer_in_source = source_key in [
+            "sedi_export+sewer_in",
+            "sediexport+sewerin",
+        ]
+        priority_routing_table = (
+            self.routing_non_sinks.file_path
+            if include_sewer_in_source
+            else self.routing_non_river.file_path
+        )
 
-        nodata = self.rp.nodata
-        if pd.isna(nodata):
-            valid_mask = ~np.isnan(arr_priority)
-        else:
-            valid_mask = arr_priority != nodata
+        # Approach "percentage" is only ever used with sources that are
+        # guaranteed nesting-free (see docstring), so it skips the nesting
+        # check and the retry-until-nmax loop entirely.
+        self._clear_priority_subcatchment_workspace(tempfolder)
 
-        if not np.any(valid_mask):
-            msg = "No valid source values found for identifying priority subcatchments."
-            raise ValueError(msg)
-
-        max_subcatchments = None
-        threshold_percentage = None
-        if approach_key == "n":
-            if nmax is None or int(nmax) <= 0:
-                msg = "For approach 'n', 'nmax' must be a positive integer."
-                raise ValueError(msg)
-            max_subcatchments = int(nmax)
-        else:
-            threshold_percentage = float(threshold)
-            if threshold_percentage <= 0 or threshold_percentage > 100:
-                msg = "For approach 'percentage', 'threshold' must be in (0, 100]."
-                raise ValueError(msg)
-
-        if approach_key == "n":
-            target_n = int(max_subcatchments)
-            valid_cell_count = int(np.count_nonzero(valid_mask))
-            max_candidates = max(target_n, valid_cell_count)
-            candidate_n = target_n
-            last_retained_count = -1
-
-            while True:
-                self._clear_priority_subcatchment_workspace(tempfolder)
-
-                # Delineate individual subcatchments with an expanded candidate
-                # pool until enough retained priorities remain after applying
-                # the enclosure replacement rule.
-                gdf_subcatchmpriority, _, _, vct_priority_points = (
-                    identify_individual_priority_subcatchments(
-                        arr_priority.copy(),
-                        priority_profile,
-                        self.rp.rasterio_profile,
-                        self.routing_non_river.file_path,
-                        nmax=candidate_n,
-                        threshold_percentage=None,
-                        resmap=tempfolder,
-                        epsg=self.epsg,
-                    )
+        value_column = None
+        requested_rounds = max_subcatchments
+        while True:
+            gdf_subcatchmpriority, gdf_poi, _, vct_priority_points = (
+                _identify_individual_priority_subcatchments(
+                    arr_priority.copy(),
+                    priority_profile,
+                    self.rp.rasterio_profile,
+                    priority_routing_table,
+                    nmax=requested_rounds if approach_key == "n" else None,
+                    threshold_percentage=threshold_percentage,
+                    resmap=tempfolder,
+                    epsg=self.epsg,
                 )
+            )
+            raw_count = len(gdf_poi)
 
-                self.vct_priority_points = vct_priority_points
-                self._ensure_unique_priority_target_ids()
-                self.identify_subcatchments(
-                    "vct_priority_points",
-                    target_type="points",
-                    id_column="id",
-                    tag="priority_subcatchments",
-                )
-                self._vct_priority_subcatchments = (
-                    self.vct_priority_points.vct_subcatchments
-                )
+            self.vct_priority_points = vct_priority_points
+            self._ensure_unique_priority_target_ids()
+            self.identify_subcatchments(
+                "vct_priority_points",
+                target_type="points",
+                id_column="id",
+                routing_table=priority_routing_table,
+                cleanup_workspace=False,
+            )
 
-                self._apply_priority_enclosure_filter()
-                retained_count = len(self.vct_priority_points.geodata)
+            if approach_key != "n":
+                break
 
-                if retained_count >= target_n:
-                    self._limit_priority_pairs_to_n(target_n)
-                    self._renumber_priority_pair_ids()
-                    break
+            value_column = value_column or self._priority_value_column(
+                self.vct_priority_points.geodata
+            )
+            if value_column is not None:
+                self._drop_nested_priority_duplicates(value_column)
 
-                if (
-                    candidate_n >= max_candidates
-                    and retained_count == last_retained_count
-                ):
-                    msg = (
-                        f"Unable to retain {target_n} unique priority subcatchments "
-                        "after evaluating all available candidates."
-                    )
-                    raise ValueError(msg)
+            survivor_count = len(self.vct_priority_points.geodata)
+            if survivor_count >= max_subcatchments or raw_count < requested_rounds:
+                # Either we have enough, or the search already exhausted all
+                # valid source cells and asking for more won't help.
+                break
+            requested_rounds += max_subcatchments - survivor_count
 
-                last_retained_count = retained_count
-                candidate_n = min(max_candidates, candidate_n + target_n)
+        if approach_key == "n" and value_column is not None:
+            # A round can still overshoot with several non-nested ties (e.g.
+            # parallel tributaries); keep only the top `nmax`.
+            self._trim_priority_points_to_nmax(value_column, max_subcatchments)
 
-                if candidate_n >= max_candidates and retained_count < target_n:
-                    # One final attempt with full candidate space is allowed;
-                    # failure will be handled by the stagnation guard above.
-                    continue
-        else:
-            search_threshold = float(threshold_percentage)
+        if approach_key == "percentage":
+            # The search loop above already tracks cumulative selected load
+            # per priority in an overlap-safe way -- reuse it directly as
+            # `cumperc` instead of recomputing it from geometry.
+            self._map_priority_cumperc(gdf_subcatchmpriority)
 
-            while True:
-                self._clear_priority_subcatchment_workspace(tempfolder)
-
-                # Delineate subcatchments based on top values in the source raster.
-                gdf_subcatchmpriority, _, _, vct_priority_points = (
-                    identify_individual_priority_subcatchments(
-                        arr_priority.copy(),
-                        priority_profile,
-                        self.rp.rasterio_profile,
-                        self.routing_non_river.file_path,
-                        nmax=None,
-                        threshold_percentage=search_threshold,
-                        resmap=tempfolder,
-                        epsg=self.epsg,
-                    )
-                )
-
-                self.vct_priority_points = vct_priority_points
-                # Couple priority points to subcatchments via per-point dummy vectors.
-                # This ensures each point has its own delineation, and all resulting
-                # subcatchments are aggregated on the parent points vector object.
-                self._ensure_unique_priority_target_ids()
-                self.identify_subcatchments(
-                    "vct_priority_points",
-                    target_type="points",
-                    id_column="id",
-                    tag="priority_subcatchments",
-                )
-                self._vct_priority_subcatchments = (
-                    self.vct_priority_points.vct_subcatchments
-                )
-
-                # For percentage-based selection we keep candidate order and
-                # rely on overlap-safe cumulative accounting (no double
-                # counting of raster cells) instead of enclosure replacement.
-                self._annotate_priority_cumulative_contribution(
-                    gdf_subcatchmpriority,
-                    source=source,
-                )
-                keep_ids = self._limit_priority_pairs_to_percentage(
-                    threshold_percentage
-                )
-                if keep_ids:
-                    sub_id_col = self._infer_subcatchment_label_column(
-                        gdf_subcatchmpriority,
-                        preferred="VALUE",
-                    )
-                    if sub_id_col is not None:
-                        gdf_sub_ids = pd.to_numeric(
-                            gdf_subcatchmpriority[sub_id_col],
-                            errors="coerce",
-                        )
-                        gdf_subcatchmpriority = gdf_subcatchmpriority.loc[
-                            gdf_sub_ids.isin(keep_ids)
-                        ].copy()
-                self._renumber_priority_pair_ids()
-
-                gdf_points_check = self.vct_priority_points.geodata.copy()
-                cumperc_check = pd.to_numeric(
-                    gdf_points_check.get("cumperc", pd.Series(dtype=float)),
-                    errors="coerce",
-                ).dropna()
-                has_crossing = bool(np.any(cumperc_check > threshold_percentage))
-
-                if has_crossing or search_threshold >= 100:
-                    break
-
-                search_threshold = min(100.0, search_threshold + 5.0)
-
-        # merge overlapping subcatchments into joint subcatchments
-        self.merge_overlapping_subcatchments(gdf_subcatchmpriority, merge=flag_merge)
+        self._finalize_priority_outputs()
         self._auto_cleanup_postprocessing_shapefiles()
 
-    def _select_priority_source_column(self, gdf_points):
-        """Return first available source-value column for priority points.
+        # `tempfolder` only ever holds intermediate delineation helper
+        # files: everything meaningful has just been copied out to the
+        # main postprocessing folder by `_finalize_priority_outputs`.
+        shutil.rmtree(tempfolder, ignore_errors=True)
+
+    def _drop_nested_priority_duplicates(self, value_column):
+        """Drop priorities whose subcatchment is nested inside another's.
+
+        A priority's subcatchment can end up fully (or nearly) contained
+        within another priority's subcatchment. This is not limited to
+        pixels that tie on the exact same raster value: each priority's
+        subcatchment is delineated as its own, full upstream contributing
+        area, independent of what earlier or later search rounds already
+        claimed -- so a *later*-found (and therefore lower-value) priority
+        can perfectly well turn out to be hydrologically downstream of an
+        *earlier*-found one, making its subcatchment the parent of that
+        earlier one's.
+
+        For every family of nested subcatchments, only the outermost
+        (parent) one is kept; the rest are dropped. The kept subcatchment
+        is not attributed to whichever point it was originally found for:
+        it is re-attributed to whichever point -- its own, or one of the
+        ones absorbed into it -- has the highest ranking value, since that
+        is what actually justifies the priority (and is also the value the
+        final outputs are sorted on). Ties on that value are broken by
+        picking the most downstream of the tied points (largest own
+        subcatchment). Remaining points/subcatchments are renumbered 1..M
+        in decreasing priority order.
 
         Parameters
         ----------
-        gdf_points : geopandas.GeoDataFrame
-            Points GeoDataFrame to inspect.
-
-        Returns
-        -------
-        str or None
-            Column name (``"source_value"`` or ``"source_val"``) if found,
-            else ``None``.
+        value_column : str
+            Name of the column on ``self.vct_priority_points.geodata``
+            holding the raster value used to rank priorities.
         """
-        for candidate in ["source_value", "source_val"]:
-            if candidate in gdf_points.columns:
-                return candidate
-        return None
+        points_obj = self.vct_priority_points
+        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
+        if subcatchments_obj is None:
+            return
 
-    def _compute_overlap_safe_priority_contrib(
-        self,
-        gdf_points,
-        gdf_sub,
-        point_id_column,
-        sub_id_column,
-        source,
-    ):
-        """Compute overlap-safe cumulative contribution from source raster.
+        original_gdf_points = points_obj.geodata
+        gdf_sub = subcatchments_obj.geodata
+        if "id" not in gdf_sub.columns:
+            return
 
-        Parameters
-        ----------
-        gdf_points : geopandas.GeoDataFrame
-            Points GeoDataFrame with source values.
-        gdf_sub : geopandas.GeoDataFrame
-            Subcatchments GeoDataFrame with geometries.
-        point_id_column : str
-            Column name for point ids.
-        sub_id_column : str
-            Column name for subcatchment ids.
-        source : str
-            Source raster specification (``"sedi_out"``, ``"sedi_export"``
-            or ``"sedi_export + sewer_in"``).
+        geom_by_id = gdf_sub.set_index("id").geometry
+        if len(geom_by_id) < 2:
+            return
 
-        Returns
-        -------
-        pandas.Series
-            Cumulative contribution percentage by point id.
-        """
-        if source is None:
-            return pd.Series(dtype=np.float64)
-
-        source_col = self._select_priority_source_column(gdf_points)
-        if source_col is None:
-            return pd.Series(dtype=np.float64)
-
-        arr_priority = self._select_priority_subcatchment_raster(source).astype(
-            np.float64
+        # Largest subcatchment first: the most-downstream candidate.
+        ids_sorted = sorted(
+            geom_by_id.index, key=lambda i: geom_by_id[i].area, reverse=True
         )
-        nodata = self.rp.nodata
-        if pd.isna(nodata):
-            valid_mask = ~np.isnan(arr_priority)
-        else:
-            valid_mask = arr_priority != nodata
 
-        total_source_load = float(arr_priority[valid_mask].sum())
-        if total_source_load <= 0:
-            return pd.Series(dtype=np.float64)
+        drop_ids = set()
+        parent_of = {}
+        kept = []
+        for cand_id in ids_sorted:
+            cand_geom = geom_by_id[cand_id]
+            container_id = next(
+                (
+                    keep_id
+                    for keep_id in kept
+                    if cand_geom.intersection(geom_by_id[keep_id]).area
+                    >= 0.98 * cand_geom.area
+                ),
+                None,
+            )
+            if container_id is not None:
+                drop_ids.add(cand_id)
+                parent_of[cand_id] = container_id
+            else:
+                kept.append(cand_id)
 
-        gdf_rank = gdf_points.copy()
-        gdf_rank["_id"] = pd.to_numeric(gdf_rank[point_id_column], errors="coerce")
-        gdf_rank["_source"] = pd.to_numeric(gdf_rank[source_col], errors="coerce")
-        gdf_rank = gdf_rank.dropna(subset=["_id", "_source"]).copy()
-        if gdf_rank.empty:
-            return pd.Series(dtype=np.float64)
+        if not drop_ids:
+            return
 
-        gdf_rank["_id"] = gdf_rank["_id"].astype(int)
-        gdf_rank = gdf_rank.sort_values(["_source", "_id"], ascending=[False, True])
+        # Re-attribute each surviving subcatchment to the highest-value
+        # point among itself and everything absorbed into it (ties broken
+        # by the most downstream, i.e. largest own subcatchment).
+        points_by_id = original_gdf_points.set_index("id", drop=False)
+        family = {keep_id: [keep_id] for keep_id in kept}
+        for dropped_id, keep_id in parent_of.items():
+            family[keep_id].append(dropped_id)
 
-        gdf_sub_tmp = gdf_sub.copy()
-        gdf_sub_tmp["_id"] = pd.to_numeric(gdf_sub_tmp[sub_id_column], errors="coerce")
-        gdf_sub_tmp = gdf_sub_tmp.dropna(subset=["_id"]).copy()
-        if gdf_sub_tmp.empty:
-            return pd.Series(dtype=np.float64)
+        gdf_points = original_gdf_points[
+            original_gdf_points["id"].isin(kept)
+        ].set_index("id", drop=False)
+        for keep_id, member_ids in family.items():
+            member_values = points_by_id.loc[member_ids, value_column].astype(float)
+            tied_ids = member_values.index[member_values == member_values.max()]
+            best_id = max(tied_ids, key=lambda i: geom_by_id[i].area)
+            best_row = points_by_id.loc[best_id]
+            for col in gdf_points.columns:
+                if col != "id":
+                    gdf_points.loc[keep_id, col] = best_row[col]
 
-        gdf_sub_tmp["_id"] = gdf_sub_tmp["_id"].astype(int)
-        gdf_sub_tmp = gdf_sub_tmp.drop_duplicates(subset=["_id"])
-        geom_by_id = gdf_sub_tmp.set_index("_id")["geometry"].to_dict()
+        gdf_points = gdf_points.sort_values(value_column, ascending=False).reset_index(
+            drop=True
+        )
+        self._sync_priority_subcatchments_and_renumber(gdf_points)
 
-        from rasterio.features import rasterize as _rasterize
+    def _sync_priority_subcatchments_and_renumber(self, gdf_points):
+        """Persist a filtered/re-sorted priority-points selection.
 
-        covered_mask = np.zeros(arr_priority.shape, dtype=bool)
-        cumulative_source_load = 0.0
-        contrib = {}
-
-        for _, row in gdf_rank.iterrows():
-            target_id = int(row["_id"])
-            geom = geom_by_id.get(target_id)
-            if geom is None or geom.is_empty:
-                continue
-
-            sub_mask = _rasterize(
-                [(geom, 1)],
-                out_shape=arr_priority.shape,
-                transform=self.rp.rasterio_profile["transform"],
-                fill=0,
-                dtype="uint8",
-            ).astype(bool)
-
-            new_cells = sub_mask & valid_mask & (~covered_mask)
-            selected_source_load = float(arr_priority[new_cells].sum())
-            cumulative_source_load += selected_source_load
-            contrib[target_id] = 100.0 * cumulative_source_load / total_source_load
-            covered_mask = covered_mask | sub_mask
-
-        if not contrib:
-            return pd.Series(dtype=np.float64)
-
-        return pd.Series(contrib, dtype=np.float64)
-
-    def _extract_priority_cumperc_from_subcatchments(self, gdf_subcatchmpriority):
-        """Extract cumulative contribution from precomputed subcatchment metadata.
+        Filters ``self.vct_priority_points.vct_subcatchments`` down to the
+        ids present in ``gdf_points``, renumbers both 1..N following
+        ``gdf_points``'s current row order, and writes the result back
+        in-memory.
 
         Parameters
         ----------
-        gdf_subcatchmpriority : geopandas.GeoDataFrame
-            Subcatchment GeoDataFrame with a ``source_load_cumperc`` column.
+        gdf_points : geopandas.GeoDataFrame
+            Final priority points, already filtered and sorted by priority
+            (highest first). Must still use the pre-renumbering ``id``
+            values.
+        """
+        points_obj = self.vct_priority_points
+        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
 
-        Returns
-        -------
-        pandas.Series
-            Cumulative percentage by subcatchment id.
+        id_remap = {old: new for new, old in enumerate(gdf_points["id"], start=1)}
+        gdf_points = gdf_points.copy()
+        gdf_points["id"] = gdf_points["id"].map(id_remap)
+        points_obj.geodata = gdf_points
+
+        if subcatchments_obj is not None:
+            gdf_sub = subcatchments_obj.geodata
+            gdf_sub = gdf_sub[gdf_sub["id"].isin(id_remap)].reset_index(drop=True)
+            gdf_sub["id"] = gdf_sub["id"].map(id_remap)
+            subcatchments_obj.geodata = gdf_sub
+
+    def _trim_priority_points_to_nmax(self, value_column, nmax):
+        """Keep only the top ``nmax`` priorities by selection value.
+
+        Used for approach "n": after dropping nested duplicates, the search
+        can still have found more independent (non-nested) priorities than
+        requested, e.g. several tied but non-nested pixels found in the
+        same round (parallel tributaries). Only the highest-ranked ``nmax``
+        are kept; the rest are dropped and the survivors are renumbered
+        1..nmax in decreasing priority order.
+
+        Parameters
+        ----------
+        value_column : str
+            Name of the column on ``self.vct_priority_points.geodata``
+            holding the raster value used to rank priorities.
+        nmax : int
+            Maximum number of priorities to keep.
+        """
+        gdf_points = self.vct_priority_points.geodata
+        if len(gdf_points) <= nmax:
+            return
+
+        gdf_points = gdf_points.sort_values(value_column, ascending=False).head(nmax)
+        self._sync_priority_subcatchments_and_renumber(gdf_points)
+
+    def _finalize_priority_outputs(self):
+        """Sort priority points/subcatchments by selection value and persist.
+
+        Every priority point already carries the raster value that made it
+        a priority (see ``_create_poi_records``), as ``source_val`` --
+        ESRI Shapefile field names are truncated to 10 characters, so the
+        original ``source_value`` name assigned there is already shortened
+        by the time it comes back from disk (see
+        ``_ensure_unique_priority_target_ids``, which checks for both
+        names). That value is copied onto each priority's matching
+        subcatchment (joined on the shared ``id`` column) so both outputs
+        expose the same ranking value. Both are then sorted from highest to
+        lowest and written to their final, canonical shapefile names,
+        replacing the intermediate working files.
+        """
+        points_obj = self.vct_priority_points
+        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
+
+        value_column = self._priority_value_column(points_obj.geodata)
+        if value_column is None:
+            msg = "Priority points are missing the raster selection value column."
+            raise ValueError(msg)
+
+        gdf_points = points_obj.geodata.sort_values(
+            value_column, ascending=False
+        ).reset_index(drop=True)
+        old_points_path = Path(points_obj.file_path)
+
+        if subcatchments_obj is not None:
+            value_by_id = gdf_points.set_index("id")[value_column]
+            gdf_sub = subcatchments_obj.geodata.copy()
+            gdf_sub[value_column] = gdf_sub["id"].map(value_by_id)
+            gdf_sub = gdf_sub.sort_values(value_column, ascending=False).reset_index(
+                drop=True
+            )
+            old_subcatchments_path = Path(subcatchments_obj.file_path)
+
+        points_path = self.postprocessing_folder / "priority_points.shp"
+        self._unlink_vector_dataset(old_points_path)
+        gdf_points.to_file(points_path, spatial_index="YES")
+        self.vct_priority_points = points_path
+
+        if subcatchments_obj is not None:
+            subcatchments_path = (
+                self.postprocessing_folder / "priority_points_subcatchments.shp"
+            )
+            self._unlink_vector_dataset(old_subcatchments_path)
+            gdf_sub.to_file(subcatchments_path, spatial_index="YES")
+            self.vct_priority_subcatchments = subcatchments_path
+
+    def _map_priority_cumperc(self, gdf_subcatchmpriority):
+        """Attach each priority's cumulative contribution as a ``cumperc`` column.
+
+        The cumulative contribution is already computed, overlap-safe, by
+        the search loop itself (see :func:`_write_priority_load_attributes`,
+        based on the raster cells actually claimed per subcatchment) -- no
+        separate geometry-based recomputation is needed; it is simply
+        joined onto the points and subcatchments layers by id.
+
+        Parameters
+        ----------
+        gdf_subcatchmpriority: geopandas.GeoDataFrame
+            Raw subcatchments as returned by
+            :func:`_identify_individual_priority_subcatchments`.
         """
         if gdf_subcatchmpriority is None or gdf_subcatchmpriority.empty:
-            return pd.Series(dtype=np.float64)
+            return
 
-        tmp = gdf_subcatchmpriority.copy()
-        tmp_id_col = self._infer_subcatchment_label_column(tmp, preferred="VALUE")
-        if tmp_id_col is None or "source_load_cumperc" not in tmp.columns:
-            return pd.Series(dtype=np.float64)
+        tmp_id_col = self._infer_subcatchment_label_column(
+            gdf_subcatchmpriority, preferred="VALUE"
+        )
+        if tmp_id_col is None or "src_cperc" not in gdf_subcatchmpriority.columns:
+            return
 
-        tmp["_id"] = pd.to_numeric(tmp[tmp_id_col], errors="coerce")
-        tmp["_cum"] = pd.to_numeric(tmp["source_load_cumperc"], errors="coerce")
-        tmp = tmp.dropna(subset=["_id", "_cum"])
+        tmp = gdf_subcatchmpriority[[tmp_id_col, "src_cperc"]].apply(
+            pd.to_numeric, errors="coerce"
+        )
+        tmp = tmp.dropna()
         if tmp.empty:
-            return pd.Series(dtype=np.float64)
+            return
+        contrib_by_id = tmp.groupby(tmp_id_col)["src_cperc"].max()
 
-        return tmp.groupby("_id")["_cum"].max()
-
-    def _compute_priority_contrib_fallback(self, gdf_points, point_id_column):
-        """Estimate cumulative contribution from point source values.
-
-        Parameters
-        ----------
-        gdf_points : geopandas.GeoDataFrame
-            Points GeoDataFrame with source values.
-        point_id_column : str
-            Column name for point ids.
-
-        Returns
-        -------
-        pandas.Series
-            Cumulative percentage by point id.
-        """
-        source_col = self._select_priority_source_column(gdf_points)
-        if source_col is None:
-            return pd.Series(dtype=np.float64)
-
-        gdf_rank = gdf_points.copy()
-        gdf_rank["_id"] = pd.to_numeric(gdf_rank[point_id_column], errors="coerce")
-        gdf_rank["_source"] = pd.to_numeric(gdf_rank[source_col], errors="coerce")
-        gdf_rank = gdf_rank.dropna(subset=["_id", "_source"]).copy()
-        if gdf_rank.empty:
-            return pd.Series(dtype=np.float64)
-
-        gdf_rank = gdf_rank.sort_values(["_source", "_id"], ascending=[False, True])
-        source_total = gdf_rank["_source"].sum()
-        if source_total == 0:
-            gdf_rank["cumperc"] = np.nan
-        else:
-            gdf_rank["cumperc"] = 100.0 * gdf_rank["_source"].cumsum() / source_total
-
-        return gdf_rank.set_index("_id")["cumperc"]
-
-    def _apply_priority_cumperc_to_vectors(
-        self,
-        points_obj,
-        subcatchments_obj,
-        gdf_points,
-        gdf_sub,
-        point_id_column,
-        sub_id_column,
-        contrib_by_id,
-    ):
-        """Persist mapped ``cumperc`` values to points and subcatchments layers.
-
-        Parameters
-        ----------
-        points_obj : object
-            Points vector object.
-        subcatchments_obj : object
-            Subcatchments vector object.
-        gdf_points : geopandas.GeoDataFrame
-            Points GeoDataFrame to update.
-        gdf_sub : geopandas.GeoDataFrame
-            Subcatchments GeoDataFrame to update.
-        point_id_column : str
-            Column name for point ids.
-        sub_id_column : str
-            Column name for subcatchment ids.
-        contrib_by_id : pandas.Series
-            Cumulative percentage values indexed by id.
-        """
-        gdf_points["_map_id"] = pd.to_numeric(
-            gdf_points[point_id_column], errors="coerce"
-        )
-        gdf_sub["_map_id"] = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce")
-
-        gdf_points["cumperc"] = gdf_points["_map_id"].map(contrib_by_id)
-        gdf_sub["cumperc"] = gdf_sub["_map_id"].map(contrib_by_id)
-
-        gdf_points = gdf_points.drop(columns=["_map_id"])
-        gdf_sub = gdf_sub.drop(columns=["_map_id"])
-
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
-
-    def _annotate_priority_cumulative_contribution(
-        self, gdf_subcatchmpriority, source=None
-    ):
-        """Add cumulative contribution to priority geodata.
-
-        This annotation is intended for the percentage-based priority workflow.
-        A ``cumperc`` column is added to both priority points and coupled
-        priority subcatchments. Values express cumulative selected source load
-        percentage in descending priority order.
-
-        Parameters
-        ----------
-        gdf_subcatchmpriority : geopandas.GeoDataFrame
-            Subcatchment GeoDataFrame with optional precomputed
-            ``source_load_cumperc``.
-        source : str, optional
-            Source raster specification. If ``None``, fallback methods are
-            used.
-        """
         points_obj = self.vct_priority_points
         subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
         if subcatchments_obj is None:
@@ -3286,48 +3652,20 @@ class PostProcess(Factory):
 
         gdf_points = points_obj.geodata.copy()
         gdf_sub = subcatchments_obj.geodata.copy()
-        if gdf_points.empty or gdf_sub.empty:
-            return
-
         point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(
-            gdf_sub,
-            preferred="id",
-        )
+        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
         if sub_id_column is None:
             return
 
-        contrib_by_id = self._compute_overlap_safe_priority_contrib(
-            gdf_points,
-            gdf_sub,
-            point_id_column,
-            sub_id_column,
-            source,
+        gdf_points["cumperc"] = pd.to_numeric(
+            gdf_points[point_id_column], errors="coerce"
+        ).map(contrib_by_id)
+        gdf_sub["cumperc"] = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce").map(
+            contrib_by_id
         )
 
-        if contrib_by_id.empty:
-            contrib_by_id = self._extract_priority_cumperc_from_subcatchments(
-                gdf_subcatchmpriority
-            )
-
-        if contrib_by_id.empty:
-            contrib_by_id = self._compute_priority_contrib_fallback(
-                gdf_points,
-                point_id_column,
-            )
-
-        if contrib_by_id.empty:
-            return
-
-        self._apply_priority_cumperc_to_vectors(
-            points_obj,
-            subcatchments_obj,
-            gdf_points,
-            gdf_sub,
-            point_id_column,
-            sub_id_column,
-            contrib_by_id,
-        )
+        points_obj.geodata = gdf_points
+        subcatchments_obj.geodata = gdf_sub
 
     def _clear_priority_subcatchment_workspace(self, tempfolder):
         """Remove temporary priority delineation files from previous runs.
@@ -3350,469 +3688,48 @@ class PostProcess(Factory):
             ):
                 path.unlink()
 
-    def _limit_priority_pairs_to_n(self, nmax):
-        """Trim priority points and coupled subcatchments to exactly ``nmax`` rows."""
-        nmax = int(nmax)
-        if nmax <= 0:
-            return
+    def convert_output_rsts_to_ton(self):
+        """Convert kg-unit modeloutput rasters to ton and expose them on ``self``.
 
-        points_obj = self.vct_priority_points
-        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
-        if subcatchments_obj is None:
-            return
+        Converts ``sedi_out``, ``sedi_in``, ``watereros_kg`` and ``sedi_export``
+        from kg to ton (divide by 1000). Output rasters are written to
+        ``self.postprocessing_folder`` and each is exposed as a raster-factory
+        wrapped attribute:
 
-        gdf_points = points_obj.geodata.copy()
-        gdf_sub = subcatchments_obj.geodata.copy()
-        if gdf_points.empty or gdf_sub.empty:
-            return
+        - ``self.sedi_out_ton``
+        - ``self.sedi_in_ton``
+        - ``self.watereros_ton``
+        - ``self.sedi_export_ton``
 
-        point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
-        if sub_id_column is None:
-            return
-
-        source_col = None
-        for candidate in ["source_value", "source_val"]:
-            if candidate in gdf_points.columns:
-                source_col = candidate
-                break
-
-        if source_col is not None:
-            order_col = pd.to_numeric(gdf_points[source_col], errors="coerce").fillna(
-                -np.inf
-            )
-            gdf_points = gdf_points.assign(_order_val=order_col).sort_values(
-                "_order_val", ascending=False
-            )
-        else:
-            gdf_points = gdf_points.copy()
-
-        gdf_points = gdf_points.head(nmax).copy()
-        keep_ids = (
-            pd.to_numeric(gdf_points[point_id_column], errors="coerce")
-            .dropna()
-            .astype(int)
-        )
-        keep_ids_set = set(keep_ids.tolist())
-        if not keep_ids_set:
-            return
-
-        sub_ids = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce")
-        gdf_sub = gdf_sub.loc[sub_ids.isin(keep_ids_set)].copy()
-
-        gdf_points = gdf_points.drop(
-            columns=[c for c in ["_order_val"] if c in gdf_points.columns]
-        )
-
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
-
-    def _limit_priority_pairs_to_percentage(self, threshold_percentage):
-        """Trim priority pairs up to and including first threshold crossing.
-
-        Parameters
-        ----------
-        threshold_percentage : float
-            Target cumulative percentage threshold (0, 100].
-
-        Returns
-        -------
-        set
-            Set of kept point ids.
+        If a source filename contains ``_kg`` it is replaced with ``_ton``;
+        otherwise ``_ton`` is appended to the stem.
         """
-        threshold_percentage = float(threshold_percentage)
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
 
-        points_obj = self.vct_priority_points
-        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
-        if subcatchments_obj is None:
-            return set()
-
-        gdf_points = points_obj.geodata.copy()
-        gdf_sub = subcatchments_obj.geodata.copy()
-        if gdf_points.empty or gdf_sub.empty:
-            return set()
-
-        point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
-        if sub_id_column is None or "cumperc" not in gdf_points.columns:
-            return set()
-
-        gdf_points = gdf_points.copy()
-        gdf_points["_id"] = pd.to_numeric(gdf_points[point_id_column], errors="coerce")
-        gdf_points["_cumperc"] = pd.to_numeric(gdf_points["cumperc"], errors="coerce")
-        gdf_points = gdf_points.dropna(subset=["_id", "_cumperc"]).copy()
-        if gdf_points.empty:
-            return set()
-
-        gdf_points = gdf_points.sort_values(
-            ["_cumperc", "_id"], ascending=[True, True]
-        ).copy()
-
-        n_le = int((gdf_points["_cumperc"] <= threshold_percentage).sum())
-        if n_le == 0:
-            n_keep = 1
-        elif n_le < len(gdf_points):
-            n_keep = n_le + 1
-        else:
-            n_keep = n_le
-
-        keep_ids = set(gdf_points.head(n_keep)["_id"].astype(int).tolist())
-
-        gdf_points = gdf_points.loc[gdf_points["_id"].astype(int).isin(keep_ids)].copy()
-
-        sub_ids = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce")
-        gdf_sub = gdf_sub.loc[sub_ids.isin(keep_ids)].copy()
-
-        gdf_points = gdf_points.drop(
-            columns=[c for c in ["_id", "_cumperc"] if c in gdf_points.columns]
-        )
-
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
-
-        return keep_ids
-
-    def _renumber_priority_pair_ids(self):
-        """Renumber retained priority ids to a contiguous 1..N sequence."""
-        points_obj = self.vct_priority_points
-        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
-        if subcatchments_obj is None:
-            return
-
-        gdf_points = points_obj.geodata.copy()
-        gdf_sub = subcatchments_obj.geodata.copy()
-        if gdf_points.empty or gdf_sub.empty:
-            return
-
-        point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(gdf_sub, preferred="id")
-        if sub_id_column is None:
-            return
-
-        source_col = None
-        for candidate in ["source_value", "source_val"]:
-            if candidate in gdf_points.columns:
-                source_col = candidate
-                break
-
-        gdf_points = gdf_points.copy()
-        gdf_points["_old_id"] = pd.to_numeric(
-            gdf_points[point_id_column], errors="coerce"
-        )
-        gdf_points = gdf_points.dropna(subset=["_old_id"]).copy()
-        gdf_points["_old_id"] = gdf_points["_old_id"].astype(int)
-
-        if source_col is not None:
-            gdf_points["_order"] = pd.to_numeric(
-                gdf_points[source_col], errors="coerce"
-            ).fillna(-np.inf)
-            gdf_points = gdf_points.sort_values(
-                ["_order", "_old_id"], ascending=[False, True]
-            )
-        else:
-            gdf_points = gdf_points.sort_values("_old_id", ascending=True)
-
-        id_map = {
-            old_id: new_id
-            for new_id, old_id in enumerate(gdf_points["_old_id"].tolist(), start=1)
+        sources = {
+            "sedi_out_ton": self.modeloutput.sedi_out,
+            "sedi_in_ton": self.modeloutput.sedi_in,
+            "watereros_ton": self.modeloutput.watereros_kg,
+            "sedi_export_ton": self.modeloutput.sedi_export,
         }
-        if not id_map:
-            return
-
-        gdf_points["id"] = gdf_points["_old_id"].map(id_map).astype(int)
-        gdf_points = gdf_points.drop(
-            columns=[
-                c
-                for c in ["target_id", "priority_i", "priority_id"]
-                if c in gdf_points.columns
-            ]
-        )
-
-        gdf_sub = gdf_sub.copy()
-        sub_ids = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce")
-        gdf_sub = gdf_sub.loc[sub_ids.notna()].copy()
-        gdf_sub["_old_id"] = pd.to_numeric(
-            gdf_sub[sub_id_column], errors="coerce"
-        ).astype(int)
-        gdf_sub = gdf_sub.loc[gdf_sub["_old_id"].isin(set(id_map.keys()))].copy()
-
-        gdf_sub["id"] = gdf_sub["_old_id"].map(id_map).astype(int)
-        gdf_sub = gdf_sub.drop(
-            columns=[c for c in ["target_id", "VALUE"] if c in gdf_sub.columns]
-        )
-
-        gdf_points = gdf_points.drop(
-            columns=[c for c in ["_old_id", "_order"] if c in gdf_points.columns]
-        )
-        gdf_sub = gdf_sub.drop(columns=[c for c in ["_old_id"] if c in gdf_sub.columns])
-
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub.to_file(subcatchments_path, spatial_index="YES")
-
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
-
-    def _apply_priority_enclosure_filter(self):
-        """Apply overlap-then-enclosure replacement on priority pairs.
-
-        Iterate priority points in descending source value order. For each new
-        subcatchment, first test explicit positive overlap with retained
-        subcatchments. A new geometry is only accepted when it can replace all
-        overlapping older geometries by (near-)enclosing them and not being
-        smaller. Otherwise the new geometry is discarded to keep the retained
-        set overlap-free.
-        """
-        points_obj = self.vct_priority_points
-        subcatchments_obj = getattr(points_obj, "vct_subcatchments", None)
-        if subcatchments_obj is None:
-            return
-
-        gdf_points = points_obj.geodata.copy()
-        gdf_sub = subcatchments_obj.geodata.copy()
-        if gdf_sub.empty or gdf_points.empty:
-            return
-
-        point_id_column = self._infer_point_id_column(gdf_points)
-        sub_id_column = self._infer_subcatchment_label_column(
-            gdf_sub,
-            preferred="id",
-        )
-        if sub_id_column is None:
-            return
-
-        gdf_sub = gdf_sub.copy()
-        gdf_sub["_sub_id"] = pd.to_numeric(gdf_sub[sub_id_column], errors="coerce")
-        gdf_sub = gdf_sub.dropna(subset=["_sub_id"]).copy()
-        gdf_sub["_sub_id"] = gdf_sub["_sub_id"].astype(int)
-        gdf_sub = gdf_sub.drop_duplicates(subset=["_sub_id"]).copy()
-
-        gdf_points = gdf_points.copy()
-        gdf_points["_point_id"] = pd.to_numeric(
-            gdf_points[point_id_column], errors="coerce"
-        )
-        gdf_points = gdf_points.dropna(subset=["_point_id"]).copy()
-        gdf_points["_point_id"] = gdf_points["_point_id"].astype(int)
-
-        source_col = None
-        for candidate in ["source_value", "source_val"]:
-            if candidate in gdf_points.columns:
-                source_col = candidate
-                break
-
-        if source_col is not None:
-            gdf_points["_order"] = pd.to_numeric(
-                gdf_points[source_col], errors="coerce"
-            ).fillna(-np.inf)
-            gdf_points = gdf_points.sort_values("_order", ascending=False)
-        else:
-            gdf_points = gdf_points.sort_values("_point_id", ascending=True)
-
-        sub_geom_by_id = {
-            int(row["_sub_id"]): row.geometry for _, row in gdf_sub.iterrows()
-        }
-
-        retained_ids = []
-        retained_geom = {}
-        overlap_enclosure_tolerance = 0.995
-
-        for _, point_row in gdf_points.iterrows():
-            point_id = int(point_row["_point_id"])
-            if point_id not in sub_geom_by_id:
+        nodata = self.rp.nodata
+        for attr_name, src in sources.items():
+            src_path = Path(src.file_path)
+            if not src_path.exists():
+                logger.warning("Skipping missing raster: %s", src_path)
                 continue
 
-            geom_new = sub_geom_by_id[point_id]
-            if geom_new is None or geom_new.is_empty:
-                continue
+            arr_ton = np.where(src.arr == nodata, src.arr, src.arr / 1000.0)
 
-            enclosed_ids = []
-            overlap_ids = []
-            area_new = float(geom_new.area)
-            for old_id in retained_ids:
-                geom_old = retained_geom[old_id]
-                if geom_old is None or geom_old.is_empty:
-                    continue
+            if "_kg" in src_path.stem:
+                out_name = src_path.name.replace("_kg", "_ton")
+            else:
+                out_name = f"{src_path.stem}_ton{src_path.suffix}"
+            rst_out = self.postprocessing_folder / out_name
 
-                inter = geom_new.intersection(geom_old)
-                overlap_area = float(inter.area) if not inter.is_empty else 0.0
-                if overlap_area <= 0.0:
-                    continue
-
-                overlap_ids.append(old_id)
-
-                # Explicit overlap found; only replace when old is enclosed
-                # (or near-enclosed because of raster polygon slivers) and
-                # the new geometry is not smaller.
-                area_old = float(geom_old.area)
-                min_area = min(area_new, area_old)
-                overlap_ratio = (overlap_area / min_area) if min_area > 0 else 0.0
-                old_enclosed = geom_new.covers(geom_old) or (
-                    overlap_ratio >= overlap_enclosure_tolerance
-                    and area_new >= area_old
-                )
-
-                if old_enclosed and area_new >= area_old:
-                    enclosed_ids.append(old_id)
-
-            # If there is overlap but the new geometry cannot replace every
-            # overlapping old geometry, discard the new one.
-            if overlap_ids and set(enclosed_ids) != set(overlap_ids):
-                continue
-
-            if enclosed_ids:
-                retained_ids = [
-                    old_id for old_id in retained_ids if old_id not in enclosed_ids
-                ]
-                for old_id in enclosed_ids:
-                    retained_geom.pop(old_id, None)
-
-            retained_ids.append(point_id)
-            retained_geom[point_id] = geom_new
-
-        kept_ids_set = set(retained_ids)
-        if not kept_ids_set:
-            return
-
-        gdf_sub_kept = gdf_sub.loc[gdf_sub["_sub_id"].isin(kept_ids_set)].copy()
-        point_ids = pd.to_numeric(gdf_points[point_id_column], errors="coerce")
-        gdf_points_kept = gdf_points.loc[point_ids.isin(kept_ids_set)].copy()
-
-        drop_cols = ["_point_id", "_order"]
-        gdf_points_kept = gdf_points_kept.drop(
-            columns=[c for c in drop_cols if c in gdf_points_kept.columns]
-        )
-        gdf_sub_kept = gdf_sub_kept.drop(
-            columns=[c for c in ["_sub_id"] if c in gdf_sub_kept.columns]
-        )
-
-        points_path = Path(points_obj.file_path)
-        subcatchments_path = Path(subcatchments_obj.file_path)
-
-        self._unlink_vector_dataset(points_path)
-        gdf_points_kept.to_file(points_path, spatial_index="YES")
-
-        self._unlink_vector_dataset(subcatchments_path)
-        gdf_sub_kept.to_file(subcatchments_path, spatial_index="YES")
-
-        # Reload and re-couple vectors so in-memory objects reflect filtered files.
-        self.vct_priority_points = points_path
-        self.vct_priority_points.vct_subcatchments = self.vector_factory(
-            subcatchments_path,
-            "Polygon",
-            flag_clip=False,
-        )
-        self._attach_subcatchments_plot(self.vct_priority_points)
-        self._vct_priority_subcatchments = self.vct_priority_points.vct_subcatchments
-
-    def merge_overlapping_subcatchments(self, gdf_subcatchmpriority, merge=True):
-        """Merge overlapping subcatchments and reassign priorities for
-        overlapping subcatchments.
-
-        Parameters
-        ----------
-        gdf_subcatchmpriority: geopandas.GeoDataFrame
-            Subcatchment shapes with number of subcatchment.
-        merge: bool, default True
-            Merge the separate priority subcatchment areas to one shapefile.
-        """
-        if not merge:
-            return
-
-        # fix formatting
-        gdf_subcatchmpriority["VALUE"] = gdf_subcatchmpriority["VALUE"].astype(int)
-        gdf_subcatchmpriority = gdf_subcatchmpriority.sort_values(
-            "VALUE", ascending=True
-        ).copy()
-        source_crs = gdf_subcatchmpriority.crs
-
-        # make a new dataframe with overlapping shapes together
-        l_priorities = []
-        l_polygons = []
-        l_sedi_out_low = []
-        l_sedi_out_high = []
-
-        ind = 1
-
-        while not gdf_subcatchmpriority.empty:
-
-            first_geom = gdf_subcatchmpriority.geometry.iloc[0]
-
-            # identify intersects
-            gdf_subcatchmpriority["cond"] = [
-                first_geom.intersects(geom) for geom in gdf_subcatchmpriority.geometry
-            ]
-
-            subset = gdf_subcatchmpriority.loc[gdf_subcatchmpriority["cond"]]
-
-            # get union of these intersecting polygons and their priority id
-            l_polygons.append(shapely.union_all(subset.geometry))
-            l_sedi_out_low.append(subset["sedi_out"].min())
-            l_sedi_out_high.append(subset["sedi_out"].max())
-            l_priorities.append(ind)
-
-            ind += 1
-
-            # remove records from dataframe so no duplicates are analyzed
-            gdf_subcatchmpriority = gdf_subcatchmpriority.loc[
-                ~gdf_subcatchmpriority["cond"]
-            ].copy()
-
-        # generate new dataframe
-        gpd_priorities = gpd.GeoDataFrame(
-            {
-                "priority": l_priorities,
-                "sedi_out_min": l_sedi_out_low,
-                "sedi_out_max": l_sedi_out_high,
-                "geometry": l_polygons,
-            },
-            crs=source_crs,
-        )
-
-        gpd_priorities = gpd_priorities.to_crs(epsg=int(self.epsg))
-
-        vct_out = self.postprocessing_folder / "priority_subcatchments_merged.shp"
-        gpd_priorities.to_file(vct_out, spatial_index="YES")
+            write_arr_as_rst(arr_ton, rst_out, "float32", self.rp.rasterio_profile)
+            setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
 
     # ========================================================================
     # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
@@ -3825,7 +3742,6 @@ class PostProcess(Factory):
     # - aggregate_subcatchments_for_points
     # - identify_export_parcel
     # - aggregate_sedout_parcel
-    # - couple_sedi_out_routing
     # - intersect_sedi_outparcels_with_subcatchments
     # - select_routing_to_outsidecatchment
     # - get_total_sediment
@@ -3834,7 +3750,6 @@ class PostProcess(Factory):
     # - process_buffers
     # - compute_netto_erosion_parcels
     # - merge_sedi_out_and_cumulative
-    # - convert_output_rsts_to_ton
     # - add_sediment_to_subcatchments
     # - add_segment_results_to_vct
     # - compute_sewer_in_per_catchment
@@ -3986,33 +3901,6 @@ class PostProcess(Factory):
         df_prckrt = df_prckrt.drop(["val"], axis=1)
 
         return df_prckrt
-
-    def couple_sedi_out_routing(self, cols_out=None):
-        """Couple sedi_out of raster map values to routing file.
-
-        See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
-
-        Parameters
-        ----------
-        cols_out : list of str, optional
-            Columns to include in the output GeoDataFrame.
-
-        Returns
-        -------
-        gdf_routing_sedi_out: geopandas.GeoDataFrame
-            See :func:`pywatemsedem.postprocess.couple_sedi_out_routing`
-        """
-        logger.info("Coupling amount of sediment to routing vectors...")
-        valid_routing_vector(self)
-        gdf_routing_sedi_out = couple_sedi_out_routing(
-            self.vct_routing, self.files["rst_sedi_out"], self.epsg, cols_out
-        )
-        self.vct_routing_sedi_out = self.vct_routing.parent / Path(
-            self.vct_routing.stem + "_sedi_out.shp"
-        )
-        gdf_routing_sedi_out.to_file(self.vct_routing_sedi_out, spatial_index="YES")
-
-        return gdf_routing_sedi_out
 
     def intersect_sedi_outparcels_with_subcatchments(
         self, rst_subcatchment_sinks, df_sedi_out_parcel
@@ -4213,7 +4101,7 @@ class PostProcess(Factory):
             )
             gdf_buffer["area"] = gdf_buffer.area
             if compute_priority:
-                gdf_buffer = compute_cdf_sediment_load(
+                gdf_buffer = _compute_cdf_sediment_load(
                     gdf_buffer,
                     "buff_sed",
                     self.postprocessing_folder,
@@ -4295,22 +4183,6 @@ class PostProcess(Factory):
         write_arr_as_rst(
             arr_sedi_out_total, rst_out, "float32", self.rp.rasterio_profile
         )
-
-    def convert_output_rsts_to_ton(self):
-        """Convert the units for rasters sedi_out, sedi_in, sediexport and
-        watereros from kg to ton.
-        """
-        rsts = [
-            self.files["rst_sedi_out"],
-            self.files["rst_sedi_in"],
-            self.files["rst_watereros"],
-            self.files["rst_sediexport"],
-        ]
-        new_rsts = [Path(str(x).replace("_kg", "_ton")) for x in rsts]
-
-        for i in range(0, len(rsts)):
-            if rsts[i].exists():
-                convert_arr_from_kg_to_ton(rsts[i], new_rsts[i])
 
     def add_sediment_to_subcatchments(self, vct_subcatchments):
         """Adds the sediment input of every river segment to the corresponding
@@ -4888,7 +4760,7 @@ def _unlink_vector_dataset_local(vector_path):
         vector_path.unlink()
 
 
-def identify_individual_priority_subcatchments(
+def _identify_individual_priority_subcatchments(
     arr_sedi_out,
     rst_profile,
     rstparams,
@@ -5023,7 +4895,7 @@ def identify_individual_priority_subcatchments(
     return gdf_subcatchmpriority, gdf_poi, dst, vct_priority_points
 
 
-def compute_efficiency_grass_strips(
+def _compute_efficiency_grass_strips(
     txt_routing, rst_grass_strips, rst_prckrt, rst_sedi_out
 ):
     """Compute statistics for grass strips:
@@ -5108,7 +4980,7 @@ def compute_efficiency_grass_strips(
     return sediment_load_grass_strips_in, sediment_load_grass_strips_out, df_efficiency
 
 
-def identify_subcatchments_to_target_ids(
+def _identify_subcatchments_to_target_ids(
     rst_target_ids,
     txt_routing_nonriver,
     resmap,
@@ -5181,7 +5053,7 @@ def identify_subcatchments_to_target_ids(
     )
 
 
-def compute_cdf_sediment_load(
+def _compute_cdf_sediment_load(
     df,
     column_value,
     resmap,
@@ -5258,7 +5130,7 @@ def compute_cdf_sediment_load(
     return df
 
 
-def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
+def _convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     """Convert a sinks raster to a vector file.
 
     A sinks raster is defined as a raster holding captured sediment loads
@@ -5319,6 +5191,56 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
     gdf_out.to_file(vct_out, spatial_index="YES")
 
 
+def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
+    """Couple the sedi_out raster values to the vector routing file
+
+    Parameters
+    ----------
+    vct_routing: str or pathlib.Path
+        File path of vector routing, see
+        :func:`pywatemsedem.io.modeloutput.make_routing_vct`
+    rst_sedi_out: str or pathlib.Path
+        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
+    epsg: str
+        Format "EPSG:XXXXX"
+    cols_out: list, optional
+        Columns to output
+
+    Returns
+    -------
+    gdf_routing: geopandas.GeoDataFrame
+        Loaded vector file, for format
+        see :func:`pywatemsedem.io.modeloutput.make_routing_vct`. Columns
+        added:
+
+        - *sedi_out* (float): sediment carried by this specific arrow, i.e. the
+          total sediment leaving the source pixel multiplied by ``part``.
+    """
+    gdf_routing = gpd.read_file(vct_routing)
+
+    # load sedOut
+    arr_sedi_out, profile = load_raster(rst_sedi_out)
+    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
+    df_sedi_out["sedi_out"] = df_sedi_out["val"].values
+
+    # merge sedi_out to routing
+    gdf_routing = gdf_routing.merge(
+        df_sedi_out[["col", "row", "sedi_out"]], on=["col", "row"], how="left"
+    )
+
+    # Each row is a single (source -> target) arrow; sedi_out on the raster is
+    # the total leaving the source pixel, so multiply by 'part' to get the
+    # amount carried by this arrow specifically.
+    gdf_routing["sedi_out"] = gdf_routing["sedi_out"] * gdf_routing["part"]
+
+    gdf_routing = gdf_routing.set_crs(epsg, allow_override=True)
+
+    if cols_out is not None:
+        gdf_routing = gdf_routing[cols_out]
+
+    return gdf_routing
+
+
 # ============================================================================
 # TODO: MODULE-LEVEL FUNCTIONS NOT YET USED BY postprocess.ipynb
 # ============================================================================
@@ -5338,7 +5260,6 @@ def convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
 # - create_id_raster_for_highest_value_arr
 # - check_if_file_exists
 # - split_endpoints_in_raster
-# - convert_arr_from_kg_to_ton
 # - process_filename
 # - read_filestructure
 # - get_tuple_datastructure
@@ -5497,7 +5418,7 @@ def _resolve_or_create_priority_subcatchment(
     if template_name.exists():
         return template_name.with_suffix(".sdat"), template_name
 
-    rst_subcatch, vct_subcatch = identify_subcatchments_to_target_ids(
+    rst_subcatch, vct_subcatch = _identify_subcatchments_to_target_ids(
         rst_id,
         txt_routing_non_river,
         resmap,
@@ -5543,6 +5464,14 @@ def _write_priority_load_attributes(
 ):
     """Write source-load columns to a priority subcatchment vector.
 
+    Column names are kept within the 10-character ESRI Shapefile/DBF field
+    name limit (``src_load``, ``src_perc``, ``src_cperc``) so they survive
+    the ``.to_file``/``.read_file`` round-trip unchanged. Longer names such
+    as ``source_load_perc``/``source_load_cumperc`` would be silently
+    truncated and disambiguated by fiona/pyogrio (e.g. into
+    ``source_l_1``/``source_l_2``), breaking any later lookup by name (see
+    :func:`PostProcess._map_priority_cumperc`).
+
     Parameters
     ----------
     vct_subcatch : str or pathlib.Path
@@ -5555,13 +5484,13 @@ def _write_priority_load_attributes(
         Cumulative sediment load up to and including this subcatchment.
     """
     gdf = gpd.read_file(vct_subcatch)
-    gdf["source_load"] = selected_source_load
+    gdf["src_load"] = selected_source_load
     if total_source_load != 0:
-        gdf["source_load_perc"] = 100 * selected_source_load / total_source_load
-        gdf["source_load_cumperc"] = 100 * cumulative_source_load / total_source_load
+        gdf["src_perc"] = 100 * selected_source_load / total_source_load
+        gdf["src_cperc"] = 100 * cumulative_source_load / total_source_load
     else:
-        gdf["source_load_perc"] = np.nan
-        gdf["source_load_cumperc"] = np.nan
+        gdf["src_perc"] = np.nan
+        gdf["src_cperc"] = np.nan
     gdf.to_file(vct_subcatch, spatial_index="YES")
 
 
@@ -6438,84 +6367,6 @@ def transform_dict_netto_erosion_to_df(dict_netto_ero):
     df_netto_erosion.index.name = "prc_id"
 
     return df_netto_erosion
-
-
-def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
-    """Couple the sedi_out raster values to the vector routing file
-
-    Parameters
-    ----------
-    vct_routing: str or pathlib.Path
-        File path of vector routing, see
-        :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-    rst_sedi_out: str or pathlib.Path
-        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
-    epsg: str
-        Format "EPSG:XXXXX"
-    cols_out: list, optional
-        Columns to output
-
-    Returns
-    -------
-    gdf_routing: geopandas.GeoDataFrame
-        Loaded vector file, for format
-        see :func:`pywatemsedem.io.modeloutput.make_routing_vct`. Columns
-        added:
-
-        - *sedi_out* (float): Total Sediment output (scale:parcel) from pixel
-        - *sedi_out1* (float): Sediment output coupled to arrow current pixel
-        - *sedi_out2* (float): Sedimout output coupled to other output arrow current
-          pixel
-        - *cum_sum* (float): Cumulative sediment output based on sedi_out1
-        - *cum_perc* (float): Cumulative percentage (%)
-    """
-    gdf_routing = gpd.read_file(vct_routing)
-
-    # load sedOut
-    arr_sedi_out, profile = load_raster(rst_sedi_out)
-    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile)
-    df_sedi_out["sedi_out"] = df_sedi_out["val"].values
-
-    # merge sedi_out to routing
-    gdf_routing = gdf_routing.merge(
-        df_sedi_out[["col", "row", "sedi_out"]], on=["col", "row"], how="left"
-    )
-
-    # (DR) sedi_out correction with part (%): sedi_out is total amount that goes out a
-    # pixel (derived over two pixels).
-    gdf_routing["sedi_out1"] = gdf_routing["sedi_out"] * gdf_routing["part"]
-    gdf_routing["sedi_out2"] = gdf_routing["sedi_out"] * (1 - gdf_routing["part"])
-
-    # (DR) Write cumulative percentage (descending)
-    gdf_routing = gdf_routing.sort_values("sedi_out1", ascending=False)
-    gdf_routing["cum_sum"] = gdf_routing["sedi_out1"].cumsum().astype(int)
-    gdf_routing["cum_perc"] = (
-        gdf_routing.cum_sum / gdf_routing["sedi_out1"].sum()
-    ) * 100
-    gdf_routing = gdf_routing.set_crs(epsg, allow_override=True)
-
-    if cols_out is not None:
-        gdf_routing = gdf_routing[cols_out]
-
-    return gdf_routing
-
-
-def convert_arr_from_kg_to_ton(rst_in, rst_out):
-    """Set values of all pixels of a raster divided by 1000 (kg -> ton)
-
-    Parameters
-    ----------
-    rst_in: str or pathlib.Path
-        File path of input raster to set no data values
-    rst_out: str or pathlib.Path
-        File path of output raster with no data values
-    """
-
-    arr_in, profile = load_raster(rst_in)
-    arr_out = np.where(arr_in == profile["nodata"], arr_in, arr_in / 1000)
-    profile["driver"] = "GTiff"
-    profile["compress"] = "DEFLATE"
-    write_arr_as_rst(arr_out, rst_out, "float32", profile)
 
 
 def process_filename(

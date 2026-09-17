@@ -720,7 +720,7 @@ class Modelinput(Factory):
         # checks
         valid_non_nan(self.compositelanduse.arr)
         valid_array_type(self.compositelanduse.arr, required_type=np.int16)
-        valid_boundaries(self.compositelanduse.arr, lower=-32757, upper=32757)
+        valid_boundaries(self.compositelanduse.arr, lower=-32767, upper=32767)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(nodata=None, *args, **kwargs):

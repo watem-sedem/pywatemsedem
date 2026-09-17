@@ -105,6 +105,26 @@ def test_routing_non_river_property(postprocess_obj):
     assert routing_non_river.file_path.exists()
 
 
+def test_routing_river_property(postprocess_obj):
+    """Test routing_river keeps only river-source rows from real test data."""
+
+    routing = postprocess_obj.modeloutput.routing
+    rows, cols = np.where(postprocess_obj.modelinput.compositelanduse.arr == -1)
+    river_coords = set(zip(rows + 1, cols + 1))
+    routing_coords = set(zip(routing["row"], routing["col"]))
+    expected_kept = routing_coords.intersection(river_coords)
+
+    routing_river = postprocess_obj.routing_river
+    kept_coords = set(zip(routing_river["row"], routing_river["col"]))
+
+    assert expected_kept
+    assert kept_coords.issubset(river_coords)
+    assert kept_coords == expected_kept
+    assert len(routing_river) + len(postprocess_obj.routing_non_river) == len(routing)
+    assert routing_river is postprocess_obj.routing_river
+    assert routing_river.file_path.exists()
+
+
 def test_vct_routing_property(postprocess_obj):
     """Test vct_routing property access and resulting vector object."""
 
@@ -114,12 +134,57 @@ def test_vct_routing_property(postprocess_obj):
     assert routing.file_path.exists()
     assert routing.file_path.suffix == ".shp"
     assert not routing.geodata.empty
+    assert "sedi_out" in routing.geodata.columns
     ax = routing.plot(
         show_mask=True,
         show_river=True,
         show_labels=False,
     )
     assert ax is not None
+
+
+def test_vct_routing_missing_property(postprocess_obj):
+    """Test vct_routing_missing property; None when routing_missing is empty."""
+
+    if postprocess_obj.modeloutput.routing_missing.empty:
+        assert postprocess_obj.vct_routing_missing is None
+        return
+
+    missing = postprocess_obj.vct_routing_missing
+
+    assert missing is postprocess_obj.vct_routing_missing
+    assert missing.file_path.exists()
+    assert missing.file_path.suffix == ".shp"
+    assert not missing.geodata.empty
+    assert "sedi_out" in missing.geodata.columns
+
+
+def test_vct_routing_non_river_property(postprocess_obj):
+    """Test vct_routing_non_river property; sources are land pixels only."""
+
+    non_river = postprocess_obj.vct_routing_non_river
+
+    assert non_river is postprocess_obj.vct_routing_non_river
+    assert non_river.file_path.exists()
+    assert non_river.file_path.suffix == ".shp"
+    assert not non_river.geodata.empty
+    assert "sedi_out" in non_river.geodata.columns
+    # every source pixel must be a land pixel (lnduSource != -1)
+    assert (non_river.geodata["lnduSource"] != -1).all()
+
+
+def test_vct_routing_river_property(postprocess_obj):
+    """Test vct_routing_river property; sources are river pixels only."""
+
+    river = postprocess_obj.vct_routing_river
+
+    assert river is postprocess_obj.vct_routing_river
+    assert river.file_path.exists()
+    assert river.file_path.suffix == ".shp"
+    assert not river.geodata.empty
+    assert "sedi_out" in river.geodata.columns
+    # every source pixel must be a river pixel (lnduSource == -1)
+    assert (river.geodata["lnduSource"] == -1).all()
 
 
 def _assert_sink_vector_properties(vector_obj, raster_path, expected_type):
@@ -216,6 +281,42 @@ def test_vct_sinks_property(postprocess_obj):
     np.testing.assert_allclose(gdf["cumperc"].iloc[-1], 100.0)
 
 
+def test_convert_output_rsts_to_ton(postprocess_obj):
+    """Test convert_output_rsts_to_ton writes ton rasters and exposes them on self."""
+
+    result = postprocess_obj.convert_output_rsts_to_ton()
+
+    assert result is None
+
+    expected_attrs = {
+        "sedi_out_ton": postprocess_obj.modeloutput.sedi_out,
+        "sedi_in_ton": postprocess_obj.modeloutput.sedi_in,
+        "watereros_ton": postprocess_obj.modeloutput.watereros_kg,
+        "sedi_export_ton": postprocess_obj.modeloutput.sedi_export,
+    }
+
+    for attr_name, src in expected_attrs.items():
+        assert hasattr(postprocess_obj, attr_name)
+        ton_raster = getattr(postprocess_obj, attr_name)
+
+        assert ton_raster.file_path.exists()
+        assert ton_raster.file_path.parent == postprocess_obj.postprocessing_folder
+
+        src_stem = src.file_path.stem
+        if "_kg" in src_stem:
+            assert ton_raster.file_path.name == src.file_path.name.replace(
+                "_kg", "_ton"
+            )
+        else:
+            assert ton_raster.file_path.stem == f"{src_stem}_ton"
+
+        nodata = postprocess_obj.rp.nodata
+        arr_src = src.arr
+        arr_ton = ton_raster.arr
+        valid = arr_src != nodata
+        np.testing.assert_allclose(arr_ton[valid], arr_src[valid] / 1000.0, atol=1e-6)
+
+
 @pytest.mark.parametrize(
     "compute_priority",
     [
@@ -255,14 +356,19 @@ def test_process_grass_strips(postprocess_obj, compute_priority):
     }
     assert expected_columns.issubset(gdf_grass.columns)
 
-    rst_grass_ids = (
-        postprocess_obj.postprocessing_folder / "grass_strips" / "grass_strips_id.rst"
-    )
-    assert rst_grass_ids.exists()
+    # "grass_strips" only ever held the intermediate raster used internally
+    # and is removed once processing completes.
+    assert not (postprocess_obj.postprocessing_folder / "grass_strips").exists()
 
     if compute_priority:
         for col in ["cum_sum", "cdf"]:
             assert col in gdf_grass.columns
+
+        cdf_plot = (
+            postprocess_obj.postprocessing_folder
+            / "cumulative_sedimentload_grass_strips.png"
+        )
+        assert cdf_plot.exists()
 
         cdf = pd.to_numeric(gdf_grass["cdf"], errors="coerce").dropna()
         if not cdf.empty:
@@ -365,7 +471,7 @@ def test_add_poi(
     )
 
     assert poi_path.exists()
-    assert poi_path.parent.name == "poi"
+    assert poi_path.parent == postprocess_obj.postprocessing_folder
 
     poi_vector = postprocess_obj.vct_poi
     assert poi_vector.file_path == poi_path
@@ -393,8 +499,12 @@ def test_identify_subcatchments_to_buffers(postprocess_obj):
     out = postprocess_obj.identify_subcatchments_to_buffers()
 
     assert out.exists()
-    assert out.parent.name == "buffers"
-    assert out.name.endswith("_subcatchments_to_buffers.shp")
+    assert out.parent == postprocess_obj.postprocessing_folder
+    assert out.name == f"{postprocess_obj.vct_buffers.file_path.stem}_subcatchments.shp"
+    # The "buffers" working subfolder only ever held intermediate
+    # delineation helper files and is removed once the final result has
+    # been copied to the main postprocessing folder.
+    assert not (postprocess_obj.postprocessing_folder / "buffers").exists()
 
     subcatchments = postprocess_obj.vct_buffers.vct_subcatchments
     assert subcatchments.file_path == out
@@ -411,10 +521,10 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
     """Test identify_subcatchments workflow for multiple POIs.
 
     This test validates argument usage for
-    ``identify_subcatchments(target_input, id_column, tag)``:
+    ``identify_subcatchments(target_input, id_column)``:
     - ``target_input="vct_poi"`` to use the POI vector
     - ``id_column="id"`` to map each delineated polygon to input POI ids
-    - ``tag="subcatchments"`` for deterministic output naming
+    - the output is always named ``<points vector stem>_subcatchments.shp``
     """
 
     postprocess_obj.add_poi(
@@ -427,12 +537,15 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
     out = postprocess_obj.identify_subcatchments(
         "vct_poi",
         id_column="id",
-        tag="subcatchments",
     )
 
     assert out.exists()
-    assert out.name == "vct_poi_subcatchments.shp"
-    assert out.parent.name == "poi"
+    assert out.name == "poi_subcatchments_test_subcatchments.shp"
+    assert out.parent == postprocess_obj.postprocessing_folder
+    # The "poi" working subfolder only ever held intermediate delineation
+    # helper files and is removed once the final result has been copied
+    # to the main postprocessing folder.
+    assert not (postprocess_obj.postprocessing_folder / "poi").exists()
 
     subcatchments = postprocess_obj.vct_poi.vct_subcatchments
     assert subcatchments.file_path == out
@@ -443,37 +556,34 @@ def test_identify_subcatchments_multiple_poi(postprocess_obj):
 
 
 @pytest.mark.parametrize(
-    "source, approach, nmax, threshold, flag_merge",
+    "source, approach, nmax, threshold",
     [
-        pytest.param("sedi_out", "n", 2, None, False, id="top2_from_sedi_out"),
-        pytest.param("sedi_export", "n", 2, None, True, id="top2_from_sedi_export"),
+        pytest.param("sedi_out", "n", 2, None, id="top2_from_sedi_out"),
+        pytest.param("sedi_export", "n", 2, None, id="top2_from_sedi_export"),
         pytest.param(
             "sedi_export + sewer_in",
             "percentage",
             None,
             5,
-            True,
-            id="percentage_5_merge",
+            id="percentage_5",
         ),
         pytest.param(
             "sedi_export + sewer_in",
             "percentage",
             None,
             10,
-            False,
-            id="percentage_10_no_merge",
+            id="percentage_10",
         ),
     ],
 )
-def test_identify_priority_subcatchments(
+def test_identify_priority_areas(
     postprocess_obj,
     source,
     approach,
     nmax,
     threshold,
-    flag_merge,
 ):
-    """Test identify_priority_subcatchments across supported input scenarios.
+    """Test identify_priority_areas across supported input scenarios.
 
     Parameters
     ----------
@@ -490,22 +600,18 @@ def test_identify_priority_subcatchments(
         Maximum number of selected priorities for ``approach="n"``.
     threshold: float | None
         Cumulative percentage target for ``approach="percentage"``.
-    flag_merge: bool
-        Controls creation of merged overlapping priority subcatchments
-        (``priority_subcatchments_merged.shp``).
     """
 
     kwargs = {
         "source": source,
         "approach": approach,
-        "flag_merge": flag_merge,
     }
     if nmax is not None:
         kwargs["nmax"] = nmax
     if threshold is not None:
         kwargs["threshold"] = threshold
 
-    out = postprocess_obj.identify_priority_subcatchments(**kwargs)
+    out = postprocess_obj.identify_priority_areas(**kwargs)
 
     assert out is None
 
@@ -513,23 +619,33 @@ def test_identify_priority_subcatchments(
     priority_subcatchments = postprocess_obj.vct_priority_points.vct_subcatchments
 
     assert priority_points.file_path.exists()
-    assert priority_points.file_path.name == "priority_points_of_interest.shp"
+    assert priority_points.file_path.name == "priority_points.shp"
     assert not priority_points.geodata.empty
     assert "id" in priority_points.geodata.columns
+    assert "source_val" in priority_points.geodata.columns
     assert "target_id" not in priority_points.geodata.columns
     assert "priority_i" not in priority_points.geodata.columns
     assert "priority_id" not in priority_points.geodata.columns
 
     assert priority_subcatchments.file_path.exists()
-    assert priority_subcatchments.file_path.name.endswith("priority_subcatchments.shp")
+    assert priority_subcatchments.file_path.name == "priority_points_subcatchments.shp"
     assert not priority_subcatchments.geodata.empty
     assert "id" in priority_subcatchments.geodata.columns
+    assert "source_val" in priority_subcatchments.geodata.columns
     assert "target_id" not in priority_subcatchments.geodata.columns
     assert "VALUE" not in priority_subcatchments.geodata.columns
 
     point_ids = sorted(priority_points.geodata["id"].astype(int).tolist())
     subcatchment_ids = sorted(priority_subcatchments.geodata["id"].astype(int).tolist())
     assert subcatchment_ids == point_ids
+
+    # Both outputs are sorted from highest to lowest selection value.
+    point_values = priority_points.geodata["source_val"].astype(float).tolist()
+    assert point_values == sorted(point_values, reverse=True)
+    subcatchment_values = (
+        priority_subcatchments.geodata["source_val"].astype(float).tolist()
+    )
+    assert subcatchment_values == sorted(subcatchment_values, reverse=True)
 
     if approach == "n":
         assert len(priority_points.geodata) == nmax
