@@ -3656,6 +3656,43 @@ class PostProcess(Factory):
             write_arr_as_rst(arr_ton, rst_out, "float32", self.rp.rasterio_profile)
             setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
 
+    def aggregate_sedi_out_per_parcel(self):
+        """Identify total sediment leaving a parcel.
+
+        Selects routing arrows that cross a parcel border (source parcel !=
+        target parcel) and sums their ``sedi_out`` per source parcel. Stores
+        the result on ``self.df_sedi_out_parcel``.
+
+        Returns
+        -------
+        df_sedi_out_parcel: pandas.DataFrame
+            One row per parcel, with columns ``parcel_id`` (the parcel id,
+            i.e. the routing's ``lnduSource``) and ``sedi_out_aggregated``
+            (total sediment (kg) leaving the parcel across its border).
+        """
+        valid_routing_sedi_out_vector(self)
+        gdf_routing = self.vct_routing.geodata
+
+        # select routing arrows crossing a parcel border
+        cond = gdf_routing["lnduSource"] != gdf_routing["lnduTarg"]
+        gdf_routing = gdf_routing.loc[cond]
+        cond = (gdf_routing["lnduSource"] > 0) & (
+            gdf_routing["lnduTarg"] != np.max(gdf_routing["lnduSource"])
+        )
+        gdf_routing = gdf_routing.loc[cond]
+
+        # aggregate sedi_out to parcel scale
+        self.df_sedi_out_parcel = (
+            gdf_routing.groupby("lnduSource")["sedi_out"]
+            .sum()
+            .reset_index()
+            .rename(
+                columns={"lnduSource": "parcel_id", "sedi_out": "sedi_out_aggregated"}
+            )
+        )
+
+        return self.df_sedi_out_parcel
+
     # ========================================================================
     # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
     # ========================================================================
@@ -3663,8 +3700,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - identify_export_parcel
-    # - aggregate_sedout_parcel
     # - intersect_sedi_outparcels_with_subcatchments
     # - select_routing_to_outsidecatchment
     # - get_total_sediment
@@ -3686,66 +3721,6 @@ class PostProcess(Factory):
     # - process_and_check_filename
     # - check_condition_files
     # - compute_statistics_rasters_per_polygon_vector
-
-    def identify_export_parcel(self):
-        """Identify total sediment leaving a parcel.
-
-        Returns
-        -------
-        df_prckrt: geopandas.GeoDataFrame
-            See
-            :func:`pywatemsedem.postprocess.PostProcess.aggregate_sedout_parcel`
-
-        """
-        # couple sediment out to routing file
-        valid_routing_sedi_out_vector(self)
-        gdf_routing_sedi_out = gpd.read_file(self.vct_routing_sedi_out)
-        gdf_routing_out_of_parcel = select_routing_out_of_parcel(gdf_routing_sedi_out)
-        out_shp = self.postprocessing_folder / "routing_out_of_parcel.shp"
-        gdf_routing_out_of_parcel.to_file(out_shp, spatial_index="YES")
-        df_prckrt = self.aggregate_sedout_parcel(gdf_routing_out_of_parcel)
-
-        return df_prckrt
-
-    def aggregate_sedout_parcel(self, gdf_routing):
-        """Aggregate sediment leaving on the scale of single parcels.
-
-        Parameters
-        ----------
-        gdf_routing: pandas.DataFrame
-            dataframe format of routing file, indicating which target cells
-            flor in which source cells.
-
-        Returns
-        -------
-        df_prckrt: pandas.DataFrame
-            prckrt added with sedi_out for every pixel defined per parcel
-        """
-        # load perceelskaart in dataframe format
-        arr_prckrt, profile = load_raster(self.files["rst_prckrt"])
-        df_prckrt = raster_array_to_pandas_dataframe(arr_prckrt, profile)
-
-        for i in ["col", "row"]:
-            df_prckrt[i] = df_prckrt[i].astype(np.float64)
-
-        # aggregate sedi_out of routing to parcel scale
-        gdf_routing = (
-            gdf_routing.groupby(["lnduSource"])
-            .aggregate({"sedi_out": np.sum})
-            .reset_index()
-        )
-        # merge routing to 'perceelskaart'
-        gdf_routing["lnduSource"] = gdf_routing["lnduSource"].astype(np.float64)
-        df_prckrt = df_prckrt.merge(
-            gdf_routing[["sedi_out", "lnduSource"]],
-            left_on="val",
-            right_on="lnduSource",
-            how="left",
-        )
-        df_prckrt.loc[df_prckrt["sedi_out"].isnull(), "sedi_out"] = profile["nodata"]
-        df_prckrt = df_prckrt.drop(["val"], axis=1)
-
-        return df_prckrt
 
     def intersect_sedi_outparcels_with_subcatchments(
         self, rst_subcatchment_sinks, df_sedi_out_parcel
@@ -5120,7 +5095,6 @@ def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
 # - compute_netto_ero_prckrt
 # - compute_netto_ero_parcel
 # - transform_dict_netto_erosion_to_df
-# - select_routing_out_of_parcel
 
 
 def _priority_valid_mask(arr_sedi_out, nodata):
@@ -6459,30 +6433,3 @@ def get_filename(df_datastructure_files, index, subfolder, year, simulations, sc
     mandatory = g[-2]
 
     return filename, mandatory
-
-
-def select_routing_out_of_parcel(gdf_routing):
-    """Select routing vectors defined over borders parcel
-
-    Only select the routing vector which cross the parcel border.
-
-    Parameters
-    ----------
-    gdf_routing: geopandas.GeoDataFrame
-        Loaded routing vector file (with or without sedi_out coupled to it).
-        See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-
-    Returns
-    -------
-    gdf_routing: geopandas.GeoDataFrame
-        Selected routing vector file (with or without sedi_out coupled to it).
-        See :func:`pywatemsedem.io.modeloutput.make_routing_vct`
-    """
-    cond = gdf_routing["lnduSource"] != gdf_routing["lnduTarg"]
-    gdf_routing = gdf_routing.loc[cond]
-    cond = (gdf_routing["lnduSource"] > 0) & (
-        gdf_routing["lnduTarg"] != np.max(gdf_routing["lnduSource"])
-    )
-    gdf_routing = gdf_routing.loc[cond]
-
-    return gdf_routing
