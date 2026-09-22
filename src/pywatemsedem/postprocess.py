@@ -123,9 +123,6 @@ class PostProcess(Factory):
         # Set rp AFTER super().__init__() since Factory.__init__ resets self._rp
         self.rp = self.modelinput.rp
 
-        # Enable automatic cleanup of stale postprocessing shapefiles.
-        self.auto_cleanup_postprocessing_shapefiles = True
-
     @property
     def epsg(self):
         """EPSG code (proxy to ``self.rp.epsg``)."""
@@ -945,7 +942,6 @@ class PostProcess(Factory):
         gdf_sinks.to_file(vct_out, spatial_index="YES")
 
         self.vct_sinks = vct_out
-        self._auto_cleanup_postprocessing_shapefiles()
 
     @property
     def vct_grass_strips(self):
@@ -1204,8 +1200,6 @@ class PostProcess(Factory):
 
         gdf_poi.to_file(vct_poi)
         self.vct_poi = vct_poi
-        self._auto_cleanup_postprocessing_shapefiles()
-
         return vct_poi
 
     @property
@@ -1430,7 +1424,6 @@ class PostProcess(Factory):
         gdf_buffers.to_file(vct_buffers, spatial_index="YES")
 
         self.vct_buffers = vct_buffers
-        self._auto_cleanup_postprocessing_shapefiles()
         return vct_buffers
 
     def identify_subcatchments_to_buffers(self):
@@ -1510,7 +1503,6 @@ class PostProcess(Factory):
         )
         self._attach_buffer_subcatchments_plot(vct_buffers)
         shutil.rmtree(buffer_dir, ignore_errors=True)
-        self._auto_cleanup_postprocessing_shapefiles()
 
         return vct_subcatchments
 
@@ -2757,71 +2749,6 @@ class PostProcess(Factory):
                 continue
             self._unlink_vector_dataset(shp)
 
-    def _collect_notebook_vector_paths(self):
-        """Collect active vector paths that are typically shown in notebooks."""
-        postproc_root = self.postprocessing_folder.resolve()
-
-        def _as_path(vector_obj):
-            if vector_obj is None or not hasattr(vector_obj, "file_path"):
-                return None
-            try:
-                p = Path(vector_obj.file_path).resolve()
-            except Exception:
-                return None
-            return p
-
-        keep_paths = set()
-        top_level_vectors = [
-            self._vct_routing,
-            self._vct_routing_missing,
-            self._vct_routing_non_river,
-            self._vct_routing_river,
-            self._vct_sedi_export,
-            self._vct_sewer_in,
-            self._vct_sinks,
-            self._vct_grass_strips,
-            self._vct_poi,
-            self._vct_buffers,
-            self._vct_priority_points,
-            self._vct_priority_subcatchments,
-        ]
-
-        for vector_obj in top_level_vectors:
-            p = _as_path(vector_obj)
-            if (
-                p is not None
-                and p.suffix.lower() == ".shp"
-                and postproc_root in p.parents
-            ):
-                keep_paths.add(p)
-
-            if vector_obj is not None and hasattr(vector_obj, "vct_subcatchments"):
-                p_sub = _as_path(getattr(vector_obj, "vct_subcatchments", None))
-                if (
-                    p_sub is not None
-                    and p_sub.suffix.lower() == ".shp"
-                    and postproc_root in p_sub.parents
-                ):
-                    keep_paths.add(p_sub)
-
-        return keep_paths
-
-    def _auto_cleanup_postprocessing_shapefiles(self):
-        """Run automatic postprocessing shapefile cleanup when enabled."""
-        if not getattr(self, "auto_cleanup_postprocessing_shapefiles", False):
-            return
-
-        try:
-            self.cleanup_postprocessing_shapefiles(
-                dry_run=False,
-                include_subfolders=True,
-            )
-        except Exception as exc:
-            logger.warning(
-                "Automatic postprocessing cleanup skipped due to error: %s",
-                exc,
-            )
-
     def _make_dummy_point_vector(
         self,
         points_vector_obj,
@@ -3089,7 +3016,6 @@ class PostProcess(Factory):
                     output_dir=output_dir,
                 )
 
-                self._auto_cleanup_postprocessing_shapefiles()
             finally:
                 self._cleanup_dummy_point_properties(registered_dummy_attrs)
 
@@ -3405,7 +3331,6 @@ class PostProcess(Factory):
             self._map_priority_cumperc(gdf_subcatchmpriority)
 
         self._finalize_priority_outputs()
-        self._auto_cleanup_postprocessing_shapefiles()
 
         # `tempfolder` only ever holds intermediate delineation helper
         # files: everything meaningful has just been copied out to the
@@ -3738,7 +3663,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - cleanup_postprocessing_shapefiles
     # - aggregate_subcatchments_for_points
     # - identify_export_parcel
     # - aggregate_sedout_parcel
@@ -3763,46 +3687,6 @@ class PostProcess(Factory):
     # - process_and_check_filename
     # - check_condition_files
     # - compute_statistics_rasters_per_polygon_vector
-
-    def cleanup_postprocessing_shapefiles(self, dry_run=False, include_subfolders=True):
-        """Keep only active notebook shapefiles in postprocessing folder.
-
-        Parameters
-        ----------
-        dry_run: bool, default False
-            If True, do not delete files; only report what would be removed.
-        include_subfolders: bool, default True
-            Also scan subfolders (e.g. temporary priority folders).
-
-        Returns
-        -------
-        dict
-            Summary with keys ``kept`` and ``removed``.
-        """
-        root = self.postprocessing_folder
-        keep_paths = self._collect_notebook_vector_paths()
-
-        if include_subfolders:
-            candidates = list(root.rglob("*.shp"))
-        else:
-            candidates = list(root.glob("*.shp"))
-
-        removed = []
-        kept = []
-        for shp in candidates:
-            shp_resolved = shp.resolve()
-            if shp_resolved in keep_paths:
-                kept.append(str(shp_resolved))
-                continue
-
-            removed.append(str(shp_resolved))
-            if not dry_run:
-                self._unlink_vector_dataset(shp_resolved)
-
-        return {
-            "kept": sorted(kept),
-            "removed": sorted(removed),
-        }
 
     def aggregate_subcatchments_for_points(
         self, target_input, tag="subcatchments_to_targets"
@@ -3875,7 +3759,6 @@ class PostProcess(Factory):
         df_prckrt: pandas.DataFrame
             prckrt added with sedi_out for every pixel defined per parcel
         """
-
         # load perceelskaart in dataframe format
         arr_prckrt, profile = load_raster(self.files["rst_prckrt"])
         df_prckrt = raster_array_to_pandas_dataframe(arr_prckrt, profile)
