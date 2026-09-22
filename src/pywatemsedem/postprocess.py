@@ -3663,7 +3663,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - aggregate_subcatchments_for_points
     # - identify_export_parcel
     # - aggregate_sedout_parcel
     # - intersect_sedi_outparcels_with_subcatchments
@@ -3687,43 +3686,6 @@ class PostProcess(Factory):
     # - process_and_check_filename
     # - check_condition_files
     # - compute_statistics_rasters_per_polygon_vector
-
-    def aggregate_subcatchments_for_points(
-        self, target_input, tag="subcatchments_to_targets"
-    ):
-        """Aggregate already computed dummy-point subcatchments to parent points.
-
-        This supports gradual workflows where points become available over time
-        and their subcatchments are delineated one-by-one.
-
-        Parameters
-        ----------
-        target_input : str, pathlib.Path, or object
-            Target point vector input (``vct_*`` property name, file path,
-            or vector object).
-        tag : str, default "subcatchments_to_targets"
-            Output tag for file naming.
-
-        Returns
-        -------
-        pathlib.Path
-            Path to the aggregated subcatchments vector.
-        """
-        points_vector_obj, target_name, _ = self._resolve_point_vector_target(
-            target_input
-        )
-        parent_property_name = (
-            target_input
-            if isinstance(target_input, str) and target_input.startswith("vct_")
-            else None
-        )
-        output_dir = self._point_target_output_dir(parent_property_name)
-        return self._aggregate_dummy_point_subcatchments(
-            points_vector_obj,
-            target_name,
-            tag,
-            output_dir=output_dir,
-        )
 
     def identify_export_parcel(self):
         """Identify total sediment leaving a parcel.
