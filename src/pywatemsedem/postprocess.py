@@ -91,6 +91,7 @@ class PostProcess(Factory):
         self._vct_routing_non_river = None
         self._vct_routing_river = None
         self._vct_routing_non_sinks = None
+        self._vct_routing_outside_catchment = None
         self._vct_sedi_export = None
         self._vct_sewer_in = None
         self._vct_sinks = None
@@ -758,6 +759,53 @@ class PostProcess(Factory):
         )
 
         return self._finalize_routing_vct(file_path)
+
+    @property
+    def vct_routing_outside_catchment(self):
+        """Return the vector of routing arrows leaving the catchment.
+
+        If the vector does not exist yet, it is created via
+        :meth:`select_routing_to_outside_catchment`.
+        """
+        if self._vct_routing_outside_catchment is None:
+            self.vct_routing_outside_catchment = (
+                self.select_routing_to_outside_catchment()
+            )
+        return self._vct_routing_outside_catchment
+
+    @vct_routing_outside_catchment.setter
+    def vct_routing_outside_catchment(self, vector_input):
+        """Set the routing-outside-catchment vector object from a file path."""
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_routing_outside_catchment",
+            "LineString",
+            "vct_routing_outside_catchment",
+            plot_title="Catchment mask + rivers + routing outside catchment",
+        )
+
+    def select_routing_to_outside_catchment(self):
+        """Select the routing arrows that leave the catchment (``lnduTarg == 0``).
+
+        Uses :attr:`vct_routing` as input, so it must already have
+        ``sedi_out`` (and ``lnduTarg``) coupled onto it.
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created routing-outside-catchment vector shapefile.
+        """
+        valid_routing_sedi_out_vector(self)
+
+        logger.info("Determining routing out of the catchment...")
+
+        file_path = self.postprocessing_folder / "routing_outside_catchment.shp"
+        if not file_path.exists():
+            gdf_routing = self.vct_routing.geodata
+            gdf_routing_outside = gdf_routing[gdf_routing["lnduTarg"] == 0]
+            gdf_routing_outside.to_file(file_path, spatial_index="YES")
+
+        return file_path
 
     @property
     def vct_sedi_export(self):
@@ -3700,8 +3748,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - intersect_sedi_outparcels_with_subcatchments
-    # - select_routing_to_outsidecatchment
     # - get_total_sediment
     # - read_total_sediment
     # - assign_values_df_summary
@@ -3721,84 +3767,7 @@ class PostProcess(Factory):
     # - process_and_check_filename
     # - check_condition_files
     # - compute_statistics_rasters_per_polygon_vector
-
-    def intersect_sedi_outparcels_with_subcatchments(
-        self, rst_subcatchment_sinks, df_sedi_out_parcel
-    ):
-        """Find the intersection between the subcatchments of the sinks and the
-        parcels that lie within these subcatchments.
-
-        The sedi_out_parcel map is used to identify the sediment exported out
-        of a parcel.
-
-        Parameters
-        ----------
-        rst_subcatchment_sinks: str or pathlib.Path
-            File path of the subcatcmsinks raster
-        df_sedi_out_parcel: pandas.DataFrame
-            DataFrame of the sedi_out parcel map. This map holds
-            for every pixel the total amount of sediment
-            that is transported outside the parcel in which the parcel lies.
-        """
-        arr_subcatchments, profile = load_raster(rst_subcatchment_sinks)
-        df_subcatchments = raster_array_to_pandas_dataframe(arr_subcatchments, profile)
-
-        # remove pixels with value nodata and zero
-        cond = (df_subcatchments["val"] != profile["nodata"]) & (
-            df_subcatchments["val"] != 0
-        )
-        df_subcatchments = df_subcatchments[cond]
-        # merge with sedi_out defined per parcel
-        df_subcatchments = df_subcatchments.merge(
-            df_sedi_out_parcel[["col", "row", "lnduSource"]],
-            on=["col", "row"],
-            how="left",
-        )
-        # get ids of parcels (lndSource, not equal to none, np.nan)
-        cond = ~df_subcatchments["lnduSource"].isnull()
-        unique_ids = df_subcatchments.loc[cond, "lnduSource"].unique()
-
-        #  set pixels that have no parcel_id (lnduSource) within the
-        #  unique_ids list to nodata
-        cond = df_sedi_out_parcel["lnduSource"].isin(unique_ids)
-        df_sedi_out_parcel.loc[~cond, "SediOut"] = profile["nodata"]
-
-        # write to disk
-        self.postprocessing_folder / "SedoutSinks.tif"
-        profile["driver"] = "GTiff"
-
-        arr_sedi_out = raster_dataframe_to_arr(
-            df_sedi_out_parcel, profile, "SediOut", np.float32
-        )
-
-        write_arr_as_rst(
-            arr_sedi_out,
-            self.rst_sinks,
-            "float32",
-            profile,
-        )
-
-    def select_routing_to_outsidecatchment(self, catchment_name):
-        """Export all routing vectors to the outside of the catchment.
-
-        Parameters
-        ----------
-        catchment_name : str
-            Name of the catchment (used for output file naming).
-        """
-        valid_routing_sedi_out_vector(self)
-
-        logger.info("Determining routing out of the catchment...")
-
-        vct_out = (
-            self.postprocessing_folder / f"routing_to_outside_{catchment_name}.shp"
-        )
-        if not vct_out.exists():
-            gdf_routingsedi_out = gpd.read_file(self.vct_routingsedi_out)
-            gdf_routingsedi_out = gdf_routingsedi_out[
-                gdf_routingsedi_out["lnduTarg"] == 0
-            ]
-            gdf_routingsedi_out.to_file(vct_out, spatial_index="YES")
+    # - intersect_sedi_outparcels_with_subcatchments
 
     def get_total_sediment(self):
         """Make nice output table
@@ -4559,6 +4528,62 @@ class PostProcess(Factory):
             dict_operators,
             normalize=True,
             ton=False,
+        )
+
+    def intersect_sedi_outparcels_with_subcatchments(
+        self, rst_subcatchment_sinks, df_sedi_out_parcel
+    ):
+        """Find the intersection between the subcatchments of the sinks and the
+        parcels that lie within these subcatchments.
+
+        The sedi_out_parcel map is used to identify the sediment exported out
+        of a parcel.
+
+        Parameters
+        ----------
+        rst_subcatchment_sinks: str or pathlib.Path
+            File path of the subcatcmsinks raster
+        df_sedi_out_parcel: pandas.DataFrame
+            DataFrame of the sedi_out parcel map. This map holds
+            for every pixel the total amount of sediment
+            that is transported outside the parcel in which the parcel lies.
+        """
+        arr_subcatchments, profile = load_raster(rst_subcatchment_sinks)
+        df_subcatchments = raster_array_to_pandas_dataframe(arr_subcatchments, profile)
+
+        # remove pixels with value nodata and zero
+        cond = (df_subcatchments["val"] != profile["nodata"]) & (
+            df_subcatchments["val"] != 0
+        )
+        df_subcatchments = df_subcatchments[cond]
+        # merge with sedi_out defined per parcel
+        df_subcatchments = df_subcatchments.merge(
+            df_sedi_out_parcel[["col", "row", "lnduSource"]],
+            on=["col", "row"],
+            how="left",
+        )
+        # get ids of parcels (lndSource, not equal to none, np.nan)
+        cond = ~df_subcatchments["lnduSource"].isnull()
+        unique_ids = df_subcatchments.loc[cond, "lnduSource"].unique()
+
+        #  set pixels that have no parcel_id (lnduSource) within the
+        #  unique_ids list to nodata
+        cond = df_sedi_out_parcel["lnduSource"].isin(unique_ids)
+        df_sedi_out_parcel.loc[~cond, "SediOut"] = profile["nodata"]
+
+        # write to disk
+        self.postprocessing_folder / "SedoutSinks.tif"
+        profile["driver"] = "GTiff"
+
+        arr_sedi_out = raster_dataframe_to_arr(
+            df_sedi_out_parcel, profile, "SediOut", np.float32
+        )
+
+        write_arr_as_rst(
+            arr_sedi_out,
+            self.rst_sinks,
+            "float32",
+            profile,
         )
 
 
