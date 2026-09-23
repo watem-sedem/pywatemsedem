@@ -6,6 +6,7 @@ import pytest
 from conftest import ini_file, postprocess, scenario_data
 
 from pywatemsedem.geo.utils import load_raster
+from pywatemsedem.io.modeloutput import compute_efficiency_buffers
 from pywatemsedem.postprocess import (
     compute_netto_erosion_parcels,
     read_filestructure,
@@ -324,8 +325,8 @@ def test_convert_output_rsts_to_ton(postprocess_obj):
         pytest.param(False, id="without_priority_metrics"),
     ],
 )
-def test_process_grass_strips(postprocess_obj, compute_priority):
-    """Test process_grass_strips for both compute_priority argument values.
+def test_compute_sediment_balance_grass_strips(postprocess_obj, compute_priority):
+    """Test compute_sediment_balance_grass_strips for both compute_priority values.
 
     Parameters
     ----------
@@ -337,9 +338,8 @@ def test_process_grass_strips(postprocess_obj, compute_priority):
         expected.
     """
 
-    postprocess_obj.vct_grass_strips = scenario_data.grass_strips
-
-    result = postprocess_obj.process_grass_strips(
+    result = postprocess_obj.compute_sediment_balance_grass_strips(
+        scenario_data.grass_strips,
         compute_priority=compute_priority,
     )
 
@@ -390,6 +390,34 @@ def test_process_grass_strips(postprocess_obj, compute_priority):
     else:
         assert "cum_sum" not in gdf_grass.columns
         assert "cdf" not in gdf_grass.columns
+
+
+def test_compute_sediment_balance_grass_strips_preset_vector(postprocess_obj):
+    """Test grass strips sediment balance with a preset vct_grass_strips.
+
+    Parameters
+    ----------
+    postprocess_obj: pywatemsedem.postprocess.PostProcess
+        Function-scoped PostProcess fixture configured on test data.
+    """
+    postprocess_obj.vct_grass_strips = scenario_data.grass_strips
+
+    postprocess_obj.compute_sediment_balance_grass_strips(compute_priority=False)
+
+    gdf_grass = postprocess_obj.vct_grass_strips.geodata
+    assert {"sedi_in", "sedi_out", "sed"}.issubset(gdf_grass.columns)
+
+
+def test_compute_sediment_balance_grass_strips_missing_vector(postprocess_obj):
+    """Test grass strips sediment balance raises without grass strips.
+
+    Parameters
+    ----------
+    postprocess_obj: pywatemsedem.postprocess.PostProcess
+        Function-scoped PostProcess fixture configured on test data.
+    """
+    with pytest.raises(ValueError, match="No grass strips vector available"):
+        postprocess_obj.compute_sediment_balance_grass_strips()
 
 
 @pytest.mark.parametrize(
@@ -514,6 +542,34 @@ def test_identify_subcatchments_to_buffers(postprocess_obj):
     assert len(subcatchments.geodata) == len(postprocess_obj.vct_buffers.geodata)
     assert sorted(subcatchments.geodata["id"].astype(int).tolist()) == sorted(
         postprocess_obj.vct_buffers.geodata["id"].astype(int).tolist()
+    )
+
+
+def test_compute_sediment_balance_buffers(postprocess_obj):
+    """Test compute_sediment_balance_buffers on the vectorized modelinput buffers."""
+    result = postprocess_obj.compute_sediment_balance_buffers()
+
+    assert result is None
+    gdf_buffers = postprocess_obj.vct_buffers.geodata
+    expected_columns = {"sedi_in", "sedi_out", "buff_sed", "area", "cum_sum", "cdf"}
+    assert expected_columns.issubset(gdf_buffers.columns)
+    np.testing.assert_allclose(
+        gdf_buffers["buff_sed"], gdf_buffers["sedi_in"] - gdf_buffers["sedi_out"]
+    )
+    assert (
+        postprocess_obj.postprocessing_folder / "cumulative_sedimentload_buffers.png"
+    ).exists()
+
+    # results per buffer id are equal to the buffer efficiency of the rasters
+    df_expected = compute_efficiency_buffers(
+        postprocess_obj.modelinput.buffers.file_path,
+        postprocess_obj.modeloutput.sedi_in.file_path,
+        postprocess_obj.modeloutput.sedi_out.file_path,
+    ).set_index("NR")
+    df_result = gdf_buffers.set_index("id")
+    np.testing.assert_allclose(
+        df_result.loc[df_expected.index.astype(int), "buff_sed"].to_numpy(),
+        df_expected["buff_sed"].to_numpy(dtype=float),
     )
 
 

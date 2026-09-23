@@ -1021,11 +1021,19 @@ class PostProcess(Factory):
             gdf_grass = gdf_grass.rename(columns={"NR": "id"})
             self._vct_grass_strips.geodata = gdf_grass
 
-    def process_grass_strips(self, compute_priority=True):
-        """Compute grass strips efficiency and compute priority
+    def compute_sediment_balance_grass_strips(
+        self, file_path_grass_strips=None, compute_priority=True
+    ):
+        """Compute the sediment balance per grass strip and compute priority
 
         Parameters
         ----------
+        file_path_grass_strips: str or pathlib.Path, optional
+            File path of a grass strips shapefile. If given, it is set as
+            ``self.vct_grass_strips`` before processing. If not given,
+            ``self.vct_grass_strips`` must already be set. A shapefile is
+            needed because the model input only holds grass strips as
+            land-use code -6, which does not identify individual grass strips.
         compute_priority: bool, optional
             Compute priorities for grass strips based on deposition in grass strip.
 
@@ -1035,14 +1043,17 @@ class PostProcess(Factory):
         columns from :func:`pywatemsedem.postprocess._compute_efficiency_grass_strips`
         and, if ``compute_priority=True``, additional cumulative metrics.
         """
-        logger.info("Calculating in- and output of sediment for every grass strip...")
+        if file_path_grass_strips is not None:
+            self.vct_grass_strips = file_path_grass_strips
 
         if self.vct_grass_strips is None:
             msg = (
-                "No grass strips vector available. Set 'vct_grass_strips' "
-                "first with a path."
+                "No grass strips vector available. Provide "
+                "'file_path_grass_strips' or set 'vct_grass_strips' first."
             )
             raise ValueError(msg)
+
+        logger.info("Calculating in- and output of sediment for every grass strip...")
 
         grass_dir = self._workflow_subdir("grass_strips")
         rst_grass_strips_id = grass_dir / "grass_strips_id.rst"
@@ -1367,34 +1378,13 @@ class PostProcess(Factory):
         """Return the buffers vector object.
 
         If the buffers vector does not exist yet, it is created with default
-        settings via :meth:`add_buffers`.
+        settings via :meth:`vectorize_modelinput_buffers`.
         """
         if self._vct_buffers is None:
-            self.vct_buffers = self.add_buffers()
+            self.vectorize_modelinput_buffers()
         return self._vct_buffers
 
-    @vct_buffers.setter
-    def vct_buffers(self, vector_input):
-        """Set the buffers vector object from a file path.
-
-        Parameters
-        ----------
-        vector_input: pathlib.Path or str
-            Path to an existing buffers vector shapefile. The file is loaded via
-            :meth:`vector_factory` so the result exposes ``.file_path`` and
-            ``.geodata``.
-        """
-        self._set_vector_from_input(
-            vector_input,
-            "_vct_buffers",
-            "Polygon",
-            "vct_buffers",
-            plot_title="Catchment mask + rivers + buffers",
-            init_subcatchments=True,
-            ensure_internal_id=False,
-        )
-
-    def add_buffers(self, filename="buffers.shp"):
+    def vectorize_modelinput_buffers(self, filename="buffers.shp"):
         """Create a buffers vector from ``modelinput.buffers``.
 
         Buffers are always derived by vectorizing
@@ -1470,7 +1460,15 @@ class PostProcess(Factory):
         self._unlink_vector_dataset(vct_buffers)
         gdf_buffers.to_file(vct_buffers, spatial_index="YES")
 
-        self.vct_buffers = vct_buffers
+        self._set_vector_from_input(
+            vct_buffers,
+            "_vct_buffers",
+            "Polygon",
+            "vct_buffers",
+            plot_title="Catchment mask + rivers + buffers",
+            init_subcatchments=True,
+            ensure_internal_id=False,
+        )
         return vct_buffers
 
     def identify_subcatchments_to_buffers(self):
@@ -1957,8 +1955,9 @@ class PostProcess(Factory):
             plot_kwargs["ax"] = ax
             gdf_plot = gdf
             if "column" in plot_kwargs:
+                gdf_plot = _replace_infinite_values(gdf, plot_kwargs["column"])
                 # Draw low values first and high values last (on top).
-                gdf_plot = gdf.sort_values(
+                gdf_plot = gdf_plot.sort_values(
                     by=plot_kwargs["column"],
                     ascending=True,
                     na_position="first",
@@ -2158,7 +2157,10 @@ class PostProcess(Factory):
         if column is not None and column in subcatchments_obj.geodata.columns:
             plot_kwargs["column"] = column
         plot_kwargs.update(kwargs)
-        subcatchments_obj.geodata.plot(**plot_kwargs)
+        gdf_plot = subcatchments_obj.geodata
+        if "column" in plot_kwargs:
+            gdf_plot = _replace_infinite_values(gdf_plot, plot_kwargs["column"])
+        gdf_plot.plot(**plot_kwargs)
 
         if show_river:
             self._add_river_overlay(ax, river_color=river_color)
@@ -2237,7 +2239,10 @@ class PostProcess(Factory):
     def _get_buffers_overlay_vector(self):
         """Return a polygon vector object for plotting buffers overlay."""
         if self._vct_buffers is None:
-            msg = "No buffers vector available. Call 'add_buffers()' first."
+            msg = (
+                "No buffers vector available. Call "
+                "'vectorize_modelinput_buffers()' first."
+            )
             raise ValueError(msg)
         return self.vct_buffers
 
@@ -3740,6 +3745,55 @@ class PostProcess(Factory):
 
         return self.df_sedi_out_parcel
 
+    def compute_sediment_balance_buffers(self, compute_priority=True):
+        """Compute the ingoing, outgoing and deposited sediment per buffer.
+
+        The deposition (= ingoing - outgoing sediment) is computed per buffer
+        outlet, see :func:`pywatemsedem.io.modeloutput.compute_efficiency_buffers`
+        for an explanation of the algorithm.
+
+        Parameters
+        ----------
+        compute_priority: bool, optional
+            Compute priorities for buffers based on deposition in the buffer.
+
+        Notes
+        -----
+        This method updates ``self.vct_buffers.geodata`` in place with the
+        columns ``sedi_in``, ``sedi_out``, ``buff_sed`` (kg) and ``area``
+        (m²) and, if ``compute_priority=True``, additional cumulative metrics.
+        """
+        logger.info("Calculating how much sediment is trapped in each buffer...")
+
+        df_buffers_eff = compute_efficiency_buffers(
+            self.modelinput.buffers.file_path,
+            self.modeloutput.sedi_in.file_path,
+            self.modeloutput.sedi_out.file_path,
+        )
+        df_buffers_eff = df_buffers_eff.rename(columns={"NR": "id"})
+        df_buffers_eff["id"] = df_buffers_eff["id"].astype(int)
+
+        gdf_buffers = self.vct_buffers.geodata.copy()
+        drop_cols = [c for c in df_buffers_eff.columns if c != "id"]
+        gdf_buffers = gdf_buffers.drop(columns=drop_cols, errors="ignore")
+        gdf_buffers = gdf_buffers.merge(df_buffers_eff, on="id", how="left")
+        gdf_buffers["area"] = gdf_buffers.area
+
+        if compute_priority:
+            gdf_buffers = _compute_cdf_sediment_load(
+                gdf_buffers,
+                "buff_sed",
+                self.postprocessing_folder,
+                ignore_negative_values=True,
+                sort_ascending=False,
+                tag="buffers",
+                plot=True,
+            )
+
+        # Keep buffer statistics on the active vector object so downstream
+        # calls can directly use ``pp.vct_buffers.geodata``.
+        self._vct_buffers.geodata = gdf_buffers
+
     # ========================================================================
     # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
     # ========================================================================
@@ -3747,8 +3801,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - assign_values_df_summary
-    # - process_buffers
     # - compute_netto_erosion_parcels
     # - merge_sedi_out_and_cumulative
     # - add_sediment_to_subcatchments
@@ -3765,118 +3817,7 @@ class PostProcess(Factory):
     # - check_condition_files
     # - compute_statistics_rasters_per_polygon_vector
     # - intersect_sedi_outparcels_with_subcatchments
-
-    def assign_values_df_summary(
-        self, df_summary, index, bekken, bekken_id, summary_values, unit="ton"
-    ):
-        """Assign values of summary to the summary dataframe
-
-        Parameters
-        ----------
-        df_summary: pandas.DataFrame
-            Dataframe holding all summary values
-        index: int
-            Row index to write summary values to
-        bekken: str
-            Name of the (sub)catchemnt
-        bekken_id: int
-            Id of the bekken
-        summary_values: dict
-
-            - *erosion* (float): amount of netto erosion (watererosion < 0)
-            - *deposition* (float): amount of netto deposition (watererosion >
-              0)
-            - *river* (float): amount of sediment load to river.
-            - *outside_domain* (float): amount of sediment routed out of
-              boundaries catchment
-            - *buffers* (float): amount of sediment trapped in buffers.
-            - *endpoints* (float): amount of sediment load to endpoints.
-
-        unit: str, optional
-            'ton' or 'kg'
-
-        Returns
-        -------
-        df_summary: pandas.DataFrame
-            updated dataframe holding all summary values
-        """
-        if unit == "kg":
-            unit = 1
-        if unit == "ton":
-            unit = 1000
-
-        df_summary.loc[index, "erosie"] = -summary_values["erosion"] / unit
-        df_summary.loc[index, "sedimentatie"] = summary_values["deposition"] / unit
-        df_summary.loc[index, "rivier"] = summary_values["river"] / unit
-        df_summary.loc[index, "waterloop"] = summary_values["river"] / unit
-        df_summary.loc[index, "doorvoerratio"] = (
-            -summary_values["river"] / summary_values["erosion"]
-        )
-        df_summary.loc[index, "buiten_domein"] = summary_values["outside_domain"] / unit
-        df_summary.loc[index, "buffers"] = summary_values["buffers"] / unit
-        df_summary.loc[index, "bekken"] = bekken
-        df_summary.loc[index, "bekken_id"] = bekken_id
-
-        return df_summary
-
-    def process_buffers(self, **kwargs):
-        """Compute the ingoing, outgoing and depositing sediment in buffers.
-
-        Parameters
-        ----------
-        **kwargs : dict
-            Additional keyword arguments passed to ``_process_buffers()``.
-        """
-        self._process_buffers(**kwargs)
-
-    def _process_buffers(self, compute_priority=True, cols=None, vct_out=None):
-        """Compute the ingoing, outgoing and depositing sediment in buffers.
-
-        This function computes the efficiency (deposition = ingoing -
-        outgoing) sediment per buffer. In addition, this result is
-        mapped to a shape file. See
-        :func:`pywatemsedem.postprocess.compute_efficiency_buffers` for an
-        explanation of the algorithm.
-
-        Parameters
-        ----------
-        compute_priority: bool, optional
-            Compute priorities for buffers based on deposition
-        cols: list
-            List of geopandas.GeoDataFrame output columns.
-        vct_out: str or pathlib.Path, default None
-            File path to export. If none, exported to standard name
-        """
-        logger.info("Calculating how much sediment is trapped in each buffer...")
-        if self.dict_ecm_options["Include buffers"] == 1:
-
-            df_out = compute_efficiency_buffers(
-                self.files["rst_buffers"],
-                self.files["rst_sedi_in"],
-                self.files["rst_sedi_out"],
-            )
-
-            gdf_buffer = gpd.read_file(self.files["vct_buffers"])
-            gdf_buffer = gdf_buffer.merge(
-                df_out, left_on="id", right_on="NR", how="left"
-            )
-            gdf_buffer["area"] = gdf_buffer.area
-            if compute_priority:
-                gdf_buffer = _compute_cdf_sediment_load(
-                    gdf_buffer,
-                    "buff_sed",
-                    self.postprocessing_folder,
-                    tag="buffers",
-                    plot=True,
-                )
-            if vct_out is None:
-                vct_out = self.postprocessing_folder / self.files["vct_buffers"].name
-
-            if cols:
-                gdf_buffer = gdf_buffer[cols]
-            gdf_buffer.to_file(vct_out, spatial_index="YES")
-
-            return gdf_buffer
+    # - assign_values_df_summary
 
     def compute_netto_erosion_parcels(self, join=True):
         """Compute the netto erosion per parcel.
@@ -4557,6 +4498,88 @@ class PostProcess(Factory):
             "float32",
             profile,
         )
+
+    def assign_values_df_summary(
+        self, df_summary, index, bekken, bekken_id, summary_values, unit="ton"
+    ):
+        """Assign values of summary to the summary dataframe
+
+        Parameters
+        ----------
+        df_summary: pandas.DataFrame
+            Dataframe holding all summary values
+        index: int
+            Row index to write summary values to
+        bekken: str
+            Name of the (sub)catchemnt
+        bekken_id: int
+            Id of the bekken
+        summary_values: dict
+
+            - *erosion* (float): amount of netto erosion (watererosion < 0)
+            - *deposition* (float): amount of netto deposition (watererosion >
+              0)
+            - *river* (float): amount of sediment load to river.
+            - *outside_domain* (float): amount of sediment routed out of
+              boundaries catchment
+            - *buffers* (float): amount of sediment trapped in buffers.
+            - *endpoints* (float): amount of sediment load to endpoints.
+
+        unit: str, optional
+            'ton' or 'kg'
+
+        Returns
+        -------
+        df_summary: pandas.DataFrame
+            updated dataframe holding all summary values
+        """
+        if unit == "kg":
+            unit = 1
+        if unit == "ton":
+            unit = 1000
+
+        df_summary.loc[index, "erosie"] = -summary_values["erosion"] / unit
+        df_summary.loc[index, "sedimentatie"] = summary_values["deposition"] / unit
+        df_summary.loc[index, "rivier"] = summary_values["river"] / unit
+        df_summary.loc[index, "waterloop"] = summary_values["river"] / unit
+        df_summary.loc[index, "doorvoerratio"] = (
+            -summary_values["river"] / summary_values["erosion"]
+        )
+        df_summary.loc[index, "buiten_domein"] = summary_values["outside_domain"] / unit
+        df_summary.loc[index, "buffers"] = summary_values["buffers"] / unit
+        df_summary.loc[index, "bekken"] = bekken
+        df_summary.loc[index, "bekken_id"] = bekken_id
+
+        return df_summary
+
+
+def _replace_infinite_values(gdf, column):
+    """Return a copy of ``gdf`` with infinite values in ``column`` set to NaN.
+
+    Infinite values (e.g. an efficiency of a grass strip without incoming
+    sediment) cannot be mapped on a colormap. As NaN, they are not drawn.
+
+    Parameters
+    ----------
+    gdf: geopandas.GeoDataFrame
+        Vector data to plot.
+    column: str
+        Column used for value-based coloring.
+
+    Returns
+    -------
+    geopandas.GeoDataFrame
+        ``gdf`` itself if ``column`` is not a float column or holds no infinite
+        values, otherwise a copy with infinite values replaced by NaN.
+    """
+    if not pd.api.types.is_float_dtype(gdf[column]):
+        return gdf
+    cond_infinite = np.isinf(gdf[column])
+    if not cond_infinite.any():
+        return gdf
+    gdf = gdf.copy()
+    gdf.loc[cond_infinite, column] = np.nan
+    return gdf
 
 
 def _unlink_vector_dataset_local(vector_path):
