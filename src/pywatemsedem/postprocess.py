@@ -28,7 +28,6 @@ from pywatemsedem.io.modeloutput import (
     create_deposition_raster,
     create_erosion_raster,
     define_subcatchments_saga,
-    load_total_sediment_file,
     make_routing_vct_saga,
     open_txt_routing_file,
 )
@@ -3748,8 +3747,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - get_total_sediment
-    # - read_total_sediment
     # - assign_values_df_summary
     # - process_buffers
     # - compute_netto_erosion_parcels
@@ -3768,31 +3765,6 @@ class PostProcess(Factory):
     # - check_condition_files
     # - compute_statistics_rasters_per_polygon_vector
     # - intersect_sedi_outparcels_with_subcatchments
-
-    def get_total_sediment(self):
-        """Make nice output table
-
-        Returns
-        -------
-        pandas.DataFrame
-            Sum statistic (columns `value`) for variables (indices).
-        """
-        out = self.read_total_sediment()
-        df = pd.DataFrame.from_dict(out, orient="index", columns=["value (kg)"])
-        return df
-
-    def read_total_sediment(self):
-        """Load the total sediment file
-
-        See :func:`pywatemsedem.utils.load_total_sediment_file`
-
-        Returns
-        -------
-        dict_total_sediment: dict
-            See :func:`pywatemsedem.utils.load_total_sediment_file`
-        """
-        dict_total_sediment = load_total_sediment_file(self.files["txt_total_sediment"])
-        return dict_total_sediment
 
     def assign_values_df_summary(
         self, df_summary, index, bekken, bekken_id, summary_values, unit="ton"
