@@ -1,13 +1,19 @@
 """Test functions for postprocessing functions"""
 
+import shutil
+import warnings
+from pathlib import Path
+from types import SimpleNamespace
+
+import geopandas as gpd
 import numpy as np
 import pandas as pd
 import pytest
-from conftest import ini_file, postprocess, scenario_data
+from conftest import folder_core, ini_file, postprocess, scenario_data
 
 from pywatemsedem.geo.utils import load_raster
-from pywatemsedem.io.modeloutput import compute_efficiency_buffers
 from pywatemsedem.postprocess import (
+    PostProcess,
     compute_netto_erosion_parcels,
     read_filestructure,
 )
@@ -76,6 +82,178 @@ def test_compute_netto_erosion_parcels():
         atol=1e-2,
         rtol=1e-02,
     )
+
+
+def _synthetic_postprocess():
+    """Create a PostProcess object on a synthetic 1x4 grid.
+
+    Pixel 1 routes to pixel 2, pixel 2 routes to pixel 3 (60%) and pixel 4
+    (40%) and pixel 3 routes to river pixel 4. In pixel 2, 5 kg enters the
+    sewer, in pixel 4, all incoming sediment is exported to the river.
+    """
+    pp = object.__new__(PostProcess)
+    pp._rp = SimpleNamespace(resolution=20, nodata=-9999.0)
+    pp.modelinput = SimpleNamespace()
+    pp.modeloutput = SimpleNamespace(
+        routing=pd.DataFrame(
+            {
+                "col": [1, 2, 3],
+                "row": [1, 1, 1],
+                "target1col": [2, 3, 4],
+                "target1row": [1, 1, 1],
+                "part1": [1.0, 0.6, 1.0],
+                "target2col": [-99, 4, -99],
+                "target2row": [-99, 1, -99],
+                "part2": [0.0, 0.4, 0.0],
+            }
+        ),
+        sedi_out=SimpleNamespace(arr=np.array([[10.0, 25.0, 12.0, 0.0]])),
+        sewer_in=SimpleNamespace(arr=np.array([[0.0, 5.0, 0.0, 0.0]])),
+        sedi_export=SimpleNamespace(arr=np.array([[0.0, 0.0, 0.0, 22.0]])),
+    )
+    return pp
+
+
+def test_calculate_sediment_balance_synthetic():
+    """Test the sediment balance on a synthetic 1x4 grid.
+
+    Pixels 1 and 2 form element 1, pixels 3 and 4 form element 2.
+    """
+    pp = _synthetic_postprocess()
+    elements = SimpleNamespace(arr=np.array([[1, 1, 2, 2]]))
+
+    df = pp.calculate_sediment_balance(elements)
+
+    assert df.columns.tolist() == [
+        "id",
+        "npixels",
+        "area",
+        "sedi_in",
+        "sedi_out",
+        "sewer_in",
+        "sedi_export",
+        "deposition",
+        "erosion",
+        "eSTE",
+    ]
+    assert df["id"].tolist() == [1, 2]
+    assert df["npixels"].tolist() == [2, 2]
+    np.testing.assert_allclose(df["area"], [800.0, 800.0])
+    # element 1: no inflow, 25 kg leaves via pixel 2 (the arrow from pixel 1 to
+    # pixel 2 stays within the element) and 5 kg enters the sewer
+    # element 2: 25 kg flows in from pixel 2 (15 kg to pixel 3 and 10 kg to
+    # pixel 4), the arrow from pixel 3 to 4 stays within the element, so no
+    # sediment leaves via routing, and 22 kg is exported to the river
+    np.testing.assert_allclose(df["sedi_in"], [0.0, 25.0])
+    np.testing.assert_allclose(df["sedi_out"], [25.0, 0.0])
+    np.testing.assert_allclose(df["sewer_in"], [5.0, 0.0])
+    np.testing.assert_allclose(df["sedi_export"], [0.0, 22.0])
+    np.testing.assert_allclose(df["deposition"], [0.0, 3.0])
+    np.testing.assert_allclose(df["erosion"], [30.0, 0.0])
+    # no inflow in element 1, so no trapping efficiency
+    np.testing.assert_allclose(df["eSTE"], [np.nan, 100.0])
+    # for a raster, the sediment balance is stored on the raster object
+    pd.testing.assert_frame_equal(elements.df_sediment_balance, df)
+
+
+def test_calculate_sediment_balance_priority():
+    """Test sorting the sediment balance on a sediment balance variable."""
+    pp = _synthetic_postprocess()
+    elements = SimpleNamespace(arr=np.array([[1, 1, 2, 2]]))
+
+    df = pp.calculate_sediment_balance(elements)
+    assert "cum_sum" not in df.columns
+    assert "cdf" not in df.columns
+
+    df = pp.calculate_sediment_balance(elements, compute_priority="erosion")
+    assert df["id"].tolist() == [1, 2]
+    # only positive values contribute to the cumulative distribution
+    np.testing.assert_allclose(df["cum_sum"], [30.0, np.nan])
+    np.testing.assert_allclose(df["cdf"], [100.0, np.nan])
+
+    df = pp.calculate_sediment_balance(elements, compute_priority="sedi_in")
+    assert df["id"].tolist() == [2, 1]
+    np.testing.assert_allclose(df["cum_sum"], [25.0, np.nan])
+    np.testing.assert_allclose(df["cdf"], [100.0, np.nan])
+
+    with pytest.raises(ValueError, match="compute_priority"):
+        pp.calculate_sediment_balance(elements, compute_priority="unknown")
+
+
+def test_calculate_sediment_balance_positive_ids():
+    """Test that only positive ids are considered as elements."""
+    pp = _synthetic_postprocess()
+    elements = SimpleNamespace(arr=np.array([[0, -1, 2, 2]]))
+
+    df = pp.calculate_sediment_balance(elements)
+    assert df["id"].tolist() == [2]
+    # the sediment from pixel 2 (id -1) flows into element 2
+    np.testing.assert_allclose(df["sedi_in"], [25.0])
+
+    elements = SimpleNamespace(arr=np.array([[0, -1, -9999, 0]]))
+    with pytest.raises(ValueError, match="No elements"):
+        pp.calculate_sediment_balance(elements)
+
+
+def test_calculate_sediment_balance_parcel_id_recycling():
+    """Test the warning if the maximum parcel id (int16) is reached in the
+    composite landuse raster."""
+    pp = _synthetic_postprocess()
+    compositelanduse = SimpleNamespace(arr=np.array([[1, 1, 2, 32767]]))
+    pp.modelinput = SimpleNamespace(_compositelanduse=compositelanduse)
+
+    with pytest.warns(UserWarning, match="probably not trustworthy"):
+        pp.calculate_sediment_balance(compositelanduse)
+
+    # the check is only done for the composite landuse raster
+    other = SimpleNamespace(arr=np.array([[1, 1, 2, 32767]]))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        pp.calculate_sediment_balance(other)
+
+
+def test_calculate_sediment_balance_invalid_input():
+    """Test that the elements must be a raster or vector factory object."""
+    pp = _synthetic_postprocess()
+    with pytest.raises(TypeError, match="must be a raster"):
+        pp.calculate_sediment_balance(np.array([[1, 1, 2, 2]]))
+
+
+def _copy_shapefile(file_path, folder):
+    """Copy a shapefile (with its sidecar files) to a folder, so it can be
+    overwritten by the sediment balance."""
+    file_path = Path(file_path)
+    for f in file_path.parent.glob(f"{file_path.stem}.*"):
+        shutil.copy(f, folder / f.name)
+    return folder / file_path.name
+
+
+def _assert_sediment_balance_closes(df):
+    """Assert that netto deposition = inflow - outflow - sewer - export."""
+    np.testing.assert_allclose(
+        df["deposition"] - df["erosion"],
+        df["sedi_in"] - df["sedi_out"] - df["sewer_in"] - df["sedi_export"],
+    )
+    assert ((df["deposition"] == 0) | (df["erosion"] == 0)).all()
+
+
+def test_calculate_sediment_balance_raster(postprocess_obj):
+    """Test the sediment balance on a raster factory object (parcels)."""
+    compositelanduse = postprocess_obj.modelinput.compositelanduse
+    df = postprocess_obj.calculate_sediment_balance(compositelanduse)
+
+    assert df is compositelanduse.df_sediment_balance
+    arr = compositelanduse.arr
+    assert df["id"].tolist() == np.unique(arr[arr > 0]).tolist()
+
+    # area (m²) equals the number of parcel pixels times the pixel area
+    resolution = postprocess_obj.rp.resolution
+    n_pixels = pd.Series(arr[arr > 0]).value_counts()
+    np.testing.assert_allclose(
+        df.set_index("id")["area"].sort_index(),
+        n_pixels.sort_index() * resolution**2,
+    )
+    _assert_sediment_balance_closes(df)
 
 
 def test_postprocess_init(postprocess_obj):
@@ -318,106 +496,44 @@ def test_convert_output_rsts_to_ton(postprocess_obj):
         np.testing.assert_allclose(arr_ton[valid], arr_src[valid] / 1000.0, atol=1e-6)
 
 
-@pytest.mark.parametrize(
-    "compute_priority",
-    [
-        pytest.param(True, id="with_priority_metrics"),
-        pytest.param(False, id="without_priority_metrics"),
-    ],
-)
-def test_compute_sediment_balance_grass_strips(postprocess_obj, compute_priority):
-    """Test compute_sediment_balance_grass_strips for both compute_priority values.
+def test_calculate_sediment_balance_vector(postprocess_obj):
+    """Test the sediment balance on a vector factory object (grass strips)."""
+    postprocess_obj.vct_grass_strips = _copy_shapefile(
+        scenario_data.grass_strips, postprocess_obj.postprocessing_folder
+    )
+    vct_grass_strips = postprocess_obj.vct_grass_strips
+    n_grass_strips = len(vct_grass_strips.geodata)
 
-    Parameters
-    ----------
-    postprocess_obj: pywatemsedem.postprocess.PostProcess
-        Function-scoped PostProcess fixture configured on test data.
-    compute_priority: bool
-        If ``True``, the method should append cumulative priority metrics
-        (``cum_sum``, ``cdf``). If ``False``, only efficiency metrics are
-        expected.
-    """
-
-    result = postprocess_obj.compute_sediment_balance_grass_strips(
-        scenario_data.grass_strips,
-        compute_priority=compute_priority,
+    df = postprocess_obj.calculate_sediment_balance(
+        vct_grass_strips, compute_priority="eSTE"
     )
 
-    assert result is None
-    gdf_grass = postprocess_obj.vct_grass_strips.geodata
+    assert df["eSTE"].dropna().is_monotonic_decreasing
+    _assert_sediment_balance_closes(df)
 
-    assert not gdf_grass.empty
-    expected_columns = {
-        "npixels_t",
-        "sedi_in",
-        "sedi_out",
-        "eSTE",
-        "sed",
-    }
-    assert expected_columns.issubset(gdf_grass.columns)
+    # for a vector, the sediment balance columns are added to the geodata
+    gdf = vct_grass_strips.geodata
+    assert len(gdf) == n_grass_strips
+    assert set(df.columns).issubset(gdf.columns)
+    pd.testing.assert_frame_equal(
+        gdf.set_index("id").loc[df["id"], df.columns[1:]],
+        df.set_index("id"),
+        check_dtype=False,
+    )
 
-    # "grass_strips" only ever held the intermediate raster used internally
-    # and is removed once processing completes.
-    assert not (postprocess_obj.postprocessing_folder / "grass_strips").exists()
+    # the geodata with the sediment balance is written to the vector file
+    gdf_file = gpd.read_file(vct_grass_strips.file_path)
+    assert len(gdf_file) == n_grass_strips
+    assert {"sedi_in", "sedi_out", "deposition", "eSTE", "cdf"}.issubset(
+        gdf_file.columns
+    )
 
-    if compute_priority:
-        for col in ["cum_sum", "cdf"]:
-            assert col in gdf_grass.columns
-
-        cdf_plot = (
-            postprocess_obj.postprocessing_folder
-            / "cumulative_sedimentload_grass_strips.png"
-        )
-        assert cdf_plot.exists()
-
-        cdf = pd.to_numeric(gdf_grass["cdf"], errors="coerce").dropna()
-        if not cdf.empty:
-            assert (cdf >= 0).all()
-            assert (cdf <= 100).all()
-
-        valid = gdf_grass[gdf_grass["sed"] > 0].copy()
-        if not valid.empty:
-            assert valid["sed"].is_monotonic_decreasing
-            cdf_valid = pd.to_numeric(valid["cdf"], errors="coerce").dropna()
-            if len(cdf_valid) > 1:
-                assert cdf_valid.is_monotonic_increasing
-
-            total_deposition = valid["sed"].sum()
-            np.testing.assert_allclose(
-                valid["cdf"].to_numpy(),
-                100 * valid["cum_sum"].to_numpy() / total_deposition,
-            )
-    else:
-        assert "cum_sum" not in gdf_grass.columns
-        assert "cdf" not in gdf_grass.columns
-
-
-def test_compute_sediment_balance_grass_strips_preset_vector(postprocess_obj):
-    """Test grass strips sediment balance with a preset vct_grass_strips.
-
-    Parameters
-    ----------
-    postprocess_obj: pywatemsedem.postprocess.PostProcess
-        Function-scoped PostProcess fixture configured on test data.
-    """
-    postprocess_obj.vct_grass_strips = scenario_data.grass_strips
-
-    postprocess_obj.compute_sediment_balance_grass_strips(compute_priority=False)
-
-    gdf_grass = postprocess_obj.vct_grass_strips.geodata
-    assert {"sedi_in", "sedi_out", "sed"}.issubset(gdf_grass.columns)
-
-
-def test_compute_sediment_balance_grass_strips_missing_vector(postprocess_obj):
-    """Test grass strips sediment balance raises without grass strips.
-
-    Parameters
-    ----------
-    postprocess_obj: pywatemsedem.postprocess.PostProcess
-        Function-scoped PostProcess fixture configured on test data.
-    """
-    with pytest.raises(ValueError, match="No grass strips vector available"):
-        postprocess_obj.compute_sediment_balance_grass_strips()
+    # a second run replaces the sediment balance columns
+    postprocess_obj.calculate_sediment_balance(vct_grass_strips)
+    columns = vct_grass_strips.geodata.columns
+    assert len(columns) == len(gdf.columns) - 2
+    assert "cum_sum" not in columns
+    assert "cdf" not in columns
 
 
 @pytest.mark.parametrize(
@@ -545,32 +661,34 @@ def test_identify_subcatchments_to_buffers(postprocess_obj):
     )
 
 
-def test_compute_sediment_balance_buffers(postprocess_obj):
-    """Test compute_sediment_balance_buffers on the vectorized modelinput buffers."""
-    result = postprocess_obj.compute_sediment_balance_buffers()
+def test_calculate_sediment_balance_buffers_raster(postprocess_obj):
+    """Test the sediment balance on the modelinput buffers raster.
 
-    assert result is None
+    Every buffer consists of its outlet pixel (buffer id) and its body pixels
+    (buffer id + 2^14).
+    """
+    buffers = postprocess_obj.modelinput.buffers
+    df = postprocess_obj.calculate_sediment_balance(buffers)
+
+    arr_buffers = buffers.arr
+    arr_buffers = arr_buffers[arr_buffers > 0].astype(int)
+    arr_buffers = np.where(arr_buffers > 2**14, arr_buffers - 2**14, arr_buffers)
+    n_pixels = pd.Series(arr_buffers).value_counts().sort_index()
+    assert df["id"].tolist() == n_pixels.index.tolist()
+    assert df["npixels"].tolist() == n_pixels.tolist()
+    _assert_sediment_balance_closes(df)
+
+
+def test_calculate_sediment_balance_buffers_vector(postprocess_obj):
+    """Test the sediment balance on a buffers shapefile."""
+    postprocess_obj.vct_buffers = _copy_shapefile(
+        folder_core / "buffers.shp", postprocess_obj.postprocessing_folder
+    )
+    df = postprocess_obj.calculate_sediment_balance(postprocess_obj.vct_buffers)
+
     gdf_buffers = postprocess_obj.vct_buffers.geodata
-    expected_columns = {"sedi_in", "sedi_out", "buff_sed", "area", "cum_sum", "cdf"}
-    assert expected_columns.issubset(gdf_buffers.columns)
-    np.testing.assert_allclose(
-        gdf_buffers["buff_sed"], gdf_buffers["sedi_in"] - gdf_buffers["sedi_out"]
-    )
-    assert (
-        postprocess_obj.postprocessing_folder / "cumulative_sedimentload_buffers.png"
-    ).exists()
-
-    # results per buffer id are equal to the buffer efficiency of the rasters
-    df_expected = compute_efficiency_buffers(
-        postprocess_obj.modelinput.buffers.file_path,
-        postprocess_obj.modeloutput.sedi_in.file_path,
-        postprocess_obj.modeloutput.sedi_out.file_path,
-    ).set_index("NR")
-    df_result = gdf_buffers.set_index("id")
-    np.testing.assert_allclose(
-        df_result.loc[df_expected.index.astype(int), "buff_sed"].to_numpy(),
-        df_expected["buff_sed"].to_numpy(dtype=float),
-    )
+    assert set(df.columns).issubset(gdf_buffers.columns)
+    _assert_sediment_balance_closes(df)
 
 
 def test_identify_subcatchments_multiple_poi(postprocess_obj):

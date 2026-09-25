@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import warnings
 from pathlib import Path
 
 import geopandas as gpd
@@ -24,14 +25,11 @@ from pywatemsedem.grasstrips import estimate_ste
 from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
     Modeloutput,
-    compute_efficiency_buffers,
     create_deposition_raster,
     create_erosion_raster,
     define_subcatchments_saga,
     make_routing_vct_saga,
-    open_txt_routing_file,
 )
-from pywatemsedem.io.plots import plot_cumulative_sedimentload
 from pywatemsedem.scenario import WSException
 from pywatemsedem.tools import package_resource
 from pywatemsedem.valid import (
@@ -1021,126 +1019,6 @@ class PostProcess(Factory):
             gdf_grass = gdf_grass.rename(columns={"NR": "id"})
             self._vct_grass_strips.geodata = gdf_grass
 
-    def compute_sediment_balance_grass_strips(
-        self, file_path_grass_strips=None, compute_priority=True
-    ):
-        """Compute the sediment balance per grass strip and compute priority
-
-        Parameters
-        ----------
-        file_path_grass_strips: str or pathlib.Path, optional
-            File path of a grass strips shapefile. If given, it is set as
-            ``self.vct_grass_strips`` before processing. If not given,
-            ``self.vct_grass_strips`` must already be set. A shapefile is
-            needed because the model input only holds grass strips as
-            land-use code -6, which does not identify individual grass strips.
-        compute_priority: bool, optional
-            Compute priorities for grass strips based on deposition in grass strip.
-
-        Notes
-        -----
-        This method updates ``self.vct_grass_strips.geodata`` in place with
-        columns from :func:`pywatemsedem.postprocess._compute_efficiency_grass_strips`
-        and, if ``compute_priority=True``, additional cumulative metrics.
-        """
-        if file_path_grass_strips is not None:
-            self.vct_grass_strips = file_path_grass_strips
-
-        if self.vct_grass_strips is None:
-            msg = (
-                "No grass strips vector available. Provide "
-                "'file_path_grass_strips' or set 'vct_grass_strips' first."
-            )
-            raise ValueError(msg)
-
-        logger.info("Calculating in- and output of sediment for every grass strip...")
-
-        grass_dir = self._workflow_subdir("grass_strips")
-        rst_grass_strips_id = grass_dir / "grass_strips_id.rst"
-
-        gdf_grass_strips = self.vct_grass_strips.geodata.copy()
-        if "id" not in gdf_grass_strips.columns:
-            msg = (
-                "Grass strips vector must contain an 'id' column. "
-                "Provide 'NR' in the input vector so it can be renamed to 'id'."
-            )
-            raise ValueError(msg)
-
-        arr_grass_strips_id = self.vct_grass_strips.rasterize(
-            self.modelinput.compositelanduse.file_path,
-            self.epsg,
-            col="id",
-            dtype_raster="integer",
-            nodata=-9999,
-            gdal=False,
-        )
-
-        # Validate that every -6 compositelanduse cell maps to a rasterized
-        # grass-strip pixel.
-        arr_compositelanduse = self.modelinput.compositelanduse.arr
-        mask_grass_compositelanduse = arr_compositelanduse == -6
-        nodata_grass_ids = -9999
-
-        mask_grass_rasterized = (arr_grass_strips_id != nodata_grass_ids) & (
-            arr_grass_strips_id > 0
-        )
-
-        missing_mask = mask_grass_compositelanduse & (~mask_grass_rasterized)
-        if np.any(missing_mask):
-            rows_missing, cols_missing = np.where(missing_mask)
-            preview = ", ".join(
-                [
-                    f"(row={int(r) + 1}, col={int(c) + 1})"
-                    for r, c in zip(rows_missing[:10], cols_missing[:10])
-                ]
-            )
-            msg = (
-                "Rasterized grass strips do not fully cover compositelanduse "
-                "grass-strip cells (-6). "
-                f"Missing coverage for {len(rows_missing)} cell(s). "
-                f"Examples: {preview}."
-            )
-            raise ValueError(msg)
-
-        write_arr_as_rst(
-            arr_grass_strips_id,
-            rst_grass_strips_id,
-            np.int32,
-            self.rp.rasterio_profile,
-        )
-
-        _, _, df_grass_strips_eff = _compute_efficiency_grass_strips(
-            self.modeloutput.routing.file_path,
-            rst_grass_strips_id,
-            self.modelinput.compositelanduse.file_path,
-            self.modeloutput.sedi_out.file_path,
-        )
-
-        gdf_grass_strips = gdf_grass_strips.merge(
-            df_grass_strips_eff,
-            on="id",
-            how="left",
-        )
-        if compute_priority:
-            # `grass_dir` only holds the intermediate raster used above; the
-            # cdf plot is a final result and is written directly to the main
-            # postprocessing folder.
-            gdf_grass_strips = _compute_cdf_sediment_load(
-                gdf_grass_strips,
-                "sed",
-                self.postprocessing_folder,
-                ignore_negative_values=True,
-                sort_ascending=False,
-                tag="grass_strips",
-                plot=True,
-            )
-
-        # Keep grass-strip statistics on the active vector object so downstream
-        # calls can directly use ``pp.vct_grass_strips.geodata``.
-        self._vct_grass_strips.geodata = gdf_grass_strips
-
-        shutil.rmtree(grass_dir, ignore_errors=True)
-
     def add_poi(
         self,
         x_coord,
@@ -1383,6 +1261,26 @@ class PostProcess(Factory):
         if self._vct_buffers is None:
             self.vectorize_modelinput_buffers()
         return self._vct_buffers
+
+    @vct_buffers.setter
+    def vct_buffers(self, vector_input):
+        """Set the buffers vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing buffers vector shapefile. The file is loaded
+            via :meth:`vector_factory` so the result exposes ``.file_path``
+            and ``.geodata``.
+        """
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_buffers",
+            "Polygon",
+            "vct_buffers",
+            plot_title="Catchment mask + rivers + buffers",
+            init_subcatchments=True,
+        )
 
     def vectorize_modelinput_buffers(self, filename="buffers.shp"):
         """Create a buffers vector from ``modelinput.buffers``.
@@ -3708,91 +3606,247 @@ class PostProcess(Factory):
             write_arr_as_rst(arr_ton, rst_out, "float32", self.rp.rasterio_profile)
             setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
 
-    def aggregate_sedi_out_per_parcel(self):
-        """Identify total sediment leaving a parcel.
+    def calculate_sediment_balance(self, elements, compute_priority=None):
+        """Compute the sediment balance per element.
 
-        Selects routing arrows that cross a parcel border (source parcel !=
-        target parcel) and sums their ``sedi_out`` per source parcel. Stores
-        the result on ``self.df_sedi_out_parcel``.
-
-        Returns
-        -------
-        df_sedi_out_parcel: pandas.DataFrame
-            One row per parcel, with columns ``parcel_id`` (the parcel id,
-            i.e. the routing's ``lnduSource``) and ``sedi_out_aggregated``
-            (total sediment (kg) leaving the parcel across its border).
-        """
-        valid_routing_sedi_out_vector(self)
-        gdf_routing = self.vct_routing.geodata
-
-        # select routing arrows crossing a parcel border
-        cond = gdf_routing["lnduSource"] != gdf_routing["lnduTarg"]
-        gdf_routing = gdf_routing.loc[cond]
-        cond = (gdf_routing["lnduSource"] > 0) & (
-            gdf_routing["lnduTarg"] != np.max(gdf_routing["lnduSource"])
-        )
-        gdf_routing = gdf_routing.loc[cond]
-
-        # aggregate sedi_out to parcel scale
-        self.df_sedi_out_parcel = (
-            gdf_routing.groupby("lnduSource")["sedi_out"]
-            .sum()
-            .reset_index()
-            .rename(
-                columns={"lnduSource": "parcel_id", "sedi_out": "sedi_out_aggregated"}
-            )
-        )
-
-        return self.df_sedi_out_parcel
-
-    def compute_sediment_balance_buffers(self, compute_priority=True):
-        """Compute the ingoing, outgoing and deposited sediment per buffer.
-
-        The deposition (= ingoing - outgoing sediment) is computed per buffer
-        outlet, see :func:`pywatemsedem.io.modeloutput.compute_efficiency_buffers`
-        for an explanation of the algorithm.
+        An element is a group of pixels with the same id. Only positive ids
+        are considered: pixels (or polygons) with a zero, negative or nodata id
+        do not belong to an element. The sediment flowing in and out of an
+        element is derived from the routing arrows that cross the element
+        border (source id != target id): every arrow carries the ``sedi_out``
+        of its source pixel multiplied by its ``part``.
 
         Parameters
         ----------
-        compute_priority: bool, optional
-            Compute priorities for buffers based on deposition in the buffer.
+        elements: AbstractRaster or AbstractVector
+            Raster factory object holding the element id per pixel (e.g.
+            ``self.modelinput.buffers``) or polygon vector factory object with
+            an ``id`` column (e.g. ``self.vct_grass_strips``). A vector is
+            rasterized on the model grid first, in the same way as grass strips
+            and buffers are rasterized for a scenario (see
+            :meth:`pywatemsedem.geo.vectors.AbstractVector.rasterize`), i.e.
+            every pixel touched by a polygon belongs to the polygon. For
+            ``self.modelinput.buffers``, the buffer body pixels (buffer id +
+            2^14) are part of the buffer.
+        compute_priority: str, optional
+            Sediment balance variable to prioritize the elements on, sorted
+            from highest to lowest (e.g. ``"deposition"`` or ``"eSTE"``), and
+            for which the cumulative sum ``cum_sum`` and cumulative
+            distribution ``cdf`` (%) are added. Only positive values
+            contribute to ``cum_sum`` and ``cdf``, which are nan for the other
+            elements. If not given, the elements are sorted on ``id``.
+
+        Returns
+        -------
+        df_balance: pandas.DataFrame
+            One row per element, with the columns:
+
+            - *id* (int): element id
+            - *npixels* (int): number of pixels of the element
+            - *area* (float): area of the element (m²)
+            - *sedi_in* (float): sediment flowing into the element, i.e.
+              carried by the routing arrows from pixels outside the element to
+              pixels in the element (kg)
+            - *sedi_out* (float): sediment flowing out of the element, i.e.
+              carried by the routing arrows from pixels in the element to
+              pixels outside the element (kg)
+            - *sewer_in* (float): sediment entering the sewer in the element
+              (kg)
+            - *sedi_export* (float): sediment exported to the river in the
+              element (kg)
+            - *deposition* (float): ``sedi_in - sedi_out - sewer_in -
+              sedi_export`` if positive, else zero (kg)
+            - *erosion* (float): ``sedi_out + sewer_in + sedi_export -
+              sedi_in`` if positive, else zero (kg)
+            - *eSTE* (float): estimated sediment trapping efficiency (%), see
+              :func:`pywatemsedem.grasstrips.estimate_ste`, nan if ``sedi_in``
+              is zero
+            - *cum_sum* (float): cumulative sum of ``compute_priority``, only
+              if ``compute_priority`` is given
+            - *cdf* (float): ``cum_sum`` as percentage of the total of
+              ``compute_priority`` (%), only if ``compute_priority`` is given
 
         Notes
         -----
-        This method updates ``self.vct_buffers.geodata`` in place with the
-        columns ``sedi_in``, ``sedi_out``, ``buff_sed`` (kg) and ``area``
-        (m²) and, if ``compute_priority=True``, additional cumulative metrics.
+        For a raster factory object, ``df_balance`` is stored as
+        ``elements.df_sediment_balance``. For a vector factory object, the
+        columns of ``df_balance`` are added to ``elements.geodata``, which is
+        written to ``elements.file_path``.
+
+        Parcel ids in ``self.modelinput.compositelanduse`` are limited to the
+        int16 maximum (32767). If this maximum is reached, parcel ids are
+        probably recycled, so multiple parcels can have the same id, and a
+        warning is raised.
         """
-        logger.info("Calculating how much sediment is trapped in each buffer...")
-
-        df_buffers_eff = compute_efficiency_buffers(
-            self.modelinput.buffers.file_path,
-            self.modeloutput.sedi_in.file_path,
-            self.modeloutput.sedi_out.file_path,
-        )
-        df_buffers_eff = df_buffers_eff.rename(columns={"NR": "id"})
-        df_buffers_eff["id"] = df_buffers_eff["id"].astype(int)
-
-        gdf_buffers = self.vct_buffers.geodata.copy()
-        drop_cols = [c for c in df_buffers_eff.columns if c != "id"]
-        gdf_buffers = gdf_buffers.drop(columns=drop_cols, errors="ignore")
-        gdf_buffers = gdf_buffers.merge(df_buffers_eff, on="id", how="left")
-        gdf_buffers["area"] = gdf_buffers.area
-
-        if compute_priority:
-            gdf_buffers = _compute_cdf_sediment_load(
-                gdf_buffers,
-                "buff_sed",
-                self.postprocessing_folder,
-                ignore_negative_values=True,
-                sort_ascending=False,
-                tag="buffers",
-                plot=True,
+        nodata = self.rp.nodata
+        if hasattr(elements, "geodata"):
+            gdf = elements.geodata
+            if "id" not in gdf.columns:
+                msg = "Vector must contain an 'id' column."
+                raise ValueError(msg)
+            # only polygons with a positive id are elements
+            gdf = gdf[gdf["id"] > 0]
+            if gdf.empty:
+                msg = "No polygons with a positive id found in the vector."
+                raise ValueError(msg)
+            arr_ids = self.vector_factory(gdf, "Polygon").rasterize(
+                self.modelinput.mask.file_path,
+                self.epsg,
+                col="id",
+                dtype_raster="integer",
+                gdal=False,
             )
+        elif hasattr(elements, "arr"):
+            arr_ids = np.asarray(elements.arr)
+            if elements is getattr(self.modelinput, "_buffers", None):
+                arr_ids = np.where(arr_ids > 2**14, arr_ids - 2**14, arr_ids)
+            if elements is getattr(self.modelinput, "_compositelanduse", None):
+                max_id = np.iinfo(np.int16).max
+                if np.nanmax(arr_ids) >= max_id:
+                    msg = (
+                        f"The maximum parcel id ({max_id}, int16) is reached in "
+                        "the composite landuse raster: parcel ids are probably "
+                        "recycled, so multiple parcels can have the same id. The "
+                        "sediment balance per parcel is therefore probably not "
+                        "trustworthy. Future development is needed to support "
+                        "catchments with parcel id recycling."
+                    )
+                    warnings.warn(msg)
+        else:
+            msg = (
+                "'elements' must be a raster (AbstractRaster) or vector "
+                "(AbstractVector) factory object."
+            )
+            raise TypeError(msg)
 
-        # Keep buffer statistics on the active vector object so downstream
-        # calls can directly use ``pp.vct_buffers.geodata``.
-        self._vct_buffers.geodata = gdf_buffers
+        # only pixels with a positive id belong to an element
+        arr_ids = np.asarray(arr_ids, dtype=np.float64)
+        valid = np.isfinite(arr_ids) & (arr_ids > 0)
+        if not pd.isna(nodata):
+            valid &= arr_ids != nodata
+        if not np.any(valid):
+            msg = "No elements (positive ids) found to compute the sediment balance."
+            raise ValueError(msg)
+        arr_ids = np.where(valid, arr_ids, 0).astype(np.int64)
+
+        def _values(arr):
+            arr = np.asarray(arr, dtype=np.float64)
+            invalid = ~np.isfinite(arr)
+            if not pd.isna(nodata):
+                invalid |= arr == nodata
+            return np.where(invalid, 0.0, arr)
+
+        arr_sedi_out = _values(self.modeloutput.sedi_out.arr)
+        arr_sewer_in = _values(self.modeloutput.sewer_in.arr)
+        arr_sedi_export = _values(self.modeloutput.sedi_export.arr)
+
+        # sediment carried by every routing arrow (routing is 1-based)
+        df_routing = self.modeloutput.routing
+        rows_source = df_routing["row"].to_numpy() - 1
+        cols_source = df_routing["col"].to_numpy() - 1
+        ids_source = arr_ids[rows_source, cols_source]
+        sedi_out_source = arr_sedi_out[rows_source, cols_source]
+        lst_arrows = []
+        for i in (1, 2):
+            cond = (
+                (df_routing[f"target{i}col"] != -99) & (df_routing[f"part{i}"] > 0)
+            ).to_numpy()
+            ids_target = arr_ids[
+                df_routing.loc[cond, f"target{i}row"].to_numpy() - 1,
+                df_routing.loc[cond, f"target{i}col"].to_numpy() - 1,
+            ]
+            lst_arrows.append(
+                pd.DataFrame(
+                    {
+                        "id_source": ids_source[cond],
+                        "id_target": ids_target,
+                        "sedi": sedi_out_source[cond]
+                        * df_routing.loc[cond, f"part{i}"].to_numpy(),
+                    }
+                )
+            )
+        df_arrows = pd.concat(lst_arrows, ignore_index=True)
+
+        # select arrows crossing an element border
+        df_arrows = df_arrows[df_arrows["id_source"] != df_arrows["id_target"]]
+        sedi_in = df_arrows.groupby("id_target")["sedi"].sum()
+        sedi_out = df_arrows.groupby("id_source")["sedi"].sum()
+
+        df_pixels = pd.DataFrame(
+            {
+                "id": arr_ids[valid],
+                "sewer_in": arr_sewer_in[valid],
+                "sedi_export": arr_sedi_export[valid],
+            }
+        )
+        df_balance = df_pixels.groupby("id").agg(
+            npixels=("sewer_in", "size"),
+            sewer_in=("sewer_in", "sum"),
+            sedi_export=("sedi_export", "sum"),
+        )
+        df_balance["area"] = df_balance["npixels"] * self.rp.resolution**2
+        df_balance["sedi_in"] = sedi_in.reindex(df_balance.index, fill_value=0.0)
+        df_balance["sedi_out"] = sedi_out.reindex(df_balance.index, fill_value=0.0)
+        netto = (
+            df_balance["sedi_in"]
+            - df_balance["sedi_out"]
+            - df_balance["sewer_in"]
+            - df_balance["sedi_export"]
+        )
+        df_balance["deposition"] = netto.clip(lower=0.0)
+        df_balance["erosion"] = (-netto).clip(lower=0.0)
+        df_balance["eSTE"] = estimate_ste(
+            df_balance["sedi_in"].where(df_balance["sedi_in"] > 0),
+            df_balance["sedi_out"],
+        )
+
+        df_balance = df_balance.reset_index()[
+            [
+                "id",
+                "npixels",
+                "area",
+                "sedi_in",
+                "sedi_out",
+                "sewer_in",
+                "sedi_export",
+                "deposition",
+                "erosion",
+                "eSTE",
+            ]
+        ]
+        if compute_priority is None:
+            df_balance = df_balance.sort_values("id")
+        elif compute_priority in df_balance.columns:
+            df_balance = df_balance.sort_values(compute_priority, ascending=False)
+            # only positive values contribute to the cumulative distribution
+            values = df_balance[compute_priority].where(
+                df_balance[compute_priority] > 0
+            )
+            df_balance["cum_sum"] = values.cumsum()
+            df_balance["cdf"] = 100 * df_balance["cum_sum"] / values.sum()
+        else:
+            msg = (
+                f"'compute_priority' must be one of {df_balance.columns.tolist()}, "
+                f"not '{compute_priority}'."
+            )
+            raise ValueError(msg)
+        df_balance = df_balance.reset_index(drop=True)
+
+        if hasattr(elements, "geodata"):
+            # sediment balance columns from an earlier run are replaced
+            columns = {"cum_sum", "cdf"} | set(df_balance.columns) - {"id"}
+            gdf = elements.geodata.drop(columns=list(columns), errors="ignore")
+            elements.geodata = gdf.merge(
+                df_balance.astype({"id": gdf["id"].dtype}), on="id", how="left"
+            )
+            file_path = getattr(elements, "file_path", None)
+            if file_path is not None:
+                self._unlink_vector_dataset(file_path)
+                elements.geodata.to_file(file_path, spatial_index="YES")
+        else:
+            elements.df_sediment_balance = df_balance
+
+        return df_balance
 
     # ========================================================================
     # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
@@ -3801,7 +3855,6 @@ class PostProcess(Factory):
     # (directly or indirectly) by postprocess.ipynb. These are reserved for
     # future workflow extensions or advanced use cases.
     #
-    # - compute_netto_erosion_parcels
     # - merge_sedi_out_and_cumulative
     # - add_sediment_to_subcatchments
     # - add_segment_results_to_vct
@@ -3818,29 +3871,6 @@ class PostProcess(Factory):
     # - compute_statistics_rasters_per_polygon_vector
     # - intersect_sedi_outparcels_with_subcatchments
     # - assign_values_df_summary
-
-    def compute_netto_erosion_parcels(self, join=True):
-        """Compute the netto erosion per parcel.
-
-        For an explanation of the definition of netto erosion,
-        see :func:`pywatemsedem.postprocess.compute_netto_erosion_parcels`
-
-        Parameters
-        ----------
-        join: bool, optional
-            Join the results of the netto erosion raster calculations to the
-            parcel shape file.
-        """
-        logger.info("Calculating netto erosion for every parcel...")
-        compute_netto_erosion_parcels(
-            self.files["rst_prckrt"],
-            self.files["rst_watereros"],
-            self.files["rst_percelen_prcid"],
-            resolution=self.rp.resolution,
-            fmap=self.postprocessing_folder,
-            flag_write=True,
-            flag_join_vct_parcels=join,
-        )
 
     def merge_sedi_out_and_cumulative(self, catchment_name, segments_to_retain=None):
         """Merge SediOut.rst and Cumulative.rst rasters.
@@ -4735,91 +4765,6 @@ def _identify_individual_priority_subcatchments(
     return gdf_subcatchmpriority, gdf_poi, dst, vct_priority_points
 
 
-def _compute_efficiency_grass_strips(
-    txt_routing, rst_grass_strips, rst_prckrt, rst_sedi_out
-):
-    """Compute statistics for grass strips:
-
-    1. Compute the individual sediment input and output per routing element
-    2. Compute the incoming and outgoing sediment per gras_id
-    3. Compute the total incoming and outgoing sediment aggregated over all
-       grass strips
-
-    Parameters
-    ----------
-    txt_routing: str or pathlib.Path
-        File path of the WaTEM/SEDEM routing table
-    rst_grass_strips: str or ppathlib.Path
-        raster grass strips with id's filename
-    rst_prckrt: str or pathlib.Path
-        raster WaTEM/SEDEM perceelskaart
-    rst_sedi_out: str or pathlib.Path
-        File path WaTEM/SEDEM output raster 'SediOut_kg.rst'
-
-    Returns
-    -------
-    sediment_load_grass_strips_in: float
-        Total sediment load streaming into all gras strips (kg)
-    sediment_load_grass_strips_out: float
-        Total sediment load streaming out of all gras strips (kg)
-    df_efficiency: pandas.DataFrame
-
-        Sediment load flowing in and flowing out grass strip with the columns:
-
-                - *id* (float): grass_id
-        - *npixels_t* (float: number of pixels of target grass strip
-        - *sedi_in* (float): total incoming sediment in grass strip (kg)
-        - *sedi_out* (float): total outgoing sediment out of grass strip (kg)
-        - *eSTE* (float): estimated sediment trapping efficiency, see
-          :func:`pywatemsedem.grasstrips.estimate_ste` (%)
-        - sed (float): amount of sedimentation (kg)
-
-    Note
-    ----
-    The output uses a single grass strip identifier in column ``id``.
-    """
-    # load files
-    arr_prckrt, _ = load_raster(rst_prckrt)
-    arr_grass_strips_id, profile = load_raster(rst_grass_strips)
-
-    # Filter grass-strip ids directly on array level: only pixels that are
-    # grass strip land-use (-6) in the perceelskaart are retained.
-    arr_grass_strips_id = np.where(
-        arr_prckrt == -6,
-        arr_grass_strips_id,
-        profile["nodata"],
-    )
-    df_grass_strips = raster_array_to_pandas_dataframe(arr_grass_strips_id, profile)
-
-    arr_sedi_out, profile_sedi_out = load_raster(rst_sedi_out)
-    df_sedi_out = raster_array_to_pandas_dataframe(arr_sedi_out, profile_sedi_out)
-    df_routing = open_txt_routing_file(txt_routing)
-
-    df_grass_strips["val"] = df_grass_strips["val"].astype(np.float64)
-
-    # merge grass strips with sedi_out raster
-    df_routing_grasid = merge_grass_strip_id_and_sedi_out_to_routing(
-        df_grass_strips, df_sedi_out, df_routing
-    )
-
-    # format df_routing_grass to a list format
-    df_routing_grass_T = reformat_routing_grass(df_routing_grasid)
-
-    # aggregate per grass strip
-    df_efficiency = aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass_T)
-
-    # compute counts
-    arr_id, arr_npixels_t = np.unique(arr_grass_strips_id, return_counts=True)
-    df_counts = pd.DataFrame()
-    df_counts["id"] = arr_id
-    df_counts["npixels_t"] = arr_npixels_t
-    df_efficiency = df_efficiency.merge(df_counts, on="id")
-    sediment_load_grass_strips_in = np.sum(df_efficiency["sedi_in"])
-    sediment_load_grass_strips_out = np.sum(df_efficiency["sedi_out"])
-
-    return sediment_load_grass_strips_in, sediment_load_grass_strips_out, df_efficiency
-
-
 def _identify_subcatchments_to_target_ids(
     rst_target_ids,
     txt_routing_nonriver,
@@ -4891,83 +4836,6 @@ def _identify_subcatchments_to_target_ids(
         gdal_profile,
         tag=tag,
     )
-
-
-def _compute_cdf_sediment_load(
-    df,
-    column_value,
-    resmap,
-    tag=None,
-    no_data=None,
-    ignore_negative_values=False,
-    sort_ascending=True,
-    plot=False,
-):
-    """Compute the cdf of sediment load in 'column_value' in the dataframe df
-
-    Parameters
-    ----------
-    df: pandas.DataFrame
-        Dataframe to compute cdf for
-        - *column_value* (float): sediment load values
-    column_value: str
-        Column in 'df' to compute cdf for
-    resmap: str or pathlib.Path
-        Folder path to which write figure to
-    tag: str, optional
-        Tag appended to the output filename (e.g. ``"buffers"``,
-        ``"grass_strips"``).
-    no_data: float, optional
-        No_data value in 'column_value'
-    ignore_negative_values: float, optional
-        Ignore negative values in column_value
-    sort_ascending: bool, optional
-        Sort values in ascending order before cumulative aggregation.
-        If ``False``, the cumulative statistics are computed from highest
-        values to lowest values.
-    plot: str, optional
-        Write plot to disk (True/False)
-
-    Returns
-    -------
-    df: pandas.DataFrame
-        Updated dataframe with cdf
-
-        - *column_value* (float): sediment load values
-        - *cum_sum* (float): cumulative sum of sediment load
-        - *cdf* (float): cumulative distribution estimate
-
-    """
-    # calculate cumulative sum and cdf, normalized to total deposition across
-    # all valid rows (optionally only positive values).
-    df["value"] = df[column_value]
-    df = df.sort_values("value", ascending=sort_ascending)
-    df[["rank", "cum_sum", "cdf"]] = np.nan
-
-    cond_valid = df["value"] != no_data
-    if ignore_negative_values:
-        cond_contrib = cond_valid & (df["value"] > 0.0)
-    else:
-        cond_contrib = cond_valid
-
-    total_contrib = df.loc[cond_contrib, "value"].sum()
-
-    if np.any(cond_contrib):
-        df.loc[cond_contrib, "rank"] = np.arange(len(df.loc[cond_contrib]))
-        df.loc[cond_contrib, "cum_sum"] = df.loc[cond_contrib, "value"].cumsum()
-        if total_contrib > 0:
-            df.loc[cond_contrib, "cdf"] = (
-                100 * df.loc[cond_contrib, "cum_sum"] / total_contrib
-            )
-
-    if plot:
-        if tag is not None:
-            fname = resmap / f"cumulative_sedimentload_{tag}.png"
-        else:
-            fname = resmap / "cumulative_sedimentload.png"
-        plot_cumulative_sedimentload(df.loc[cond_contrib], fname)
-
-    return df
 
 
 def _convert_rst_sinks_to_vct(rst_in, vct_out, kind, epsg="EPSG:31370"):
@@ -5104,17 +4972,8 @@ def couple_sedi_out_routing(vct_routing, rst_sedi_out, epsg, cols_out=None):
 # - read_filestructure
 # - get_tuple_datastructure
 # - get_filename
-# - aggregate_sedi_in_and_sedi_out_grass_strips
-# - merge_grass_strip_id_and_sedi_out_to_routing
-# - reformat_routing_grass
-# - select_and_rename_cols_grass_routing
-# - filter_grass_strips_with_prckrt
-# - merge_grass_id_to_routing
 # - get_stats_ktc
 # - get_stats_cfactor
-# - compute_netto_ero_prckrt
-# - compute_netto_ero_parcel
-# - transform_dict_netto_erosion_to_df
 
 
 def _priority_valid_mask(arr_sedi_out, nodata):
@@ -5559,296 +5418,6 @@ def split_endpoints_in_raster(
     sum_id2 = np.sum(arr[arr != profile["nodata"]])
 
     return sum_id1, sum_id2
-
-
-def aggregate_sedi_in_and_sedi_out_grass_strips(df_routing_grass):
-    """
-    Compute the load in and out of a grass strips, so efficiencies can be
-    computed.
-
-    Parameters
-    ----------
-    df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`:
-
-        - *targetrow* (float): target row of pixel
-        - *targetcol* (float) target column of pixel
-        - *sedi_in* (float): incoming sediment pixel
-        - *sedi_out* (float): outgoing sediment pixel
-        - *gras_id_source* (float): grass strip id for source, -9999 if not a grass
-          strip.
-        - *gras_id_target* (float): grass strip id for target, -9999 if not a grass
-          strip.
-
-    Returns
-    -------
-    df_efficiency: pandas.DataFrame
-        Sediment load flowing in and flowing out grass strip with the columns:
-
-                - *id* (float): grass_id
-        - *sedi_in* (float): incoming sediment in grass strip
-        - *sedi_out* (float): outgoing sediment out of grass strip
-        - *eSTE* (float): estimated sediment trapping efficiency, see
-          :func:`pywatemsedem.grasstrips.estimate_ste`
-        - *sed* (float): amount of sedimentation
-
-    Notes
-    -----
-    The output uses a single grass strip identifier in column ``id``.
-    """
-
-    condition = df_routing_grass["gras_id_source"] != df_routing_grass["gras_id_target"]
-    df_sedi_out_grass = (
-        df_routing_grass.loc[condition]
-        .groupby("gras_id_source")
-        .aggregate({"sedi_out": np.sum})
-        .reset_index()
-    )
-    df_sedi_in_grass = (
-        df_routing_grass.loc[condition]
-        .groupby("gras_id_target")
-        .aggregate({"sedi_out": np.sum})
-        .reset_index()
-    )
-    df_sedi_in_grass = df_sedi_in_grass.rename(columns={"sedi_out": "sedi_in"})
-    df_npixels = (
-        df_routing_grass[["targetrow", "targetcol", "gras_id_target"]]
-        .drop_duplicates()
-        .groupby("gras_id_target")
-        .size()
-        .reset_index()
-    )
-    df_efficiency = df_sedi_in_grass[["gras_id_target", "sedi_in"]].merge(
-        df_sedi_out_grass,
-        left_on="gras_id_target",
-        right_on="gras_id_source",
-        how="outer",
-    )
-    df_efficiency["id"] = df_efficiency["gras_id_target"].combine_first(
-        df_efficiency["gras_id_source"]
-    )
-    df_efficiency = df_efficiency.drop(columns=["gras_id_target", "gras_id_source"])
-    df_efficiency[["sedi_in", "sedi_out"]] = df_efficiency[
-        ["sedi_in", "sedi_out"]
-    ].fillna(0)
-
-    df_npixels.columns = ["id", "npixels_r"]
-    df_efficiency = df_efficiency.merge(df_npixels, on="id", how="left")
-    df_efficiency["npixels_r"] = df_efficiency["npixels_r"].fillna(0)
-    df_efficiency["eSTE"] = estimate_ste(
-        df_efficiency["sedi_in"], df_efficiency["sedi_out"]
-    )
-    df_efficiency["sed"] = df_efficiency["sedi_in"] - df_efficiency["sedi_out"]
-    df_efficiency = df_efficiency[df_efficiency["id"] != -9999]
-    df_efficiency = df_efficiency[
-        ["id", "sedi_in", "sedi_out", "npixels_r", "eSTE", "sed"]
-    ]
-
-    return df_efficiency
-
-
-def merge_grass_strip_id_and_sedi_out_to_routing(
-    df_grass_strips,
-    df_sedi_out,
-    df_routing,
-):
-    """Merge the id of the grass strips and the sedi_out (also pd list-format)
-     to routing df.
-
-    Filter grass strips which are not of landuse type -6 ('weide') with 'WaTEM/SEDEM
-    perceelskaart'
-
-    Parameters
-    ----------
-    df_grass_strips: pandas.DataFrame
-        - *col* (int): col
-        - *row* (int): row
-        - *val* (int): gras_id
-
-    df_sedi_out: pandas.DataFrame
-        - *col* (int): col
-        - *row* (int): row
-        - *val* (fload): outgoing sediment
-
-    df_routing: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`
-
-    Returns
-    -------
-    df_routing_grass_id: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`,
-        holding columns of df_routing and additional columns:
-
-        - *gras_id_source* (int): gras_id value of the source pixel
-        - *gras_id_target1* (int): gras_id value of the target1 pixel
-        - *gras_id_target2* (int): gras_id value of the target2 pixel
-    """
-    # prepare merge
-    for i in ["source", "target1", "target2"]:
-        df_grass_strips[f"gras_id_{i}"] = df_grass_strips["val"]
-
-    for target_id in [1, 2]:
-        df_grass_strips[[f"target{target_id}row", f"target{target_id}col"]] = (
-            df_grass_strips[["row", "col"]]
-        )
-
-    # define sedout and index cols to join on
-    df_sedi_out["sedi_out"] = df_sedi_out["val"]
-    df_sedi_out = df_sedi_out.set_index(["col", "row"])
-
-    # join gras_id sources
-    df_routing_grass_id = merge_grass_id_to_routing(
-        df_routing, df_grass_strips, ["col", "row"], ["gras_id_source"]
-    )
-
-    # join sedi_out
-    df_routing_grass_id = df_routing_grass_id.join(
-        df_sedi_out[["sedi_out"]], how="left"
-    ).reset_index()
-    df_routing_grass_id = merge_grass_id_to_routing(
-        df_routing_grass_id,
-        df_grass_strips,
-        ["target1col", "target1row"],
-        ["gras_id_target1"],
-    ).reset_index()
-
-    # joint gras ids targets
-    df_routing_grass_id = merge_grass_id_to_routing(
-        df_routing_grass_id,
-        df_grass_strips,
-        ["target2col", "target2row"],
-        ["gras_id_target2"],
-    ).reset_index()
-
-    return df_routing_grass_id
-
-
-def reformat_routing_grass(df_routing_grass):
-    """Reformat the routing_gras DataFrame
-
-    Reformat the routing_gras dataframe so targets 1 and 2 are reported in
-    the same column target.
-
-    Parameters
-    ----------
-    df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`
-
-    Returns
-    -------
-    df_routing_grass_T: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`
-
-        - *gras_id_target* (float): id of the routing target
-        - *sedi_out* (float): sediment output pixel
-
-    """
-    df_routing_grass["sedi_out1"] = (
-        df_routing_grass["sedi_out"] * df_routing_grass["part1"]
-    )
-    df_routing_grass["sedi_out2"] = df_routing_grass["sedi_out"] * (
-        1 - df_routing_grass["part1"]
-    )
-
-    df1 = select_and_rename_cols_grass_routing(df_routing_grass, 1)
-    df2 = select_and_rename_cols_grass_routing(df_routing_grass, 2)
-
-    df_routing_grass_T = pd.concat([df1, df2])
-
-    return df_routing_grass_T
-
-
-def select_and_rename_cols_grass_routing(df_routing_grass, target_id):
-    """Select and rename columns of grass strip routing geodataframe.
-
-    Parameters
-    ----------
-    df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`
-    target_id: int
-        The number of the targets, can only be 1 or 2
-
-    Returns
-    -------
-    df_routing_grass: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`,
-        selected and renamed after target1 or target2
-    """
-
-    cols = {
-        f"target{target_id}row": "targetrow",
-        f"target{target_id}col": "targetcol",
-        f"sedi_out{target_id}": "sedi_out",
-        f"gras_id_target{target_id}": "gras_id_target",
-    }
-    cond = df_routing_grass[f"part{target_id}"] != 0
-    df_routing_grass = df_routing_grass.loc[
-        cond, ["row", "col", "gras_id_source"] + list(cols.keys())
-    ].rename(columns=cols)
-
-    return df_routing_grass
-
-
-def filter_grass_strips_with_prckrt(df_grass_strips, df_prckrt, profile_grass_strips):
-    """
-    Use the WaTEM/SEDEM 'perceelskaart' to filter grass strips (lay-over infr. and
-    river cells over gras_buffer_id)
-
-    Parameters
-    ----------
-    df_grass_strips: pandas.DataFrame
-        see
-        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sedi_out_to_routing`
-    df_prckrt: pandas.DataFrame
-
-        - *col* (int): col
-        - *row* (int): row
-        - *val* (float): WaTEM/SEDEM perceelskaart id.
-
-    profile_grass_strips: rasterio.profiles
-        see :func:`rasterio.open`
-
-    Returns
-    -------
-    df_grass_strips: pandas.DataFrame
-        filtered data, see
-        :func:`pywatemsedem.postprocess.merge_grass_strip_id_and_sedi_out_to_routing`
-    """
-
-    df_grass_strips.loc[df_prckrt["val"] != -6, "val"] = profile_grass_strips["nodata"]
-
-    return df_grass_strips
-
-
-def merge_grass_id_to_routing(df_routing, df_grass_strips, cols, field):
-    """
-    Merge the gras_id with the source, target1 and target2 pixels
-
-    Parameters
-    ----------
-    df_routing: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file`
-    df_grass_strips: pandas.DataFrame
-        See :func:
-        `pywatemsedem.postprocess.merge_grass_strip_id_and_sedi_out_to_routing`
-    cols: list
-        Cols to consider for join
-    field: str
-        Column to use of df_grass_strips to do join
-
-    Returns
-    -------
-    df_routing_merged: pandas.DataFrame
-        See :func:`pywatemsedem.process_output.open_txt_routing_file` with
-
-        TO DO
-
-    """
-    df_routing = df_routing.set_index(cols)
-    df_grass_strips = df_grass_strips.set_index(cols)
-    df_routing_merged = df_routing.join(df_grass_strips[field], how="left")
-
-    return df_routing_merged
 
 
 def get_stats_ktc(rst_ktc, rst_prckrt):
