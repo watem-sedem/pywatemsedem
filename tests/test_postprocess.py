@@ -647,6 +647,20 @@ def test_identify_priority_areas(
     )
     assert subcatchment_values == sorted(subcatchment_values, reverse=True)
 
+    # Every priority carries its own contribution, with `cumperc` its running
+    # sum from highest to lowest selection value.
+    perc = priority_points.geodata["perc"].astype(float)
+    cumperc = priority_points.geodata["cumperc"].astype(float)
+    assert not perc.isna().any()
+    assert (perc > 0).all()
+    np.testing.assert_allclose(cumperc, perc.cumsum())
+    assert (cumperc <= 100).all()
+    for column in ["perc", "cumperc"]:
+        np.testing.assert_allclose(
+            priority_subcatchments.geodata[column].astype(float),
+            priority_points.geodata[column].astype(float),
+        )
+
     if approach == "n":
         assert len(priority_points.geodata) == nmax
         assert len(priority_subcatchments.geodata) == nmax
@@ -657,13 +671,6 @@ def test_identify_priority_areas(
     else:
         assert len(priority_points.geodata) >= 1
         assert len(priority_subcatchments.geodata) >= 1
-        assert "cumperc" in priority_points.geodata.columns
-        assert "cumperc" in priority_subcatchments.geodata.columns
-
-        cumperc = pd.to_numeric(
-            priority_points.geodata["cumperc"], errors="coerce"
-        ).dropna()
-        assert not cumperc.empty
-        assert (cumperc >= 0).all()
-        assert (cumperc <= 100).all()
-        assert bool((cumperc > float(threshold)).any())
+        # Only the last priority reaches the threshold.
+        assert (cumperc.iloc[:-1] < float(threshold)).all()
+        assert cumperc.iloc[-1] >= float(threshold)
