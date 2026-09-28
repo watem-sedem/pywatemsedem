@@ -84,12 +84,10 @@ class PostProcess(Factory):
         # DATA
         self._routing_non_river = None
         self._routing_river = None
-        self._routing_non_sinks = None
         self._vct_routing = None
         self._vct_routing_missing = None
         self._vct_routing_non_river = None
         self._vct_routing_river = None
-        self._vct_routing_non_sinks = None
         self._vct_sedi_export = None
         self._vct_sewer_in = None
         self._vct_sinks = None
@@ -375,53 +373,6 @@ class PostProcess(Factory):
         )
 
     @property
-    def routing_non_sinks(self):
-        """Return the routing table without river or sewer routing."""
-        if self._routing_non_sinks is None:
-            self.remove_sink_routing()
-        return self._routing_non_sinks
-
-    def remove_sink_routing(self):
-        """Remove river and sewer routing from routing file.
-
-        Sediment that reaches a river or a sewer pixel does not continue
-        draining onward from there, so both are treated as sinks: routing
-        rows sourced from either are removed, on top of what
-        :meth:`remove_river_routing` already removes.
-        """
-        # Identify the rows and columns of the routing file that are river
-        # routing (lnduSource == -1).
-        rows, cols = np.where(self.modelinput.compositelanduse.arr == -1)
-        river_coords = set(zip(rows + 1, cols + 1))
-
-        # Identify the rows and columns of the routing file that are sewer
-        # routing (non-zero, valid sewer_in cells).
-        arr_sewer_in = self.modeloutput.sewer_in.arr
-        nodata = self.rp.nodata
-        if pd.isna(nodata):
-            sewer_mask = ~np.isnan(arr_sewer_in) & (arr_sewer_in != 0)
-        else:
-            sewer_mask = (arr_sewer_in != nodata) & (arr_sewer_in != 0)
-        sewer_rows, sewer_cols = np.where(sewer_mask)
-        sewer_coords = set(zip(sewer_rows + 1, sewer_cols + 1))
-
-        # Remove these rows and columns from the routing file
-        df = self.modeloutput.routing.copy()
-        to_remove = river_coords | sewer_coords
-        df_filtered = df[~df[["row", "col"]].apply(tuple, axis=1).isin(to_remove)]
-
-        self._routing_non_sinks = df_filtered.copy()
-
-        self._routing_non_sinks.file_path = (
-            self.postprocessing_folder / "routing_non_sinks.txt"
-        )
-        self._routing_non_sinks.to_csv(
-            self._routing_non_sinks.file_path,
-            sep="\t",
-            index=False,
-        )
-
-    @property
     def vct_routing(self):
         """Return the routing vector object.
 
@@ -634,63 +585,6 @@ class PostProcess(Factory):
             Path to the created routing vector shapefile.
         """
         txt_routing = self.routing_non_river.file_path
-        file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
-
-        make_routing_vct_saga(
-            txt_routing,
-            self.modelinput.compositelanduse.file_path,
-            file_path,
-            self.rp.gdal_profile,
-            extent=extent,
-            tile_number=tile_number,
-        )
-
-        return self._finalize_routing_vct(file_path)
-
-    @property
-    def vct_routing_non_sinks(self):
-        """Return the non-sinks (non-river, non-sewer) routing vector object.
-
-        If the vector does not exist yet, it is created via
-        :meth:`make_routing_non_sinks_vct`.
-        """
-        if self._vct_routing_non_sinks is None:
-            self.vct_routing_non_sinks = self.make_routing_non_sinks_vct()
-        return self._vct_routing_non_sinks
-
-    @vct_routing_non_sinks.setter
-    def vct_routing_non_sinks(self, vector_input):
-        """Set the non-sinks routing vector object from a file path."""
-        self._set_vector_from_input(
-            vector_input,
-            "_vct_routing_non_sinks",
-            "LineString",
-            "vct_routing_non_sinks",
-            plot_title="Catchment mask + rivers + non-sinks routing",
-        )
-
-    def make_routing_non_sinks_vct(self, extent=None, tile_number=None, tag=""):
-        """Make a routing vector file that excludes river and sewer routing.
-
-        Uses :attr:`routing_non_sinks` as input. Sediment output values from
-        ``modeloutput.sedi_out`` are coupled to each routing line via
-        :func:`couple_sedi_out_routing`, adding the ``sedi_out`` column.
-
-        Parameters
-        ----------
-        extent: list
-            list holding value of extent to consider, xmin,ymin,xmax,ymax
-        tile_number: int
-            id of tile
-        tag: str
-            tag to add to filename
-
-        Returns
-        -------
-        file_path: pathlib.Path
-            Path to the created routing vector shapefile.
-        """
-        txt_routing = self.routing_non_sinks.file_path
         file_path = self.postprocessing_folder / (txt_routing.stem + tag + ".shp")
 
         make_routing_vct_saga(
