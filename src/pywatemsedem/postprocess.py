@@ -1727,7 +1727,7 @@ class PostProcess(Factory):
         cmap=None,
         legend=False,
         legend_kwds=None,
-        show_labels=True,
+        show_labels=False,
         label_column=None,
         label_color="black",
         label_fontsize=8,
@@ -1759,7 +1759,7 @@ class PostProcess(Factory):
             Whether to display a legend.
         legend_kwds : dict, optional
             Legend keyword arguments.
-        show_labels : bool, default True
+        show_labels : bool, default False
             Whether to annotate feature labels.
         label_column : str, optional
             Column to use for labels (default ``"id"``).
@@ -2024,7 +2024,7 @@ class PostProcess(Factory):
         ax,
         overlay_obj,
         show_overlay=True,
-        show_labels=True,
+        show_labels=False,
         id_column=None,
         point_labels=False,
         label_color="black",
@@ -2042,7 +2042,7 @@ class PostProcess(Factory):
             Overlay vector object with a ``geodata`` GeoDataFrame.
         show_overlay : bool, default True
             Whether to display the overlay.
-        show_labels : bool, default True
+        show_labels : bool, default False
             Whether to annotate feature labels.
         id_column : str, optional
             Column name containing feature ids for labels.
@@ -2101,7 +2101,7 @@ class PostProcess(Factory):
         ax=None,
         column="id",
         show_river=True,
-        show_labels=True,
+        show_labels=False,
         river_color="#1f78b4",
         alpha=0.6,
         edgecolor="white",
@@ -2123,7 +2123,7 @@ class PostProcess(Factory):
             Column to use for feature coloring.
         show_river : bool, default True
             Whether to overlay the river network.
-        show_labels : bool, default True
+        show_labels : bool, default False
             Whether to annotate subcatchment labels.
         river_color : str, default "#1f78b4"
             Color for the river overlay.
@@ -2204,7 +2204,7 @@ class PostProcess(Factory):
             column="id",
             show_river=True,
             show_buffers=True,
-            show_labels=True,
+            show_labels=False,
             fill_subcatchments=True,
             hide_largest=False,
             zoom_to_subcatchments=False,
@@ -2520,7 +2520,7 @@ class PostProcess(Factory):
             ax=None,
             column="id",
             show_river=True,
-            show_labels=True,
+            show_labels=False,
             river_color="#1f78b4",
             poi_color="red",
             poi_markersize=35,
@@ -3072,8 +3072,8 @@ class PostProcess(Factory):
 
     def identify_priority_areas(
         self,
-        source="sedi_out",
-        approach="n",
+        source,
+        approach,
         nmax=10,
         threshold=50,
     ):
@@ -3081,11 +3081,11 @@ class PostProcess(Factory):
 
         Parameters
         ----------
-        source: str, default "sedi_out"
+        source: str
             Raster source used to rank priority subcatchments. Supported values:
             "sedi_out", "sedi_export", "sedi_export + sewer_in". ``source="sedi_out"``
             only supports ``approach="n"`` (see ``approach``).
-        approach: str, default "n"
+        approach: str
             Selection approach for priority subcatchments.
 
             - "n": select top ``nmax`` subcatchments.
