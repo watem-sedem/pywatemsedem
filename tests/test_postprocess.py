@@ -647,21 +647,10 @@ def test_identify_priority_areas(
     )
     assert subcatchment_values == sorted(subcatchment_values, reverse=True)
 
-    # Every priority carries its own contribution, with `cumperc` its running
-    # sum from highest to lowest selection value.
-    perc = priority_points.geodata["perc"].astype(float)
-    cumperc = priority_points.geodata["cumperc"].astype(float)
-    assert not perc.isna().any()
-    assert (perc > 0).all()
-    np.testing.assert_allclose(cumperc, perc.cumsum())
-    assert (cumperc <= 100).all()
-    for column in ["perc", "cumperc"]:
-        np.testing.assert_allclose(
-            priority_subcatchments.geodata[column].astype(float),
-            priority_points.geodata[column].astype(float),
-        )
-
     if approach == "n":
+        for gdf in [priority_points.geodata, priority_subcatchments.geodata]:
+            assert "perc" not in gdf.columns
+            assert "cumperc" not in gdf.columns
         assert len(priority_points.geodata) == nmax
         assert len(priority_subcatchments.geodata) == nmax
         assert priority_points.geodata["id"].nunique() == nmax
@@ -671,6 +660,33 @@ def test_identify_priority_areas(
     else:
         assert len(priority_points.geodata) >= 1
         assert len(priority_subcatchments.geodata) >= 1
+        # Every priority carries its own contribution, with `cumperc` its
+        # running sum from highest to lowest selection value.
+        perc = priority_points.geodata["perc"].astype(float)
+        cumperc = priority_points.geodata["cumperc"].astype(float)
+        assert not perc.isna().any()
+        assert (perc > 0).all()
+        np.testing.assert_allclose(cumperc, perc.cumsum())
+        assert (cumperc <= 100).all()
+        for column in ["perc", "cumperc"]:
+            np.testing.assert_allclose(
+                priority_subcatchments.geodata[column].astype(float),
+                priority_points.geodata[column].astype(float),
+            )
         # Only the last priority reaches the threshold.
         assert (cumperc.iloc[:-1] < float(threshold)).all()
         assert cumperc.iloc[-1] >= float(threshold)
+
+
+def test_identify_priority_areas_sedi_out_percentage_not_supported(postprocess_obj):
+    """Test that approach "percentage" is rejected for source "sedi_out".
+
+    Parameters
+    ----------
+    postprocess_obj: pywatemsedem.postprocess.PostProcess
+        Function-scoped PostProcess fixture configured on test data.
+    """
+    with pytest.raises(ValueError, match="only supports approach='n'"):
+        postprocess_obj.identify_priority_areas(
+            source="sedi_out", approach="percentage", threshold=10
+        )

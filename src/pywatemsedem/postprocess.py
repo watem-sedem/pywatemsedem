@@ -3240,20 +3240,13 @@ class PostProcess(Factory):
         may still absorb earlier ones, approach "n" only stops once all tied
         pixels are handled, keeping the top ``nmax`` should that overshoot.
 
-        Each round, after picking a pixel (and absorbing nested priorities),
-        the contribution ``perc`` (%) of every priority so far is:
-
-        - ``source="sedi_out"``: the sum of ``sedi_out`` over its
-          subcatchment, divided by the sum of ``sedi_out`` over the whole
-          catchment. A parent subcatchment already holds the ones absorbed
-          into it.
-        - ``source="sedi_export"``/``"sedi_export + sewer_in"``: its picked
-          source value (plus those of any absorbed priorities), divided by
-          the sum of all source values.
-
-        ``cumperc`` is then recomputed for all priorities so far as the
-        running sum of ``perc`` from highest to lowest ``source_val``; for
-        approach "percentage" the total is checked against ``threshold``.
+        For approach "percentage", each round (after absorbing nested
+        priorities) the contribution ``perc`` (%) of every priority so far is
+        its picked source value (plus those of any absorbed priorities),
+        divided by the sum of all source values. ``cumperc`` is then
+        recomputed for all priorities so far as the running sum of ``perc``
+        from highest to lowest ``source_val``, and its total is checked
+        against ``threshold``.
 
         Outputs
         -------
@@ -3267,8 +3260,9 @@ class PostProcess(Factory):
         Both outputs share an ``id`` column, carry the raster value that made
         each priority a priority (highest remaining source value at the time
         it was picked) in a ``source_val`` column, and are sorted (and
-        numbered 1..N) from highest to lowest ``source_val``. Both also
-        carry the ``perc`` and ``cumperc`` columns described above.
+        numbered 1..N) from highest to lowest ``source_val``. For approach
+        "percentage", both also carry the ``perc`` and ``cumperc`` columns
+        described above.
         """
         (
             source_key,
@@ -3288,9 +3282,6 @@ class PostProcess(Factory):
                 self.rp,
                 self.routing_non_river.file_path,
                 tempfolder,
-                perc_basis=(
-                    "subcatchment" if source_key in ["sedi_out", "sediout"] else "pixel"
-                ),
                 nmax=max_subcatchments,
                 threshold_percentage=threshold_percentage,
             )
@@ -4375,7 +4366,6 @@ def _search_priority_subcatchments(
     rp,
     txt_routing,
     resmap,
-    perc_basis="subcatchment",
     nmax=None,
     threshold_percentage=None,
 ):
@@ -4394,25 +4384,24 @@ def _search_priority_subcatchments(
         Routing table to delineate subcatchments with.
     resmap: pathlib.Path
         Folder to write intermediate delineation files to.
-    perc_basis: {"subcatchment", "pixel"}, default "subcatchment"
-        Load a priority's ``perc`` is based on: the sum of source values
-        over its subcatchment, or its picked source value.
     nmax: int, optional
         Stop once this many priorities are found.
     threshold_percentage: float, optional
-        Stop once ``cumperc`` reaches this percentage.
+        Stop once ``cumperc`` reaches this percentage. Only then are
+        ``perc`` and ``cumperc`` computed.
 
     Returns
     -------
     list of dict
-        One record per priority, ranked by :func:`_rank_priorities`, with
-        keys ``row`` and ``col`` (0-based indices of the priority pixel),
-        ``source_val`` (source value of that pixel), ``load``, ``perc``,
-        ``cumperc`` and ``geometry`` (subcatchment polygon).
+        One record per priority, from highest to lowest ``source_val``,
+        with keys ``row`` and ``col`` (0-based indices of the priority
+        pixel), ``source_val`` (source value of that pixel), ``load``,
+        ``geometry`` (subcatchment polygon) and, if ``threshold_percentage``
+        is given, ``perc`` and ``cumperc``.
     """
-    source_valid = _priority_valid_mask(arr_source, rp.nodata)
-    total_load = arr_source[source_valid].sum(dtype=np.float64)
-    valid = source_valid.copy()
+    valid = _priority_valid_mask(arr_source, rp.nodata)
+    if threshold_percentage is not None:
+        total_load = arr_source[valid].sum(dtype=np.float64)
     priorities = []
 
     round_id = 0
@@ -4432,17 +4421,11 @@ def _search_priority_subcatchments(
         # subcatchment: absorb them, attributing the parent subcatchment to the
         # highest-value point (ties: the most downstream, i.e. largest one).
         nested = [p for p in priorities if catch[p["row"], p["col"]]]
-        if perc_basis == "subcatchment":
-            # The parent subcatchment already holds all nested ones.
-            load = arr_source[catch & source_valid].sum(dtype=np.float64)
-        else:
-            load = value + sum(p["load"] for p in nested)
-
         record = {
             "row": row,
             "col": col,
             "source_val": value,
-            "load": load,
+            "load": value + sum(p["load"] for p in nested),
             "n_cells": int(catch.sum()),
             "geometry": geometry,
         }
@@ -4451,39 +4434,36 @@ def _search_priority_subcatchments(
             best = max([record] + nested, key=lambda p: (p["source_val"], p["n_cells"]))
             record.update({k: best[k] for k in ["row", "col", "source_val"]})
         priorities.append(record)
-        _rank_priorities(priorities, total_load)
+        priorities.sort(key=lambda p: p["source_val"], reverse=True)
 
         # Don't stop while pixels tied with this one remain: one of them may
         # lie downstream and absorb earlier priorities.
         tie_pending = np.any(valid & (arr_source == value))
         if nmax is not None and len(priorities) >= nmax and not tie_pending:
             break
-        if (
-            threshold_percentage is not None
-            and priorities[-1]["cumperc"] >= threshold_percentage
-        ):
-            break
+        if threshold_percentage is not None:
+            _update_priority_cumperc(priorities, total_load)
+            if priorities[-1]["cumperc"] >= threshold_percentage:
+                break
 
-    # Several non-nested tied pixels can overshoot `nmax`. Being a prefix of
-    # the ranking, the kept priorities' `cumperc` is unaffected.
+    # Several non-nested tied pixels can overshoot `nmax`.
     return priorities if nmax is None else priorities[:nmax]
 
 
-def _rank_priorities(priorities, total_load):
-    """Rank priorities and (re)compute their ``perc`` and ``cumperc``.
+def _update_priority_cumperc(priorities, total_load):
+    """(Re)compute ``perc`` and ``cumperc`` of ranked priorities in place.
 
-    Sorts ``priorities`` in place from highest to lowest ``source_val``, then
-    sets ``perc`` (``load`` as percentage of ``total_load``) and ``cumperc``
-    (running sum of ``perc`` in that order) on every record.
+    ``perc`` is a priority's ``load`` as percentage of ``total_load``,
+    ``cumperc`` the running sum of ``perc`` in the order of ``priorities``.
 
     Parameters
     ----------
     priorities: list of dict
-        Priority records holding a ``source_val`` and a ``load``.
+        Priority records holding a ``load``, ranked from highest to lowest
+        ``source_val``.
     total_load: float
         Load to express percentages against.
     """
-    priorities.sort(key=lambda p: p["source_val"], reverse=True)
     cumulative_load = 0.0
     for p in priorities:
         cumulative_load += p["load"]
@@ -4553,7 +4533,8 @@ def _priority_records_to_gdfs(priorities, rp, epsg):
     """
     df = pd.DataFrame(priorities)
     df["id"] = np.arange(1, len(df) + 1, dtype=int)
-    value_columns = ["source_val", "perc", "cumperc"]
+    # `perc`/`cumperc` are only computed for approach "percentage".
+    value_columns = [c for c in ["source_val", "perc", "cumperc"] if c in df]
 
     profile = rp.gdal_profile
     minx, miny, _, _ = profile["minmax"]
