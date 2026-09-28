@@ -19,6 +19,7 @@ from pywatemsedem.geo.utils import (
     set_no_data_rst,
     write_arr_as_rst,
 )
+from pywatemsedem.geo.vectors import delete_vector, infer_id_column
 from pywatemsedem.grasstrips import estimate_ste
 from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
@@ -162,49 +163,6 @@ class PostProcess(Factory):
             return self._workflow_subdir("priority")
         return self.postprocessing_folder
 
-    def _relocate_vector(self, vector_obj, target_dir, filename=None):
-        """Write a vector object's file to ``target_dir``, optionally renamed.
-
-        Copies ``vector_obj``'s current geodata to ``target_dir`` (as
-        ``filename``, or its current file name if not given), removes the
-        old file, and returns a freshly-loaded vector object pointing at
-        the new location. A no-op if the vector is already there.
-
-        Parameters
-        ----------
-        vector_obj : object
-            Vector object exposing ``.geodata`` and ``.file_path``.
-        target_dir : str or pathlib.Path
-            Directory the vector should end up in.
-        filename : str, optional
-            New file name. If ``None``, keeps the current file name.
-
-        Returns
-        -------
-        object
-            Vector object loaded from the new, relocated file path.
-        """
-        old_path = Path(vector_obj.file_path)
-        new_path = Path(target_dir) / (filename or old_path.name)
-        if new_path.resolve() == old_path.resolve():
-            return vector_obj
-
-        geom_type_map = {
-            "Point": "Point",
-            "MultiPoint": "Point",
-            "LineString": "LineString",
-            "MultiLineString": "LineString",
-            "Polygon": "Polygon",
-            "MultiPolygon": "Polygon",
-        }
-        geometry_type = geom_type_map[vector_obj.geodata.geom_type.iloc[0]]
-
-        self._unlink_vector_dataset(new_path)
-        vector_obj.geodata.to_file(new_path, spatial_index="YES")
-        self._unlink_vector_dataset(old_path)
-
-        return self.vector_factory(new_path, geometry_type, flag_clip=False)
-
     def _set_vector_from_input(
         self,
         vector_input,
@@ -250,7 +208,7 @@ class PostProcess(Factory):
             flag_clip=False,
         )
         if ensure_internal_id:
-            self._ensure_vector_id_column(vector_obj)
+            vector_obj.ensure_id_column()
 
         if init_subcatchments:
             vector_obj.vct_subcatchments = None
@@ -259,56 +217,6 @@ class PostProcess(Factory):
 
         if plot_title is not None:
             self._attach_vector_plot(vector_obj, title=plot_title)
-
-    def _ensure_id_column_on_gdf(self, gdf):
-        """Ensure a GeoDataFrame has an integer ``id`` column.
-
-        Parameters
-        ----------
-        gdf : geopandas.GeoDataFrame
-            Input GeoDataFrame to check and potentially modify.
-
-        Returns
-        -------
-        tuple
-            ``(modified_gdf, changed)`` where ``changed`` indicates whether
-            the ``id`` column was added.
-        """
-        if "id" in gdf.columns:
-            return gdf, False
-
-        gdf = gdf.copy()
-        if gdf.empty:
-            gdf["id"] = pd.Series(dtype=np.int64)
-        else:
-            gdf["id"] = np.arange(1, len(gdf) + 1, dtype=np.int64)
-        return gdf, True
-
-    def _ensure_vector_id_column(self, vector_obj, persist=True):
-        """Ensure an in-memory vector object always exposes an ``id`` column.
-
-        Parameters
-        ----------
-        vector_obj : object
-            Vector object with a ``geodata`` GeoDataFrame attribute.
-        persist : bool, default True
-            If ``True`` and the ``id`` column was added, write the updated
-            vector to disk.
-        """
-        if vector_obj is None or not hasattr(vector_obj, "geodata"):
-            return
-
-        gdf = vector_obj.geodata
-        if gdf is None:
-            return
-
-        gdf, changed = self._ensure_id_column_on_gdf(gdf)
-        vector_obj.geodata = gdf
-
-        if changed and persist and hasattr(vector_obj, "file_path") and not gdf.empty:
-            vector_path = Path(vector_obj.file_path)
-            self._unlink_vector_dataset(vector_path)
-            gdf.to_file(vector_path, spatial_index="YES")
 
     @property
     def routing_non_river(self):
@@ -1087,13 +995,7 @@ class PostProcess(Factory):
             raise ValueError(msg)
 
         vct_poi = self.postprocessing_folder / Path(filename).name
-        if vct_poi.suffix.lower() == ".shp":
-            for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg"]:
-                part = vct_poi.with_suffix(suffix)
-                if part.exists():
-                    part.unlink()
-        elif vct_poi.exists():
-            vct_poi.unlink()
+        delete_vector(vct_poi)
 
         gdf_poi.to_file(vct_poi)
         self.vct_poi = vct_poi
@@ -1299,7 +1201,7 @@ class PostProcess(Factory):
         else:
             gdf_buffers = gdf_buffers.to_crs(self.epsg)
 
-        id_column = self._infer_polygon_id_column(gdf_buffers)
+        id_column = infer_id_column(gdf_buffers)
         if id_column is not None:
             gdf_buffers = gdf_buffers[gdf_buffers[id_column] > 0].copy()
             exid_offset = 2**14
@@ -1319,7 +1221,7 @@ class PostProcess(Factory):
             gdf_buffers["id"] = np.arange(1, len(gdf_buffers) + 1)
 
         vct_buffers = self.postprocessing_folder / Path(filename).name
-        self._unlink_vector_dataset(vct_buffers)
+        delete_vector(vct_buffers)
         gdf_buffers.to_file(vct_buffers, spatial_index="YES")
 
         self.vct_buffers = vct_buffers
@@ -1394,7 +1296,7 @@ class PostProcess(Factory):
         # helper folder is removed.
         subcatchments_name = f"{vct_buffers.file_path.stem}_subcatchments.shp"
         vct_subcatchments = self.postprocessing_folder / subcatchments_name
-        self._unlink_vector_dataset(vct_subcatchments)
+        delete_vector(vct_subcatchments)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
         vct_buffers.vct_subcatchments = self.vector_factory(
             Path(vct_subcatchments),
@@ -1406,66 +1308,6 @@ class PostProcess(Factory):
         self._auto_cleanup_postprocessing_shapefiles()
 
         return vct_subcatchments
-
-    def _infer_point_id_column(self, gdf, requested=None):
-        """Infer a point id column from a point GeoDataFrame.
-
-        Parameters
-        ----------
-        gdf : geopandas.GeoDataFrame
-            Point GeoDataFrame to inspect.
-        requested : str, optional
-            Explicit column name to use. Must exist in ``gdf``.
-
-        Returns
-        -------
-        str
-            Name of the inferred or requested id column.
-
-        Raises
-        ------
-        ValueError
-            If ``requested`` is not found or no id column can be inferred.
-        """
-        if requested is not None:
-            if requested not in gdf.columns:
-                msg = f"Requested id_column '{requested}' not found in point vector."
-                raise ValueError(msg)
-            return requested
-
-        for candidate in [
-            "id",
-            "ID",
-            "target_id",
-            "poi_id",
-            "priority_id",
-            "priority_i",
-            "NR",
-            "nr",
-        ]:
-            if candidate in gdf.columns:
-                return candidate
-
-        msg = "No id column found in point vector. Please provide 'id_column'."
-        raise ValueError(msg)
-
-    def _infer_polygon_id_column(self, gdf):
-        """Infer an id column from a polygon GeoDataFrame.
-
-        Parameters
-        ----------
-        gdf : geopandas.GeoDataFrame
-            Polygon GeoDataFrame to inspect.
-
-        Returns
-        -------
-        str or None
-            Name of the inferred id column, or ``None`` if not found.
-        """
-        for candidate in ["id", "ID", "buffer_id", "NR", "nr", "VALUE"]:
-            if candidate in gdf.columns:
-                return candidate
-        return None
 
     def _add_river_overlay(self, ax, river_color="#1f78b4"):
         """Plot river raster cells as a fixed-color overlay.
@@ -1873,39 +1715,6 @@ class PostProcess(Factory):
 
         vector_obj.plot = plot
 
-    def _infer_subcatchment_label_column(self, gdf, preferred=None):
-        """Infer a label column for subcatchment polygons.
-
-        Parameters
-        ----------
-        gdf : geopandas.GeoDataFrame
-            GeoDataFrame to inspect.
-        preferred : str, optional
-            Preferred column name to check first.
-
-        Returns
-        -------
-        str or None
-            Name of the inferred label column, or ``None`` if not found.
-        """
-        if preferred is not None and preferred in gdf.columns:
-            return preferred
-
-        for candidate in [
-            "id",
-            "ID",
-            "target_id",
-            "VALUE",
-            "buffer_id",
-            "poi_id",
-            "priority_id",
-            "NR",
-            "nr",
-        ]:
-            if candidate in gdf.columns:
-                return candidate
-        return None
-
     def _annotate_subcatchment_labels(
         self,
         ax,
@@ -2169,9 +1978,11 @@ class PostProcess(Factory):
             )
 
         if show_labels:
-            label_column = self._infer_subcatchment_label_column(
-                subcatchments_obj.geodata,
-                preferred=column,
+            gdf_subcatchments = subcatchments_obj.geodata
+            label_column = (
+                column
+                if column in gdf_subcatchments.columns
+                else infer_id_column(gdf_subcatchments)
             )
             self._annotate_subcatchment_labels(
                 ax,
@@ -2326,7 +2137,7 @@ class PostProcess(Factory):
                 "Point",
                 flag_clip=False,
             )
-            self._ensure_vector_id_column(target_vector_obj)
+            target_vector_obj.ensure_id_column()
             target_name = Path(target_input).stem
 
         gdf = target_vector_obj.geodata
@@ -2443,7 +2254,7 @@ class PostProcess(Factory):
             gdf_point_sub = vct_point.vct_subcatchments.geodata.copy()
             point_id = getattr(vct_point, "point_id", None)
             if point_id is None:
-                point_id_column = self._infer_point_id_column(vct_point.geodata)
+                point_id_column = infer_id_column(vct_point.geodata, required=True)
                 point_id = int(vct_point.geodata.iloc[0][point_id_column])
 
             # Persist a stable coupling key between point and subcatchment.
@@ -2476,7 +2287,7 @@ class PostProcess(Factory):
 
         out_dir = output_dir or self.postprocessing_folder
         vct_subcatchments = out_dir / f"{target_name}_{tag}.shp"
-        self._unlink_vector_dataset(vct_subcatchments)
+        delete_vector(vct_subcatchments)
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
         points_vector_obj.vct_subcatchments = self.vector_factory(
@@ -2492,7 +2303,7 @@ class PostProcess(Factory):
             sub_obj = getattr(vct_point, "vct_subcatchments", None)
             if sub_obj is None or not hasattr(sub_obj, "file_path"):
                 continue
-            self._unlink_vector_dataset(Path(sub_obj.file_path))
+            delete_vector(Path(sub_obj.file_path))
             vct_point.vct_subcatchments = None
 
         # Remove stale individual subcatchment outputs from previous runs,
@@ -2561,23 +2372,6 @@ class PostProcess(Factory):
 
         subcatchments_obj.plot = plot
 
-    def _unlink_vector_dataset(self, vector_path):
-        """Remove an existing vector dataset before re-writing it.
-
-        Parameters
-        ----------
-        vector_path : str or pathlib.Path
-            Path to the vector file (shapefile or other format).
-        """
-        vector_path = Path(vector_path)
-        if vector_path.suffix.lower() == ".shp":
-            for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix"]:
-                part = vector_path.with_suffix(suffix)
-                if part.exists():
-                    part.unlink()
-        elif vector_path.exists():
-            vector_path.unlink()
-
     def _remove_individual_subcatchment_shapefiles(self, folder, keep_paths=None):
         """Remove individual ``subcatchments_*.shp`` files in a folder.
 
@@ -2606,7 +2400,7 @@ class PostProcess(Factory):
             shp_resolved = shp.resolve()
             if shp_resolved in keep_resolved:
                 continue
-            self._unlink_vector_dataset(shp)
+            delete_vector(shp)
 
     def _collect_notebook_vector_paths(self):
         """Collect active vector paths that are typically shown in notebooks."""
@@ -2711,7 +2505,7 @@ class PostProcess(Factory):
 
         point_name = Path(points_vector_obj.file_path).stem
         point_path = tempfolder / f"{point_name}_{tag}_point_{point_id}.shp"
-        self._unlink_vector_dataset(point_path)
+        delete_vector(point_path)
         gdf_point.to_file(point_path, spatial_index="YES")
 
         vct_point = self.vector_factory(
@@ -2719,7 +2513,7 @@ class PostProcess(Factory):
             "Point",
             flag_clip=False,
         )
-        self._ensure_vector_id_column(vct_point)
+        vct_point.ensure_id_column()
         vct_point.vct_subcatchments = None
         vct_point.point_id = point_id
 
@@ -2765,8 +2559,8 @@ class PostProcess(Factory):
         target_vector_obj, target_name, _ = self._resolve_point_vector_target(
             target_input
         )
-        target_id_column = self._infer_point_id_column(
-            target_vector_obj.geodata, id_column
+        target_id_column = infer_id_column(
+            target_vector_obj.geodata, requested=id_column, required=True
         )
 
         if len(target_vector_obj.geodata) != 1:
@@ -2815,7 +2609,7 @@ class PostProcess(Factory):
                 c for c in ["target_id", "VALUE"] if c in gdf_subcatchments.columns
             ]
         )
-        self._unlink_vector_dataset(Path(vct_subcatchments))
+        delete_vector(Path(vct_subcatchments))
         gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
         target_vector_obj.vct_subcatchments = self.vector_factory(
             Path(vct_subcatchments),
@@ -2886,8 +2680,8 @@ class PostProcess(Factory):
             self._resolve_point_vector_target(target_input)
         )
         output_dir = self._point_target_output_dir(parent_property_name)
-        target_id_column = self._infer_point_id_column(
-            points_vector_obj.geodata, id_column
+        target_id_column = infer_id_column(
+            points_vector_obj.geodata, requested=id_column, required=True
         )
 
         if len(points_vector_obj.geodata) == 1:
@@ -2949,8 +2743,8 @@ class PostProcess(Factory):
             f"{Path(points_vector_obj.file_path).stem}_subcatchments.shp"
         )
         target_dir = self.postprocessing_folder if cleanup_workspace else output_dir
-        points_vector_obj.vct_subcatchments = self._relocate_vector(
-            points_vector_obj.vct_subcatchments, target_dir, filename=subcatchments_name
+        points_vector_obj.vct_subcatchments.relocate(
+            target_dir, filename=subcatchments_name
         )
         self._attach_subcatchments_plot(points_vector_obj)
 
@@ -3194,7 +2988,7 @@ class PostProcess(Factory):
             (gdf_points, points_path),
             (gdf_subcatchments, subcatchments_path),
         ]:
-            self._unlink_vector_dataset(path)
+            delete_vector(path)
             gdf.to_file(path, spatial_index="YES")
 
         self.vct_priority_points = points_path
@@ -3310,7 +3104,7 @@ class PostProcess(Factory):
 
             removed.append(str(shp_resolved))
             if not dry_run:
-                self._unlink_vector_dataset(shp_resolved)
+                delete_vector(shp_resolved)
 
         return {
             "kept": sorted(kept),
