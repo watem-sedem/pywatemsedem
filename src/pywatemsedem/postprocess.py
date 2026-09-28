@@ -311,8 +311,8 @@ class PostProcess(Factory):
             plot_title="Catchment mask + rivers + routing",
         )
 
-    def _finalize_routing_vct(self, file_path):
-        """Couple ``sedi_out`` onto a freshly SAGA-written routing vector.
+    def _add_sedi_out_to_routing_vct(self, file_path):
+        """Add a ``sedi_out`` column to a freshly SAGA-written routing vector.
 
         Reads the SAGA output once via :func:`couple_sedi_out_routing`
         (which also resolves the CRS, so no separate read/set_crs/write
@@ -373,7 +373,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        return self._finalize_routing_vct(file_path)
+        return self._add_sedi_out_to_routing_vct(file_path)
 
     @property
     def vct_routing_missing(self):
@@ -447,7 +447,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        return self._finalize_routing_vct(file_path)
+        return self._add_sedi_out_to_routing_vct(file_path)
 
     @property
     def vct_routing_non_river(self):
@@ -504,7 +504,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        return self._finalize_routing_vct(file_path)
+        return self._add_sedi_out_to_routing_vct(file_path)
 
     @property
     def vct_routing_river(self):
@@ -561,7 +561,7 @@ class PostProcess(Factory):
             tile_number=tile_number,
         )
 
-        return self._finalize_routing_vct(file_path)
+        return self._add_sedi_out_to_routing_vct(file_path)
 
     @property
     def vct_sedi_export(self):
