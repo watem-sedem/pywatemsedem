@@ -1700,7 +1700,7 @@ class Modeloutput(Factory):
         # checks op raster
         valid_non_nan(arr_compositelanduse)
         valid_array_type(arr_compositelanduse, required_type=np.int16)
-        valid_boundaries(arr_compositelanduse, lower=-32757, upper=32757)
+        valid_boundaries(arr_compositelanduse, lower=-32767, upper=32767)
 
         # selecting what to vectorise
         raster = self.modeloutputfolder / "SediOut_kg.rst"
