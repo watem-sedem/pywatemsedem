@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.parcelslanduse &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>pywatemsedem.parcelslanduse &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../../_static/documentation_options.js?v=9172181d"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -232,8 +232,12 @@
     <span class="k">if</span> <span class="n">landuse_parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">landuse_parcels</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">parcels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># avoid too many parcel ids in integer 16 raster</span>
-        <span class="n">parcels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">parcels</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">,</span> <span class="p">(</span><span class="n">parcels</span> <span class="o">%</span> <span class="mi">32757</span><span class="p">),</span> <span class="n">nodata</span><span class="p">)</span>
+        <span class="c1"># avoid too many parcel ids in integer 16 raster (int16 max = 2**15 - 1 =</span>
+        <span class="c1"># 32767). Cast to a wider dtype first: 2**15 itself does not fit in an</span>
+        <span class="c1"># int16 array, and numpy no longer silently upcasts in that case.</span>
+        <span class="n">parcels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">parcels</span> <span class="o">!=</span> <span class="n">nodata</span><span class="p">,</span> <span class="p">(</span><span class="n">parcels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="o">**</span><span class="mi">15</span><span class="p">),</span> <span class="n">nodata</span>
+        <span class="p">)</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">parcels</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">landuse_core</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">map_input_array_on_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">landuse_core</span><span class="p">,</span> <span class="n">nodata</span><span class="p">)</span>

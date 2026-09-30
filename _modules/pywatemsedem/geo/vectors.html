@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.vectors &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>pywatemsedem.geo.vectors &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../../../_static/documentation_options.js?v=9172181d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -98,6 +98,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">SUFFIXES_SHP</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.rasterproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterProperties</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.geo.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
@@ -597,7 +598,136 @@
         <span class="n">geodata</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
         <span class="n">geodata</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">geodata</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">keep_geom_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">geodata</span></div>
+
+
+<div class="viewcode-block" id="VectorFile.relocate">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile.relocate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">relocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Move the vector file to ``target_dir``, optionally renaming it.</span>
+
+<span class="sd">        Writes the in-memory geodata to the new location, removes the old</span>
+<span class="sd">        file and updates ``file_path``. Does nothing if the vector is already</span>
+<span class="sd">        at that location.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_dir : str or pathlib.Path</span>
+<span class="sd">            Folder to move the vector file to.</span>
+<span class="sd">        filename : str, default None</span>
+<span class="sd">            New file name. If None, the current file name is kept.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pathlib.Path</span>
+<span class="sd">            New file path.</span>
+<span class="sd">        """</span>
+        <span class="n">old_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">new_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">target_dir</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">filename</span> <span class="ow">or</span> <span class="n">old_path</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="o">!=</span> <span class="n">old_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">():</span>
+            <span class="n">delete_vector</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">"YES"</span><span class="p">)</span>
+            <span class="n">delete_vector</span><span class="p">(</span><span class="n">old_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">new_path</span>
+        <span class="k">return</span> <span class="n">new_path</span></div>
+
+
+<div class="viewcode-block" id="VectorFile.ensure_id_column">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.VectorFile.ensure_id_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ensure_id_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add an integer ``id`` column (1..N) if the vector has none.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        persist : bool, default True</span>
+<span class="sd">            If True and the column was added, write the vector back to</span>
+<span class="sd">            ``file_path``.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="s2">"id"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">persist</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">delete_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geodata</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">spatial_index</span><span class="o">=</span><span class="s2">"YES"</span><span class="p">)</span></div>
 </div>
+
+
+
+<span class="c1"># Column names recognised as feature id, in order of preference.</span>
+<span class="n">ID_COLUMN_CANDIDATES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"id"</span><span class="p">,</span>
+    <span class="s2">"ID"</span><span class="p">,</span>
+    <span class="s2">"target_id"</span><span class="p">,</span>
+    <span class="s2">"poi_id"</span><span class="p">,</span>
+    <span class="s2">"priority_id"</span><span class="p">,</span>
+    <span class="s2">"priority_i"</span><span class="p">,</span>
+    <span class="s2">"buffer_id"</span><span class="p">,</span>
+    <span class="s2">"VALUE"</span><span class="p">,</span>
+    <span class="s2">"NR"</span><span class="p">,</span>
+    <span class="s2">"nr"</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="infer_id_column">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.infer_id_column">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_id_column</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">requested</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return the name of the feature id column of a GeoDataFrame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gdf : geopandas.GeoDataFrame</span>
+<span class="sd">        Vector data to inspect.</span>
+<span class="sd">    requested : str, default None</span>
+<span class="sd">        Column to use. Must exist in ``gdf``. If None, the first column of</span>
+<span class="sd">        :data:`ID_COLUMN_CANDIDATES` present in ``gdf`` is used.</span>
+<span class="sd">    required : bool, default False</span>
+<span class="sd">        Raise if no id column can be found.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or None</span>
+<span class="sd">        Name of the id column, or None if none is found and ``required`` is</span>
+<span class="sd">        False.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``requested`` is not a column of ``gdf``, or if ``required`` is</span>
+<span class="sd">        True and no id column is found.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">requested</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">requested</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Requested id column '</span><span class="si">{</span><span class="n">requested</span><span class="si">}</span><span class="s2">' not found in vector."</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">requested</span>
+
+    <span class="n">column</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ID_COLUMN_CANDIDATES</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">column</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">required</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"No id column found in vector. Please provide 'id_column'."</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">column</span></div>
+
+
+
+<div class="viewcode-block" id="delete_vector">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.vectors.delete_vector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_vector</span><span class="p">(</span><span class="n">vct_in</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Delete a vector dataset, including all shapefile sidecar files.</span>
+
+<span class="sd">    Files that do not exist are ignored.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vct_in : str or pathlib.Path</span>
+<span class="sd">        File path of the vector dataset to be deleted.</span>
+<span class="sd">    """</span>
+    <span class="n">vct_in</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">vct_in</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vct_in</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">".shp"</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">SUFFIXES_SHP</span><span class="p">:</span>
+            <span class="n">vct_in</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vct_in</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">missing_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </pre></div>
 

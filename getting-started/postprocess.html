@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pywatemsedem Postprocessing &mdash; pywatemsedem 1.4.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=fbdb9ebb" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=9172181d"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pywatemsedem
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">pywatemsedem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userchoices.html">How to use the User Choices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calibrate.html">Calibrating WaTEM/SEDEM</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html#package-release">Package release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codeofconduct.html">Code of conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pywatemsedem</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pywatemsedem Postprocessing</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/watem-sedem/pywatemsedem/blob/master/docs/getting-started/postprocess.ipynb" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+</pre></div>
+</div>
+</div>
+<section id="pywatemsedem-Postprocessing">
+<h1>pywatemsedem Postprocessing<a class="headerlink" href="#pywatemsedem-Postprocessing" title="Link to this heading"></a></h1>
+<section id="1.-Introduction">
+<h2>1. Introduction<a class="headerlink" href="#1.-Introduction" title="Link to this heading"></a></h2>
+<p>This tutorial demonstrates how to use the <strong>PostProcess</strong> class from the pywatemsedem package to analyze and postprocess WaTEM/SEDEM model output data.</p>
+<p>What you will do in this notebook:</p>
+<ul class="simple">
+<li><p>Initialize a <code class="docutils literal notranslate"><span class="pre">PostProcess</span></code> object for a scenario.</p></li>
+<li><p>Inspect routing outputs (full routing, missing-routing, non-river routing, and river-only routing vectors).</p></li>
+<li><p>Explore sink-related vectors: sediment export to rivers, sewer inflow, and combined sinks.</p></li>
+<li><p>Inspect ranked sediment-load outputs for prioritization.</p></li>
+<li><p>Delineate and inspect point-of-interest (POI) subcatchments.</p></li>
+<li><p>Delineate and inspect buffer subcatchments.</p></li>
+<li><p>Identify and visualize priority subcatchments with two approaches:</p>
+<ul>
+<li><p>top-<code class="docutils literal notranslate"><span class="pre">n</span></code> selection,</p></li>
+<li><p>percentage-based selection using <code class="docutils literal notranslate"><span class="pre">sedi_export</span> <span class="pre">+</span> <span class="pre">sewer_in</span></code>.</p></li>
+</ul>
+</li>
+<li><p>Run and inspect the grass-strip postprocessing workflow.</p></li>
+</ul>
+<p>All generated outputs are written to the postprocessing folder and can be inspected as GeoDataFrames or loaded in GIS.</p>
+</section>
+<section id="2.-Imports-and-example-data">
+<h2>2. Imports and example data<a class="headerlink" href="#2.-Imports-and-example-data" title="Link to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span><span class="p">,</span> <span class="n">find_dotenv</span>
+<span class="n">load_dotenv</span><span class="p">(</span><span class="n">find_dotenv</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the working directory to the project root</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">"../.."</span><span class="p">)</span>
+
+<span class="c1"># Select the example results folder used in this tutorial</span>
+<span class="n">ini</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"tests/io/data/modelinput/inifile.ini"</span><span class="p">)</span>
+<span class="n">postprocessing_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"tests/postprocess"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="3.-PostProcess-object">
+<h2>3. PostProcess object<a class="headerlink" href="#3.-PostProcess-object" title="Link to this heading"></a></h2>
+<section id="3.1.-Initialisation">
+<h3>3.1. Initialisation<a class="headerlink" href="#3.1.-Initialisation" title="Link to this heading"></a></h3>
+<p>The object initialisation arguments can be fetched based on ini file and the epsg code</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the main PostProcess object used in all next steps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.postprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostProcess</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">PostProcess</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">postprocessing_folder</span><span class="p">,</span> <span class="mi">31370</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="Convert-output-rasters-from-kg-to-ton">
+<h4>Convert output rasters from kg to ton<a class="headerlink" href="#Convert-output-rasters-from-kg-to-ton" title="Link to this heading"></a></h4>
+<p>Convert the main modeloutput rasters (<code class="docutils literal notranslate"><span class="pre">sedi_out</span></code>, <code class="docutils literal notranslate"><span class="pre">sedi_in</span></code>, <code class="docutils literal notranslate"><span class="pre">watereros_kg</span></code>, <code class="docutils literal notranslate"><span class="pre">sedi_export</span></code>) from kg to ton. Ton copies are written to the postprocessing folder.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Converts kg -&gt; ton and exposes rasters as attributes on `pp`:</span>
+<span class="c1"># pp.sedi_out_ton, pp.sedi_in_ton, pp.watereros_ton, pp.sedi_export_ton</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">convert_output_rsts_to_ton</span><span class="p">()</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">sedi_out_ton</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Location of the converted ton raster on disk</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">sedi_out_ton</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Routing-vectors">
+<h4>Routing vectors<a class="headerlink" href="#Routing-vectors" title="Link to this heading"></a></h4>
+<p>Prepare routing vectors as line shapefiles. Each line represents one source→target arrow with an extra <code class="docutils literal notranslate"><span class="pre">sedi_out</span></code> column (source <code class="docutils literal notranslate"><span class="pre">sedi_out</span></code> × <code class="docutils literal notranslate"><span class="pre">part</span></code>).</p>
+<p>Available vectors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">vct_routing</span></code>: full routing table (land + river arrows).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vct_routing_missing</span></code>: routes that do not end in a sink (<code class="docutils literal notranslate"><span class="pre">None</span></code> if the <code class="docutils literal notranslate"><span class="pre">routing_missing</span></code> table has no lines).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vct_routing_non_river</span></code>: routing arrows whose source is a land pixel (river arrows dropped).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vct_routing_river</span></code>: routing arrows whose source is a river pixel.</p></li>
+</ul>
+<p>Below only <code class="docutils literal notranslate"><span class="pre">vct_routing_non_river</span></code> is computed and inspected.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute the non-river routing vector (cached on `pp`)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_routing_non_river</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># File path of the non-river routing vector on disk</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_routing_non_river</span><span class="o">.</span><span class="n">file_path</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preview of non-river routing attributes (col, row, part, sedi_out, ...)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_routing_non_river</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="Sediment-Export-to-Rivers-vector">
+<h4>Sediment Export to Rivers vector<a class="headerlink" href="#Sediment-Export-to-Rivers-vector" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load river export points to inspect where sediment reaches rivers</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sedi_export</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the river export layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sedi_export</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of river export point attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sedi_export</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_sedi_export</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s2">"sediment"</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrRd"</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"Sediment export (kg)"</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Sewer-Inflow-vector">
+<h4>Sewer Inflow vector<a class="headerlink" href="#Sewer-Inflow-vector" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load sewer inflow points to inspect where sediment enters sewers</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sewer_in</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the sewer inflow layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sewer_in</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of sewer inflow point attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sewer_in</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_sewer_in</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s2">"sediment"</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrRd"</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"Sewer inflow (kg)"</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Combined-Sinks-(Rivers-+-Sewers)">
+<h4>Combined Sinks (Rivers + Sewers)<a class="headerlink" href="#Combined-Sinks-(Rivers-+-Sewers)" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the combined sinks layer (rivers + sewers) for total sink analysis</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sinks</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the combined sinks layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sinks</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of combined sink attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_sinks</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_sinks</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s2">"sediment"</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrRd"</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"Combined sinks (kg)"</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Point-of-interest-subcatchments-(2-POIs)">
+<h4>Point-of-interest subcatchments (2 POIs)<a class="headerlink" href="#Point-of-interest-subcatchments-(2-POIs)" title="Link to this heading"></a></h4>
+<p>We demonstrate the point workflow with exactly two POIs. The model delineates one subcatchment per point and then aggregates them on the parent points vector (<code class="docutils literal notranslate"><span class="pre">vct_poi.vct_subcatchments</span></code>).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add two demonstration POIs for subcatchment delineation</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">add_poi</span><span class="p">(</span>
+    <span class="p">[</span><span class="mf">165570.4</span><span class="p">,</span> <span class="mf">164464.4</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">168768</span><span class="p">,</span> <span class="mf">166967.9</span><span class="p">],</span>
+    <span class="nb">id</span><span class="o">=</span><span class="p">[</span><span class="mi">101</span><span class="p">,</span> <span class="mi">102</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Quick check: do the POIs look correct?</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Delineate subcatchments that drain to the POIs</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">identify_subcatchments</span><span class="p">(</span>
+    <span class="n">target_input</span><span class="o">=</span><span class="s2">"vct_poi"</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="o">=</span><span class="s2">"id"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Quick check: inspect resulting subcatchments</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<p>Plot options</p>
+<p>Use the default call:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Most used options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">show_river=True/False</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show_labels=True/False</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">column=&quot;id&quot;</span></code> (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">river_color</span></code>, <code class="docutils literal notranslate"><span class="pre">poi_color</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_poi</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Buffer-subcatchments">
+<h4>Buffer subcatchments<a class="headerlink" href="#Buffer-subcatchments" title="Link to this heading"></a></h4>
+<p>Use the same pattern as POI: first create <code class="docutils literal notranslate"><span class="pre">vct_buffers</span></code>, then delineate and access subcatchments via <code class="docutils literal notranslate"><span class="pre">vct_buffers.vct_subcatchments</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load buffers that will be used as target zones</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_buffers</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Delineate subcatchments that drain to buffers</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identify_subcatchments_to_buffers</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run once more to make sure the latest plotting helper is attached</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">identify_subcatchments_to_buffers</span><span class="p">()</span>
+
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_buffers</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Priority-areas">
+<h4>Priority areas<a class="headerlink" href="#Priority-areas" title="Link to this heading"></a></h4>
+<p>In this section, we identify priority areas: locations with the highest remaining source value, together with the subcatchment draining to each one. The subcatchment itself is not separately ranked – it is simply the drainage area coupled to its priority point.</p>
+<p>The <strong>source value</strong> is the pixel value of the raster chosen with the <code class="docutils literal notranslate"><span class="pre">source</span></code> argument:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;sedi_out&quot;</span></code>: sediment leaving the pixel (kg), including sediment routed into it from upstream.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;sedi_export&quot;</span></code>: sediment exported from the pixel to a river (kg). It is only non-zero for pixels draining directly into a river.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;sedi_export</span> <span class="pre">+</span> <span class="pre">sewer_in&quot;</span></code>: sediment exported from the pixel to a river or entering a sewer (kg).</p></li>
+</ul>
+<p>“Remaining” means the pixel does not lie in the subcatchment of a priority picked earlier.</p>
+<p>What happens step by step:</p>
+<ol class="arabic simple">
+<li><p>We repeatedly pick the pixel with the highest remaining source value as a priority point, then mask out its contribution so it can’t be picked again.</p></li>
+<li><p>We delineate the subcatchment draining to each priority point and couple it to that point.</p></li>
+<li><p>The plot gives a quick visual overview of where the priority areas and the linked subcatchments are.</p></li>
+</ol>
+<p>Both outputs carry a <code class="docutils literal notranslate"><span class="pre">source_val</span></code> column: the raster value of the point that made it a priority (not the subcatchment’s total contribution), and both are sorted from highest to lowest priority.</p>
+<p>How to read the colors in the plot:</p>
+<ul class="simple">
+<li><p>red = highest priority (<code class="docutils literal notranslate"><span class="pre">id=1</span></code>)</p></li>
+<li><p>blue = lower priority</p></li>
+</ul>
+<p>Below, we show two methods with the same structure so they are easy to compare.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Top-n method: keep the 5 highest-priority locations</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">identify_priority_areas</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">"sedi_out"</span><span class="p">,</span> <span class="n">approach</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the priority-points layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the priority-subcatchments layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of priority-point attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of priority-subcatchment attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"Spectral"</span><span class="p">,</span>
+    <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="Priority-areas-(approach-2:-percentage,-source-=-sedi_export-+-sewer_in)">
+<h5>Priority areas (approach 2: percentage, source = sedi_export + sewer_in)<a class="headerlink" href="#Priority-areas-(approach-2:-percentage,-source-=-sedi_export-+-sewer_in)" title="Link to this heading"></a></h5>
+<p>This method keeps priority areas until cumulative contribution first exceeds the chosen threshold.</p>
+<p>In practice:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">source=&quot;sedi_export</span> <span class="pre">+</span> <span class="pre">sewer_in&quot;</span></code>: combines contribution to rivers and sewers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">approach=&quot;percentage&quot;</span></code>: keeps priority areas in priority order up to the first threshold crossing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">threshold=30</span></code>: keeps the highest-priority areas until <code class="docutils literal notranslate"><span class="pre">cumperc</span></code> first goes above 30%.</p></li>
+</ul>
+<p>In the geodata for this method, you also get <code class="docutils literal notranslate"><span class="pre">cumperc</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cumperc</span></code> is the cumulative contribution by priority level.</p></li>
+<li><p>It helps you verify where the first threshold crossing happens.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Percentage method: keep subcatchments until cumulative contribution first exceeds 30%</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">identify_priority_areas</span><span class="p">(</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"sedi_export + sewer_in"</span><span class="p">,</span>
+    <span class="n">approach</span><span class="o">=</span><span class="s2">"percentage"</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the priority-points layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check where the priority-subcatchments layer is saved</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">file_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of priority-point attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick preview of priority-subcatchment attributes</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">vct_priority_points</span><span class="o">.</span><span class="n">vct_subcatchments</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"Spectral"</span><span class="p">,</span>
+    <span class="n">show_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Grass-strips">
+<h4>Grass strips<a class="headerlink" href="#Grass-strips" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Provide the grass-strip layer used for the efficiency check</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_grass_strips</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"tests/data/grass_strips.shp"</span><span class="p">)</span>
+
+<span class="c1"># Run grass-strip postprocessing</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">process_grass_strips</span><span class="p">()</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">gdf</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">geodata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">gdf</span><span class="p">[</span><span class="s2">"eSTE_plot"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">"eSTE"</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">gdf</span><span class="p">[</span><span class="s2">"eSTE"</span><span class="p">]))</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">geodata</span> <span class="o">=</span> <span class="n">gdf</span>
+
+<span class="n">pp</span><span class="o">.</span><span class="n">vct_grass_strips</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s2">"eSTE_plot"</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"RdYlGn"</span><span class="p">,</span>
+    <span class="n">vmin</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="s2">"grass strip efficiency [%]"</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

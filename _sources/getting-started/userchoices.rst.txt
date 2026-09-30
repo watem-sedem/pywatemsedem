@@ -205,14 +205,6 @@ Final timestep output
 ^^^^^^^^^^^^^^^^^^^^^
 See :ref:`here <watemsedem:timestep>`
 
-begin_jaar
-^^^^^^^^^^
-(begin) Year of simulation (in development).
-
-begin_maand
-^^^^^^^^^^^
-(begin) Month of simulation (in development).
-
 Sewer exit
 ^^^^^^^^^^
 Only CN. For functionality in WaTEM/SEDEM pascal, see :ref:`here <watemsedem:sewerexit>`
@@ -272,20 +264,3 @@ See :ref:`here <watemsedem:writerainfallexcess>`
 Write routing table
 ^^^^^^^^^^^^^^^^^^^
 see :ref:`here <watemsedem:writerouting>`
-
-Maximize grass strips (maximize_grass_strips)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The option (boolean) enable the maximisation of for grass strips in the WaTEM/SEDEM
-parcels raster. In essence, with this option, the
-:func:`pywatemsedem.core.grasstrips.expand_grass_strips_with_triggers`-function is
-used. This function aims to *expand* or *maximize* grass strips within the
-boundaries of a parcel, so to avoid that grass strips are removed by
-overlap with river and infrastructure pixels (note that river and
-infrastructure pixels have a higher priority in the hierarchy of the WaTEM/SEDEM
-perceelskaart). This algorithm loops with a 3x3-window over a grass strip
-raster, and checks if any of the pixels in the 3x3-window are located next
-to a *trigger* pixel. If this is the case, the considered pixel in the window
-is also considered to be a grass pixel. Note that in essence this algorithm is
-used as a solution to a resolution issue: because of the higher priority of
-infrastructure and rivers in pywatemsedem, grass strips 'disappear' at a resolution
-of 20 m.

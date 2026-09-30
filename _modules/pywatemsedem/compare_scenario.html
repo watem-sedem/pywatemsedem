@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.compare_scenario &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>pywatemsedem.compare_scenario &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../../_static/documentation_options.js?v=9172181d"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -182,9 +182,15 @@
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.compare_scenario.DeltaScenario.check_rasterprop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_rasterprop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Check if the raster properties are equal for both scenario's"""</span>
-        <span class="n">rstparams1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">rstparams</span>
-        <span class="n">rstparams2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">rstparams</span>
-        <span class="k">if</span> <span class="n">rstparams1</span> <span class="o">==</span> <span class="n">rstparams2</span><span class="p">:</span>
+        <span class="n">rp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp1</span><span class="o">.</span><span class="n">rp</span>
+        <span class="n">rp2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp2</span><span class="o">.</span><span class="n">rp</span>
+        <span class="c1"># Compare key raster properties</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">rp1</span><span class="o">.</span><span class="n">bounds</span> <span class="o">==</span> <span class="n">rp2</span><span class="o">.</span><span class="n">bounds</span>
+            <span class="ow">and</span> <span class="n">rp1</span><span class="o">.</span><span class="n">resolution</span> <span class="o">==</span> <span class="n">rp2</span><span class="o">.</span><span class="n">resolution</span>
+            <span class="ow">and</span> <span class="n">rp1</span><span class="o">.</span><span class="n">epsg</span> <span class="o">==</span> <span class="n">rp2</span><span class="o">.</span><span class="n">epsg</span>
+            <span class="ow">and</span> <span class="n">rp1</span><span class="o">.</span><span class="n">nodata</span> <span class="o">==</span> <span class="n">rp2</span><span class="o">.</span><span class="n">nodata</span>
+        <span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>

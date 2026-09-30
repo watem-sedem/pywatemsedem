@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../../../_static/documentation_options.js?v=9172181d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -140,7 +140,6 @@
     <span class="n">valid_rasterlist</span><span class="p">,</span>
     <span class="n">valid_vector</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.io.ini</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_item_from_ini</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -668,7 +667,7 @@
 <span class="sd">    """</span>
     <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"saga_cmd"</span><span class="p">,</span> <span class="n">SAGA_FLAGS</span><span class="p">,</span> <span class="s2">"shapes_grid"</span><span class="p">,</span> <span class="s2">"3"</span><span class="p">]</span>
     <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-GRIDS"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-SHAPES"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)]</span>
+    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-POINTS"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)]</span>
     <span class="n">execute_saga</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span></div>
 
 
@@ -1386,89 +1385,6 @@
 
 
 
-<div class="viewcode-block" id="rasterprofile_to_rstparams">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.rasterprofile_to_rstparams">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">rasterprofile_to_rstparams</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Transform rasterprofile to rstparams</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    profile: rasterio.profiles</span>
-<span class="sd">        See :class:`rasterio.profiles.Profile`</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    rstparams: dict</span>
-<span class="sd">        gdal dictionary holding all metadata for idrisi rasters</span>
-
-<span class="sd">    """</span>
-    <span class="n">rstparams</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"driver"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"GTiff"</span>
-    <span class="n">minmax</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">profile</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]))</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"width"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">minmax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">profile</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]))</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"crs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">"epsg"</span><span class="p">]</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"transform"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span>
-        <span class="n">profile</span><span class="p">[</span><span class="s2">"res"</span><span class="p">],</span>
-        <span class="mi">0</span><span class="p">,</span>
-        <span class="n">minmax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="mi">0</span><span class="p">,</span>
-        <span class="o">-</span><span class="n">profile</span><span class="p">[</span><span class="s2">"res"</span><span class="p">],</span>
-        <span class="n">minmax</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-    <span class="p">)</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">]</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"compress"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"DEFLATE"</span>
-
-    <span class="k">return</span> <span class="n">rstparams</span></div>
-
-
-
-<div class="viewcode-block" id="rstparams_to_rasterprofile">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.rstparams_to_rasterprofile">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">rstparams_to_rasterprofile</span><span class="p">(</span><span class="n">rstparams</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Transform rstparams dictionary to rasterio raster profile dictionary</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    rstparams: dict</span>
-<span class="sd">        gdal dictionary holding all metadata for idrisi rasters</span>
-<span class="sd">    epsg: str, default None</span>
-<span class="sd">        The epsg code defining the coordinate system of the raster,</span>
-<span class="sd">        format = "EPSG:XXXXX"</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    profile: rasterio.profiles</span>
-<span class="sd">        See :class:`rasterio.profiles.Profile`</span>
-
-<span class="sd">    """</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"nodata"</span><span class="p">:</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">]}</span>
-
-    <span class="k">if</span> <span class="s2">"init"</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">rstparams</span><span class="p">[</span><span class="s2">"crs"</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-        <span class="n">profile</span><span class="p">[</span><span class="s2">"epsg"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"crs"</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">"init"</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">profile</span><span class="p">[</span><span class="s2">"epsg"</span><span class="p">]</span> <span class="o">=</span> <span class="n">epsg</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">"Cannot get epsg-code from rstparams, and no epsg defined!"</span><span class="p">)</span>
-
-    <span class="n">profile</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"transform"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="n">xmin</span> <span class="o">=</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"transform"</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">xmax</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">+</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"transform"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"width"</span><span class="p">]</span>
-    <span class="n">ymax</span> <span class="o">=</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"transform"</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>
-    <span class="n">ymin</span> <span class="o">=</span> <span class="n">ymax</span> <span class="o">+</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"transform"</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]</span>
-
-    <span class="n">profile</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span><span class="p">]</span>
-    <span class="n">profile</span><span class="p">[</span><span class="s2">"ncols"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"width"</span><span class="p">]</span>
-    <span class="n">profile</span><span class="p">[</span><span class="s2">"nrows"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rstparams</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">profile</span></div>
-
-
-
 <div class="viewcode-block" id="set_no_data_rst">
 <a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.set_no_data_rst">[docs]</a>
 <span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"rst_in"</span><span class="p">:</span> <span class="n">valid_raster</span><span class="p">})</span>
@@ -1599,58 +1515,6 @@
         <span class="n">profile</span><span class="p">[</span><span class="s2">"dtype"</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtype</span>
 
     <span class="k">return</span> <span class="n">arr</span><span class="p">,</span> <span class="n">profile</span></div>
-
-
-
-<div class="viewcode-block" id="get_rstparams">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.get_rstparams">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_rstparams</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Get rstparams and rasterprofile from template raster (default:pkaart)</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ini: pathlib.Path</span>
-<span class="sd">        file path to ini-file of WaTEM-SEDEM</span>
-<span class="sd">    epsg: str, default None</span>
-<span class="sd">        the epsg code defining the coordinate system of the raster,</span>
-<span class="sd">        format = "EPSG:XXXXX"</span>
-<span class="sd">    template: str or pathlib.Path, default None</span>
-<span class="sd">        File path to a template file that can be used as template for</span>
-<span class="sd">        geodata and bin mask. Default the "P" raster is used.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    profile: rasterio.profiles</span>
-<span class="sd">        See :class:`rasterio.profiles.Profile`</span>
-<span class="sd">    rstparams: dict</span>
-<span class="sd">        gdal dictionary holding all metadata for idrisi rasters</span>
-<span class="sd">    arr_bindomain: numpy.ndarray</span>
-<span class="sd">        binary mask of modelling domain</span>
-
-<span class="sd">    """</span>
-    <span class="c1"># this template is used to generate binair mask</span>
-    <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">modelinputfolder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
-            <span class="n">get_item_from_ini</span><span class="p">(</span><span class="n">ini</span><span class="p">,</span> <span class="s2">"Working directories"</span><span class="p">,</span> <span class="s2">"input directory"</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">template</span> <span class="o">=</span> <span class="n">modelinputfolder</span> <span class="o">/</span> <span class="n">get_item_from_ini</span><span class="p">(</span>
-            <span class="n">ini</span><span class="p">,</span> <span class="s2">"Files"</span><span class="p">,</span> <span class="s2">"p factor map filename"</span><span class="p">,</span> <span class="nb">str</span>
-        <span class="p">)</span>
-
-    <span class="c1"># open and assign profile to rstparams</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Templatefile '</span><span class="si">{</span><span class="n">template</span><span class="si">}</span><span class="s2">' not known for getting spatial metadata "</span>
-            <span class="sa">f</span><span class="s2">"'rstparams' and 'profile'."</span>
-        <span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="n">rstparams</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
-    <span class="n">rstparams</span><span class="p">[</span><span class="s2">"compress"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"DEFLATE"</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="n">rstparams_to_rasterprofile</span><span class="p">(</span><span class="n">rstparams</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">rstparams</span><span class="p">,</span> <span class="n">profile</span></div>
 
 
 

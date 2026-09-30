@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.choices &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>pywatemsedem.choices &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../../_static/documentation_options.js?v=9172181d"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -157,7 +157,18 @@
 <div class="viewcode-block" id="UserChoice.validate_type">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.choices.UserChoice.validate_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Validate if the value has the correct dtype"""</span>
+<span class="w">        </span><span class="sd">"""Validate that a value matches the expected dtype of this user choice.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : object</span>
+<span class="sd">            The candidate value to validate against :attr:`dtype`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``value`` is not an instance of the expected :attr:`dtype`.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"Value ('</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">') assigned to key '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' should be dtype "</span>
@@ -169,7 +180,22 @@
 <div class="viewcode-block" id="UserChoice.validate_value">
 <a class="viewcode-back" href="../../api/pywatemsedem.html#pywatemsedem.choices.UserChoice.validate_value">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Validate if the value is within the allowed values"""</span>
+<span class="w">        </span><span class="sd">"""Validate that a value is within the allowed values of this user choice.</span>
+
+<span class="sd">        When :attr:`allowed_values` is ``None`` no restriction applies and the</span>
+<span class="sd">        value is accepted.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : object</span>
+<span class="sd">            The candidate value to validate against :attr:`allowed_values`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If :attr:`allowed_values` is defined and ``value`` is not one of</span>
+<span class="sd">            them.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_values</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Value ('</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">') should be one of: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">allowed_values</span><span class="si">}</span><span class="s2">."</span>

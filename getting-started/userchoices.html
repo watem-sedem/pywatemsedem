@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Choices &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>User Choices &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../_static/documentation_options.js?v=9172181d"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -103,8 +103,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#beta">Beta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stream-velocity">Stream velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#final-timestep-output">Final timestep output</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#begin-jaar">begin_jaar</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#begin-maand">begin_maand</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sewer-exit">Sewer exit</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ls-correction">LS correction</a></li>
 </ul>
@@ -121,7 +119,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#output-per-river-segment">Output per river segment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#write-rainfall-excess">Write rainfall excess</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#write-routing-table">Write routing table</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#maximize-grass-strips-maximize-grass-strips">Maximize grass strips (maximize_grass_strips)</a></li>
 </ul>
 </li>
 </ul>
@@ -364,14 +361,6 @@ for WaTEM/SEDEM model simulation. For functionality in WaTEM/SEDEM pascal, see
 <h4>Final timestep output<a class="headerlink" href="#final-timestep-output" title="Link to this heading"></a></h4>
 <p>See <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#timestep" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
 </section>
-<section id="begin-jaar">
-<h4>begin_jaar<a class="headerlink" href="#begin-jaar" title="Link to this heading"></a></h4>
-<p>(begin) Year of simulation (in development).</p>
-</section>
-<section id="begin-maand">
-<h4>begin_maand<a class="headerlink" href="#begin-maand" title="Link to this heading"></a></h4>
-<p>(begin) Month of simulation (in development).</p>
-</section>
 <section id="sewer-exit">
 <h4>Sewer exit<a class="headerlink" href="#sewer-exit" title="Link to this heading"></a></h4>
 <p>Only CN. For functionality in WaTEM/SEDEM pascal, see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/input.html#sewerexit" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
@@ -430,23 +419,6 @@ same. For an explanation of these functionalities, we refer to the
 <section id="write-routing-table">
 <h4>Write routing table<a class="headerlink" href="#write-routing-table" title="Link to this heading"></a></h4>
 <p>see <a class="reference external" href="https://watem-sedem.github.io/watem-sedem/choices.html#writerouting" title="(in WaTEM/SEDEM)"><span class="xref std std-ref">here</span></a></p>
-</section>
-<section id="maximize-grass-strips-maximize-grass-strips">
-<h4>Maximize grass strips (maximize_grass_strips)<a class="headerlink" href="#maximize-grass-strips-maximize-grass-strips" title="Link to this heading"></a></h4>
-<p>The option (boolean) enable the maximisation of for grass strips in the WaTEM/SEDEM
-parcels raster. In essence, with this option, the
-<code class="xref py py-func docutils literal notranslate"><span class="pre">pywatemsedem.core.grasstrips.expand_grass_strips_with_triggers()</span></code>-function is
-used. This function aims to <em>expand</em> or <em>maximize</em> grass strips within the
-boundaries of a parcel, so to avoid that grass strips are removed by
-overlap with river and infrastructure pixels (note that river and
-infrastructure pixels have a higher priority in the hierarchy of the WaTEM/SEDEM
-perceelskaart). This algorithm loops with a 3x3-window over a grass strip
-raster, and checks if any of the pixels in the 3x3-window are located next
-to a <em>trigger</em> pixel. If this is the case, the considered pixel in the window
-is also considered to be a grass pixel. Note that in essence this algorithm is
-used as a solution to a resolution issue: because of the higher priority of
-infrastructure and rivers in pywatemsedem, grass strips ‘disappear’ at a resolution
-of 20 m.</p>
 </section>
 </section>
 </section>

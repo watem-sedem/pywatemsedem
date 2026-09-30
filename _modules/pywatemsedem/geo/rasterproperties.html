@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 1.2.0.post1.dev2+gaa8208729 documentation</title>
+  <title>pywatemsedem.geo.rasterproperties &mdash; pywatemsedem 1.4.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=e461b786"></script>
+      <script src="../../../_static/documentation_options.js?v=9172181d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -93,7 +93,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pywatemsedem.geo.rasterproperties</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyproj</span><span class="w"> </span><span class="kn">import</span> <span class="n">CRS</span>
@@ -316,6 +317,60 @@
             <span class="n">nodata</span><span class="o">=</span><span class="n">rasterio_profile</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">],</span>
             <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">,</span>
         <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RasterProperties.from_template">
+<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.rasterproperties.RasterProperties.from_template">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_template</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">epsg</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create RasterProperties from a template raster file.</span>
+
+<span class="sd">        Only ``.rst`` (IDRISI) templates are currently supported. That</span>
+<span class="sd">        format does not round-trip an EPSG code, so ``epsg`` must always</span>
+<span class="sd">        be given explicitly -- it can not be inferred from the template.</span>
+
+<span class="sd">        .. todo::</span>
+<span class="sd">            Broaden support to ``.sdat`` (SAGA) templates as well, since</span>
+<span class="sd">            that is also a possible WaTEM/SEDEM output raster format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        template : pathlib.Path or str</span>
+<span class="sd">            File path to a template raster. Must be a ``.rst`` file.</span>
+<span class="sd">        epsg : int</span>
+<span class="sd">            EPSG code should be a numeric value, see https://epsg.io/.</span>
+<span class="sd">            Required.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``template`` is not a ``.rst`` file (names the file type that</span>
+<span class="sd">            was given instead), or if ``epsg`` is missing.</span>
+<span class="sd">        IOError</span>
+<span class="sd">            If ``template`` does not exist.</span>
+<span class="sd">        """</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+
+        <span class="n">template_suffix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">template</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"(no extension)"</span>
+        <span class="k">if</span> <span class="n">template_suffix</span> <span class="o">!=</span> <span class="s2">".rst"</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">"'from_template' currently only supports '.rst' templates, "</span>
+                <span class="sa">f</span><span class="s2">"got a '</span><span class="si">{</span><span class="n">template_suffix</span><span class="si">}</span><span class="s2">' file ('</span><span class="si">{</span><span class="n">template</span><span class="si">}</span><span class="s2">')."</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">epsg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"'from_template' is missing the required argument 'epsg'."</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">template</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+                <span class="n">rasterio_profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Template file '</span><span class="si">{</span><span class="n">template</span><span class="si">}</span><span class="s2">' not found for getting spatial metadata."</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_rasterio</span><span class="p">(</span><span class="n">rasterio_profile</span><span class="p">,</span> <span class="n">epsg</span><span class="o">=</span><span class="n">epsg</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
