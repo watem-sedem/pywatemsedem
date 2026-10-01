@@ -62,7 +62,7 @@ pyogrio==0.13.0
     # via
     #   geopandas
     #   pywatemsedem (setup.py)
-pyparsing==3.3.2
+pyparsing==3.3.3
     # via
     #   matplotlib
     #   rasterio
