@@ -32,7 +32,7 @@ fonttools==4.63.0
     # via matplotlib
 geopandas==1.1.4
     # via pywatemsedem (setup.py)
-joblib==1.5.3
+joblib==1.6.0
     # via scikit-learn
 kiwisolver==1.5.0
     # via matplotlib
