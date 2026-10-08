@@ -34,7 +34,7 @@ geopandas==1.1.4
     # via pywatemsedem (setup.py)
 joblib==1.5.3
     # via scikit-learn
-kiwisolver==1.5.0
+kiwisolver==1.5.1
     # via matplotlib
 matplotlib==3.11.1
     # via pywatemsedem (setup.py)
