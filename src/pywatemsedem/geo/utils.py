@@ -25,7 +25,11 @@ import numpy as np
 import pandas as pd
 import pyogrio
 import rasterio
-from rasterio.features import shapes
+import rasterio.shutil
+from rasterio.enums import Resampling
+from rasterio.features import rasterize, shapes
+from rasterio.transform import from_origin
+from rasterio.warp import reproject
 
 from pywatemsedem.defaults import (
     SAGA_FLAGS,
@@ -344,19 +348,26 @@ def tiff_to_idrisi(tiff_in, rst_out, dtype):
 
     Notes
     -----
-    Uses and relies on gdal_translate CLI.
+    Uses rasterio (GDAL Idrisi "RST" driver) to perform the conversion, so no
+    external GDAL command-line tools are required.
     """
-    cmd_args = [
-        "gdal_translate",
-        "-q",
-        "-ot",
-        dtype.capitalize(),
-        "-of",
-        "RST",
-        str(tiff_in),
-        str(rst_out),
-    ]
-    execute_subprocess(cmd_args)
+    dtype = dtype.capitalize().lower()
+    with rasterio.open(tiff_in) as src:
+        data = src.read()
+        profile = {
+            "driver": "RST",
+            "width": src.width,
+            "height": src.height,
+            "count": src.count,
+            "dtype": dtype,
+            "crs": src.crs,
+            "transform": src.transform,
+        }
+        if src.nodata is not None:
+            profile["nodata"] = src.nodata
+
+    with rasterio.open(rst_out, "w", **profile) as dst:
+        dst.write(data.astype(dtype))
 
 
 @valid_input(dict={"rst_in": valid_raster})
@@ -367,9 +378,14 @@ def delete_rst(rst_in):
     ----------
     rst_in : str or pathlib.Path
         File path of the raster dataset to be deleted.
+
+    Notes
+    -----
+    Uses ``rasterio.shutil.delete`` (GDAL ``GDALDeleteDataset``) so the raster
+    and all its sidecar files (e.g. ``.rdc`` for Idrisi ``.rst``) are removed,
+    without relying on the ``gdalmanage`` CLI.
     """
-    cmd_args = ["gdalmanage", "delete", str(rst_in)]
-    execute_subprocess(cmd_args)
+    rasterio.shutil.delete(str(rst_in))
     return
 
 
@@ -395,8 +411,10 @@ def clip_rst(rst_in, rst_out, cnst, resampling="near"):
 
     Notes
     -----
-    1. This function uses the gdalwarp CLI, see
-       https://gdal.org/en/stable/programs/gdalwarp.html for more information.
+    1. This function uses rasterio (GDAL warp bindings) to clip and resample the
+       raster onto the target grid, so no external GDAL command-line tools are
+       required. The source and target CRS are both set to ``cnst["epsg"]``,
+       matching the previous ``gdalwarp -s_srs ... -t_srs ...`` behaviour.
     2. "mode" and "near" have been tested, see
        https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r.
     """
@@ -405,15 +423,49 @@ def clip_rst(rst_in, rst_out, cnst, resampling="near"):
     rst_out = Path(rst_out)
 
     logger.info(f"Clipping {rst_in.name}...")
-    cmd_args = ["gdalwarp", "-q", "-s_srs", str(cnst["epsg"])]
-    cmd_args += ["-t_srs", str(cnst["epsg"])]
-    cmd_args += ["-te"]
-    for oor in cnst["minmax"]:
-        cmd_args += [str(oor)]
-    cmd_args += ["-tr", str(cnst["res"]), str(cnst["res"])]
-    cmd_args += ["-r", resampling]
-    cmd_args += [str(rst_in), str(rst_out)]
-    execute_subprocess(cmd_args)
+
+    resampling_methods = {"near": Resampling.nearest, "mode": Resampling.mode}
+    if resampling not in resampling_methods:
+        raise IOError(
+            f"Resampling method '{resampling}' not supported, please select "
+            f"{', '.join(resampling_methods)}."
+        )
+
+    xmin, ymin, xmax, ymax = cnst["minmax"]
+    res = cnst["res"]
+    nodata = cnst["nodata"]
+    crs = rasterio.crs.CRS.from_string(str(cnst["epsg"]))
+
+    width = int(round((xmax - xmin) / res))
+    height = int(round((ymax - ymin) / res))
+    dst_transform = from_origin(xmin, ymax, res, res)
+
+    with rasterio.open(rst_in) as src:
+        source = src.read()
+        destination = np.full((src.count, height, width), nodata, dtype=source.dtype)
+        reproject(
+            source=source,
+            destination=destination,
+            src_transform=src.transform,
+            src_crs=crs,
+            src_nodata=src.nodata,
+            dst_transform=dst_transform,
+            dst_crs=crs,
+            dst_nodata=nodata,
+            resampling=resampling_methods[resampling],
+        )
+        profile = {
+            "width": width,
+            "height": height,
+            "count": src.count,
+            "dtype": source.dtype,
+            "crs": crs,
+            "transform": dst_transform,
+            "nodata": nodata,
+        }
+
+    with rasterio.open(rst_out, "w", **profile) as dst:
+        dst.write(destination)
 
 
 @valid_input(dict={"vct": valid_vector})
@@ -560,27 +612,45 @@ def vct_to_rst_value_gdal(
 
     Notes
     -----
-    Uses and relies on gdal_rasterize CLI.
+    Uses ``rasterio.features.rasterize`` to burn the value ``1`` for every
+    feature onto a grid initialised to ``0`` (with ``nodata`` stored as band
+    metadata), matching the former ``gdal_rasterize`` behaviour without relying
+    on the CLI. The ``all_touched`` option mirrors ``gdal_rasterize -at``.
     """
-    cmd_args = ["gdal_rasterize", "-q", "-a_nodata", str(nodata)]
-    if alltouched:
-        cmd_args += ["-at"]
-    cmd_args += ["-burn", "1"]  # make binary grid
-    cmd_args += ["-l", vct_in.stem]
-    cmd_args += ["-of", "SAGA", "-te"]
-    for oor in raster_properties["minmax"]:
-        cmd_args += [str(oor)]
+    dtype_map = {"integer": "int16", "float": "float32"}
+    out_dtype = dtype_map.get(dtype, "float64")
 
-    if dtype == "integer":
-        cmd_args += ["-ot", "Int16"]
-    elif dtype == "float":
-        cmd_args += ["-ot", "Float32"]
+    xmin, ymin, xmax, ymax = raster_properties["minmax"]
+    res = raster_properties["res"]
+    width = int(round((xmax - xmin) / res))
+    height = int(round((ymax - ymin) / res))
+    transform = from_origin(xmin, ymax, res, res)
 
-    cmd_args += ["-tr", str(raster_properties["res"]), str(raster_properties["res"])]
-    cmd_args += ["-co", "COMPRESS=DEFLATE"]
-    cmd_args += [str(vct_in), str(rst_out)]
+    gdf = gpd.read_file(vct_in)
+    geometries = [(geom, 1) for geom in gdf.geometry if geom is not None]
+    if geometries:
+        arr = rasterize(
+            geometries,
+            out_shape=(height, width),
+            transform=transform,
+            fill=0,
+            all_touched=alltouched,
+            dtype=out_dtype,
+        )
+    else:
+        arr = np.zeros((height, width), dtype=out_dtype)
 
-    execute_subprocess(cmd_args)
+    profile = {
+        "width": width,
+        "height": height,
+        "count": 1,
+        "dtype": out_dtype,
+        "crs": gdf.crs,
+        "transform": transform,
+        "nodata": nodata,
+    }
+    with rasterio.open(rst_out, "w", **profile) as dst:
+        dst.write(arr, 1)
 
 
 @valid_input(dict={"vct_in": valid_vector})
@@ -789,7 +859,10 @@ def vct_to_rst_field(
 
     Notes
     -----
-    Uses and relies on gdal_rasterize CLI.
+    Uses ``rasterio.features.rasterize`` to burn the ``field`` value of every
+    feature onto a grid initialised to ``0`` (with ``nodata`` stored as band
+    metadata), matching the former ``gdal_rasterize`` behaviour without relying
+    on the CLI. The ``all_touched`` option mirrors ``gdal_rasterize -at``.
     """
     # if rst_out.exists():
     #    delete_rst(rst_out)
@@ -816,22 +889,57 @@ def vct_to_rst_field(
         )
         raise TypeError(msg)
 
-    cmd_args = ["gdal_rasterize", "-q", "-a_nodata", str(Cnst["nodata"])]
-    if alltouched:
-        cmd_args += ["-at"]
-    if field:
-        cmd_args += ["-a", field]
-    cmd_args += ["-l", vct_in.stem]
-    cmd_args += ["-of", "GTiff", "-te"]
-    for oor in Cnst["minmax"]:
-        cmd_args += [str(oor)]
+    gdal_to_numpy = {
+        "Byte": "uint8",
+        "Int16": "int16",
+        "UInt16": "uint16",
+        "Int32": "int32",
+        "UInt32": "uint32",
+        "Float32": "float32",
+        "Float64": "float64",
+    }
+    out_dtype = gdal_to_numpy.get(dtype, str(dtype).lower())
 
-    cmd_args += ["-ot", dtype]
-    cmd_args += ["-tr", str(Cnst["res"]), str(Cnst["res"])]
-    cmd_args += ["-co", "COMPRESS=DEFLATE"]
-    cmd_args += [str(vct_in), str(rst_out)]
+    nodata = Cnst["nodata"]
+    xmin, ymin, xmax, ymax = Cnst["minmax"]
+    res = Cnst["res"]
+    width = int(round((xmax - xmin) / res))
+    height = int(round((ymax - ymin) / res))
+    transform = from_origin(xmin, ymax, res, res)
 
-    execute_subprocess(cmd_args)
+    gdf = gpd.read_file(vct_in)
+    if field is not None:
+        geometries = [
+            (geom, value)
+            for geom, value in zip(gdf.geometry, gdf[field])
+            if geom is not None
+        ]
+    else:
+        geometries = [(geom, 1) for geom in gdf.geometry if geom is not None]
+
+    if geometries:
+        arr = rasterize(
+            geometries,
+            out_shape=(height, width),
+            transform=transform,
+            fill=0,
+            all_touched=alltouched,
+            dtype=out_dtype,
+        )
+    else:
+        arr = np.zeros((height, width), dtype=out_dtype)
+
+    profile = {
+        "width": width,
+        "height": height,
+        "count": 1,
+        "dtype": out_dtype,
+        "crs": gdf.crs,
+        "transform": transform,
+        "nodata": nodata,
+    }
+    with rasterio.open(rst_out, "w", **profile) as dst:
+        dst.write(arr, 1)
 
 
 def execute_saga(cmd_args):
