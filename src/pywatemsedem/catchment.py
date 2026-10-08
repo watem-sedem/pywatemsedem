@@ -21,7 +21,6 @@ from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
     clean_up_tempfiles,
     create_filename,
-    create_spatial_index,
     define_extent_from_vct,
     execute_subprocess,
     read_rasterio_profile,
@@ -553,41 +552,6 @@ class Catchment(Factory):
             plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._landuse.plot = plot
-
-    @staticmethod
-    def create_height_contours(rst_input, vct_output):
-        """Create height contours line vector based on a DTM raster
-
-        Parameters
-        ----------
-        rst_input: pathlib.Path
-            Input DTM raster
-        vct_output: pathlib.Path
-            Output height contour line vector
-        """
-        if rst_input is not None:
-            if not vct_output.exists():
-                cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "5"]
-                cmd_args += [
-                    "-GRID",
-                    str(rst_input),
-                    "-CONTOUR",
-                    str(vct_output),
-                    "-ZSTEP",
-                    "1",
-                ]
-                try:
-                    execute_subprocess(cmd_args)
-                except OSError as e:
-                    if "corrupted size vs. prev_size in fastbins" in str(e):
-                        try:
-                            pyogrio.read_info(vct_output)
-                        except pyogrio.errors.DataSourceError:
-                            raise IOError(e)
-                create_spatial_index(vct_output)
-        else:
-            msg = "Inputfile is not valid!"
-            raise FileNotFoundError(msg)
 
     @property
     def catchment_area(self):

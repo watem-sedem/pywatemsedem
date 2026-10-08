@@ -1091,30 +1091,6 @@ def lines_to_raster(vct_line, rst_out, rst_template, field, dtype):
                 raise IOError(e)
 
 
-@valid_input(dict={"vct_in": valid_vector})
-def create_spatial_index(vct_in):
-    """Creates a qix-file for a given shapefile
-
-    Parameters
-    ----------
-    vct_in: str or pathlib.Path
-        File path of the input shapefile
-
-    Note
-    -----
-    Uses and relies on ogrinfo CLI
-    """
-    if vct_in.exists():
-        cmd_args = ["ogrinfo", str(vct_in)]
-        cmd_args += ["-q", "-sql", f"CREATE SPATIAL INDEX ON {vct_in.stem}"]
-        execute_subprocess(cmd_args)
-    else:
-        msg = f"Shapefile does not exist! ({vct_in})"
-        logger.error(msg)
-        raise FileNotFoundError(msg)
-    return
-
-
 @valid_input(dict={"rst": valid_raster})
 def load_raster(rst, return_bounds=False):
     """read raster with rasterio as a numpy array.

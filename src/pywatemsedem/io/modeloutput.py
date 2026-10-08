@@ -18,7 +18,6 @@ from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
     clean_up_tempfiles,
     create_filename,
-    create_spatial_index,
     execute_saga,
     load_raster,
     mask_array_with_val,
@@ -2134,8 +2133,6 @@ def run_saga_make_routing_shp_cmd(txt_routing, rst_prckrt, vct_out, rstparams=No
     epsg = _get_epsg_for_routing_vector(rstparams=rstparams, rst_prckrt=rst_prckrt)
     _set_vector_epsg(vct_out, epsg)
 
-    create_spatial_index(vct_out)
-
 
 def define_subcatchments_saga(
     rst_in,
@@ -2191,7 +2188,6 @@ def define_subcatchments_saga(
 
     execute_saga(cmd_args)
     raster_to_polygon(rst_subcatchments, vct_subcatchments)
-    create_spatial_index(vct_subcatchments)
     gdf_subcatchments = gpd.read_file(vct_subcatchments)
     gdf_subcatchments.drop(columns=["ID", "NAME"], inplace=True)
     gdf_subcatchments["VALUE"] = gdf_subcatchments["VALUE"].astype("int32")
