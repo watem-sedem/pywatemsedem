@@ -42,10 +42,31 @@ logger = logging.getLogger(__name__)
 
 
 def valid_dtm(func):
-    """Check if you have defined a DTM."""
+    """Decorator to check if a DTM is defined before executing the function.
+
+    Guard applied to :class:`Catchment` methods that require a digital terrain
+    model. The decorated method is only executed when a non-empty DTM raster is
+    available (see :attr:`~pywatemsedem.catchment.Catchment.dtm`).
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for DTM definition.
+
+    Raises
+    ------
+    IOError
+        If the DTM is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating DTM is defined."""
         if self._dtm.is_empty():
             msg = "Please first define non-empty DTM!"
             raise IOError(msg)
@@ -56,10 +77,31 @@ def valid_dtm(func):
 
 
 def valid_vct_river(func):
-    """Check if you have defined a river vector."""
+    """Decorator to check if a river vector is defined before executing the function.
+
+    Guard applied to :class:`Catchment` methods that require a river vector. The
+    decorated method is only executed when a non-empty river vector is available
+    (see :attr:`~pywatemsedem.catchment.Catchment.vct_river`).
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for river vector definition.
+
+    Raises
+    ------
+    IOError
+        If the river vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating river vector is defined."""
         if self._vct_river.is_empty():
             msg = "Please define non-empty river vector!"
             raise IOError(msg)
@@ -69,10 +111,32 @@ def valid_vct_river(func):
 
 
 def valid_vct_infra_line(func):
-    """Check if infrastructure vectors are defined"""
+    """Decorator to check if infrastructure line vectors are defined.
+
+    Guard applied to :class:`Catchment` methods that require infrastructure line
+    features. The decorated method is only executed when a non-empty
+    infrastructure roads vector is available (see
+    :attr:`~pywatemsedem.catchment.Catchment.vct_infrastructure_roads`).
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for infrastructure line vector definition.
+
+    Raises
+    ------
+    IOError
+        If the infrastructure roads vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute the wrapped function after validating infrastructure line vector."""
         if self._vct_infrastructure_roads.is_empty():
             msg = "Please define infrastructure line vector!"
             raise IOError(msg)
@@ -82,10 +146,32 @@ def valid_vct_infra_line(func):
 
 
 def valid_vct_infra_poly(func):
-    """Check if infrastructure vectors are defined"""
+    """Decorator to check if infrastructure polygon vectors are defined.
+
+    Guard applied to :class:`Catchment` methods that require infrastructure
+    polygon features. The decorated method is only executed when a non-empty
+    infrastructure buildings vector is available (see
+    :attr:`~pywatemsedem.catchment.Catchment.vct_infrastructure_buildings`).
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that checks for infrastructure polygon vector definition.
+
+    Raises
+    ------
+    IOError
+        If the infrastructure buildings vector is empty or not defined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
+        """Execute wrapped function after validating infrastructure polygon vector."""
         if self._vct_infrastructure_buildings.is_empty():
             msg = "Please define non-empty infrastructure polygon vector!"
             raise IOError(msg)
@@ -94,37 +180,29 @@ def valid_vct_infra_poly(func):
     return wrapper
 
 
-def valid_vct_parcels(func):
-    """Check if infrastructure vectors are defined"""
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        if self._vct_parcels.is_empty():
-            msg = "Please define non_empty parcels polygon vector!"
-            raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 class Catchment(Factory):
-    """Construct a new Catchment instance
+    """Construct a new Catchment instance.
 
     The catchment class holds all static information for a catchment.
     The class considers all data of which the content is user-option-independent (i.e.
-    :class:`pywatemsedem.choices.Choices`.
+    :class:`pywatemsedem.choices.Choices`).
 
-    Following properties can be set:
-
-        - *kfactor*: K-factor raster.
-        - *landuse*: base landuse raster.
-        - *river*: river line vector.
-        - *water*: water polygon vector
-        - *vct_infrastructure_buildings*: polygon vector of infrastructure
-          (typically buildings).
-        - *vct_infrastructure_roads*: roads line vector (with optional attribute
-          'paved').
-        - *cnsoil*: cn soil raster (CN-only).
+    Attributes
+    ----------
+    kfactor : pathlib.Path, str or numpy.ndarray
+        K-factor raster.
+    landuse : pathlib.Path, str or numpy.ndarray
+        Base landuse raster.
+    vct_river : pathlib.Path, str or geopandas.GeoDataFrame
+        River line vector.
+    vct_water : pathlib.Path, str or geopandas.GeoDataFrame
+        Water polygon vector.
+    vct_infrastructure_buildings : pathlib.Path, str or geopandas.GeoDataFrame
+        Polygon vector of infrastructure (typically buildings).
+    vct_infrastructure_roads : pathlib.Path, str or geopandas.GeoDataFrame
+        Roads line vector (with optional attribute 'paved').
+    hydrological_soil_group : pathlib.Path, str or numpy.ndarray
+        CN soil raster (CN-only).
 
     Notes
     -----
@@ -142,23 +220,25 @@ class Catchment(Factory):
         nodata,
         results_folder=None,
     ):
-        """Initialize
+        """Initialize the Catchment instance.
 
         Parameters
         ----------
-        name: str
+        name : str
             Name of the catchment.
-        vct_catchment: str or pathlib.Path or geopandas.GeoDataFrame
+        vct_catchment : str or pathlib.Path or geopandas.GeoDataFrame
             Vector file of catchment outline (mask). This should be a single polygon
             vector.
-        resolution: int
-            Spatial resolution (m)
-        epsg_code: int
-            EPSG-code
-        nodata: float
-            Nodata-value
-        results_folder: str | pathlib.Path, default None
-            Folder path to write results to. If None, write to current folder
+        rst_dtm : str or pathlib.Path
+            File path to the digital terrain model raster.
+        resolution : int
+            Spatial resolution (m).
+        epsg_code : int
+            EPSG-code.
+        nodata : float
+            Nodata-value.
+        results_folder : str or pathlib.Path, default None
+            Folder path to write results to. If None, write to current folder.
         """
         # prepare catchment
         if results_folder is None:
@@ -166,7 +246,7 @@ class Catchment(Factory):
             msg = f"Setting results folder to {(results_folder / name)}"
             warnings.warn(msg)
         self.folder = CatchmentFolder(Path(results_folder) / name, resolution)
-        self.folder.create_all()
+        self.folder.check_all(create=True)
         self.name = name
 
         # initiate factory
@@ -198,7 +278,7 @@ class Catchment(Factory):
         # set dtm
         self.dtm = rst_dtm
 
-        # API atttributes
+        # API attributes
         self._hydrosoilgroup = AbstractRaster()
         self._landuse = AbstractRaster()
         self._water = AbstractRaster()
@@ -459,7 +539,17 @@ class Catchment(Factory):
         )
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the landuse raster with standardized landuse colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._landuse.plot = plot
@@ -534,6 +624,9 @@ class Catchment(Factory):
             - *0*: no river
             - *-9999*: nodata
         """
+        if self._river.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, 0, self.mask.arr)
+            self.river = nodata_arr
 
         return self._river
 
@@ -643,23 +736,23 @@ class Catchment(Factory):
             ["line_id", "startpt_id", "endpt_id", "geometry"]
         ]
 
-        river = self._vct_river.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            "line_id",
-            dtype_raster="integer",
-            gdal=False,
-        )
-
-        self.river = river
-        self.segments = river
-
-        self._adjacent_edges, self._up_edges, flag = check_segment_edges(
-            self.adjacent_edges, self.up_edges, self.segments.arr
-        )
-
-        # set routing
         if not self._vct_river.is_empty():
+            river = self._vct_river.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                "line_id",
+                dtype_raster="integer",
+                gdal=False,
+            )
+
+            self.river = river
+            self.segments = river
+
+            self._adjacent_edges, self._up_edges, flag = check_segment_edges(
+                self.adjacent_edges, self.up_edges, self.segments.arr
+            )
+
+            # set routing
             routing = self._vct_river.rasterize(
                 self.rasterfile_mask,
                 self.rp.epsg,
@@ -668,10 +761,13 @@ class Catchment(Factory):
             )
             routing[routing == self.rp.nodata] = 0
             self.routing = routing
+
         else:
-            msg = "River input vector is empty, setting river routing to None"
+            msg = (
+                "River input vector is empty"
+                ", no river raster and segments are generated."
+            )
             logger.info(msg)
-            self._routing = AbstractRaster()
 
     @property
     def tubed_river(self):
@@ -937,6 +1033,9 @@ class Catchment(Factory):
             - *-5*: open water
             - *-9999*: nodata
         """
+        if self._water.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, -9999, self.mask.arr)
+            self.water = nodata_arr
         return self._water
 
     @water.setter
@@ -986,14 +1085,21 @@ class Catchment(Factory):
             self._vct_infrastructure_buildings.geodata["paved"].astype(int)
         )
 
-        infra = self._vct_infrastructure_buildings.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            col="paved",
-            dtype_raster="integer",
-            gdal=False,
-        )
-        self.infrastructure_buildings = infra
+        if not self._vct_infrastructure_buildings.is_empty():
+            infra = self._vct_infrastructure_buildings.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                col="paved",
+                dtype_raster="integer",
+                gdal=False,
+            )
+            self.infrastructure_buildings = infra
+        else:
+            msg = (
+                "Infrastructure (buildings) vector is empty"
+                ", no buildings raster is generated"
+            )
+            logger.info(msg)
 
     @property
     # @valid_req_property(
@@ -1010,6 +1116,10 @@ class Catchment(Factory):
             - *-2*: paved
             - *-9999*: nodata
         """
+        if self._infrastructure_buildings.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, -9999, self.mask.arr)
+            self.infrastructure_buildings = nodata_arr
+
         return self._infrastructure_buildings
 
     @infrastructure_buildings.setter
@@ -1037,9 +1147,13 @@ class Catchment(Factory):
             Raster containing following values:
 
             - *-2*: paved
-            - *-7*: paved
+            - *-7*: not paved
             - *-9999*: nodata
         """
+        if self._infrastructure_roads.is_empty():
+            nodata_arr = np.where(self.mask.arr == 1, -9999, self.mask.arr)
+            self.infrastructure_roads = nodata_arr
+
         return self._infrastructure_roads
 
     @infrastructure_roads.setter
@@ -1095,15 +1209,22 @@ class Catchment(Factory):
             self._vct_infrastructure_roads.geodata["paved"].astype(int)
         )
 
-        arr = self._vct_infrastructure_roads.rasterize(
-            self.rasterfile_mask,
-            self.rp.epsg,
-            col="paved",
-            dtype_raster="integer",
-            gdal=False,
-        )
+        if not self._vct_infrastructure_roads.is_empty():
+            arr = self._vct_infrastructure_roads.rasterize(
+                self.rasterfile_mask,
+                self.rp.epsg,
+                col="paved",
+                dtype_raster="integer",
+                gdal=False,
+            )
 
-        self.infrastructure_roads = arr
+            self.infrastructure_roads = arr
+        else:
+            msg = (
+                "Infrastructure (roads) vector is empty"
+                ", no roads raster is generated"
+            )
+            logger.info(msg)
 
     @property
     def infrastructure(self):
@@ -1127,31 +1248,29 @@ class Catchment(Factory):
         or roads and buildings (3). If no roads or buildings are defined, an error is
         thrown."""
 
-        if not self.infrastructure_roads.is_empty():
-            if not self.infrastructure_buildings.is_empty():
-                arr1 = self.infrastructure_roads.arr.copy()
-                arr2 = self.infrastructure_buildings.arr.copy()
-                cond1 = arr1 == self.infrastructure_roads.rp.nodata
-                cond2 = arr2 != self.infrastructure_buildings.rp.nodata
-                arr = np.where(cond1 & cond2, arr2, arr1)
-                arr = np.where(
-                    arr != self.infrastructure_buildings.rp.nodata, arr, self.rp.nodata
-                )
-                self._infrastructure = RasterMemory(arr, self.rp)
-            else:
-                self._infrastructure = self.infrastructure_roads
-        else:
-            if not self.infrastructure_buildings.is_empty():
-                self._infrastructure = self.infrastructure_buildings
-            else:
-                msg = (
-                    "First define infrastructure lines (roads) or/and polygons "
-                    "(buildings) before calling infrastructure property!"
-                )
-                raise IOError(msg)
+        arr1 = self.infrastructure_roads.arr.copy()
+        arr2 = self.infrastructure_buildings.arr.copy()
+        cond1 = arr1 == self.infrastructure_roads.rp.nodata
+        cond2 = arr2 != self.infrastructure_buildings.rp.nodata
+        arr = np.where(cond1 & cond2, arr2, arr1)
+        arr = np.where(
+            arr != self.infrastructure_buildings.rp.nodata, arr, self.rp.nodata
+        )
+        self._infrastructure = RasterMemory(arr, self.rp)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the infrastructure raster.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; when given, cells are converted to a binary
+                infrastructure/no-infrastructure mask before plotting. When
+                ``None`` the raster is plotted as-is.
+            *args, **kwargs
+                Additional arguments passed to
+                ``matplotlib.axes.Axes.imshow``.
+            """
             fig, ax = plt.subplots(figsize=[10, 10])
             """Plot infrastructure"""
             arr_plot = self._infrastructure.arr.copy().astype(np.float32)
@@ -1201,4 +1320,4 @@ class Catchment(Factory):
         """
         logger.info("Aanmaken folderstructuur bekken...")
         self.folder = CatchmentFolder(Path(self.name), self.rp.resolution)
-        self.folder.create_all()
+        self.folder.check_all(create=True)

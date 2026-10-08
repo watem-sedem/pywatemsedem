@@ -1,4 +1,5 @@
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -10,7 +11,7 @@ from pywatemsedem.geo.utils import load_raster
 
 
 def test_rastermemory():
-    """Test functionalities of RasterMemory class"""
+    """Test functionalities of RasterMemory class."""
 
     # mask a certain part of the raster.
     arr, profile = load_raster(geodata.rst_example)
@@ -81,13 +82,14 @@ def test_rastermemory():
 
 
 def test_rasterfile():
-    """Test functionalities of RasterFile class"""
+    """Test functionalities of RasterFile class."""
 
     # clip
     rp = RasterProperties([162300, 165760, 167560, 169520], 20, -9999, 31370)
     raster = RasterFile(geodata.rst_example, rp=rp)
     assert raster.arr.shape[0] == 188
     assert raster.arr.shape[1] == 263
+    assert raster.file_path == Path("tests/geo/data/example_input_raster.tif")
 
     # clip with extent outside rasters extent
     rp = RasterProperties([230, 760, 560, 1000], 20, -9999, 31370)
@@ -108,7 +110,7 @@ def test_rasterfile():
 
 
 def test_temporalraster():
-    """Test functionalities of RasterProperties class"""
+    """Test functionalities of TemporalRaster class."""
 
     # load raster
     arr, profile = load_raster(geodata.rst_example)

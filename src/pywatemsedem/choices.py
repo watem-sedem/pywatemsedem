@@ -6,10 +6,36 @@ logger = logging.getLogger(__name__)
 
 
 class UserChoice:
+    """Represent a single user-configurable choice/option.
+
+    This class encapsulates a configuration option with validation,
+    type checking, and default value handling.
+
+    Parameters
+    ----------
+    key : str
+        The name/identifier of the choice.
+    section : str
+        The INI file section this choice belongs to.
+    dtype : type
+        The expected data type (e.g., str, int, float, bool).
+    mandatory : bool
+        Whether this choice must have a value set.
+    default_value : any, default None
+        The default value if none is provided.
+    allowed_values : list, default None
+        List of allowed values. If None, any value of correct dtype is allowed.
+
+    Attributes
+    ----------
+    value : any
+        The current value of the choice.
+    """
+
     def __init__(
         self, key, section, dtype, mandatory, default_value=None, allowed_values=None
     ):
-        """Initialize choice"""
+        """Initialize the UserChoice instance."""
         self.key = key
         self.section = section
         self.dtype = dtype
@@ -32,7 +58,18 @@ class UserChoice:
         return "\n".join(print_)
 
     def validate_type(self, value):
-        """Validate if the value has the correct dtype"""
+        """Validate that a value matches the expected dtype of this user choice.
+
+        Parameters
+        ----------
+        value : object
+            The candidate value to validate against :attr:`dtype`.
+
+        Raises
+        ------
+        TypeError
+            If ``value`` is not an instance of the expected :attr:`dtype`.
+        """
         if not isinstance(value, self.dtype):
             msg = (
                 f"Value ('{value}') assigned to key '{self.key}' should be dtype "
@@ -41,7 +78,22 @@ class UserChoice:
             raise TypeError(msg)
 
     def validate_value(self, value):
-        """Validate if the value is within the allowed values"""
+        """Validate that a value is within the allowed values of this user choice.
+
+        When :attr:`allowed_values` is ``None`` no restriction applies and the
+        value is accepted.
+
+        Parameters
+        ----------
+        value : object
+            The candidate value to validate against :attr:`allowed_values`.
+
+        Raises
+        ------
+        ValueError
+            If :attr:`allowed_values` is defined and ``value`` is not one of
+            them.
+        """
         if self.allowed_values is not None:
             if value not in self.allowed_values:
                 msg = f"Value ('{value}') should be one of: {self.allowed_values}."
@@ -100,12 +152,29 @@ class UserChoice:
 
 
 class WSMixin:
+    """Mixin class providing common functionality for choice container classes.
+
+    This mixin provides shared methods for representing, validating, and
+    loading configuration values from INI files. It is inherited by
+    Options, Parameters, Extensions, ExtensionsParameters, and Output classes.
+
+    Methods
+    -------
+    check_mandatory_values()
+        Validate that all mandatory UserChoice attributes have values set.
+    apply_defaults()
+        Apply default values to all UserChoice attributes.
+    read_values_from_ini(ini)
+        Load values from an INI configuration file.
+    """
+
     def __repr__(self):
         """String representation of the Choices class"""
         print_ = []
         for key in self.__dict__:
             attribute = getattr(self, key)
-            print_.append(f"{attribute.key}: {attribute.value}")
+            if isinstance(attribute, UserChoice):
+                print_.append(f"{attribute.key}: {attribute.value}")
         return "\n".join(print_)
 
     def check_mandatory_values(self):
@@ -146,8 +215,38 @@ class WSMixin:
 
 
 class Options(WSMixin):
+    """Container for WaTEM/SEDEM model algorithm options.
+
+    This class holds configuration options that control which algorithms
+    are used for calculating erosion factors (L, S, TC models), routing
+    behavior, and other computational settings.
+
+    Attributes
+    ----------
+    l_model : UserChoice
+        L-factor calculation method ('Desmet1996_Vanoost2003' or
+        'Desmet1996_McCool'). For documentation, see :ref:`here <watemsedem:lmodel>`.
+    s_model : UserChoice
+        S-factor calculation method ('Nearing1997' or 'McCool1987').
+        For documentation, see :ref:`here <watemsedem:smodel>`.
+    tc_model : UserChoice
+        Transport capacity model ('VanOost2000' or 'Verstraeten2007').
+        For documentation, see :ref:`here <watemsedem:tcmodel>`.
+    only_routing : UserChoice
+        Flag to run only the routing algorithm without erosion calculation.
+        For documentation, see :ref:`here <watemsedem:onlyrouting>`.
+    calculate_tillage_erosion : UserChoice
+        Flag to include tillage erosion in calculations.
+        For documentation, see :ref:`here <watemsedem:calctileros>`.
+
+    See Also
+    --------
+    Parameters : Model parameter values.
+    Extensions : Optional model extensions.
+    """
+
     def __init__(self):
-        """Initialise WSOptions"""
+        """Initialize the Options instance with default algorithm choices."""
         self._l_model = UserChoice(
             "L model",
             "Options",
@@ -196,12 +295,12 @@ class Options(WSMixin):
 
     @l_model.setter
     def l_model(self, input_value):
-        """Assign the l_model
+        """Assign the l_model.
 
         Parameters
-        ---------
-        input_value: str
-            name of the L model
+        ----------
+        input_value : str
+            Name of the L model.
         """
         self._l_model.value = input_value
 
@@ -218,12 +317,12 @@ class Options(WSMixin):
 
     @s_model.setter
     def s_model(self, input_value):
-        """Assign the s_model
+        """Assign the s_model.
 
         Parameters
-        ---------
-        input_value: str
-            name of the S model
+        ----------
+        input_value : str
+            Name of the S model.
         """
         self._s_model.value = input_value
 
@@ -240,12 +339,12 @@ class Options(WSMixin):
 
     @tc_model.setter
     def tc_model(self, input_value):
-        """Assign the tc_model
+        """Assign the tc_model.
 
         Parameters
-        ---------
-        input_value: str
-            name of the TC model
+        ----------
+        input_value : str
+            Name of the TC model.
         """
         self._tc_model.value = input_value
 
@@ -262,11 +361,12 @@ class Options(WSMixin):
 
     @only_routing.setter
     def only_routing(self, input_value):
-        """Assign the only_routing option
+        """Assign the only_routing option.
 
         Parameters
-        ---------
-        input_value: bool
+        ----------
+        input_value : bool
+            Whether to only perform routing.
         """
         self._only_routing.value = input_value
 
@@ -283,18 +383,64 @@ class Options(WSMixin):
 
     @calculate_tillage_erosion.setter
     def calculate_tillage_erosion(self, input_value):
-        """Assign the calculate_tillage_erosion option
+        """Assign the calculate_tillage_erosion option.
 
         Parameters
-        ---------
-        input_value: bool
+        ----------
+        input_value : bool
+            Whether to calculate tillage erosion.
         """
         self._calculate_tillage_erosion.value = input_value
 
 
 class Parameters(WSMixin):
+    """Container for WaTEM/SEDEM model parameters.
+
+    This class holds the numerical parameters required for erosion
+    calculations, including the R-factor, parcel connectivity values,
+    trapping efficiencies, and kernel sizes.
+
+    Attributes
+    ----------
+    r_factor : UserChoice
+        Rainfall erosivity factor (R-factor) for the study area.
+        For documentation, see :ref:`here <watemsedem:rfactor_var>`.
+    parcel_connectivity_cropland : UserChoice
+        Parcel connectivity for cropland parcels (0-100).
+        For documentation, see :ref:`here <watemsedem:parcelconncrop>`.
+    parcel_connectivity_grasstrips : UserChoice
+        Parcel connectivity for grass strips (0-100).
+        For documentation, see :ref:`here <watemsedem:parcelconngras>`.
+    parcel_connectivity_forest : UserChoice
+        Parcel connectivity for forest parcels (0-100).
+        For documentation, see :ref:`here <watemsedem:parcelconnforest>`.
+    parcel_trapping_eff_cropland : UserChoice
+        Parcel trapping efficiency for cropland (0-100).
+        For documentation, see :ref:`here <watemsedem:parceltrapppingcrop>`.
+    parcel_trapping_eff_pasture : UserChoice
+        Parcel trapping efficiency for pasture (0-100).
+        For documentation, see :ref:`here <watemsedem:parceltrappingpasture>`.
+    parcel_trapping_eff_forest : UserChoice
+        Parcel trapping efficiency for forest (0-100).
+        For documentation, see :ref:`here <watemsedem:parceltrappingforest>`.
+    max_kernel : UserChoice
+        Maximum kernel size for flow routing calculations.
+        For documentation, see :ref:`here <watemsedem:maxkernel>`.
+    max_kernel_river : UserChoice
+        Maximum kernel size for river routing calculations.
+        For documentation, see :ref:`here <watemsedem:maxkernelriver>`.
+    bulk_density : UserChoice
+        Soil bulk density in kg/m³.
+        For documentation, see :ref:`here <watemsedem:bulkdensity>`.
+
+    See Also
+    --------
+    Options : Model algorithm options.
+    ExtensionsParameters : Parameters for optional extensions.
+    """
+
     def __init__(self):
-        """Initialise WSParameters"""
+        """Initialize the Parameters instance with required model parameters."""
         self._r_factor = UserChoice("R factor", "Parameters", float, True, None)
         self._parcel_connectivity_cropland = UserChoice(
             "Parcel connectivity cropland", "Parameters", int, True, None
@@ -542,8 +688,76 @@ class Parameters(WSMixin):
 
 
 class Extensions(WSMixin):
+    """Container for WaTEM/SEDEM optional model extensions.
+
+    This class holds boolean flags that enable or disable optional
+    features and extensions in the WaTEM/SEDEM model, such as curve
+    number calculations, sewer systems, buffers, and output options.
+
+    Attributes
+    ----------
+    curve_number : UserChoice
+        Enable curve number based runoff calculations.
+        For documentation, see :ref:`here <watemsedem:simple>`.
+    include_sewers : UserChoice
+        Include sewer system in routing calculations.
+        For documentation, see :ref:`here <watemsedem:inlcudesewers>`.
+    create_ktc_map : UserChoice
+        Generate ktc map by watem-sedem. If set to False, pywatemsedem
+        can make the ktc map.
+        For documentation, see :ref:`here <watemsedem:createktc>`.
+    create_ktil_map : UserChoice
+        Generate ktil map.
+        For documentation, see :ref:`here <watemsedem:createktil>`.
+    estimate_clay_content : UserChoice
+        Estimate clay content from parent material.
+        For documentation, see :ref:`here <watemsedem:estimclay>`.
+    include_tillage_direction : UserChoice
+        Account for tillage direction in calculations.
+        For documentation, see :ref:`here <watemsedem:includetillagedirection>`.
+    include_buffers : UserChoice
+        Include buffers.
+        For documentation, see :ref:`here <watemsedem:includebuffers>`.
+    include_ditches : UserChoice
+        Include ditches.
+        For documentation, see :ref:`here <watemsedem:includeditches>`.
+    include_dams : UserChoice
+        Include dams.
+        For documentation, see :ref:`here <watemsedem:includedams>`.
+    output_per_river_segment : UserChoice
+        Generate output aggregated per river segment.
+        For documentation, see :ref:`here <watemsedem:outputsegment>`.
+    adjusted_slope : UserChoice
+        Use adjusted slope calculations.
+        For documentation, see :ref:`here <watemsedem:adjustslope>`.
+    buffer_reduce_area : UserChoice
+        Reduce contributing area at buffer locations.
+        For documentation, see :ref:`here <watemsedem:bufferreduce>`.
+    force_routing : UserChoice
+        Force specific routing directions.
+        For documentation, see :ref:`here <watemsedem:forcerouting>`.
+    river_routing : UserChoice
+        Enable river routing calculations.
+        For documentation, see :ref:`here <watemsedem:riverrouting>`.
+    manual_outlet_selection : UserChoice
+        Add outlets manually to the model.
+        For documentation, see :ref:`here <watemsedem:manualoutlet>`.
+    convert_output : UserChoice
+    calibrate : UserChoice
+        Enable calibration mode for ktc factors.
+        For documentation, see :ref:`here <watemsedem:calibrate>`.
+    cardinal_routing_river : UserChoice
+        Use only cardinal directions for routing to river pixels.
+        For documentation, see :ref:`here <watemsedem:cardinalrouting>`.
+
+    See Also
+    --------
+    ExtensionsParameters : Parameters for enabled extensions.
+    Options : Model algorithm options.
+    """
+
     def __init__(self):
-        """Initialise WSExtensions"""
+        """Initialize the Extensions instance with all extensions disabled."""
         self._curve_number = UserChoice(
             "Curve Number", "Extensions", bool, False, False
         )
@@ -959,8 +1173,86 @@ class Extensions(WSMixin):
 
 
 class ExtensionsParameters(WSMixin):
+    """Container for parameters associated with enabled model extensions.
+
+    This class holds numerical parameters that are required when specific
+    extensions are enabled. The mandatory status of each parameter depends
+    on whether its associated extension is active.
+
+    Parameters
+    ----------
+    extensions : pywatemsedem.choices.Extensions
+        Instance of Extensions class containing the enabled/disabled
+        status of each model extension.
+
+    Attributes
+    ----------
+    sewer_exit : UserChoice
+        Sewer exit location identifier (required if include_sewers is True).
+        For documentation, see :ref:`here <watemsedem:sewerexit>`.
+    clay_content_parent_material : UserChoice
+        Clay content of parent material (required if estimate_clay_content is True).
+        For documentation, see :ref:`here <watemsedem:claycontent>`.
+    antecedent_rainfall : UserChoice
+        5-day antecedent rainfall in mm (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:5dayrainfall>`.
+    stream_velocity : UserChoice
+        Stream flow velocity in m/s (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:streamvelocity>`.
+    alpha : UserChoice
+        Alpha parameter for curve number calculations.
+        For documentation, see :ref:`here <watemsedem:alpha>`.
+    beta : UserChoice
+        Beta parameter for curve number calculations.
+        For documentation, see :ref:`here <watemsedem:beta>`.
+    ls_correction : UserChoice
+        LS factor correction multiplier.
+        For documentation, see :ref:`here <watemsedem:lscorrection>`.
+    ktc_low : UserChoice
+        Low transport capacity coefficient (required if create_ktc_map is True).
+        For documentation, see :ref:`here <watemsedem:ktclow>`.
+    ktc_high : UserChoice
+        High transport capacity coefficient (required if create_ktc_map is True).
+        For documentation, see :ref:`here <watemsedem:ktchigh>`.
+    ktc_limit : UserChoice
+        C-factor threshold for ktc classification.
+        For documentation, see :ref:`here <watemsedem:ktclimit>`.
+    ktil_default : UserChoice
+        Default ktil value for tillage erosion.
+        For documentation, see :ref:`here <watemsedem:ktildefault>`.
+    ktil_threshold : UserChoice
+        C-factor threshold for ktil classification.
+        For documentation, see :ref:`here <watemsedem:ktilthres>`.
+    desired_timestep : UserChoice
+        Model timestep in minutes (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:timestep>`.
+    endtime_model : UserChoice
+        Total simulation time in minutes (required if curve_number is True).
+        For documentation, see :ref:`here <watemsedem:endtime>`.
+    ktc_low_lower : UserChoice
+        Lower bound of ktc_low range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktclow_lower>`.
+    ktc_low_upper : UserChoice
+        Upper bound of ktc_low range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktclow_upper>`.
+    ktc_high_lower : UserChoice
+        Lower bound of ktc_high range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktchigh_lower>`.
+    ktc_high_upper : UserChoice
+        Upper bound of ktc_high range for calibration (required if calibrate is True).
+        For documentation, see :ref:`here <watemsedem:ktchigh_upper>`.
+    steps : UserChoice
+        Number of calibration steps between lower and upper ktc values.
+        For documentation, see :ref:`here <watemsedem:steps>`.
+
+    See Also
+    --------
+    Extensions : Boolean flags for enabling extensions.
+    Parameters : Core model parameters.
+    """
+
     def __init__(self, extensions):
-        """Generate WSExtensionsParameters instance .
+        """Initialize ExtensionsParameters based on enabled extensions.
 
         Parameters
         ----------
@@ -1534,8 +1826,58 @@ class ExtensionsParameters(WSMixin):
 
 
 class Output(WSMixin):
+    """Container for WaTEM/SEDEM output configuration options.
+
+    This class holds boolean flags that control which intermediate and
+    final results are written to output files during model execution.
+
+    Attributes
+    ----------
+    write_aspect : UserChoice
+        Write aspect raster to output.
+        For documentation, see :ref:`here <watemsedem:writeaspect>`.
+    write_ls_factor : UserChoice
+        Write LS factor raster to output.
+        For documentation, see :ref:`here <watemsedem:writels>`.
+    write_upstream_area : UserChoice
+        Write upstream area raster to output.
+        For documentation, see :ref:`here <watemsedem:writeuparea>`.
+    write_slope : UserChoice
+        Write slope raster to output.
+        For documentation, see :ref:`here <watemsedem:writeslope>`.
+    write_routing_table : UserChoice
+        Write routing table to output.
+        For documentation, see :ref:`here <watemsedem:writerouting>`.
+    write_routing_column_row : UserChoice
+        Write routing column/row information to output.
+        For documentation, see :ref:`here <watemsedem:writeroutingrc>`.
+    write_rusle : UserChoice
+        Write RUSLE raster to output.
+        For documentation, see :ref:`here <watemsedem:writerusle>`.
+    write_sediment_export : UserChoice
+        Write sediment export raster to output.
+        For documentation, see :ref:`here <watemsedem:writesedexport>`.
+    write_water_erosion : UserChoice
+        Write water erosion raster to output.
+        For documentation, see :ref:`here <watemsedem:writerwatereros>`.
+    write_rainfall_excess : UserChoice
+        Write rainfall excess raster to output.
+        For documentation, see :ref:`here <watemsedem:writerainfallexcess>`.
+    write_total_runoff : UserChoice
+        Write total runoff raster to output.
+        For documentation, see :ref:`here <watemsedem:writetotalrunoff>`.
+    export_saga : UserChoice
+        Export grids in SAGA GIS format (.sgrd).
+        For documentation, see :ref:`here <watemsedem:sagagrids>`.
+
+    See Also
+    --------
+    Options : Model algorithm options.
+    Choices : Main container combining all choice categories.
+    """
+
     def __init__(self):
-        """Initialise WSOutput"""
+        """Initialize the Output instance with all output options disabled."""
         self._write_aspect = UserChoice("Write aspect", "Output", bool, False, False)
         self._write_ls_factor = UserChoice(
             "Write LS factor", "Output", bool, False, False
@@ -1744,7 +2086,7 @@ class Output(WSMixin):
         pywatemsedem.choices.UserChoice
             UserChoice instance of the write_water_erosion output option
         """
-        return self.write_water_erosion
+        return self._write_water_erosion
 
     @write_water_erosion.setter
     def write_water_erosion(self, input_value):
@@ -1821,21 +2163,62 @@ class Output(WSMixin):
 
 
 class Choices:
+    """Main container aggregating all WaTEM/SEDEM configuration categories.
+
+    This class serves as the top-level container that combines all
+    configuration components (options, parameters, extensions, extension
+    parameters, and output settings) into a single object for convenient
+    access and management.
+
+    Parameters
+    ----------
+    options : pywatemsedem.choices.Options
+        Instance containing model algorithm options.
+    parameters : pywatemsedem.choices.Parameters
+        Instance containing core model parameters.
+    extensions : pywatemsedem.choices.Extensions
+        Instance containing extension enable/disable flags.
+    extensionparameters : pywatemsedem.choices.ExtensionsParameters
+        Instance containing parameters for enabled extensions.
+    output : pywatemsedem.choices.Output
+        Instance containing output configuration options.
+
+    Attributes
+    ----------
+    options : pywatemsedem.choices.Options
+        Model algorithm options.
+    parameters : pywatemsedem.choices.Parameters
+        Core model parameters.
+    extensions : pywatemsedem.choices.Extensions
+        Extension enable/disable flags.
+    extensionparameters : pywatemsedem.choices.ExtensionsParameters
+        Parameters for enabled extensions.
+    output : pywatemsedem.choices.Output
+        Output configuration options.
+
+    Examples
+    --------
+    >>> from pywatemsedem.choices import (
+    ...     Options, Parameters, Extensions, ExtensionsParameters, Output, Choices
+    ... )
+    >>> options = Options()
+    >>> parameters = Parameters()
+    >>> extensions = Extensions()
+    >>> ext_params = ExtensionsParameters(extensions)
+    >>> output = Output()
+    >>> choices = Choices(options, parameters, extensions, ext_params, output)
+
+    See Also
+    --------
+    pywatemsedem.choices.Options : Model algorithm options.
+    pywatemsedem.choices.Parameters : Core model parameters.
+    pywatemsedem.choices.Extensions : Optional model extensions.
+    pywatemsedem.choices.ExtensionsParameters : Extension-specific parameters.
+    pywatemsedem.choices.Output : Output configuration options.
+    """
+
     def __init__(self, options, parameters, extensions, extensionparameters, output):
-        """Initialise Choices container
-
-        Parameters
-        ----------
-        options: pywatemsedem.choices.Options
-            Instance of :class:`pywatemsedem options
-            <pywatemsedem.core.choices.WSOptions>` containing the model options.
-        parameters: pywatemsedem.core.choices.WSParameters
-            Instance of :class:`pywatemsedem parameters
-            <pywatemsedem.core.choices.WSParameters>` containing the model parameters.
-        extensions: pywatemsedem.core.choices.WSExtensions
-            Instance of :class:`pywatemsed
-
-        """
+        """Initialize the Choices container with all configuration components."""
         self.options = options
         self.parameters = parameters
         self.extensions = extensions

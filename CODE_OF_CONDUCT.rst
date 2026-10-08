@@ -1,3 +1,5 @@
+.. _code_conduct:
+
 ====================================
 Contributor Covenant Code of Conduct
 ====================================

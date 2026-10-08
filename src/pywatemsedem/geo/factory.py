@@ -22,11 +22,27 @@ from pywatemsedem.geo.vectors import VectorFile, VectorMemory
 
 
 def valid_mask_factory(func):
-    """Check valid mask inputted when using raster or vectofactory"""
+    """Decorator to check if a valid mask is set before using raster or vector factory.
+
+    Parameters
+    ----------
+    func : callable
+        The function to wrap.
+
+    Returns
+    -------
+    callable
+        Wrapped function that validates mask existence.
+
+    Raises
+    ------
+    PywatemsedemInputError
+        If the mask has not been created.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """Wrapper fun"""
+        """Execute the wrapped function after validating mask is set."""
         if self.mask is None:
             msg = (
                 f"First create a mask with " f"{Factory.create_mask.__name__}-function"
@@ -38,33 +54,42 @@ def valid_mask_factory(func):
 
 
 class Factory:
-    """Factory class
+    """Factory class for generating vectors and rasters.
 
-    Used to enable functions to generate vectors and rasters.
+    Used to enable functions to generate vectors and rasters with consistent
+    spatial properties (resolution, EPSG code, nodata value).
+
+    Attributes
+    ----------
+    mask : pathlib.Path or str
+        Mask raster or vector polygon file.
+    rp : pywatemsedem.geo.rasterproperties.RasterProperties
+        Raster properties instance.
 
     Notes
     -----
-    By default a rasterproperties instance is made in the initialisation
-    See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled of by
-    setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to False
+    By default a rasterproperties instance is made in the initialisation.
+    See :func:`pywatemsedem.geo.factory.create_mask`-function. This can be toggled off
+    by setting :const:`pywatemsedem.geo.factory.Factory.create_rasterproperties` to
+    False.
     """
 
     def __init__(self, resolution, epsg_code, nodata, resmap, bounds=None):
-        """See class docs
+        """Initialize the Factory instance.
 
         Parameters
-        ---------
-        resolution:int
-            Model spatial resolution
-        epsg_code: int
+        ----------
+        resolution : int
+            Model spatial resolution.
+        epsg_code : int
             EPSG code should be a numeric value, see https://epsg.io/.
-        nodata: float
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
-        resmap: pathlib.Path | str
-            Folder path to write factory files to
-        bounds: list, default None
+        nodata : float
+            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
+        resmap : pathlib.Path or str
+            Folder path to write factory files to.
+        bounds : list, default None
             Raster boundaries which you wish for model.
-            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`
+            See :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
         """
         self._resolution = resolution
         self._epsg_code = epsg_code
@@ -88,8 +113,14 @@ class Factory:
 
     @rp.setter
     def rp(self, rasterproperties):
-        """RasterProperties. See
-        :class:`pywatemsedem.geo.rasterproperties.RasterProperties`"""
+        """Set the raster properties.
+
+        Parameters
+        ----------
+        rasterproperties : pywatemsedem.geo.rasterproperties.RasterProperties
+            Raster properties (bounds, resolution, epsg, nodata, ...) to assign,
+            see :class:`pywatemsedem.geo.rasterproperties.RasterProperties`.
+        """
         self._rp = rasterproperties
 
     @property
@@ -267,25 +298,49 @@ class Factory:
     def vector_factory(
         self, vector_input, geometry_type, allow_empty=False, flag_clip=True
     ):
-        """Vector factory to load vectors in memory
+        """Create and load a vector dataset into memory.
 
         Parameters
         ----------
-        vector_input: str, pathlib.Path or geopandas.GeoDataFrame
-            Input vector file or geopandas dataframe
-        mask: bool, default True
-            Mask vector (True), nodata value will be that one of
-            `pywatemsedem.geo.factory.Factory.rp`.
-        allow_empty: bool, default False
-            Allow vector to be empty, see
-            :class:`pywatemsedem.geo.vectors.AbstractVector`
-        flag_clip: bool, default True
-            Clip vector to mask
+        vector_input : str, pathlib.Path, or geopandas.GeoDataFrame
+            Input vector source. Can be:
+
+            * Path to a vector file (e.g. ESRI Shapefile, GeoPackage).
+            * A ``geopandas.GeoDataFrame`` already loaded in memory.
+
+        geometry_type : str
+            Expected geometry type for the vector dataset. Passed to
+            :class:`pywatemsedem.geo.vectors.VectorFile` or
+            :class:`pywatemsedem.geo.vectors.VectorMemory` for validation.
+
+        allow_empty : bool, default=False
+            If ``True``, allow the resulting vector dataset to contain no
+            geometries. See
+            :class:`pywatemsedem.geo.vectors.AbstractVector`.
+
+        flag_clip : bool, default=True
+            If ``True``, clip the input vector to the factory mask
+            (``self.vct_mask``). If ``False``, no clipping is applied.
 
         Returns
         -------
-        vector: pywatemsedem.geo.rasters.AbstractVector
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        pywatemsedem.geo.vectors.AbstractVector
+            A vector object loaded from disk
+            (:class:`pywatemsedem.geo.vectors.VectorFile`) or memory
+            (:class:`pywatemsedem.geo.vectors.VectorMemory`).
+
+        Raises
+        ------
+        IOError
+            If ``vector_input`` is not a valid vector file, cannot be read,
+            or is not a ``pathlib.Path``, ``str``, or
+            ``geopandas.GeoDataFrame`` instance.
+
+        Notes
+        -----
+        Input vector files are validated using ``pyogrio.read_info`` before
+        loading. The resulting vector is reprojected or validated against
+        the factory EPSG code (``self.rp.epsg``).
         """
 
         if isinstance(vector_input, str):

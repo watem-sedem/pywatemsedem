@@ -1,3 +1,8 @@
+"""errors.py
+
+This module defines custom error classes and functions to raise errors
+"""
+
 import numpy as np
 
 from pywatemsedem.io.valid import valid_boundaries
@@ -9,12 +14,12 @@ class PywatemsedemVectorAttributeError(Exception):
 
 
 class PywatemsedemVectorAttributeValueError(Exception):
-    """Raise error when input data attribute values don't conform required attributes
+    """Raise error when input data attribute values don't conform required attribute
     values"""
 
 
 class PywatemsedemRasterValueError(Exception):
-    """Raise error when input data attribute values don't conform required attributes
+    """Raise error when input data attribute values don't conform required attribute
     values"""
 
 

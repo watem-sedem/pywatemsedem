@@ -1,4 +1,4 @@
-"""Test functions for utils scripts"""
+"""Test functions for utils scripts."""
 
 import re
 
@@ -16,7 +16,7 @@ from pywatemsedem.choices import (
 
 
 def test_userchoice_not_allowed_value():
-    """Test if a ValueError is raised when a not allowed value is entered"""
+    """Test if a ValueError is raised when a not allowed value is entered."""
     user_choice = UserChoice(
         "Test1",
         "Tests",
@@ -36,7 +36,7 @@ def test_userchoice_not_allowed_value():
 
 
 def test_userchoice_wrong_dtype():
-    """Test if a TypeError is raised when a value with a wrong dtype is entered"""
+    """Test if a TypeError is raised when a value with a wrong dtype is entered."""
     user_choice = UserChoice(
         "Test2",
         "Tests",
@@ -54,21 +54,21 @@ def test_userchoice_wrong_dtype():
 
 
 def test_read_default_value_from_ini():
-    """Test reading default value of a user choice from an ini-file"""
+    """Test reading default value of a user choice from an ini-file."""
     user_choice = UserChoice("R factor", "Parameters", float, True)
     user_choice.read_default_value_from_ini(default_ini_file)
     assert user_choice.default_value == 1250.0
 
 
 def test_read_value_from_ini():
-    """Test reading value of a user choice from an ini-file"""
+    """Test reading value of a user choice from an ini-file."""
     user_choice = UserChoice("R factor", "Parameters", float, True)
     user_choice.read_value_from_ini(default_ini_file)
     assert user_choice.value == 1250.0
 
 
 def test_apply_default_value():
-    """Test assigning default value to value"""
+    """Test assigning default value to value."""
     user_choice = UserChoice(
         "R factor", "Parameters", float, True, default_value=1250.0
     )
@@ -77,7 +77,7 @@ def test_apply_default_value():
 
 
 def test_initiation_ws_options():
-    """Test if the WSOptions model is initialised ok"""
+    """Test if the WSOptions model is initialised ok."""
     ws_opt = Options()
 
     assert ws_opt.l_model.default_value == "Desmet1996_Vanoost2003"
@@ -109,13 +109,13 @@ def test_initiation_ws_options():
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_initialisation_ws_parameters():
-    """Test if the WSParamaeters object is initialised ok"""
+    """Test if the WSParameters object is initialised ok."""
     Parameters()
 
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_initialisation_ws_extensions():
-    """Test if the WSExtensions object is initialised ok"""
+    """Test if the WSExtensions object is initialised ok."""
     Extensions()
 
 

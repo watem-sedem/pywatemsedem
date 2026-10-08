@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -7,7 +8,7 @@ from rasterio import Affine
 
 
 class RasterProperties:
-    """Raster properties class
+    """Raster properties class.
 
     Pywatemsedem makes use of rasterio and gdal for loading, writing and processing
     rasters/vectors. A small class is implemented to easily switch between raster
@@ -57,15 +58,40 @@ class RasterProperties:
         epsg = 31370
         rp = RasterProperties(bounds, resolution, nodata, epsg)
 
+    Attributes
+    ----------
+    bounds : list of float
+        Raster boundary coordinates [x_left, y_lower, x_right, y_upper].
+    resolution : int
+        Spatial resolution.
+    nodata : float
+        No data value used in raster.
+    epsg : int
+        EPSG code of the raster projection.
+    driver : str
+        Name of GDAL driver (GTiff, RST, or SAGA).
+    nrows : int
+        Number of rows in the raster.
+    ncols : int
+        Number of columns in the raster.
+    xcoord : numpy.ndarray
+        1D-vector array of x-coordinates.
+    ycoord : numpy.ndarray
+        1D-vector array of y-coordinates.
+    gdal_profile : dict
+        GDAL profile dictionary.
+    rasterio_profile : dict
+        Rasterio profile dictionary.
+
     Notes
     -----
-    1. Current implementation support storing of raster properties, yet is does not aim
-       to provide functionalities to adapt raster properties (as these functionalities
-       are present in rasterio).
+    1. Current implementation supports storing of raster properties, yet it does not
+       aim to provide functionalities to adapt raster properties (as these
+       functionalities are present in rasterio).
     2. Current implementation does not support tiled rasters. In addition,
-       it only support bands-interleaving as only single-band raster are used.
+       it only supports bands-interleaving as only single-band rasters are used.
     3. Definition interleaving: the way multiple bands of a raster are saved to the
-       raster (e.g. pixel-based, line-based, band-based)
+       raster (e.g. pixel-based, line-based, band-based).
     4. The coordinate reference system (crs) is defined in EPSG.
     5. Note that dtype in gdal operation is typically derived from input raster
        dtype that is used to execute the gdal operation. As such dtype is not
@@ -189,6 +215,57 @@ class RasterProperties:
             nodata=rasterio_profile["nodata"],
             epsg=epsg,
         )
+
+    @classmethod
+    def from_template(cls, template, epsg: int = None):
+        """Create RasterProperties from a template raster file.
+
+        Only ``.rst`` (IDRISI) templates are currently supported. That
+        format does not round-trip an EPSG code, so ``epsg`` must always
+        be given explicitly -- it can not be inferred from the template.
+
+        .. todo::
+            Broaden support to ``.sdat`` (SAGA) templates as well, since
+            that is also a possible WaTEM/SEDEM output raster format.
+
+        Parameters
+        ----------
+        template : pathlib.Path or str
+            File path to a template raster. Must be a ``.rst`` file.
+        epsg : int
+            EPSG code should be a numeric value, see https://epsg.io/.
+            Required.
+
+        Raises
+        ------
+        TypeError
+            If ``template`` is not a ``.rst`` file (names the file type that
+            was given instead), or if ``epsg`` is missing.
+        IOError
+            If ``template`` does not exist.
+        """
+        import rasterio
+
+        template_suffix = Path(template).suffix.lower() or "(no extension)"
+        if template_suffix != ".rst":
+            msg = (
+                "'from_template' currently only supports '.rst' templates, "
+                f"got a '{template_suffix}' file ('{template}')."
+            )
+            raise TypeError(msg)
+
+        if epsg is None:
+            msg = "'from_template' is missing the required argument 'epsg'."
+            raise TypeError(msg)
+
+        try:
+            with rasterio.open(template) as src:
+                rasterio_profile = src.profile
+        except IOError:
+            msg = f"Template file '{template}' not found for getting spatial metadata."
+            raise IOError(msg)
+
+        return cls.from_rasterio(rasterio_profile, epsg=epsg)
 
     @property
     def rasterio_profile(self) -> dict:

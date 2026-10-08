@@ -7,6 +7,7 @@ import pandas as pd
 from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
     mask_array_with_val,
@@ -32,21 +33,70 @@ COLORMAP = "cividis"
 
 @dataclass
 class Modelinput(Factory):
-    def __init__(self, ini, resolution, epsg, nodata):
-        """AbstractRaster class with model inputs as attributes. Modelinput class
-        serves the goal of automating the reading in, checking and visualisation
-        of the input data of the WaTEM/SEDEM model.
+    """Raster class with model inputs as attributes.
+
+    Modelinput class serves the goal of automating the reading in, checking and
+    visualisation of the input data of the WaTEM/SEDEM model.
+
+    Attributes
+    ----------
+    mask : pathlib.Path or str
+        Catchment mask raster or polygon.
+    rivermask : pathlib.Path or str
+        River mask raster.
+    cfactor : pathlib.Path or str
+        C-factor raster.
+    buffers : pathlib.Path or str
+        Buffers raster.
+    dtm : pathlib.Path or str
+        Digital terrain model raster.
+    kfactor : pathlib.Path or str
+        K-factor raster.
+    ktc : pathlib.Path or str
+        kTC raster.
+    outlet : pathlib.Path or str
+        Outlet raster.
+    pfactor : pathlib.Path or str
+        P-factor raster.
+    compositelanduse : pathlib.Path or str
+        Composite landuse raster.
+    ptef : pathlib.Path or str
+        Parcel trapping efficiency raster.
+    riversegments : pathlib.Path or str
+        River segments raster.
+    riverrouting : pathlib.Path or str
+        River routing raster.
+    sewers : pathlib.Path or str
+        Sewers raster.
+    upstream_segments : pathlib.Path or str
+        Upstream segments table.
+    adjacent_segments : pathlib.Path or str
+        Adjacent segments table.
+    ktil : pathlib.Path or str
+        kTil raster.
+    tillagedirection : pathlib.Path or str
+        Tillage direction raster.
+    orientedroughness : pathlib.Path or str
+        Oriented roughness raster.
+    ditches : pathlib.Path or str
+        Ditches raster.
+    dams : pathlib.Path or str
+        Dams raster.
+    cn : pathlib.Path or str
+        Curve number raster.
+    rainfall : pathlib.Path or str
+        Rainfall table.
+    """
+
+    def __init__(self, ini, epsg):
+        """Initialize the Modelinput instance.
 
         Parameters
         ----------
-        ini: pathlib.Path
+        ini : pathlib.Path
             Path to the ini file with model settings and input file paths of
             WaTEM-SEDEM.
-        resolution: int
-            See :class:`pywatemsedem.geo.RasterProperties`
-        epsg: int
-            See :class:`pywatemsedem.geo.RasterProperties`.
-        nodata: int
+        epsg : int
             See :class:`pywatemsedem.geo.RasterProperties`.
         """
 
@@ -56,8 +106,19 @@ class Modelinput(Factory):
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
 
+        template = self.modelinputfolder / get_item_from_ini(
+            ini, "Files", "p factor map filename", str
+        )
+        rp = RasterProperties.from_template(template, epsg=epsg)
+        resolution = rp.resolution
+        nodata = rp.nodata
+
         # apply factory and set mask
         super().__init__(resolution, epsg, nodata, self.modelinputfolder)
+
+        # Set rp AFTER super().__init__() since Factory.__init__ resets self._rp
+        self.rp = rp
+
         self.mask = self.modelinputfolder / get_item_from_ini(
             ini, "Files", "shapefile catchment", str
         )
@@ -122,6 +183,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._mask.plot = plot
+        self._mask.file_path = mask
 
     @property
     def rivermask(self):
@@ -195,6 +257,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._rivermask.plot = plot
+        self._rivermask.file_path = raster
 
     @property
     def cfactor(self):
@@ -256,6 +319,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._cfactor.plot = plot
+        self._cfactor.file_path = raster
 
     @property
     def buffers(self):
@@ -315,6 +379,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._buffers.plot = plot
+        self._buffers.file_path = raster
 
     @property
     def dtm(self):
@@ -374,6 +439,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._dtm.plot = plot
+        self._dtm.file_path = raster
 
     @property
     def kfactor(self):
@@ -389,25 +455,22 @@ class Modelinput(Factory):
         return self._kfactor
 
     @kfactor.setter
-    def kfactor(self, raster_input):
+    def kfactor(self, raster):
         """Set the K-factor raster.
 
         Parameters
         ----------
         raster: pathlib.Path | str
         """
-        raster = self.raster_factory(raster_input, flag_mask=False)
+        self._kfactor = self.raster_factory(raster, flag_mask=False)
         # checks on raster data
-        valid_non_nan(raster.arr)
+        valid_non_nan(self._kfactor.arr)
         # NO need for checking no data, deal with this in plotting!
-        valid_array_type(raster.arr, required_type=np.int16)
+        valid_array_type(self._kfactor.arr, required_type=np.int16)
         valid_boundaries(
-            raster.arr[raster.arr != self._nodata], lower=0, upper=None
+            self._kfactor.arr[self._kfactor.arr != self._nodata], lower=0, upper=None
         )  # No data value excluded from check
-        check_raster_properties_raster_with_template(
-            self.rp, raster_input, epsg=self.rp.epsg
-        )
-        self._kfactor = raster
+        check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
             """Plot the kfactor raster.
@@ -435,6 +498,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._kfactor.plot = plot
+        self._kfactor.file_path = raster
 
     @property
     def ktc(self):
@@ -502,6 +566,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._ktc.plot = plot
+        self._ktc.file_path = raster
 
     @property
     def outlet(self):
@@ -567,6 +632,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._outlet.plot = plot
+        self._outlet.file_path = raster
 
     @property
     def pfactor(self):
@@ -626,6 +692,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._pfactor.plot = plot
+        self._pfactor.file_path = raster
 
     @property
     def compositelanduse(self):
@@ -653,14 +720,25 @@ class Modelinput(Factory):
         # checks
         valid_non_nan(self.compositelanduse.arr)
         valid_array_type(self.compositelanduse.arr, required_type=np.int16)
-        valid_boundaries(self.compositelanduse.arr, lower=-32757, upper=32757)
+        valid_boundaries(self.compositelanduse.arr, lower=-32767, upper=32767)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plot the compositelanduse raster."""
+            """Plot the composite landuse raster with standardized colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._compositelanduse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
+        self._compositelanduse.file_path = raster
 
     @property
     def ptef(self):
@@ -719,6 +797,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._ptef.plot = plot
+        self._ptef.file_path = raster
 
     @property
     def riversegments(self):
@@ -789,6 +868,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._riversegments.plot = plot
+        self._riversegments.file_path = raster
 
     @property
     def riverrouting(self):
@@ -868,6 +948,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._riverrouting.plot = plot
+        self._riverrouting.file_path = raster
 
     @property
     def sewers(self):
@@ -926,6 +1007,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._sewers.plot = plot
+        self._sewers.file_path = raster
 
     @property
     def upstream_segments(self):
@@ -949,6 +1031,7 @@ class Modelinput(Factory):
         text: pathlib.Path | str
         """
         self._upstream_segments = pd.read_table(text)
+        self._upstream_segments.file_path = text
         # checks
         array = self.upstream_segments[["line_id", "upstream_line"]].values
         valid_non_nan(array)
@@ -978,6 +1061,7 @@ class Modelinput(Factory):
         """
 
         self._adjacent_segments = pd.read_table(text)
+        self._adjacent_segments.file_path = text
         # checks
         array = self.adjacent_segments.values
         valid_non_nan(array)
@@ -1018,6 +1102,7 @@ class Modelinput(Factory):
         valid_non_nan(self._ktil.arr)
         valid_array_type(self._ktil.arr, required_type=np.int16)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
+        self._ktil.file_path = raster
 
     @property
     def tillagedirection(self):
@@ -1048,7 +1133,23 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the tillagedirection raster."""
+            """Plot the tillagedirection raster.
+
+            Parameters
+            ----------
+            fig : matplotlib.figure.Figure, default None
+                If not given, defaults to generating a new figure.
+            ax : matplotlib.axes.Axes, default None
+                If not given, defaults to generating a new axis.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_continuous_raster`.
+
+            Returns
+            -------
+            fig : matplotlib.figure.Figure
+            ax : matplotlib.axes.Axes
+            """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(
                 self.tillagedirection.arr, self.mask.arr, self._nodata
@@ -1061,6 +1162,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._tillagedirection.plot = plot
+        self._tillagedirection.file_path = raster
 
     @property
     def orientedroughness(self):
@@ -1092,7 +1194,23 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the orientedroughness raster."""
+            """Plot the orientedroughness raster.
+
+            Parameters
+            ----------
+            fig : matplotlib.figure.Figure, default None
+                If not given, defaults to generating a new figure.
+            ax : matplotlib.axes.Axes, default None
+                If not given, defaults to generating a new axis.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_continuous_raster`.
+
+            Returns
+            -------
+            fig : matplotlib.figure.Figure
+            ax : matplotlib.axes.Axes
+            """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(
                 self.orientedroughness.arr, self.mask.arr, self._nodata
@@ -1105,6 +1223,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._orientedroughness.plot = plot
+        self._orientedroughness.file_path = raster
 
     @property
     def ditches(self):
@@ -1181,6 +1300,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._ditches.plot = plot
+        self._ditches.file_path = raster
 
     @property
     def dams(self):
@@ -1257,6 +1377,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._dams.plot = plot
+        self._dams.file_path = raster
 
     @property
     def cn(self):
@@ -1288,7 +1409,23 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the CN raster."""
+            """Plot the CN raster.
+
+            Parameters
+            ----------
+            fig : matplotlib.figure.Figure, default None
+                If not given, defaults to generating a new figure.
+            ax : matplotlib.axes.Axes, default None
+                If not given, defaults to generating a new axis.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_continuous_raster`.
+
+            Returns
+            -------
+            fig : matplotlib.figure.Figure
+            ax : matplotlib.axes.Axes
+            """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.cn.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(
@@ -1299,6 +1436,7 @@ class Modelinput(Factory):
             return fig, ax
 
         self._cn.plot = plot
+        self._cn.file_path = raster
 
     @property
     def rainfall(self):
@@ -1332,6 +1470,8 @@ class Modelinput(Factory):
                     "Expected 2 columns but only one column was detected "
                     "with both tab and space delimiters."
                 )
+
+        self._rainfall.file_path = text
 
         # checks
         array = self.rainfall.values

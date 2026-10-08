@@ -1,6 +1,18 @@
 pywatemsedem
 ============
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.21722831.svg
+  :target: https://doi.org/10.5281/zenodo.21722831
+
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci_pinned.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/ci_nonpinned.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+.. image:: https://github.com/watem-sedem/pywatemsedem/actions/workflows/linting.yml/badge.svg?branch=master
+    :target: https://github.com/watem-sedem/pywatemsedem
+
+
+
 The pywatemsedem package is a Python wrapper for.
 `WaTEM/SEDEM <https://watem-sedem.github.io/watem-sedem/>`_.
 The aim of the pywatemsedem package is to:

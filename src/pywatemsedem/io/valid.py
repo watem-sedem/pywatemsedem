@@ -10,9 +10,9 @@ def valid_boundaries(arr, lower=None, upper=None, tolerance=None):
     ----------
     arr : numpy.ndarray
         Input array.
-    lower : int, float, default None
+    lower : int or float, default None
         Lower boundary.
-    upper : int, float, default None
+    upper : int or float, default None
         Upper boundary.
     tolerance : float, default None
         Allowed tolerance outside the boundaries.

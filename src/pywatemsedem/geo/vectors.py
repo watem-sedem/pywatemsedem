@@ -3,6 +3,7 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 
+from pywatemsedem.defaults import SUFFIXES_SHP
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
@@ -19,9 +20,16 @@ from pywatemsedem.geo.utils import (
 
 
 class AbstractVector:
-    """Abstract Vector class based on geopandas GeoDataFrame"""
+    """Abstract vector class based on geopandas GeoDataFrame.
+
+    Attributes
+    ----------
+    geodata : geopandas.GeoDataFrame
+        Vector data.
+    """
 
     def __init__(self):
+        """Initialize AbstractVector."""
         self._geodata = None
         self._geometry_type = None
 
@@ -33,19 +41,21 @@ class AbstractVector:
         allow_empty=False,
         req_epsg=None,
     ):
-        """Abstract vector class
+        """Initialize vector with geodata and geometry type.
 
         Parameters
         ----------
-        geodata: geopandas.GeoDataFrame
+        geodata : geopandas.GeoDataFrame
             Input data set.
-        geometry_type: str
-            Geometry type of input dataset
-        req_geometry_type: str, default None
+        geometry_type : str
+            Geometry type of input dataset.
+        req_geometry_type : str, default None
             Geometry type, for implemented types, see
-            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`
-        allow_empty: bool, default False
-            Allow an empty geodataframe
+            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`.
+        allow_empty : bool, default False
+            Allow an empty geodataframe.
+        req_epsg : int, default None
+            Required EPSG code.
         """
         self._geodata = geodata
         self._geometry_type = geometry_type
@@ -67,16 +77,21 @@ class AbstractVector:
         req_geometry,
         implemented_types=["LineString", "Polygon", "Point"],
     ):
-        """Check geometry types of vector to the required type
+        """Check geometry types of vector to the required type.
 
         Parameters
         ----------
-        geometry_type: str
+        geometry_type : str
             Geometry type of input dataset.
-        req_geometry: str
-            The required geometry types
-        implemented_types: list, default "LineString", "Polygon", "Point"
+        req_geometry : str
+            The required geometry type.
+        implemented_types : list, default ["LineString", "Polygon", "Point"]
             List of implemented geometry types.
+
+        Raises
+        ------
+        TypeError
+            If required geometry type is not implemented or does not match.
         """
         if req_geometry is not None:
             if req_geometry not in implemented_types:
@@ -93,7 +108,13 @@ class AbstractVector:
                 raise TypeError(msg)
 
     def check_crs(self, req_epsg):
-        """Check if crs is the required crs"""
+        """Check if CRS matches the required EPSG code.
+
+        Parameters
+        ----------
+        req_epsg : int
+            Required EPSG code.
+        """
         if req_epsg is not None:
             if self._geodata.crs.to_epsg() != req_epsg:
                 if self._geodata.crs is None:
@@ -102,21 +123,31 @@ class AbstractVector:
                     self._geodata = self._geodata.to_crs(epsg=req_epsg)
 
     def check_if_empty(self):
-        """Check if input is empty"""
+        """Check if input geodataframe is empty.
+
+        Raises
+        ------
+        ValueError
+            If the geodataframe is empty.
+        """
         if self._geodata.empty:
             msg = "Input vector cannot be empty!"
             raise ValueError(msg)
 
     def plot(self, color=None, column=None):
-        """Plot shape vector with geopandas plot
+        """Plot vector with geopandas plot.
 
         Parameters
         ----------
-        color
+        color : str, default None
+            Color for plotting.
+        column : str, default None
+            Column name for color mapping.
 
         Returns
         -------
-        ax: matplotlib.pyplot.axis
+        matplotlib.axes.Axes
+            Axes object.
         """
         df = self.geodata.to_crs(epsg=3857)
         kwargs = {}
@@ -130,12 +161,24 @@ class AbstractVector:
 
     @property
     def geodata(self):
-        """Property to override"""
+        """Return geodata.
+
+        Returns
+        -------
+        geopandas.GeoDataFrame
+            Vector data.
+        """
         return self._geodata
 
     @geodata.setter
     def geodata(self, input):
-        """Setter"""
+        """Set geodata.
+
+        Parameters
+        ----------
+        input : geopandas.GeoDataFrame
+            Vector data.
+        """
         self._geodata = input
 
     def write(self, outfile_path):
@@ -143,8 +186,18 @@ class AbstractVector:
 
         Parameters
         ----------
-        outfile_path: pathlib.Path or str, default None
-            File path output
+        outfile_path : pathlib.Path or str
+            File path output.
+
+        Returns
+        -------
+        bool
+            True if write was successful.
+
+        Raises
+        ------
+        TypeError
+            If file extension is not supported.
         """
         if outfile_path is not None:
             outfile_path = Path(outfile_path)
@@ -171,35 +224,38 @@ class AbstractVector:
         convert_lines_to_direction=False,
         gdal=False,
     ):
-        """Rasterize function for shape file
+        """Rasterize vector to array.
 
         Parameters
         ----------
-        rst_reference: str or  pathlib.Path
+        rst_reference : str or pathlib.Path
             File path to reference file for raster output.
-        epsg: int
-            EPSG code should be a numeric value, see https://epsg.io/.
-        col: str, default "NR"
-            Column name to map
-        nodata: float, default None
-            Values within dataframe 'col' that have to be considered as nodata in
-            raster.
-        dtype_raster: str, default "float"
-            Output raster type
-            convert_lines_to_direction:
-        convert_lines_to_direction: bool, default "False"
-            Convert lines to directions
-        gdal: bool, default False
-            Use gdal(true) / saga (false)-enige for mapping.
+        epsg : int
+            EPSG code, should be a numeric value. See https://epsg.io/.
+        col : str, default "NR"
+            Column name to map.
+        nodata : float, default None
+            Values within dataframe 'col' that have to be considered as nodata
+            in raster.
+        dtype_raster : str, default "float"
+            Output raster type.
+        convert_lines_to_direction : bool, default False
+            Convert lines to directions.
+        gdal : bool, default False
+            Use gdal (True) or saga (False) engine for mapping.
 
         Returns
         -------
-        arr: numpy.ndarray
-            Return numpy array
+        numpy.ndarray
+            Rasterized array.
         """
         # convert lines to directions only be done with saga
         if gdal & convert_lines_to_direction:
             gdal = False
+
+        if self._geodata is None:
+            msg = "Cannot rasterize empty vector"
+            raise ValueError(msg)
 
         if (col == "NR") & ("NR" not in self._geodata.columns):
             self._geodata["NR"] = np.arange(0, len(self._geodata), 1)
@@ -249,28 +305,34 @@ class AbstractVector:
         return arr
 
     def is_empty(self):
-        """check if geodata (vector) is None (empty)
+        """Check if geodata (vector) is None (empty).
 
         Returns
         -------
-        True/False
+        bool
+            True if geodata is None, False otherwise.
         """
-        return self._geodata is None
+        empty = False
+
+        if self._geodata is None:
+            empty = True
+        elif len(self._geodata) == 0:
+            empty = True
+
+        return empty
 
 
 class VectorMemory(AbstractVector):
-    """Geopandas vector
+    """Vector stored in memory from a geopandas GeoDataFrame.
 
-    Parameters
+    Attributes
     ----------
-    geodata: geopandas.GeoDataFrame
-        See :class:`pywatemsedem.geo.vectors.AbstractVector`
-    geometry_type: str
-        See :class:`pywatemsedem.geo.vectors.AbstractVector`
-    req_geometry_type: str, default None
-        See :class:`pywatemsedem.geo.vectors.AbstractVector`
-    allow_empty: bool, default False
-        See :class:`pywatemsedem.geo.vectors.AbstractVector`
+    geodata : geopandas.GeoDataFrame
+        Vector data.
+
+    Notes
+    -----
+    Inherits from :class:`pywatemsedem.geo.vectors.AbstractVector`.
     """
 
     def __init__(
@@ -282,19 +344,22 @@ class VectorMemory(AbstractVector):
         allow_empty=False,
         epsg=None,
     ):
-        """Initialize VectorMemory class
+        """Initialize VectorMemory.
 
         Parameters
         ----------
-        geodata: geopandas.GeoDataFrame
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
-        geometry_type: str
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
-        req_geometry_type: str, default None
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
-        clip_mask: geopandas.GeoDataFrame, default None
-        allow_empty: bool, default False
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+        geodata : geopandas.GeoDataFrame
+            Input geodataframe.
+        geometry_type : str
+            Geometry type of input dataset.
+        req_geometry_type : str, default None
+            Required geometry type.
+        clip_mask : geopandas.GeoDataFrame, default None
+            Mask vector for clipping.
+        allow_empty : bool, default False
+            Allow an empty geodataframe.
+        epsg : int, default None
+            Required EPSG code.
         """
         if clip_mask is not None:
             geodata = self.clip(geodata, clip_mask)
@@ -308,24 +373,38 @@ class VectorMemory(AbstractVector):
         )
 
     def clip(self, geodata, clip_mask):
-        """Clip input geodata with clip_mask
+        """Clip input geodata with clip_mask.
 
         Parameters
         ----------
-        geodata: geopandas.GeoDataFrame
-            geodataframe of input data
-        clip_mask: geopandas.GeoDataFrame
-            Mask vector
+        geodata : geopandas.GeoDataFrame
+            Geodataframe of input data.
+        clip_mask : geopandas.GeoDataFrame
+            Mask vector.
 
         Returns
         -------
-        geopandas.GeoDataFrame"""
+        geopandas.GeoDataFrame
+            Clipped geodataframe.
+        """
         gdf = gpd.clip(geodata, clip_mask, keep_geom_type=True)
         return gdf
 
 
 class VectorFile(AbstractVector):
-    """clipped Vector based on input vector file"""
+    """Vector loaded from an input vector file.
+
+    Attributes
+    ----------
+    geodata : geopandas.GeoDataFrame
+        Vector data.
+    file_path : pathlib.Path
+        File path to input vector file.
+
+    Notes
+    -----
+    Inherits from :class:`pywatemsedem.geo.vectors.AbstractVector`.
+    """
 
     def __init__(
         self,
@@ -335,19 +414,21 @@ class VectorFile(AbstractVector):
         allow_empty=False,
         epsg=None,
     ):
-        """Initialize VectorFile class
+        """Initialize VectorFile.
 
         Parameters
         ----------
-        file_path: pathlib.Path
-            File path to user input raster.
-        req_geometry_type: str
+        file_path : pathlib.Path
+            File path to user input vector.
+        req_geometry_type : str, default None
             Required type of geometry, see implemented geometries in
-            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`
-        vct_clip: pathlib.Path
-            Mask vector
-        allow_empty: bool, default False
-            See :class:`pywatemsedem.geo.vectors.AbstractVector`
+            :func:`pywatemsedem.geo.vectors.AbstractVector.check_type`.
+        vct_clip : pathlib.Path, default None
+            Mask vector for clipping.
+        allow_empty : bool, default False
+            Allow an empty geodataframe.
+        epsg : int, default None
+            Required EPSG code.
         """
         self.file_path = file_path
 
@@ -367,16 +448,17 @@ class VectorFile(AbstractVector):
         )
 
     def clip(self, vct_clip):
-        """Clip input file path with vct_clip
+        """Clip input file path with vct_clip.
 
         Parameters
         ----------
-        vct_clip: pathlib.Path
-            Mask vector
+        vct_clip : pathlib.Path
+            Mask vector.
 
         Returns
         -------
         geopandas.GeoDataFrame
+            Clipped geodataframe.
         """
         gdf_mask = gpd.read_file(vct_clip)
         gdf_mask = gdf_mask.dissolve()
@@ -384,3 +466,120 @@ class VectorFile(AbstractVector):
         geodata = gpd.read_file(self.file_path, bbox=mask)
         geodata = gpd.clip(geodata, mask, keep_geom_type=True)
         return geodata
+
+    def relocate(self, target_dir, filename=None):
+        """Move the vector file to ``target_dir``, optionally renaming it.
+
+        Writes the in-memory geodata to the new location, removes the old
+        file and updates ``file_path``. Does nothing if the vector is already
+        at that location.
+
+        Parameters
+        ----------
+        target_dir : str or pathlib.Path
+            Folder to move the vector file to.
+        filename : str, default None
+            New file name. If None, the current file name is kept.
+
+        Returns
+        -------
+        pathlib.Path
+            New file path.
+        """
+        old_path = Path(self.file_path)
+        new_path = Path(target_dir) / (filename or old_path.name)
+        if new_path.resolve() != old_path.resolve():
+            delete_vector(new_path)
+            self._geodata.to_file(new_path, spatial_index="YES")
+            delete_vector(old_path)
+            self.file_path = new_path
+        return new_path
+
+    def ensure_id_column(self, persist=True):
+        """Add an integer ``id`` column (1..N) if the vector has none.
+
+        Parameters
+        ----------
+        persist : bool, default True
+            If True and the column was added, write the vector back to
+            ``file_path``.
+        """
+        if "id" in self._geodata.columns:
+            return
+
+        self._geodata = self._geodata.copy()
+        self._geodata["id"] = np.arange(1, len(self._geodata) + 1, dtype=np.int64)
+        if persist and not self._geodata.empty:
+            delete_vector(self.file_path)
+            self._geodata.to_file(self.file_path, spatial_index="YES")
+
+
+# Column names recognised as feature id, in order of preference.
+ID_COLUMN_CANDIDATES = [
+    "id",
+    "ID",
+    "target_id",
+    "poi_id",
+    "priority_id",
+    "priority_i",
+    "buffer_id",
+    "VALUE",
+    "NR",
+    "nr",
+]
+
+
+def infer_id_column(gdf, requested=None, required=False):
+    """Return the name of the feature id column of a GeoDataFrame.
+
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+        Vector data to inspect.
+    requested : str, default None
+        Column to use. Must exist in ``gdf``. If None, the first column of
+        :data:`ID_COLUMN_CANDIDATES` present in ``gdf`` is used.
+    required : bool, default False
+        Raise if no id column can be found.
+
+    Returns
+    -------
+    str or None
+        Name of the id column, or None if none is found and ``required`` is
+        False.
+
+    Raises
+    ------
+    ValueError
+        If ``requested`` is not a column of ``gdf``, or if ``required`` is
+        True and no id column is found.
+    """
+    if requested is not None:
+        if requested not in gdf.columns:
+            msg = f"Requested id column '{requested}' not found in vector."
+            raise ValueError(msg)
+        return requested
+
+    column = next((c for c in ID_COLUMN_CANDIDATES if c in gdf.columns), None)
+    if column is None and required:
+        msg = "No id column found in vector. Please provide 'id_column'."
+        raise ValueError(msg)
+    return column
+
+
+def delete_vector(vct_in):
+    """Delete a vector dataset, including all shapefile sidecar files.
+
+    Files that do not exist are ignored.
+
+    Parameters
+    ----------
+    vct_in : str or pathlib.Path
+        File path of the vector dataset to be deleted.
+    """
+    vct_in = Path(vct_in)
+    if vct_in.suffix.lower() == ".shp":
+        for suffix in SUFFIXES_SHP:
+            vct_in.with_suffix(suffix).unlink(missing_ok=True)
+    else:
+        vct_in.unlink(missing_ok=True)

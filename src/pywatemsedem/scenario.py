@@ -42,11 +42,36 @@ logger = logging.getLogger(__name__)
 
 
 def valid_vct_endpoints(func):
-    """Check if endpoints vector are defined"""
+    """Guard a :class:`Scenario` method that requires the endpoints vector.
+
+    This decorator validates, prior to executing ``func``, that the ``include_sewers``
+    extension is enabled (see
+    :attr:`~pywatemsedem.choices.Extensions.include_sewers`) and that a non-empty
+    endpoints line vector has been assigned (see
+    :attr:`~pywatemsedem.scenario.Scenario.vct_endpoints`). It is meant to be
+    applied to :class:`Scenario` methods that rely on sewer endpoints.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the endpoints vector and the ``include_sewers``
+        extension and then delegates to ``func``.
+
+    Raises
+    ------
+    IOError
+        If the ``include_sewers`` extension is disabled, or if it is enabled but the
+        endpoints line vector is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate endpoints vector, then call the wrapped method."""
         if self.choices.extensions.include_sewers.value:
             if self._vct_endpoints.is_empty():
                 msg = (
@@ -64,11 +89,35 @@ def valid_vct_endpoints(func):
 
 
 def valid_composite_landuse(func):
-    """Check if composite landuse is defined"""
+    """Guard a :class:`Scenario` method that requires the composite landuse.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    composite landuse raster is available (see
+    :attr:`~pywatemsedem.scenario.Scenario.composite_landuse`, typically created
+    with :meth:`~pywatemsedem.scenario.Scenario.create_composite_landuse`). It is
+    meant to be applied to :class:`Scenario` methods that consume the composite
+    landuse.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the composite landuse raster and then
+        delegates to ``func``.
+
+    Raises
+    ------
+    IOError
+        If the composite landuse raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate composite landuse, then call the wrapped method."""
         if self._composite_landuse.is_empty():
             msg = (
                 "Please define a non-empty composite landuse (see also "
@@ -81,11 +130,33 @@ def valid_composite_landuse(func):
 
 
 def valid_cfactor(func):
-    """Check if composite landuse is defined"""
+    """Guard a :class:`Scenario` method that requires the C-factor raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    C-factor raster is available (see
+    :attr:`~pywatemsedem.scenario.Scenario.cfactor`). It is meant to be applied
+    to :class:`Scenario` methods that consume the C-factor.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the C-factor raster and then delegates
+        to ``func``.
+
+    Raises
+    ------
+    IOError
+        If the C-factor raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate C-factor raster, then call the wrapped method."""
         if self._cfactor.is_empty():
             msg = (
                 "Please define a non-empty C-factor raster (see also "
@@ -98,11 +169,34 @@ def valid_cfactor(func):
 
 
 def valid_ktc(func):
-    """Check if composite landuse is defined"""
+    """Guard a :class:`Scenario` method that requires the ktc raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    transport capacity coefficient (ktc) raster is available (see
+    :attr:`~pywatemsedem.scenario.Scenario.ktc`, typically created with
+    :meth:`~pywatemsedem.scenario.Scenario.create_ktc`). It is meant to be
+    applied to :class:`Scenario` methods that consume the ktc raster.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the ktc raster and then delegates to
+        ``func``.
+
+    Raises
+    ------
+    IOError
+        If the ktc raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate ktc raster, then call the wrapped method."""
         if self._ktc.is_empty():
             msg = (
                 "Please define a non-empty ktc raster (see also "
@@ -115,11 +209,33 @@ def valid_ktc(func):
 
 
 def valid_river(func):
-    """Check if river is defined"""
+    """Guard a :class:`Scenario` method that requires the river raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    river raster is available on the associated catchment (see
+    :attr:`~pywatemsedem.catchment.Catchment.river`). It is meant to be applied
+    to :class:`Scenario` methods that consume the river raster.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the river raster and then delegates to
+        ``func``.
+
+    Raises
+    ------
+    IOError
+        If the catchment river raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate river raster, then call the wrapped method."""
         if self.catchm.river.is_empty():
             msg = (
                 "Please define a non-empty river raster (see also "
@@ -132,11 +248,33 @@ def valid_river(func):
 
 
 def valid_landuse(func):
-    """Check if infrastructure is defined"""
+    """Guard a :class:`Scenario` method that requires the landuse raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    landuse raster is available on the associated catchment (see
+    :attr:`~pywatemsedem.catchment.Catchment.landuse`). It is meant to be applied
+    to :class:`Scenario` methods that consume the landuse raster.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the landuse raster and then delegates to
+        ``func``.
+
+    Raises
+    ------
+    IOError
+        If the catchment landuse raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate landuse raster, then call the wrapped method."""
         if self.catchm.landuse.is_empty():
             msg = "Please define a non-empty landuse raster"
             raise IOError(msg)
@@ -146,11 +284,33 @@ def valid_landuse(func):
 
 
 def valid_infrastructure(func):
-    """Check if infrastructure is defined"""
+    """Guard a :class:`Scenario` method that requires the infrastructure raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    infrastructure raster is available on the associated catchment (see
+    :attr:`~pywatemsedem.catchment.Catchment.infrastructure`). It is meant to be
+    applied to :class:`Scenario` methods that consume the infrastructure raster.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the infrastructure raster and then
+        delegates to ``func``.
+
+    Raises
+    ------
+    IOError
+        If the catchment infrastructure raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate infrastructure raster, then call the wrapped method."""
         if self.catchm.infrastructure.is_empty():
             msg = "Please define a non-empty infrastructure raster"
             raise IOError(msg)
@@ -159,30 +319,38 @@ def valid_infrastructure(func):
     return wrapper
 
 
-def valid_vct_grass_strips(func):
-    """Check if grass strips vector is defined"""
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """wrapper"""
-        if self.choices.dict_ecm_options["UseGras"] == 1:
-            if self._vct_grass_strips.is_empty():
-                msg = (
-                    "No (or empty) grass strips defined, but option 'UseGras' equal "
-                    "to 1."
-                )
-                raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
 def valid_vct_buffers(func):
-    """Check if buffers vector is defined"""
+    """Guard a :class:`Scenario` method that expects the buffers vector.
+
+    This decorator checks, prior to executing ``func``, whether a non-empty
+    buffers vector has been assigned (see
+    :attr:`~pywatemsedem.scenario.Scenario.vct_buffers`) when the ``buffers``
+    extension is enabled (see
+    :attr:`~pywatemsedem.choices.Extensions.include_buffers`). Unlike the other
+    guards, a missing buffers vector only triggers a warning (not an error), so
+    ``func`` is always executed. It is meant to be applied to :class:`Scenario`
+    methods that may use buffers.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that checks the buffers vector and then delegates to ``func``.
+
+    Warns
+    -----
+    UserWarning
+        If the ``buffers`` extension is enabled but the buffers vector is empty
+        or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Check buffers vector (warn only), then call the wrapped method."""
         if self.choices.extensions.include_buffers.value:
             if self._vct_buffers.is_empty():
                 msg = (
@@ -196,11 +364,33 @@ def valid_vct_buffers(func):
 
 
 def valid_vct_outlets(func):
-    """Check if outlet vector is defined"""
+    """Guard a :class:`Scenario` method that requires the outlets vector.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    outlets point vector has been assigned (see
+    :attr:`~pywatemsedem.scenario.Scenario.vct_outlets`). It is meant to be
+    applied to :class:`Scenario` methods that rely on outlets.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the outlets vector and then delegates to
+        ``func``.
+
+    Raises
+    ------
+    IOError
+        If the outlets point vector is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate outlets vector, then call the wrapped method."""
         if self._vct_outlets.is_empty():
             msg = (
                 "Please define non-empty outlets point vector "
@@ -213,11 +403,33 @@ def valid_vct_outlets(func):
 
 
 def valid_dtm(func):
-    """Check if you have defined a K-factor raster."""
+    """Guard a :class:`Scenario` method that requires the DTM raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    digital terrain model (DTM) raster is available on the associated catchment
+    (see :attr:`~pywatemsedem.catchment.Catchment.dtm`). It is meant to be
+    applied to :class:`Scenario` methods that consume the DTM.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the DTM raster and then delegates to
+        ``func``.
+
+    Raises
+    ------
+    IOError
+        If the catchment DTM raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate DTM raster, then call the wrapped method."""
         if self.catchm.dtm.is_empty():
             msg = "Please first define a (non-empty) DTM raster!"
             raise IOError(msg)
@@ -228,11 +440,33 @@ def valid_dtm(func):
 
 
 def valid_kfactor(func):
-    """Check if you have defined a K-factor raster."""
+    """Guard a :class:`Scenario` method that requires the K-factor raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    K-factor (soil erodibility) raster is available on the associated catchment
+    (see :attr:`~pywatemsedem.catchment.Catchment.kfactor`). It is meant to be
+    applied to :class:`Scenario` methods that consume the K-factor.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the K-factor raster and then delegates
+        to ``func``.
+
+    Raises
+    ------
+    IOError
+        If the catchment K-factor raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate K-factor raster, then call the wrapped method."""
         if self.catchm.kfactor.is_empty():
             msg = "Please first define a (non-empty) K-factor raster!"
             raise IOError(msg)
@@ -243,11 +477,33 @@ def valid_kfactor(func):
 
 
 def valid_pfactor(func):
-    """Check if you have defined a P-factor raster."""
+    """Guard a :class:`Scenario` method that requires the P-factor raster.
+
+    This decorator validates, prior to executing ``func``, that a non-empty
+    P-factor raster is available on the associated catchment
+    (see :attr:`~pywatemsedem.catchment.Catchment.pfactor`). It is meant to be
+    applied to :class:`Scenario` methods that consume the P-factor.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the P-factor raster and then delegates
+        to ``func``.
+
+    Raises
+    ------
+    IOError
+        If the catchment P-factor raster is empty or undefined.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate P-factor raster, then call the wrapped method."""
         if self.catchm.pfactor.is_empty():
             msg = "Please first define a (non-empty) P-factor raster!"
             raise IOError(msg)
@@ -258,11 +514,33 @@ def valid_pfactor(func):
 
 
 def valid_ini(func):
-    """Check if you have defined a valid ini-file."""
+    """Guard a :class:`Scenario` method that requires the ini-file.
+
+    This decorator validates, prior to executing ``func``, that an ini-file has
+    been created (see :attr:`~pywatemsedem.scenario.Scenario.ini`, created with
+    :meth:`~pywatemsedem.scenario.Scenario.create_ini_file`). It is meant to be
+    applied to :class:`Scenario` methods that rely on the model ini-file.
+
+    Parameters
+    ----------
+    func : callable
+        The (bound) :class:`Scenario` method to wrap.
+
+    Returns
+    -------
+    callable
+        A wrapper that first validates the ini-file and then delegates to
+        ``func``.
+
+    Raises
+    ------
+    IOError
+        If no ini-file has been defined yet.
+    """
 
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        """wrapper"""
+        """Validate ini-file, then call the wrapped method."""
         if self.ini is None:
             msg = "Please define an ini-file with *create_ini_file*."
             raise IOError(msg)
@@ -277,9 +555,33 @@ class WSException(Exception):
 
 
 class Scenario:
-    """Construct a new Scenario instance
+    """Construct a new Scenario instance.
 
     The scenario class holds all dynamic information for a scenario.
+
+    Attributes
+    ----------
+    vct_parcels : pathlib.Path, str or geopandas.GeoDataFrame
+        Parcels polygon vector with landuse and C-factor attributes.
+    vct_grass_strips : pathlib.Path, str or geopandas.GeoDataFrame
+        Grass strips polygon vector with width and scale_ktc attributes.
+    vct_buffers : pathlib.Path, str or geopandas.GeoDataFrame
+        Buffers polygon vector with buffer properties (buffercap, hdam, hknijp,
+        dknijp, qcoef, boverl, eff).
+    vct_bufferoutlets : pathlib.Path, str or geopandas.GeoDataFrame
+        Buffer outlets polygon vector.
+    vct_ditches : pathlib.Path, str or geopandas.GeoDataFrame
+        Ditches line vector.
+    vct_conductive_dams : pathlib.Path, str or geopandas.GeoDataFrame
+        Conductive dams line vector.
+    vct_outlets : pathlib.Path, str or geopandas.GeoDataFrame
+        Outlets point vector.
+    vct_endpoints : pathlib.Path, str or geopandas.GeoDataFrame
+        Endpoints line vector (sewers, ditches) with efficiency attribute.
+    force_routing : pathlib.Path, str or geopandas.GeoDataFrame
+        Forced routing line vector.
+    grass_strips : pathlib.Path, str or numpy.ndarray
+        Grass strips raster.
     """
 
     def __init__(self, catchm, year, scenario_nr, userchoices):
@@ -303,7 +605,7 @@ class Scenario:
         self.catchm = deepcopy(catchm)
         self.rp = self.catchm.rp
 
-        # Initalize
+        # Initialize
         self.vector_factory = self.catchm.vector_factory
         self.raster_factory = self.catchm.raster_factory
 
@@ -329,7 +631,7 @@ class Scenario:
         # WaTEM/SEDEM input
         self._ktc = AbstractRaster()
         self._cn = AbstractRaster()
-        self._cn_table = None
+        self._rainfall = None
         self._cfactor = AbstractRaster()
         self._composite_landuse = AbstractRaster()
 
@@ -340,9 +642,6 @@ class Scenario:
         self.rst_outlet = AbstractRaster()
         self.ini = None
 
-        # initialisation functionalities
-        # self.temporal_resolution()
-
         # Create folder structure
         self.scenario_folder_init = (
             self.catchm.folder.home_folder / f"scenario_" f"{self.scenario_nr}"
@@ -350,26 +649,7 @@ class Scenario:
         self.sfolder = ScenarioFolders(
             self.catchm.folder, str(self.scenario_nr), self.year
         )
-        self.sfolder.create_all()
-
-    def temporal_resolution(self):
-        """Calculates for which years and seasons the scenario needs data.
-
-        Based on the defined choices in the
-        :py:class:`CNWS.UserChoices <pywatemsedem.CNWS.UserChoices>` 'begin_jaar',
-        'begin_maand' and, in case of CNWS, 'Endtime model'.
-        """
-        if self.choices.extensions.curve_number.value:
-            if self.choices.dict_variables["begin_maand"] in [1, 2, 3]:
-                self.season = "winter"
-            elif self.choices.dict_variables["begin_maand"] in [4, 5, 6]:
-                self.season = "spring"
-            elif self.choices.dict_variables["begin_maand"] in [7, 8, 9]:
-                self.season = "summer"
-            elif self.choices.dict_variables["begin_maand"] in [10, 11, 12]:
-                self.season = "fall"
-        else:
-            self.season = "spring"
+        self.sfolder.check_all(create=True)
 
     @property
     def vct_parcels(self):
@@ -396,7 +676,7 @@ class Scenario:
             - *[0,1]*: C-factor for crop.
             - *NULL*: no C-factor defined.
 
-        Should contain a defiction of the C-reduction (column 'C_reduct'), used
+        Should contain a definition of the C-reduction (column 'C_reduct'), used
         in case of source-oriented measures.
 
         Can contain a 'NR' column which is the identification ID of the
@@ -652,7 +932,6 @@ class Scenario:
         self.grass_strips = arr
 
     @property
-    # @valid_vct_grass_strips
     def grass_strips(self):
         """Grass strips raster getter"""
         return self._grass_strips
@@ -716,6 +995,11 @@ class Scenario:
         self._vct_buffers.geodata["id"] = np.arange(
             1.0, len(self.vct_buffers.geodata) + 1, 1
         )
+
+        if self._vct_buffers.is_empty():
+            msg = "Buffers vector is empty, setting include_buffers to False"
+            warnings.warn(msg)
+            self.choices.extensions.include_buffers = False
 
         if not self.choices.extensions.include_buffers.value:
             msg = (
@@ -814,7 +1098,7 @@ class Scenario:
             self.vct_buffers.geodata = assign_buffer_id_to_df_buffer(
                 self.vct_buffers.geodata
             )
-            if not self.catchm.vct_river.is_empty():
+            if not self.catchm.river.is_empty():
                 arr, self.vct_buffers.geodata = process_buffers_in_river(
                     self.vct_buffers.geodata,
                     self.buffers_exid.arr,
@@ -829,6 +1113,10 @@ class Scenario:
                     logger.warning(msg)
                     self.choices.extensions.include_buffers = False
                     arr = None
+                    raster = AbstractRaster()
+            else:
+                arr = self.buffers_exid.arr
+
             if arr is not None:
                 arr = filter_outlets_in_arr_extension_id(
                     self.vct_buffers.geodata, arr, self.catchm.dtm.arr, None
@@ -1123,50 +1411,6 @@ class Scenario:
         self.endpoints = np.where(cond_mask, 0, self.endpoints.arr)
 
     @property
-    def cn_table(self):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        return self._cn_table
-
-    @cn_table.setter
-    def cn_table(self, df):
-        """Set/getter CN-table
-
-        Returns
-        -------
-        pandas.DataFrame
-            with columns:
-
-            - CNmaxID (int): unique identifier, compiled from CN type id (1-11,
-              associated to crop), contour plowing measures (0/1/2), hydrological
-              conditions ({0,1->3}, {unknown, poor to good}), contour_id (0/1).
-            - CNmax_1 (int): CNmax for soil class 1
-            - CNmax_2 (int): CNmax for soil class 2
-            - CNmax_3 (int): CNmax for soil class 3
-            - CNmax_4 (int): CNmax for soil class 4
-        """
-        if not {"CNmaxID", "CNmax_1", "CNmax_2", "CNmax_3", "CNmax_4"}.issubset(df):
-            msg = (
-                "Dataframe should have columns 'CNmaxID', 'CNmax_1', 'CNmax_2', "
-                "'CNmax_3', 'CNmax_4'."
-            )
-            raise IOError(msg)
-        self._cn_table = df
-
-    @property
     def composite_landuse(self):
         """Getter infrastructure polygon vector"""
         return self._composite_landuse
@@ -1185,7 +1429,17 @@ class Scenario:
         )
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the composite landuse raster with standardized colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._composite_landuse.arr, nodata, *args, **kwargs)
 
         self._composite_landuse.plot = plot
@@ -1240,6 +1494,34 @@ class Scenario:
             3-D raster: x,y raster for every season.
         """
         self._cn = self.raster_factory(raster_input, flag_clip=False, flag_mask=False)
+
+    @property
+    def rainfall(self):
+        """Getter rainfall file"""
+        return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, rainfall_filename):
+        """Setter rainfall file
+
+        Parameters
+        ----------
+        file_path: str or pathlib.Path
+            rainfall time series, for documentation, see
+            :ref:`here <watemsedem:rainfallfile>`
+
+        """
+        if not (
+            isinstance(rainfall_filename, str) or isinstance(rainfall_filename, Path)
+        ):
+            msg = "Rainfall filename is not of type `str` or `pathlib.Path`."
+            raise TypeError(msg)
+
+        if not Path(rainfall_filename).exists():
+            msg = f"Rainfall filename {rainfall_filename} does not exist."
+            raise IOError(msg)
+
+        self._rainfall = Path(rainfall_filename)
 
     @valid_landuse
     @valid_river
@@ -1457,11 +1739,21 @@ class Scenario:
             dtype=np.int32,
         )
         if self.choices.extensions.curve_number.value:
-            if self.cn is not None:
+            if not self.cn.is_empty():
                 self.cn.write(self.sfolder.wsinput_folder / inputfilename.cn_file)
             else:
-                msg = "Model version in 'CN-WS', define a CN raster to run CN."
+                msg = "CN extension is enabled, define a CN raster to run CN."
                 raise IOError(msg)
+
+            if self.rainfall is not None:
+                shutil.copy(
+                    self.rainfall,
+                    self.sfolder.wsinput_folder / inputfilename.rainfall_file,
+                )
+            else:
+                msg = "CN extension is enabled, define a rainfall file to run CN."
+                raise IOError(msg)
+
         if not self.choices.extensions.create_ktc_map.value:
             if not self.ktc.is_empty():
                 self.ktc.write(self.sfolder.wsinput_folder / inputfilename.ktc_file)
@@ -1476,8 +1768,7 @@ class Scenario:
         if not self.choices.options.only_routing.value:
             if self.choices.extensions.calibrate.value:
                 self.choices.output.write_sediment_export = False
-                self.choices.output.write_water_export = False
-                self.choices.extensions.output_per_river_segment = False
+                self.choices.output.write_water_erosion = False
 
         if self.choices.extensions.include_buffers.value & (
             not self.buffers.is_empty()

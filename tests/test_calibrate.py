@@ -4,11 +4,11 @@ from pywatemsedem import calibrate
 
 
 class TestCalibrate:
-    """Test class to test calibrate functionlaities."""
+    """Test class to test calibrate functionalities."""
 
     # TODO: expand tests with dummy data.
     def test_process_calibrationrun_output(self):
-        """Test processing of calibration output"""
+        """Test processing of calibration output."""
         # implicit test
         calibrate.process_calibrationrun_output(
             calibratedata.txt_calibrate,

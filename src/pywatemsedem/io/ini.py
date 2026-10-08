@@ -1,3 +1,9 @@
+"""ini.py
+
+This module contains the IniFile class, which is used to create the WaTEM/SEDEM
+ini-file, together with some useful functions to handle ini-files.
+"""
+
 import configparser
 import datetime
 import logging
@@ -40,7 +46,17 @@ class IniFile:
     """
 
     def __init__(self, inputfolder, outputfolder, choices):
-        """Creates an ini-file for the scenario"""
+        """Creates an ini-file for the scenario
+
+        Parameters
+        ----------
+        inputfolder: pathlib.Path or str
+            file path of the folder with input data
+        outputfolder: pathlib.Path or str
+            file path of the folder where the output files will be stored
+        choices: pywatemsedem.choices.Choices
+            instance of the class containing the user choices
+        """
 
         self.wsinput_folder = inputfolder
         self.wsoutput_folder = outputfolder
@@ -48,12 +64,19 @@ class IniFile:
         self.choices = choices
 
     def write(self, ini):
-        """Write ini file to disk"""
+        """Write the assembled configuration to an ini-file on disk.
+
+        Parameters
+        ----------
+        ini : pathlib.Path or str
+            Target path of the ini-file to (over)write.
+        """
         with open(ini, "w") as f:
             self.cfg.write(f)
             f.close()
 
     def add_sections(self):
+        """Adding all watem-sedem sections to the config file"""
         self.cfg.add_section("Model information")
         self.cfg.add_section("Working directories")
         self.cfg.add_section("Files")
@@ -82,7 +105,7 @@ class IniFile:
         )
 
     def add_files(self):
-        """Add section files to config file"""
+        """Add all Files to config file"""
         self.cfg.set(
             "Files",
             "DTM filename",
@@ -122,14 +145,14 @@ class IniFile:
             raise IOError(msg)
 
     def add_parameters(self):
-        """Add section parameters to config file"""
+        """Add parameters to config file"""
         for key in self.choices.parameters.__dict__:
             attribute = getattr(self.choices.parameters, key)
             if attribute.value is not None:
                 self.cfg.set("Parameters", attribute.key, str(attribute.value))
 
     def add_output(self):
-        """Add section outputs config file"""
+        """Add outputs to config file"""
         for key in self.choices.output.__dict__:
             attribute = getattr(self.choices.output, key)
             if attribute.value is not None:
@@ -457,39 +480,40 @@ class IniFile:
         """Add create ktc map and calibration extensions and
         their extension parameters to config file"""
         if self.choices.extensions.calibrate.value:
-            self.cfg.add_section("Calibration")
             self.cfg.set(
                 "Extensions",
                 "Calibrate",
                 "1",
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcHigh_lower",
-                str(self.choices.extensionparameters["KTcHigh_lower"]),
+                str(self.choices.extensionparameters.ktc_high_lower.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcHigh_upper",
-                str(self.choices.dict_variables["KTcHigh_upper"]),
+                str(self.choices.extensionparameters.ktc_high_upper.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcLow_lower",
-                str(self.choices.dict_variables["KTcLow_lower"]),
+                str(self.choices.extensionparameters.ktc_low_lower.value),
             )
             self.cfg.set(
-                "Calibration",
+                "Parameters Extensions",
                 "KTcLow_upper",
-                str(self.choices.dict_variables["KTcLow_upper"]),
+                str(self.choices.extensionparameters.ktc_low_upper.value),
             )
             self.cfg.set(
-                "Calibration", "steps", str(self.choices.dict_variables["steps"])
+                "Parameters Extensions",
+                "steps",
+                str(self.choices.extensionparameters.steps.value),
             )
             self.cfg.set(
-                "Parameters",
+                "Parameters Extensions",
                 "ktc limit",
-                str(self.choices.parameters.ktc_limit.value),
+                str(self.choices.extensionparameters.ktc_limit.value),
             )
         elif (
             not self.choices.extensions.create_ktc_map.value
@@ -574,7 +598,7 @@ class IniFile:
             self.cfg.set(
                 "Files",
                 "Rainfall filename",
-                "Rainfall.txt",  # TODO: define in templates
+                (self.wsinput_folder / inputfilename.rainfall_file).name,
             )
             self.cfg.set(
                 "Parameters Extensions",
@@ -609,7 +633,7 @@ def open_ini(ini):
 
     Parameters
     ----------
-    ini: pathlib.Path
+    ini: pathlib.Path or str
 
     Returns
     -------

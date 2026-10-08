@@ -27,6 +27,7 @@ class InputFileName:
             self.endpoints_id_file = "sewers_id.rst"
             self.buffers_file = "buffers.rst"
             self.cn_file = "cn.rst"
+            self.rainfall_file = "rainfall.txt"
             self.adjacentedges_file = "adjacent_edges.txt"
             self.upedges_file = "up_edges.txt"
 
