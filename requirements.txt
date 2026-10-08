@@ -86,7 +86,7 @@ shapely==2.1.2
     # via geopandas
 six==1.17.0
     # via python-dateutil
-threadpoolctl==3.6.0
+threadpoolctl==3.7.0
     # via scikit-learn
 tzdata==2026.4
     # via pandas
