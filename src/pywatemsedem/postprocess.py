@@ -3652,11 +3652,12 @@ class PostProcess(Factory):
               pixels outside the element (kg)
             - *sewer_in* (float): sediment entering the sewer in the element
               (kg)
-            - *sedi_export* (float): sediment exported to the river in the
-              element (kg)
+            - *sedi_exp* (float): sediment exported to the river in the
+              element (kg), abbreviated to fit the 10-character limit of
+              shapefile field names
             - *deposition* (float): ``sedi_in - sedi_out - sewer_in -
-              sedi_export`` if positive, else zero (kg)
-            - *erosion* (float): ``sedi_out + sewer_in + sedi_export -
+              sedi_exp`` if positive, else zero (kg)
+            - *erosion* (float): ``sedi_out + sewer_in + sedi_exp -
               sedi_in`` if positive, else zero (kg)
             - *eSTE* (float): estimated sediment trapping efficiency (%), see
               :func:`pywatemsedem.grasstrips.estimate_ste`, nan if ``sedi_in``
@@ -3776,13 +3777,13 @@ class PostProcess(Factory):
             {
                 "id": arr_ids[valid],
                 "sewer_in": arr_sewer_in[valid],
-                "sedi_export": arr_sedi_export[valid],
+                "sedi_exp": arr_sedi_export[valid],
             }
         )
         df_balance = df_pixels.groupby("id").agg(
             npixels=("sewer_in", "size"),
             sewer_in=("sewer_in", "sum"),
-            sedi_export=("sedi_export", "sum"),
+            sedi_exp=("sedi_exp", "sum"),
         )
         df_balance["area"] = df_balance["npixels"] * self.rp.resolution**2
         df_balance["sedi_in"] = sedi_in.reindex(df_balance.index, fill_value=0.0)
@@ -3791,7 +3792,7 @@ class PostProcess(Factory):
             df_balance["sedi_in"]
             - df_balance["sedi_out"]
             - df_balance["sewer_in"]
-            - df_balance["sedi_export"]
+            - df_balance["sedi_exp"]
         )
         df_balance["deposition"] = netto.clip(lower=0.0)
         df_balance["erosion"] = (-netto).clip(lower=0.0)
@@ -3808,7 +3809,7 @@ class PostProcess(Factory):
                 "sedi_in",
                 "sedi_out",
                 "sewer_in",
-                "sedi_export",
+                "sedi_exp",
                 "deposition",
                 "erosion",
                 "eSTE",

@@ -131,7 +131,7 @@ def test_calculate_sediment_balance_synthetic():
         "sedi_in",
         "sedi_out",
         "sewer_in",
-        "sedi_export",
+        "sedi_exp",
         "deposition",
         "erosion",
         "eSTE",
@@ -147,7 +147,7 @@ def test_calculate_sediment_balance_synthetic():
     np.testing.assert_allclose(df["sedi_in"], [0.0, 25.0])
     np.testing.assert_allclose(df["sedi_out"], [25.0, 0.0])
     np.testing.assert_allclose(df["sewer_in"], [5.0, 0.0])
-    np.testing.assert_allclose(df["sedi_export"], [0.0, 22.0])
+    np.testing.assert_allclose(df["sedi_exp"], [0.0, 22.0])
     np.testing.assert_allclose(df["deposition"], [0.0, 3.0])
     np.testing.assert_allclose(df["erosion"], [30.0, 0.0])
     # no inflow in element 1, so no trapping efficiency
@@ -232,7 +232,7 @@ def _assert_sediment_balance_closes(df):
     """Assert that netto deposition = inflow - outflow - sewer - export."""
     np.testing.assert_allclose(
         df["deposition"] - df["erosion"],
-        df["sedi_in"] - df["sedi_out"] - df["sewer_in"] - df["sedi_export"],
+        df["sedi_in"] - df["sedi_out"] - df["sewer_in"] - df["sedi_exp"],
     )
     assert ((df["deposition"] == 0) | (df["erosion"] == 0)).all()
 
