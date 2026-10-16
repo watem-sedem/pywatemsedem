@@ -496,6 +496,43 @@ def test_convert_output_rsts_to_ton(postprocess_obj):
         np.testing.assert_allclose(arr_ton[valid], arr_src[valid] / 1000.0, atol=1e-6)
 
 
+def test_write_erosion_deposition_raster(postprocess_obj):
+    """Test write_erosion_deposition_raster splits watereros in erosion/deposition."""
+
+    result = postprocess_obj.write_erosion_deposition_raster()
+
+    assert result is None
+
+    erosion = postprocess_obj.erosion
+    deposition = postprocess_obj.deposition
+    assert erosion.file_path == postprocess_obj.postprocessing_folder / "Erosion_kg.rst"
+    assert deposition.file_path == (
+        postprocess_obj.postprocessing_folder / "Deposition_kg.rst"
+    )
+    assert erosion.file_path.exists()
+    assert deposition.file_path.exists()
+
+    nodata = postprocess_obj.rp.nodata
+    arr_watereros = postprocess_obj.modeloutput.watereros_kg.arr
+    valid = arr_watereros != nodata
+
+    # nodata is retained
+    np.testing.assert_array_equal(erosion.arr[~valid], nodata)
+    np.testing.assert_array_equal(deposition.arr[~valid], nodata)
+
+    # both rasters are positive and split watereros
+    assert np.all(erosion.arr[valid] >= 0)
+    assert np.all(deposition.arr[valid] >= 0)
+    assert np.any(erosion.arr[valid] > 0)
+    assert np.any(deposition.arr[valid] > 0)
+    np.testing.assert_allclose(
+        deposition.arr[valid] - erosion.arr[valid], arr_watereros[valid], rtol=1e-6
+    )
+    np.testing.assert_allclose(
+        erosion.arr[valid], np.where(arr_watereros < 0, -arr_watereros, 0)[valid]
+    )
+
+
 def test_calculate_sediment_balance_vector(postprocess_obj):
     """Test the sediment balance on a vector factory object (grass strips)."""
     postprocess_obj.vct_grass_strips = _copy_shapefile(

@@ -3606,6 +3606,40 @@ class PostProcess(Factory):
             write_arr_as_rst(arr_ton, rst_out, "float32", self.rp.rasterio_profile)
             setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
 
+    def write_erosion_deposition_raster(self):
+        """Split the watereros raster in an erosion and a deposition raster.
+
+        In ``self.modeloutput.watereros_kg``, negative values are erosion and
+        positive values are deposition. Both rasters hold positive values (kg)
+        and zero elsewhere; nodata pixels remain nodata. The rasters are
+        written to ``self.postprocessing_folder`` and exposed as raster-factory
+        wrapped attributes:
+
+        - ``self.erosion``: ``Erosion_kg.rst``, ``-watereros`` where
+          ``watereros < 0``
+        - ``self.deposition``: ``Deposition_kg.rst``, ``watereros`` where
+          ``watereros > 0``
+        """
+        if self.mask is None:
+            self.mask = self.modelinput.mask.file_path
+
+        arr_watereros = self.modeloutput.watereros_kg.arr
+        nodata = self.rp.nodata
+        if pd.isna(nodata):
+            valid = ~np.isnan(arr_watereros)
+        else:
+            valid = arr_watereros != nodata
+
+        rasters = {
+            "erosion": ("Erosion_kg.rst", np.clip(-arr_watereros, 0, None)),
+            "deposition": ("Deposition_kg.rst", np.clip(arr_watereros, 0, None)),
+        }
+        for attr_name, (filename, arr) in rasters.items():
+            arr = np.where(valid, arr, nodata)
+            rst_out = self.postprocessing_folder / filename
+            write_arr_as_rst(arr, rst_out, "float32", self.rp.rasterio_profile)
+            setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
+
     def calculate_sediment_balance(self, elements, compute_priority=None):
         """Compute the sediment balance per element.
 
@@ -3865,7 +3899,6 @@ class PostProcess(Factory):
     # - calculate_areas_prckrt
     # - make_facts
     # - split_sewerin
-    # - write_erosion_deposition_raster
     # - assign_filenames
     # - process_and_check_filename
     # - check_condition_files
@@ -4249,13 +4282,6 @@ class PostProcess(Factory):
             rst_ditches,
         )
         return rst_sewers, rst_ditches
-
-    def write_erosion_deposition_raster(self):
-        """Write erosion and deposition ratser based on watereros"""
-        self.files["rst_erosion"] = create_erosion_raster(self.files["rst_watereros"])
-        self.files["rst_deposition"] = create_deposition_raster(
-            self.files["rst_watereros"]
-        )
 
     @property
     def sinks(self):
