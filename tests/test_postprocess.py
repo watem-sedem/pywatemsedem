@@ -195,6 +195,35 @@ def test_calculate_sediment_balance_positive_ids():
         pp.calculate_sediment_balance(elements)
 
 
+def test_calculate_sediment_balance_grass_strips_landuse():
+    """Test that only grass strip pixels (landuse -6) belong to a grass strip.
+
+    Pixel 2 is infrastructure (-2) in the model, so it does not belong to
+    grass strip 1.
+    """
+    pp = _synthetic_postprocess()
+    compositelanduse = SimpleNamespace(arr=np.array([[-6, -2, -6, -6]]))
+    pp.modelinput = SimpleNamespace(compositelanduse=compositelanduse)
+    grass_strips = SimpleNamespace(arr=np.array([[1, 1, 2, 2]]))
+
+    # other elements are not restricted to a landuse
+    df = pp.calculate_sediment_balance(grass_strips)
+    assert df["npixels"].tolist() == [2, 2]
+
+    pp._vct_grass_strips = grass_strips
+    df = pp.calculate_sediment_balance(grass_strips)
+
+    assert df["id"].tolist() == [1, 2]
+    assert df["npixels"].tolist() == [1, 2]
+    # grass strip 1: the 10 kg from pixel 1 to pixel 2 now leaves the strip,
+    # the 5 kg sewer inflow in pixel 2 is no longer part of the strip
+    # grass strip 2: still receives the 25 kg from pixel 2
+    np.testing.assert_allclose(df["sedi_in"], [0.0, 25.0])
+    np.testing.assert_allclose(df["sedi_out"], [10.0, 0.0])
+    np.testing.assert_allclose(df["sewer_in"], [0.0, 0.0])
+    np.testing.assert_allclose(df["sedi_exp"], [0.0, 22.0])
+
+
 def test_calculate_sediment_balance_parcel_id_recycling():
     """Test the warning if the maximum parcel id (int16) is reached in the
     composite landuse raster."""
@@ -571,6 +600,20 @@ def test_calculate_sediment_balance_vector(postprocess_obj):
     assert len(columns) == len(gdf.columns) - 2
     assert "cum_sum" not in columns
     assert "cdf" not in columns
+
+
+def test_calculate_sediment_balance_vector_landuse(postprocess_obj):
+    """Test that the grass strips only hold the grass strip pixels of the model."""
+    postprocess_obj.vct_grass_strips = _copy_shapefile(
+        scenario_data.grass_strips, postprocess_obj.postprocessing_folder
+    )
+    df = postprocess_obj.calculate_sediment_balance(postprocess_obj.vct_grass_strips)
+
+    # every grass strip pixel (landuse -6) of the model belongs to exactly one
+    # grass strip, pixels with another landuse do not belong to a grass strip
+    arr_landuse = postprocess_obj.modelinput.compositelanduse.arr
+    assert df["npixels"].sum() == (arr_landuse == -6).sum()
+    _assert_sediment_balance_closes(df)
 
 
 @pytest.mark.parametrize(

@@ -3661,7 +3661,12 @@ class PostProcess(Factory):
             :meth:`pywatemsedem.geo.vectors.AbstractVector.rasterize`), i.e.
             every pixel touched by a polygon belongs to the polygon. For
             ``self.modelinput.buffers``, the buffer body pixels (buffer id +
-            2^14) are part of the buffer.
+            2^14) are part of the buffer. For ``self.vct_grass_strips``, only
+            the pixels that are grass strip in
+            ``self.modelinput.compositelanduse`` (value -6) are part of a grass
+            strip, i.e. not the pixels where the model gives priority to
+            another landuse (e.g. infrastructure or river). Grass strips
+            without such pixels get no sediment balance (nan).
         compute_priority: str, optional
             Sediment balance variable to prioritize the elements on, sorted
             from highest to lowest (e.g. ``"deposition"`` or ``"eSTE"``), and
@@ -3759,6 +3764,10 @@ class PostProcess(Factory):
         valid = np.isfinite(arr_ids) & (arr_ids > 0)
         if not pd.isna(nodata):
             valid &= arr_ids != nodata
+        if elements is getattr(self, "_vct_grass_strips", None):
+            # only the pixels that are grass strip in the model
+            arr_landuse = np.asarray(self.modelinput.compositelanduse.arr)
+            valid &= arr_landuse == -6
         if not np.any(valid):
             msg = "No elements (positive ids) found to compute the sediment balance."
             raise ValueError(msg)
