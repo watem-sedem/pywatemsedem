@@ -3901,7 +3901,6 @@ class PostProcess(Factory):
     # - merge_sedi_out_and_cumulative
     # - add_sediment_to_subcatchments
     # - add_segment_results_to_vct
-    # - compute_sewer_in_per_catchment
     # - identify_sinks_in_routing
     # - set_prckrt_nodata
     # - calculate_areas_prckrt
@@ -4050,39 +4049,6 @@ class PostProcess(Factory):
                 f"{self.files['vct_waterline']} does not exist!"
             )
             raise IOError(msg)
-
-    def compute_sewer_in_per_catchment(self, vct_subcatchments):
-        """Compute sewer in per subcatchment
-
-        Parameters
-        ----------
-        vct_subcatchments: str or pathlib.Path
-            File path of vectorfile which holds the subcatchments subject to
-            inspection
-
-        """
-        vct_subcatchments = Path(vct_subcatchments)
-        rst_subcatchment = vct_subcatchments.parent / Path(
-            vct_subcatchments.stem + ".sdat"
-        )
-        arr_sewerin, _ = load_raster(self.files["rst_sewerin"])
-        arr_subcatchment, _ = load_raster(rst_subcatchment)
-        sewer_in = []
-        catchids = np.unique(arr_subcatchment)
-        for catchid in catchids:
-            sewerinsum = np.where(arr_subcatchment == catchid, arr_sewerin, 0).sum()
-            sewer_in.append(sewerinsum)
-        data = {"ids": catchids, "sewer_in": sewer_in}
-        df_sewerin = pd.DataFrame.from_dict(data)
-        df_sewerin["sewer_in"] = np.round(
-            df_sewerin["sewer_in"] / 1000, 3
-        )  # kg to tonnes
-        gdf_subcatchments = gpd.read_file(vct_subcatchments)
-        gdf_subcatchments = gdf_subcatchments.merge(
-            df_sewerin, left_on="NR", right_on="ids", how="left"
-        )
-        gdf_subcatchments.drop(columns=["ids"], inplace=True)
-        gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
 
     def identify_sinks_in_routing(self, catchment_name, scenario_label):
         """Identify sinks based on whether more than one routing vector goes to a pixel.
