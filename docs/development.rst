@@ -220,38 +220,6 @@ item, you can use this in the docstring. E.g. a dict
     2. Detail alert: the format *variable: type* is used as constructor for
        every variable in the documentation (and not *variable : type*).
 
-Postprocess file structure
---------------------------
-
-The postprocess filestructure file `src/pywatemsedem/data/postprocess_files.csv`
-holds an overview of all files that are used within postprocessing
-(either WaTEM/SEDEM input data, output data, intermediate processing files,
-etc..). This file can be used to add files to the WaTEM/SEDEM package. Do note that
-this table is only used to define the references to files within the WaTEM/SEDEM
-Python code. These references are saved in Python in a dictionary. Each line
-holds the definition for one file:
-
-- tag_variable & prefix_variable (str): define the dictionary key
-  (e.g. ``rst_aspect``) as the filename structure defined above.
-- folder, filename, argument and  extension (str): hold the dictionary value
-  and defines the filename. Python string formating is used in filename to
-  define the specific arguments needed to recognize the file (e.g. filename:
-  `buffers_%s_s%s` and argument `bekken, scenario` will fill in the catchment
-  name and scenario number in the filename).
-- mandatory (int): indicates whether a file is mandatory to create/load.
-- condition (str) (only postprocess): indicates the condition which is coupled
-  to the existence of a file, e.g. if a ``rst_buffers`` file is loaded, then
-  the option ``Include buffers`` in the model code is set to one. This option
-  is only required for the postprocessing.
-- default_value (int) (only postprocess): the default value given to an empty
-  raster (usefull if a file was not mandatory, but if it does have to be
-  loaded for merging with other scenario's).
-- generate_nodata (int) (only postprocess): generate a no data file to define
-  model domain (i.e. some inputfiles have 0 as nodata value for the
-  modeldomain, but also have 0 in the model domain).
-- postprocess (int) (only postprocess): indicate whether file has to be loaded
-  within postprocessing script.
-
 Package release
 ===============
 

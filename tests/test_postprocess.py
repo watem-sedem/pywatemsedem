@@ -12,32 +12,7 @@ import pytest
 from conftest import folder_core, ini_file, postprocess, scenario_data
 
 from pywatemsedem.geo.utils import load_raster
-from pywatemsedem.postprocess import (
-    PostProcess,
-    compute_netto_erosion_parcels,
-    read_filestructure,
-)
-
-
-@pytest.mark.parametrize("sep", [",", ";"])
-def test_read_filestructure(sep):
-    """Test function for reading filestructure file from pywatemsedem package
-
-    The function is tested by using a correct delimiter (sep=",") which leads to a
-    succesfull load of the text file (","-delimited), and by using a wrong delimiter
-    (sep=";") which leads to a fail of loading the text file.
-
-    Parameters
-    ----------
-    sep: str
-        Delimiter.
-    """
-    if sep == ";":
-        with pytest.raises(KeyError, match="DataFrame should contain "):
-            read_filestructure(sep=sep)
-    else:
-        df = read_filestructure(sep=sep)
-        assert len(df) > 0
+from pywatemsedem.postprocess import PostProcess, compute_netto_erosion_parcels
 
 
 def test_compute_netto_erosion_parcels():
