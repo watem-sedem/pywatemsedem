@@ -99,7 +99,6 @@ class PostProcess(Factory):
         self._vct_priority_points = None
         self._vct_point = None
         self._vct_points_dummy = {}
-        self._sinks = None
 
         # general
         self.ini = Path(ini)
@@ -4291,21 +4290,6 @@ class PostProcess(Factory):
             rst_ditches,
         )
         return rst_sewers, rst_ditches
-
-    @property
-    def sinks(self):
-        """Getter Sinks attribute."""
-        return self._sinks
-
-    @sinks.setter
-    def sinks(self, raster):
-        """Setter
-
-        Parameters
-        ----------
-        raster: pathlib.Path | str
-        """
-        self._sinks = self.raster_factory(raster, flag_mask=True)
 
     def assign_filenames(self, fmap_results, year, catchment_name, scenario_label):
         """Use filestructure defined in the package to appoint names of files.
