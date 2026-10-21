@@ -17,7 +17,6 @@ from pywatemsedem.geo.utils import (
     load_raster,
     raster_array_to_pandas_dataframe,
     raster_dataframe_to_arr,
-    set_no_data_rst,
     write_arr_as_rst,
 )
 from pywatemsedem.grasstrips import estimate_ste
@@ -27,7 +26,6 @@ from pywatemsedem.io.modeloutput import (
     define_subcatchments_saga,
     make_routing_vct_saga,
 )
-from pywatemsedem.scenario import WSException
 from pywatemsedem.valid import (
     valid_routing_sedi_out_vector,
 )
@@ -3979,7 +3977,8 @@ class PostProcess(Factory):
         Returns
         -------
         pandas.DataFrame
-            Single row with the columns:
+            One row per statistic, with the columns *statistic*, *value* and
+            *unit* (``ha``, ``%`` or ``-`` for counts). The statistics are:
 
             - *catchment_area* (float): area of the catchment (ha), from the
               mask raster.
@@ -3988,8 +3987,8 @@ class PostProcess(Factory):
               the composite landuse raster.
             - *parcel_area* (float): area of the agricultural parcels (ha), from
               ``vct_parcels`` if given, otherwise from the raster.
-            - *rel_parcel_area* (float): share of the agricultural parcels in
-              the catchment area (%).
+            - *rel_parcel_area* (float): share of ``parcel_area`` in the
+              catchment area (%).
             - *n_parcels_ntkerend* (float): number of parcels with
               non-inversion tillage, requires ``vct_parcels``.
             - *n_grass_strips* (float): number of grass strips, requires
@@ -3997,6 +3996,14 @@ class PostProcess(Factory):
             - *grass_strip_area* (float): area of the grass strips (ha), from
               ``vct_grass_strips`` if given, otherwise from the raster
               (landuse -6).
+            - *river_area*, *infrastructure_area*, *forest_area*,
+              *meadow_area*, *open_water_area* (float): area of the landuse
+              classes -1 to -5 in the composite landuse raster (ha).
+            - *rel_<area>* (float): share of every area above (except the
+              catchment area) in the catchment area (%).
+
+            If the parcel or grass strip areas are computed with the vectors,
+            the relative areas do not exactly sum up to 100 %.
         """
         pixel_area_ha = self.rp.resolution**2 / 10000.0
         arr_mask = self.modelinput.mask.arr == 1
@@ -4007,11 +4014,19 @@ class PostProcess(Factory):
             "catchment_area": np.sum(arr_mask) * pixel_area_ha,
             "n_parcels": np.unique(arr_parcels).size,
             "parcel_area": arr_parcels.size * pixel_area_ha,
-            "rel_parcel_area": np.nan,
             "n_parcels_ntkerend": np.nan,
             "n_grass_strips": np.nan,
             "grass_strip_area": np.sum(arr_landuse == -6) * pixel_area_ha,
         }
+        landuse_classes = {
+            "river": -1,
+            "infrastructure": -2,
+            "forest": -3,
+            "meadow": -4,
+            "open_water": -5,
+        }
+        for name, value in landuse_classes.items():
+            summary[f"{name}_area"] = np.sum(arr_landuse == value) * pixel_area_ha
 
         missing = []
         if vct_parcels is not None:
@@ -4026,9 +4041,6 @@ class PostProcess(Factory):
                 missing.append("n_parcels_ntkerend ('ntkerend' not in vct_parcels)")
         else:
             missing.append("n_parcels_ntkerend (requires vct_parcels)")
-        summary["rel_parcel_area"] = (
-            summary["parcel_area"] / summary["catchment_area"] * 100
-        )
 
         if vct_grass_strips is not None:
             gdf_grass_strips = gpd.read_file(vct_grass_strips)
@@ -4045,7 +4057,17 @@ class PostProcess(Factory):
         if missing:
             logger.warning(f"Could not compute: {', '.join(missing)}.")
 
-        df = pd.DataFrame([summary])
+        rows = []
+        for name, value in summary.items():
+            if name.endswith("_area"):
+                rows.append((name, value, "ha"))
+                # relative area next to every area
+                if name != "catchment_area":
+                    relative = value / summary["catchment_area"] * 100
+                    rows.append((f"rel_{name}", relative, "%"))
+            else:
+                rows.append((name, value, "-"))
+        df = pd.DataFrame(rows, columns=["statistic", "value", "unit"])
         df.to_csv(self.postprocessing_folder / "model_input_summary.csv", index=False)
         return df
 
@@ -4080,8 +4102,6 @@ class PostProcess(Factory):
     # - add_sediment_to_subcatchments
     # - add_segment_results_to_vct
     # - identify_sinks_in_routing
-    # - set_prckrt_nodata
-    # - calculate_areas_prckrt
     # - split_sewerin
     # - intersect_sedi_outparcels_with_subcatchments
     # - assign_values_df_summary
@@ -4301,58 +4321,6 @@ class PostProcess(Factory):
         else:
             msg = "routing.txt does not exist!"
             logger.error(msg)
-
-    def set_prckrt_nodata(self):
-        """Set nodata to 'WaTEM/SEDEM perceelskaart'"""
-        try:
-            rst_prckrt_nodata = self.files["rst_prckrt"].stem + "_nodata.tif"
-            set_no_data_rst(self.files["rst_prckrt"], rst_prckrt_nodata)
-        except KeyError:
-            msg = "'set_no_data_rst' failed for WaTEM/SEDEM perceelskaart."
-            logger.error(msg)
-            raise WSException(msg)
-        except TypeError:
-            msg = "check if scenario is defined correctly"
-            logger.warning(msg)
-            raise WSException(msg)
-
-    def calculate_areas_prckrt(self, year, catchment_name, scenario_label):
-        """Calculate the areas and relative areas of all landuse classes
-        in the parcelmap.
-
-        Parameters
-        ----------
-        year : int
-            Simulation year (used for output file naming).
-        catchment_name : str
-            Name of the catchment (used for output file naming).
-        scenario_label : int or str
-            Scenario label (used for output file naming).
-        """
-
-        if self.files["rst_prckrt"] is None:
-            self.set_prckrt_nodata()
-
-        arr_prckrt, _ = load_raster(self.files["rst_prckrt"])
-
-        res = self.rp.resolution
-        arr_prckrt = np.where(arr_prckrt >= 1, 1, arr_prckrt)
-        vals, counts = np.unique(arr_prckrt, return_counts=True)
-        areas = np.multiply(counts, res**2)
-        mask = np.where(vals == 0, True, False)
-        vals = np.ma.array(vals, mask=mask)
-        areas = np.ma.array(areas, mask=mask)
-        total_area = np.sum(areas)
-        rel_areas = areas / total_area
-
-        df = pd.DataFrame()
-        df["lnduse_class"] = vals
-        df["area"] = areas
-        df["rel_area"] = rel_areas * 100
-        f = self.postprocessing_folder / (
-            f"opp_perceelskaart_{year}_{catchment_name}_" f"s{scenario_label}.csv"
-        )
-        df.to_csv(f, sep=";")
 
     def split_sewerin(self, scenario_label):
         """Split the sewerin raster with the sewer_id raster.

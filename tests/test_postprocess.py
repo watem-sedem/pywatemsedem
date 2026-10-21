@@ -928,16 +928,36 @@ def test_summarize_model_input_rasters(postprocess_obj, caplog):
     arr_landuse = postprocess_obj.modelinput.compositelanduse.arr[arr_mask]
     arr_parcels = arr_landuse[arr_landuse > 0]
 
-    row = df.iloc[0]
+    row = df.set_index("statistic")["value"]
     np.testing.assert_allclose(row["catchment_area"], arr_mask.sum() * pixel_area_ha)
     assert row["n_parcels"] == np.unique(arr_parcels).size
     np.testing.assert_allclose(row["parcel_area"], arr_parcels.size * pixel_area_ha)
     np.testing.assert_allclose(
         row["rel_parcel_area"], row["parcel_area"] / row["catchment_area"] * 100
     )
-    np.testing.assert_allclose(
-        row["grass_strip_area"], (arr_landuse == -6).sum() * pixel_area_ha
-    )
+    for column, value in [
+        ("grass_strip_area", -6),
+        ("river_area", -1),
+        ("infrastructure_area", -2),
+        ("forest_area", -3),
+        ("meadow_area", -4),
+        ("open_water_area", -5),
+    ]:
+        np.testing.assert_allclose(
+            row[column], (arr_landuse == value).sum() * pixel_area_ha
+        )
+    # every pixel in the catchment has a landuse, so with the rasters only, the
+    # relative areas sum up to 100 %
+    assert (arr_landuse != 0).all()
+    rel_columns = [c for c in row.index if c.startswith("rel_")]
+    assert len(rel_columns) == 7
+    np.testing.assert_allclose(row[rel_columns].sum(), 100.0)
+    # units: area in ha, relative area in %, counts without unit
+    units = df.set_index("statistic")["unit"]
+    assert units["catchment_area"] == "ha"
+    assert units["rel_parcel_area"] == "%"
+    assert units["n_parcels"] == "-"
+    assert set(units) == {"ha", "%", "-"}
     assert np.isnan(row["n_parcels_ntkerend"])
     assert np.isnan(row["n_grass_strips"])
 
@@ -969,7 +989,7 @@ def test_summarize_model_input_vectors(postprocess_obj, tmp_path, caplog):
     gdf_grass_strips = gpd.clip(gpd.read_file(scenario_data.grass_strips), catchment)
     gdf_grass_strips = gdf_grass_strips[gdf_grass_strips.area > 0]
 
-    row = df.iloc[0]
+    row = df.set_index("statistic")["value"]
     assert row["n_parcels"] == len(gdf_parcels)
     np.testing.assert_allclose(row["parcel_area"], gdf_parcels.area.sum() / 10000)
     np.testing.assert_allclose(
@@ -994,6 +1014,6 @@ def test_summarize_model_input_no_ntkerend(postprocess_obj, caplog):
         df = postprocess_obj.summarize_model_input(vct_parcels=scenario_data.parcels)
     assert caplog.text.count("'ntkerend' not in vct_parcels") == 2
 
-    row = df.iloc[0]
+    row = df.set_index("statistic")["value"]
     assert np.isnan(row["n_parcels_ntkerend"])
     assert row["n_grass_strips"] > 0
