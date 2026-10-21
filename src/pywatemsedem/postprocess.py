@@ -9,10 +9,12 @@ import numpy as np
 import pandas as pd
 import shapely
 
+from pywatemsedem.catchment import Catchment
 from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
+    create_filename,
     execute_saga,
     load_raster,
     raster_array_to_pandas_dataframe,
@@ -84,6 +86,8 @@ class PostProcess(Factory):
         self._vct_routing_non_sinks = None
         self._vct_routing_outside_catchment = None
         self._vct_sedi_export = None
+        self._vct_river = None
+        self._vct_sedi_export_segments = None
         self._vct_sewer_in = None
         self._vct_sinks = None
         self._vct_grass_strips = None
@@ -842,6 +846,129 @@ class PostProcess(Factory):
         _convert_rst_sinks_to_vct(
             self.modeloutput.sedi_export.file_path, vct_out, "river", self.epsg
         )
+        return vct_out
+
+    @property
+    def vct_river(self):
+        """Return the river (line) vector object."""
+        return self._vct_river
+
+    @vct_river.setter
+    def vct_river(self, vector_input):
+        """Set the river vector object from a file path.
+
+        Setting a new river resets :attr:`vct_sedi_export_segments`.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to the river (line) vector shapefile used to make the model
+            input.
+        """
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_river",
+            "LineString",
+            "vct_river",
+            plot_title="Catchment mask + river",
+            ensure_internal_id=False,
+        )
+        self._vct_sedi_export_segments = None
+
+    @property
+    def vct_sedi_export_segments(self):
+        """Return the sedi_export per river segment (line) vector object.
+
+        If the vector does not exist yet, it is created from :attr:`vct_river`
+        via :meth:`make_sedi_export_segments_vct`.
+        """
+        if self._vct_sedi_export_segments is None:
+            self.vct_sedi_export_segments = self.make_sedi_export_segments_vct()
+        return self._vct_sedi_export_segments
+
+    @vct_sedi_export_segments.setter
+    def vct_sedi_export_segments(self, vector_input):
+        """Set the sedi_export per river segment vector object from a file path.
+
+        Parameters
+        ----------
+        vector_input: pathlib.Path or str
+            Path to an existing sedi_export per river segment vector shapefile.
+        """
+        self._set_vector_from_input(
+            vector_input,
+            "_vct_sedi_export_segments",
+            "LineString",
+            "vct_sedi_export_segments",
+            plot_title="Catchment mask + sediment export per river segment",
+        )
+
+    def make_sedi_export_segments_vct(self):
+        """Make a sedi_export vector file per river segment.
+
+        The river segments are made from :attr:`vct_river` in the same way as
+        the river segment raster of the model input (see
+        :attr:`pywatemsedem.catchment.Catchment.vct_river`): the river lines are
+        clipped to the catchment and topologized with SAGA-GIS
+        (:func:`pywatemsedem.catchment.Catchment.topologize_river`), the
+        segment id is the ``line_id`` of the topology. The sediment input in
+        every river segment (``Total sediment segments.txt``, see
+        :attr:`pywatemsedem.io.modeloutput.Modeloutput.total_sediment_segments`)
+        is linked to these segments. The output holds the columns:
+
+        - ``id``: river segment id
+        - ``sediment``: sediment input in the segment (ton)
+        - ``sed_per_m``: sediment input per meter segment length (ton/m)
+        - ``type``, ``cumsum``, ``cumperc``: as in :meth:`make_sedi_export_vct`
+
+        Segments without model output get no data values.
+
+        Returns
+        -------
+        file_path: pathlib.Path
+            Path to the created sedi_export per river segment shapefile.
+        """
+        if self.vct_river is None:
+            msg = (
+                "Set 'vct_river' before making the sediment export per river "
+                "segment vector."
+            )
+            raise ValueError(msg)
+
+        # make the river segments as for the model input
+        vct_river_clipped = create_filename(".shp")
+        vct_river_topology = create_filename(".shp")
+        self.vector_factory(self.vct_river.file_path, "LineString").write(
+            vct_river_clipped
+        )
+        Catchment.topologize_river(
+            vct_river_clipped, vct_river_topology, self.modelinput.mask.file_path
+        )
+        gdf_segments = gpd.read_file(vct_river_topology)[["line_id", "geometry"]]
+        gdf_segments = gdf_segments.rename(columns={"line_id": "id"})
+        gdf_segments["id"] = gdf_segments["id"].astype(np.int64)
+        self._unlink_vector_dataset(vct_river_clipped)
+        self._unlink_vector_dataset(vct_river_topology)
+
+        # convert from kg to tonnes
+        sediment = np.round(
+            self.modeloutput.total_sediment_segments["Sediment"] / 1000, 3
+        ).rename("sediment")
+        gdf_segments = gdf_segments.merge(
+            sediment, left_on="id", right_index=True, how="left"
+        )
+        gdf_segments["sed_per_m"] = gdf_segments["sediment"] / gdf_segments.length
+        gdf_segments["type"] = "river"
+        gdf_segments = gdf_segments.sort_values("sediment", ascending=False)
+        gdf_segments["cumsum"] = gdf_segments["sediment"].cumsum()
+        gdf_segments["cumperc"] = (
+            gdf_segments["cumsum"] / gdf_segments["sediment"].sum()
+        ) * 100
+        gdf_segments = gdf_segments.reset_index(drop=True)
+
+        vct_out = self.postprocessing_folder / "SediExport_segments.shp"
+        self._unlink_vector_dataset(vct_out)
+        gdf_segments.to_file(vct_out, spatial_index="YES")
         return vct_out
 
     @property
@@ -2655,7 +2782,7 @@ class PostProcess(Factory):
         """
         vector_path = Path(vector_path)
         if vector_path.suffix.lower() == ".shp":
-            for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix"]:
+            for suffix in [".shp", ".shx", ".dbf", ".prj", ".cpg", ".qix", ".mshp"]:
                 part = vector_path.with_suffix(suffix)
                 if part.exists():
                     part.unlink()
@@ -4100,7 +4227,6 @@ class PostProcess(Factory):
     #
     # - merge_sedi_out_and_cumulative
     # - add_sediment_to_subcatchments
-    # - add_segment_results_to_vct
     # - identify_sinks_in_routing
     # - split_sewerin
     # - intersect_sedi_outparcels_with_subcatchments
@@ -4194,54 +4320,6 @@ class PostProcess(Factory):
             gdf_subcatchments["sedar_ha"] = gdf_subcatchments["sedar"] * 10000.0
             gdf_subcatchments.drop(columns=["VALUE"], inplace=True)
             gdf_subcatchments.to_file(vct_subcatchments, spatial_index="YES")
-
-    def add_segment_results_to_vct(self, catchment_name, scenario_label):
-        """Add sediment input to every river segment and calculate sedlen.
-
-        Sedlen is calculated as sediment input divided by river segment length.
-        The resulting shapefile is stored in ``self.vct_riversegment``.
-
-        Parameters
-        ----------
-        catchment_name : str
-            Name of the catchment (used for output file naming).
-        scenario_label : int or str
-            Scenario label (used for output file naming).
-        """
-        logger.info("Coupling results to segments...")
-
-        if (
-            self.files["txt_total_sediment_segments"] is not None
-            and self.files["vct_waterline"] is not None
-        ):
-            df_total_sediment_segments = pd.read_csv(
-                self.files["txt_total_sediment_segments"],
-                sep="\t",
-                skiprows=2,
-                names=["NR", "Sediment"],
-            )
-            df_total_sediment_segments["Sediment"] = np.round(
-                df_total_sediment_segments.Sediment / 1000, 3
-            )  # kg to tonnes
-            df_waterline = gpd.read_file(self.files["vct_waterline"])
-            df_waterline = df_waterline.merge(
-                df_total_sediment_segments, on="NR", how="left"
-            )
-            df_waterline["sedlen"] = df_waterline["Sediment"] / df_waterline.length
-
-            self.vct_riversegment = (
-                self.postprocessing_folder
-                / f"Sedimentexport2Segments_{catchment_name}_"
-                f"s{scenario_label}.shp"
-            )
-
-            df_waterline.to_file(self.vct_riversegment, spatial_index="YES")
-        else:
-            msg = (
-                f"{self.files['txt_total_sediment_segments']} or "
-                f"{self.files['vct_waterline']} does not exist!"
-            )
-            raise IOError(msg)
 
     def identify_sinks_in_routing(self, catchment_name, scenario_label):
         """Identify sinks based on whether more than one routing vector goes to a pixel.
