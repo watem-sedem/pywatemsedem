@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 1.4.0 documentation</title>
+  <title>pywatemsedem.io.modeloutput &mdash; pywatemsedem 1.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9172181d"></script>
+      <script src="../../../_static/documentation_options.js?v=e0a75244"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -113,7 +113,6 @@
     <span class="n">check_raster_properties_raster_with_template</span><span class="p">,</span>
     <span class="n">clean_up_tempfiles</span><span class="p">,</span>
     <span class="n">create_filename</span><span class="p">,</span>
-    <span class="n">create_spatial_index</span><span class="p">,</span>
     <span class="n">execute_saga</span><span class="p">,</span>
     <span class="n">load_raster</span><span class="p">,</span>
     <span class="n">mask_array_with_val</span><span class="p">,</span>
@@ -2247,9 +2246,7 @@
     <span class="n">execute_saga</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
 
     <span class="n">epsg</span> <span class="o">=</span> <span class="n">_get_epsg_for_routing_vector</span><span class="p">(</span><span class="n">rstparams</span><span class="o">=</span><span class="n">rstparams</span><span class="p">,</span> <span class="n">rst_prckrt</span><span class="o">=</span><span class="n">rst_prckrt</span><span class="p">)</span>
-    <span class="n">_set_vector_epsg</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span>
-
-    <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">vct_out</span><span class="p">)</span></div>
+    <span class="n">_set_vector_epsg</span><span class="p">(</span><span class="n">vct_out</span><span class="p">,</span> <span class="n">epsg</span><span class="p">)</span></div>
 
 
 
@@ -2309,7 +2306,6 @@
 
     <span class="n">execute_saga</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
     <span class="n">raster_to_polygon</span><span class="p">(</span><span class="n">rst_subcatchments</span><span class="p">,</span> <span class="n">vct_subcatchments</span><span class="p">)</span>
-    <span class="n">create_spatial_index</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">)</span>
     <span class="n">gdf_subcatchments</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_subcatchments</span><span class="p">)</span>
     <span class="n">gdf_subcatchments</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"ID"</span><span class="p">,</span> <span class="s2">"NAME"</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">"VALUE"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_subcatchments</span><span class="p">[</span><span class="s2">"VALUE"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"int32"</span><span class="p">)</span>

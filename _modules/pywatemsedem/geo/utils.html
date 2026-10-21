@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.4.0 documentation</title>
+  <title>pywatemsedem.geo.utils &mdash; pywatemsedem 1.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9172181d"></script>
+      <script src="../../../_static/documentation_options.js?v=e0a75244"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -120,7 +120,11 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyogrio</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">shapes</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio.shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Resampling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">rasterize</span><span class="p">,</span> <span class="n">shapes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_origin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.warp</span><span class="w"> </span><span class="kn">import</span> <span class="n">reproject</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pywatemsedem.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SAGA_FLAGS</span><span class="p">,</span>
@@ -468,19 +472,26 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on gdal_translate CLI.</span>
+<span class="sd">    Uses rasterio (GDAL Idrisi "RST" driver) to perform the conversion, so no</span>
+<span class="sd">    external GDAL command-line tools are required.</span>
 <span class="sd">    """</span>
-    <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"gdal_translate"</span><span class="p">,</span>
-        <span class="s2">"-q"</span><span class="p">,</span>
-        <span class="s2">"-ot"</span><span class="p">,</span>
-        <span class="n">dtype</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
-        <span class="s2">"-of"</span><span class="p">,</span>
-        <span class="s2">"RST"</span><span class="p">,</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">tiff_in</span><span class="p">),</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">rst_out</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span></div>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tiff_in</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"driver"</span><span class="p">:</span> <span class="s2">"RST"</span><span class="p">,</span>
+            <span class="s2">"width"</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="s2">"height"</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="s2">"count"</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+            <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">dtype</span><span class="p">,</span>
+            <span class="s2">"crs"</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="s2">"transform"</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">profile</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">]</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">nodata</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_out</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">))</span></div>
 
 
 
@@ -494,9 +505,14 @@
 <span class="sd">    ----------</span>
 <span class="sd">    rst_in : str or pathlib.Path</span>
 <span class="sd">        File path of the raster dataset to be deleted.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses ``rasterio.shutil.delete`` (GDAL ``GDALDeleteDataset``) so the raster</span>
+<span class="sd">    and all its sidecar files (e.g. ``.rdc`` for Idrisi ``.rst``) are removed,</span>
+<span class="sd">    without relying on the ``gdalmanage`` CLI.</span>
 <span class="sd">    """</span>
-    <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"gdalmanage"</span><span class="p">,</span> <span class="s2">"delete"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)]</span>
-    <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
+    <span class="n">rasterio</span><span class="o">.</span><span class="n">shutil</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">))</span>
     <span class="k">return</span></div>
 
 
@@ -525,8 +541,10 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    1. This function uses the gdalwarp CLI, see</span>
-<span class="sd">       https://gdal.org/en/stable/programs/gdalwarp.html for more information.</span>
+<span class="sd">    1. This function uses rasterio (GDAL warp bindings) to clip and resample the</span>
+<span class="sd">       raster onto the target grid, so no external GDAL command-line tools are</span>
+<span class="sd">       required. The source and target CRS are both set to ``cnst["epsg"]``,</span>
+<span class="sd">       matching the previous ``gdalwarp -s_srs ... -t_srs ...`` behaviour.</span>
 <span class="sd">    2. "mode" and "near" have been tested, see</span>
 <span class="sd">       https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r.</span>
 <span class="sd">    """</span>
@@ -535,15 +553,49 @@
     <span class="n">rst_out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Clipping </span><span class="si">{</span><span class="n">rst_in</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
-    <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"gdalwarp"</span><span class="p">,</span> <span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"-s_srs"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cnst</span><span class="p">[</span><span class="s2">"epsg"</span><span class="p">])]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-t_srs"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cnst</span><span class="p">[</span><span class="s2">"epsg"</span><span class="p">])]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-te"</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">oor</span> <span class="ow">in</span> <span class="n">cnst</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">oor</span><span class="p">)]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-tr"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cnst</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">cnst</span><span class="p">[</span><span class="s2">"res"</span><span class="p">])]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-r"</span><span class="p">,</span> <span class="n">resampling</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rst_in</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)]</span>
-    <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span></div>
+
+    <span class="n">resampling_methods</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"near"</span><span class="p">:</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">nearest</span><span class="p">,</span> <span class="s2">"mode"</span><span class="p">:</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">mode</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">resampling</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">resampling_methods</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Resampling method '</span><span class="si">{</span><span class="n">resampling</span><span class="si">}</span><span class="s2">' not supported, please select "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resampling_methods</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">cnst</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">cnst</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]</span>
+    <span class="n">nodata</span> <span class="o">=</span> <span class="n">cnst</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">]</span>
+    <span class="n">crs</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">CRS</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cnst</span><span class="p">[</span><span class="s2">"epsg"</span><span class="p">]))</span>
+
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">))</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">))</span>
+    <span class="n">dst_transform</span> <span class="o">=</span> <span class="n">from_origin</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_in</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">src</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span> <span class="n">nodata</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">reproject</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">destination</span><span class="o">=</span><span class="n">destination</span><span class="p">,</span>
+            <span class="n">src_transform</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>
+            <span class="n">src_crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+            <span class="n">src_nodata</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">nodata</span><span class="p">,</span>
+            <span class="n">dst_transform</span><span class="o">=</span><span class="n">dst_transform</span><span class="p">,</span>
+            <span class="n">dst_crs</span><span class="o">=</span><span class="n">crs</span><span class="p">,</span>
+            <span class="n">dst_nodata</span><span class="o">=</span><span class="n">nodata</span><span class="p">,</span>
+            <span class="n">resampling</span><span class="o">=</span><span class="n">resampling_methods</span><span class="p">[</span><span class="n">resampling</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"width"</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span>
+            <span class="s2">"height"</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+            <span class="s2">"count"</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+            <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="s2">"crs"</span><span class="p">:</span> <span class="n">crs</span><span class="p">,</span>
+            <span class="s2">"transform"</span><span class="p">:</span> <span class="n">dst_transform</span><span class="p">,</span>
+            <span class="s2">"nodata"</span><span class="p">:</span> <span class="n">nodata</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_out</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span></div>
 
 
 
@@ -702,27 +754,45 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on gdal_rasterize CLI.</span>
+<span class="sd">    Uses ``rasterio.features.rasterize`` to burn the value ``1`` for every</span>
+<span class="sd">    feature onto a grid initialised to ``0`` (with ``nodata`` stored as band</span>
+<span class="sd">    metadata), matching the former ``gdal_rasterize`` behaviour without relying</span>
+<span class="sd">    on the CLI. The ``all_touched`` option mirrors ``gdal_rasterize -at``.</span>
 <span class="sd">    """</span>
-    <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"gdal_rasterize"</span><span class="p">,</span> <span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"-a_nodata"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nodata</span><span class="p">)]</span>
-    <span class="k">if</span> <span class="n">alltouched</span><span class="p">:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-at"</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-burn"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">]</span>  <span class="c1"># make binary grid</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-l"</span><span class="p">,</span> <span class="n">vct_in</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-of"</span><span class="p">,</span> <span class="s2">"SAGA"</span><span class="p">,</span> <span class="s2">"-te"</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">oor</span> <span class="ow">in</span> <span class="n">raster_properties</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">oor</span><span class="p">)]</span>
+    <span class="n">dtype_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"integer"</span><span class="p">:</span> <span class="s2">"int16"</span><span class="p">,</span> <span class="s2">"float"</span><span class="p">:</span> <span class="s2">"float32"</span><span class="p">}</span>
+    <span class="n">out_dtype</span> <span class="o">=</span> <span class="n">dtype_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="s2">"float64"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"integer"</span><span class="p">:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-ot"</span><span class="p">,</span> <span class="s2">"Int16"</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"float"</span><span class="p">:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-ot"</span><span class="p">,</span> <span class="s2">"Float32"</span><span class="p">]</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">raster_properties</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">raster_properties</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">))</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">))</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">from_origin</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-tr"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">raster_properties</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">raster_properties</span><span class="p">[</span><span class="s2">"res"</span><span class="p">])]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-co"</span><span class="p">,</span> <span class="s2">"COMPRESS=DEFLATE"</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">vct_in</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)]</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_in</span><span class="p">)</span>
+    <span class="n">geometries</span> <span class="o">=</span> <span class="p">[(</span><span class="n">geom</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="k">if</span> <span class="n">geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">geometries</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">rasterize</span><span class="p">(</span>
+            <span class="n">geometries</span><span class="p">,</span>
+            <span class="n">out_shape</span><span class="o">=</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+            <span class="n">fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">all_touched</span><span class="o">=</span><span class="n">alltouched</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">out_dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">out_dtype</span><span class="p">)</span>
 
-    <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span></div>
+    <span class="n">profile</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"width"</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span>
+        <span class="s2">"height"</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">out_dtype</span><span class="p">,</span>
+        <span class="s2">"crs"</span><span class="p">:</span> <span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+        <span class="s2">"transform"</span><span class="p">:</span> <span class="n">transform</span><span class="p">,</span>
+        <span class="s2">"nodata"</span><span class="p">:</span> <span class="n">nodata</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_out</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
 
@@ -946,7 +1016,10 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Uses and relies on gdal_rasterize CLI.</span>
+<span class="sd">    Uses ``rasterio.features.rasterize`` to burn the ``field`` value of every</span>
+<span class="sd">    feature onto a grid initialised to ``0`` (with ``nodata`` stored as band</span>
+<span class="sd">    metadata), matching the former ``gdal_rasterize`` behaviour without relying</span>
+<span class="sd">    on the CLI. The ``all_touched`` option mirrors ``gdal_rasterize -at``.</span>
 <span class="sd">    """</span>
     <span class="c1"># if rst_out.exists():</span>
     <span class="c1">#    delete_rst(rst_out)</span>
@@ -973,22 +1046,57 @@
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"gdal_rasterize"</span><span class="p">,</span> <span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"-a_nodata"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Cnst</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">])]</span>
-    <span class="k">if</span> <span class="n">alltouched</span><span class="p">:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-at"</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">field</span><span class="p">:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-a"</span><span class="p">,</span> <span class="n">field</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-l"</span><span class="p">,</span> <span class="n">vct_in</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-of"</span><span class="p">,</span> <span class="s2">"GTiff"</span><span class="p">,</span> <span class="s2">"-te"</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">oor</span> <span class="ow">in</span> <span class="n">Cnst</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]:</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">oor</span><span class="p">)]</span>
+    <span class="n">gdal_to_numpy</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"Byte"</span><span class="p">:</span> <span class="s2">"uint8"</span><span class="p">,</span>
+        <span class="s2">"Int16"</span><span class="p">:</span> <span class="s2">"int16"</span><span class="p">,</span>
+        <span class="s2">"UInt16"</span><span class="p">:</span> <span class="s2">"uint16"</span><span class="p">,</span>
+        <span class="s2">"Int32"</span><span class="p">:</span> <span class="s2">"int32"</span><span class="p">,</span>
+        <span class="s2">"UInt32"</span><span class="p">:</span> <span class="s2">"uint32"</span><span class="p">,</span>
+        <span class="s2">"Float32"</span><span class="p">:</span> <span class="s2">"float32"</span><span class="p">,</span>
+        <span class="s2">"Float64"</span><span class="p">:</span> <span class="s2">"float64"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">out_dtype</span> <span class="o">=</span> <span class="n">gdal_to_numpy</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
 
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-ot"</span><span class="p">,</span> <span class="n">dtype</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-tr"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Cnst</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">Cnst</span><span class="p">[</span><span class="s2">"res"</span><span class="p">])]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-co"</span><span class="p">,</span> <span class="s2">"COMPRESS=DEFLATE"</span><span class="p">]</span>
-    <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">vct_in</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">rst_out</span><span class="p">)]</span>
+    <span class="n">nodata</span> <span class="o">=</span> <span class="n">Cnst</span><span class="p">[</span><span class="s2">"nodata"</span><span class="p">]</span>
+    <span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">Cnst</span><span class="p">[</span><span class="s2">"minmax"</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Cnst</span><span class="p">[</span><span class="s2">"res"</span><span class="p">]</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">))</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">))</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">from_origin</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 
-    <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span></div>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">vct_in</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">geometries</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">geom</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">gdf</span><span class="p">[</span><span class="n">field</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">geometries</span> <span class="o">=</span> <span class="p">[(</span><span class="n">geom</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">geom</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span> <span class="k">if</span> <span class="n">geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">geometries</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">rasterize</span><span class="p">(</span>
+            <span class="n">geometries</span><span class="p">,</span>
+            <span class="n">out_shape</span><span class="o">=</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+            <span class="n">fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">all_touched</span><span class="o">=</span><span class="n">alltouched</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">out_dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">out_dtype</span><span class="p">)</span>
+
+    <span class="n">profile</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"width"</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span>
+        <span class="s2">"height"</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">out_dtype</span><span class="p">,</span>
+        <span class="s2">"crs"</span><span class="p">:</span> <span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+        <span class="s2">"transform"</span><span class="p">:</span> <span class="n">transform</span><span class="p">,</span>
+        <span class="s2">"nodata"</span><span class="p">:</span> <span class="n">nodata</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_out</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
 
@@ -1150,33 +1258,6 @@
                 <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">rst_out</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">".sdat"</span><span class="p">))</span>
             <span class="k">except</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">RasterioIOError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="create_spatial_index">
-<a class="viewcode-back" href="../../../api/pywatemsedem.geo.html#pywatemsedem.geo.utils.create_spatial_index">[docs]</a>
-<span class="nd">@valid_input</span><span class="p">(</span><span class="nb">dict</span><span class="o">=</span><span class="p">{</span><span class="s2">"vct_in"</span><span class="p">:</span> <span class="n">valid_vector</span><span class="p">})</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_spatial_index</span><span class="p">(</span><span class="n">vct_in</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Creates a qix-file for a given shapefile</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    vct_in: str or pathlib.Path</span>
-<span class="sd">        File path of the input shapefile</span>
-
-<span class="sd">    Note</span>
-<span class="sd">    -----</span>
-<span class="sd">    Uses and relies on ogrinfo CLI</span>
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">vct_in</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">cmd_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ogrinfo"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">vct_in</span><span class="p">)]</span>
-        <span class="n">cmd_args</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-q"</span><span class="p">,</span> <span class="s2">"-sql"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"CREATE SPATIAL INDEX ON </span><span class="si">{</span><span class="n">vct_in</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
-        <span class="n">execute_subprocess</span><span class="p">(</span><span class="n">cmd_args</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Shapefile does not exist! (</span><span class="si">{</span><span class="n">vct_in</span><span class="si">}</span><span class="s2">)"</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">return</span></div>
 
 
 

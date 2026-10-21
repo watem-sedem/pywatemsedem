@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; pywatemsedem 1.4.0 documentation</title>
+  <title>Installation &mdash; pywatemsedem 1.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9172181d"></script>
+      <script src="_static/documentation_options.js?v=e0a75244"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -113,11 +113,13 @@ source.</p>
 <p>Make sure to setup a new environment in either conda or venv (using tox):</p>
 <section id="using-conda">
 <h3>Using conda<a class="headerlink" href="#using-conda" title="Link to this heading"></a></h3>
-<p>When using conda, you can setup the environment using the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>
+<p>When using conda, you can setup the environment using the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>
 file included in this repository.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>pywatemsedem<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.13
 
 conda<span class="w"> </span>activate<span class="w"> </span>pywatemsedem
+
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
 <p>Next, install the package from within the <code class="docutils literal notranslate"><span class="pre">pywatemsedem</span></code> folder in the terminal
@@ -134,12 +136,14 @@ developer dependencies as well (using pip):</p>
 <p class="admonition-title">Note</p>
 <p>The <cite>-no-deps</cite> option does not search for the dependencies from pip, but
 only installs the package itself for development and assumes you already
-have the dependencies installed yourself.</p>
+have the dependencies installed yourself with the requirements.txt file. This
+option is preferred as it avoids to use the package with versions of dependencies
+that are not tested with the package.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you wish to make use of hvplot, please manually install
-<a class="reference external" href="https://hvplot.holoviz.org/">hvplot</a> with conda.</p>
+<a class="reference external" href="https://hvplot.holoviz.org/">hvplot</a> with conda and/or pip.</p>
 </div>
 </section>
 <section id="using-venv">
@@ -199,6 +203,10 @@ SAGA = $YOUR_PATH/saga-9.3.1_x64 #folder reference
 </div>
 <p>When importing pywatemsedem, it will add the directories of saga and watem-sedem
 to your PATH envrionment variable.</p>
+<p>The python dependencies are listed in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file. The CI system
+tests the package with the pinned versions of the dependencies in this file.
+We recommend to install the dependencies from this file, or to use the <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">dev</span></code>
+command which will create a virtual environment with the pinned dependencies installed.</p>
 </section>
 </section>
 
