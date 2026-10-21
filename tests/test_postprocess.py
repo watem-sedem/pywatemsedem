@@ -64,7 +64,8 @@ def _synthetic_postprocess():
 
     Pixel 1 routes to pixel 2, pixel 2 routes to pixel 3 (60%) and pixel 4
     (40%) and pixel 3 routes to river pixel 4. In pixel 2, 5 kg enters the
-    sewer, in pixel 4, all incoming sediment is exported to the river.
+    sewer, in pixel 4, all incoming sediment is exported to the river. The
+    erosion and deposition per pixel are set independently of the routing.
     """
     pp = object.__new__(PostProcess)
     pp._rp = SimpleNamespace(resolution=20, nodata=-9999.0)
@@ -86,6 +87,8 @@ def _synthetic_postprocess():
         sewer_in=SimpleNamespace(arr=np.array([[0.0, 5.0, 0.0, 0.0]])),
         sedi_export=SimpleNamespace(arr=np.array([[0.0, 0.0, 0.0, 22.0]])),
     )
+    pp.erosion = SimpleNamespace(arr=np.array([[10.0, 20.0, 0.0, -9999.0]]))
+    pp.deposition = SimpleNamespace(arr=np.array([[0.0, 5.0, 3.0, -9999.0]]))
     return pp
 
 
@@ -109,6 +112,8 @@ def test_calculate_sediment_balance_synthetic():
         "sedi_exp",
         "deposition",
         "erosion",
+        "gross_depo",
+        "gross_eros",
         "eSTE",
     ]
     assert df["id"].tolist() == [1, 2]
@@ -125,6 +130,9 @@ def test_calculate_sediment_balance_synthetic():
     np.testing.assert_allclose(df["sedi_exp"], [0.0, 22.0])
     np.testing.assert_allclose(df["deposition"], [0.0, 3.0])
     np.testing.assert_allclose(df["erosion"], [30.0, 0.0])
+    # gross erosion and deposition are summed separately, nodata is not counted
+    np.testing.assert_allclose(df["gross_depo"], [5.0, 3.0])
+    np.testing.assert_allclose(df["gross_eros"], [30.0, 0.0])
     # no inflow in element 1, so no trapping efficiency
     np.testing.assert_allclose(df["eSTE"], [np.nan, 100.0])
     # for a raster, the sediment balance is stored on the raster object
@@ -258,6 +266,17 @@ def test_calculate_sediment_balance_raster(postprocess_obj):
         n_pixels.sort_index() * resolution**2,
     )
     _assert_sediment_balance_closes(df)
+
+    # the gross erosion and deposition of all parcels equal those of the
+    # erosion and deposition rasters (created by the sediment balance) in the
+    # parcels
+    nodata = postprocess_obj.rp.nodata
+    for column, raster in [
+        ("gross_eros", postprocess_obj.erosion),
+        ("gross_depo", postprocess_obj.deposition),
+    ]:
+        cond = (arr > 0) & (raster.arr != nodata)
+        np.testing.assert_allclose(df[column].sum(), raster.arr[cond].sum(), rtol=1e-6)
 
 
 def test_postprocess_init(postprocess_obj):

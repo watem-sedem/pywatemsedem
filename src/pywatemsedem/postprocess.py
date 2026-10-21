@@ -13,7 +13,6 @@ from pywatemsedem.defaults import SAGA_FLAGS
 from pywatemsedem.geo.factory import Factory
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
-    compute_statistics_rasters_per_polygon_vector,
     execute_saga,
     load_raster,
     raster_array_to_pandas_dataframe,
@@ -25,8 +24,6 @@ from pywatemsedem.grasstrips import estimate_ste
 from pywatemsedem.io.modelinput import Modelinput
 from pywatemsedem.io.modeloutput import (
     Modeloutput,
-    create_deposition_raster,
-    create_erosion_raster,
     define_subcatchments_saga,
     make_routing_vct_saga,
 )
@@ -3638,83 +3635,24 @@ class PostProcess(Factory):
             write_arr_as_rst(arr, rst_out, "float32", self.rp.rasterio_profile)
             setattr(self, attr_name, self.raster_factory(rst_out, flag_mask=False))
 
-    def calculate_sediment_balance(self, elements, compute_priority=None):
-        """Compute the sediment balance per element.
+    def _element_ids(self, elements):
+        """Return the element id per pixel of the model grid.
 
-        An element is a group of pixels with the same id. Only positive ids
-        are considered: pixels (or polygons) with a zero, negative or nodata id
-        do not belong to an element. The sediment flowing in and out of an
-        element is derived from the routing arrows that cross the element
-        border (source id != target id): every arrow carries the ``sedi_out``
-        of its source pixel multiplied by its ``part``.
+        See :meth:`calculate_sediment_balance` for the definition of an element
+        for a raster and vector factory object.
 
         Parameters
         ----------
         elements: AbstractRaster or AbstractVector
-            Raster factory object holding the element id per pixel (e.g.
-            ``self.modelinput.buffers``) or polygon vector factory object with
-            an ``id`` column (e.g. ``self.vct_grass_strips``). A vector is
-            rasterized on the model grid first, in the same way as grass strips
-            and buffers are rasterized for a scenario (see
-            :meth:`pywatemsedem.geo.vectors.AbstractVector.rasterize`), i.e.
-            every pixel touched by a polygon belongs to the polygon. For
-            ``self.modelinput.buffers``, the buffer body pixels (buffer id +
-            2^14) are part of the buffer. For ``self.vct_grass_strips``, only
-            the pixels that are grass strip in
-            ``self.modelinput.compositelanduse`` (value -6) are part of a grass
-            strip, i.e. not the pixels where the model gives priority to
-            another landuse (e.g. infrastructure or river). Grass strips
-            without such pixels get no sediment balance (nan).
-        compute_priority: str, optional
-            Sediment balance variable to prioritize the elements on, sorted
-            from highest to lowest (e.g. ``"deposition"`` or ``"eSTE"``), and
-            for which the cumulative sum ``cum_sum`` and cumulative
-            distribution ``cdf`` (%) are added. Only positive values
-            contribute to ``cum_sum`` and ``cdf``, which are nan for the other
-            elements. If not given, the elements are sorted on ``id``.
+            Raster factory object holding the element id per pixel or polygon
+            vector factory object with an ``id`` column.
 
         Returns
         -------
-        df_balance: pandas.DataFrame
-            One row per element, with the columns:
-
-            - *id* (int): element id
-            - *npixels* (int): number of pixels of the element
-            - *area* (float): area of the element (m²)
-            - *sedi_in* (float): sediment flowing into the element, i.e.
-              carried by the routing arrows from pixels outside the element to
-              pixels in the element (kg)
-            - *sedi_out* (float): sediment flowing out of the element, i.e.
-              carried by the routing arrows from pixels in the element to
-              pixels outside the element (kg)
-            - *sewer_in* (float): sediment entering the sewer in the element
-              (kg)
-            - *sedi_exp* (float): sediment exported to the river in the
-              element (kg), abbreviated to fit the 10-character limit of
-              shapefile field names
-            - *deposition* (float): ``sedi_in - sedi_out - sewer_in -
-              sedi_exp`` if positive, else zero (kg)
-            - *erosion* (float): ``sedi_out + sewer_in + sedi_exp -
-              sedi_in`` if positive, else zero (kg)
-            - *eSTE* (float): estimated sediment trapping efficiency (%), see
-              :func:`pywatemsedem.grasstrips.estimate_ste`, nan if ``sedi_in``
-              is zero
-            - *cum_sum* (float): cumulative sum of ``compute_priority``, only
-              if ``compute_priority`` is given
-            - *cdf* (float): ``cum_sum`` as percentage of the total of
-              ``compute_priority`` (%), only if ``compute_priority`` is given
-
-        Notes
-        -----
-        For a raster factory object, ``df_balance`` is stored as
-        ``elements.df_sediment_balance``. For a vector factory object, the
-        columns of ``df_balance`` are added to ``elements.geodata``, which is
-        written to ``elements.file_path``.
-
-        Parcel ids in ``self.modelinput.compositelanduse`` are limited to the
-        int16 maximum (32767). If this maximum is reached, parcel ids are
-        probably recycled, so multiple parcels can have the same id, and a
-        warning is raised.
+        arr_ids: numpy.ndarray
+            Element id per pixel (int64), zero for pixels outside an element.
+        valid: numpy.ndarray
+            Boolean array, True for pixels in an element.
         """
         nodata = self.rp.nodata
         if hasattr(elements, "geodata"):
@@ -3767,20 +3705,142 @@ class PostProcess(Factory):
             arr_landuse = np.asarray(self.modelinput.compositelanduse.arr)
             valid &= arr_landuse == -6
         if not np.any(valid):
-            msg = "No elements (positive ids) found to compute the sediment balance."
+            msg = "No elements (positive ids) found."
             raise ValueError(msg)
         arr_ids = np.where(valid, arr_ids, 0).astype(np.int64)
 
-        def _values(arr):
-            arr = np.asarray(arr, dtype=np.float64)
-            invalid = ~np.isfinite(arr)
-            if not pd.isna(nodata):
-                invalid |= arr == nodata
-            return np.where(invalid, 0.0, arr)
+        return arr_ids, valid
 
-        arr_sedi_out = _values(self.modeloutput.sedi_out.arr)
-        arr_sewer_in = _values(self.modeloutput.sewer_in.arr)
-        arr_sedi_export = _values(self.modeloutput.sedi_export.arr)
+    def _store_element_results(
+        self, elements, df, attribute_name, replace_columns=frozenset()
+    ):
+        """Store results per element on a raster or vector factory object.
+
+        For a vector factory object, the columns of ``df`` are added to
+        ``elements.geodata`` (matched on ``id``), which is written to
+        ``elements.file_path``. Columns of ``df`` and ``replace_columns``
+        already present in the geodata (e.g. from an earlier run) are
+        replaced. For a raster factory object, ``df`` is stored as attribute
+        ``attribute_name`` of ``elements``.
+
+        Parameters
+        ----------
+        elements: AbstractRaster or AbstractVector
+            Raster or vector factory object.
+        df: pandas.DataFrame
+            Results with an ``id`` column.
+        attribute_name: str
+            Attribute name to store ``df`` on a raster factory object.
+        replace_columns: set, optional
+            Additional columns to remove from the geodata.
+        """
+        if hasattr(elements, "geodata"):
+            columns = (set(replace_columns) | set(df.columns)) - {"id"}
+            gdf = elements.geodata.drop(columns=list(columns), errors="ignore")
+            elements.geodata = gdf.merge(
+                df.astype({"id": gdf["id"].dtype}), on="id", how="left"
+            )
+            file_path = getattr(elements, "file_path", None)
+            if file_path is not None:
+                self._unlink_vector_dataset(file_path)
+                elements.geodata.to_file(file_path, spatial_index="YES")
+        else:
+            setattr(elements, attribute_name, df)
+
+    def calculate_sediment_balance(self, elements, compute_priority=None):
+        """Compute the sediment balance per element.
+
+        An element is a group of pixels with the same id. Only positive ids
+        are considered: pixels (or polygons) with a zero, negative or nodata id
+        do not belong to an element. The sediment flowing in and out of an
+        element is derived from the routing arrows that cross the element
+        border (source id != target id): every arrow carries the ``sedi_out``
+        of its source pixel multiplied by its ``part``. Next to this netto
+        erosion and deposition, the gross erosion and deposition are the sums
+        of the erosion and deposition of all pixels in the element
+        (``self.erosion`` and ``self.deposition``, see
+        :meth:`write_erosion_deposition_raster`, created if not yet available).
+
+        Parameters
+        ----------
+        elements: AbstractRaster or AbstractVector
+            Raster factory object holding the element id per pixel (e.g.
+            ``self.modelinput.buffers``) or polygon vector factory object with
+            an ``id`` column (e.g. ``self.vct_grass_strips``). A vector is
+            rasterized on the model grid first, in the same way as grass strips
+            and buffers are rasterized for a scenario (see
+            :meth:`pywatemsedem.geo.vectors.AbstractVector.rasterize`), i.e.
+            every pixel touched by a polygon belongs to the polygon. For
+            ``self.modelinput.buffers``, the buffer body pixels (buffer id +
+            2^14) are part of the buffer. For ``self.vct_grass_strips``, only
+            the pixels that are grass strip in
+            ``self.modelinput.compositelanduse`` (value -6) are part of a grass
+            strip, i.e. not the pixels where the model gives priority to
+            another landuse (e.g. infrastructure or river). Grass strips
+            without such pixels get no sediment balance (nan).
+        compute_priority: str, optional
+            Sediment balance variable to prioritize the elements on, sorted
+            from highest to lowest (e.g. ``"deposition"`` or ``"eSTE"``), and
+            for which the cumulative sum ``cum_sum`` and cumulative
+            distribution ``cdf`` (%) are added. Only positive values
+            contribute to ``cum_sum`` and ``cdf``, which are nan for the other
+            elements. If not given, the elements are sorted on ``id``.
+
+        Returns
+        -------
+        df_balance: pandas.DataFrame
+            One row per element, with the columns:
+
+            - *id* (int): element id
+            - *npixels* (int): number of pixels of the element
+            - *area* (float): area of the element (m²)
+            - *sedi_in* (float): sediment flowing into the element, i.e.
+              carried by the routing arrows from pixels outside the element to
+              pixels in the element (kg)
+            - *sedi_out* (float): sediment flowing out of the element, i.e.
+              carried by the routing arrows from pixels in the element to
+              pixels outside the element (kg)
+            - *sewer_in* (float): sediment entering the sewer in the element
+              (kg)
+            - *sedi_exp* (float): sediment exported to the river in the
+              element (kg), abbreviated to fit the 10-character limit of
+              shapefile field names
+            - *deposition* (float): ``sedi_in - sedi_out - sewer_in -
+              sedi_exp`` if positive, else zero (kg)
+            - *erosion* (float): ``sedi_out + sewer_in + sedi_exp -
+              sedi_in`` if positive, else zero (kg)
+            - *gross_depo* (float): sum of the deposition of all pixels in the
+              element (kg)
+            - *gross_eros* (float): sum of the erosion of all pixels in the
+              element (kg)
+            - *eSTE* (float): estimated sediment trapping efficiency (%), see
+              :func:`pywatemsedem.grasstrips.estimate_ste`, nan if ``sedi_in``
+              is zero
+            - *cum_sum* (float): cumulative sum of ``compute_priority``, only
+              if ``compute_priority`` is given
+            - *cdf* (float): ``cum_sum`` as percentage of the total of
+              ``compute_priority`` (%), only if ``compute_priority`` is given
+
+        Notes
+        -----
+        For a raster factory object, ``df_balance`` is stored as
+        ``elements.df_sediment_balance``. For a vector factory object, the
+        columns of ``df_balance`` are added to ``elements.geodata``, which is
+        written to ``elements.file_path``.
+
+        Parcel ids in ``self.modelinput.compositelanduse`` are limited to the
+        int16 maximum (32767). If this maximum is reached, parcel ids are
+        probably recycled, so multiple parcels can have the same id, and a
+        warning is raised.
+        """
+        nodata = self.rp.nodata
+        arr_ids, valid = self._element_ids(elements)
+        if getattr(self, "erosion", None) is None:
+            self.write_erosion_deposition_raster()
+
+        arr_sedi_out = _raster_values(self.modeloutput.sedi_out.arr, nodata)
+        arr_sewer_in = _raster_values(self.modeloutput.sewer_in.arr, nodata)
+        arr_sedi_export = _raster_values(self.modeloutput.sedi_export.arr, nodata)
 
         # sediment carried by every routing arrow (routing is 1-based)
         df_routing = self.modeloutput.routing
@@ -3819,12 +3879,16 @@ class PostProcess(Factory):
                 "id": arr_ids[valid],
                 "sewer_in": arr_sewer_in[valid],
                 "sedi_exp": arr_sedi_export[valid],
+                "gross_depo": _raster_values(self.deposition.arr, nodata)[valid],
+                "gross_eros": _raster_values(self.erosion.arr, nodata)[valid],
             }
         )
         df_balance = df_pixels.groupby("id").agg(
             npixels=("sewer_in", "size"),
             sewer_in=("sewer_in", "sum"),
             sedi_exp=("sedi_exp", "sum"),
+            gross_depo=("gross_depo", "sum"),
+            gross_eros=("gross_eros", "sum"),
         )
         df_balance["area"] = df_balance["npixels"] * self.rp.resolution**2
         df_balance["sedi_in"] = sedi_in.reindex(df_balance.index, fill_value=0.0)
@@ -3853,6 +3917,8 @@ class PostProcess(Factory):
                 "sedi_exp",
                 "deposition",
                 "erosion",
+                "gross_depo",
+                "gross_eros",
                 "eSTE",
             ]
         ]
@@ -3874,19 +3940,13 @@ class PostProcess(Factory):
             raise ValueError(msg)
         df_balance = df_balance.reset_index(drop=True)
 
-        if hasattr(elements, "geodata"):
-            # sediment balance columns from an earlier run are replaced
-            columns = {"cum_sum", "cdf"} | set(df_balance.columns) - {"id"}
-            gdf = elements.geodata.drop(columns=list(columns), errors="ignore")
-            elements.geodata = gdf.merge(
-                df_balance.astype({"id": gdf["id"].dtype}), on="id", how="left"
-            )
-            file_path = getattr(elements, "file_path", None)
-            if file_path is not None:
-                self._unlink_vector_dataset(file_path)
-                elements.geodata.to_file(file_path, spatial_index="YES")
-        else:
-            elements.df_sediment_balance = df_balance
+        # sediment balance columns from an earlier run are replaced
+        self._store_element_results(
+            elements,
+            df_balance,
+            "df_sediment_balance",
+            replace_columns={"cum_sum", "cdf"},
+        )
 
         return df_balance
 
@@ -4023,7 +4083,6 @@ class PostProcess(Factory):
     # - set_prckrt_nodata
     # - calculate_areas_prckrt
     # - split_sewerin
-    # - compute_statistics_rasters_per_polygon_vector
     # - intersect_sedi_outparcels_with_subcatchments
     # - assign_values_df_summary
 
@@ -4328,50 +4387,6 @@ class PostProcess(Factory):
         )
         return rst_sewers, rst_ditches
 
-    def compute_statistics_rasters_per_polygon_vector(self, vct):
-        """Compute statistics for raster for an input polygon vector
-
-        Parameters
-        ----------
-        vct: pathlib.Path
-            Polygon vector file
-
-        Returns
-        -------
-        geopandas.GeoDataFrame
-            Geopandas dataframe of vct with statistics per polygon.
-        """
-        dict_operators = {"SUM": True}
-        vct_out = self.postprocessing_folder / Path(f"{vct.stem}_statistics.shp")
-        rst_erosion = create_erosion_raster(self.modeloutput.watereros_kg.file_path)
-        rst_deposition = create_deposition_raster(
-            self.modeloutput.watereros_kg.file_path
-        )
-        lst_rasters = [
-            rst_erosion.absolute(),
-            rst_deposition.absolute(),
-            self.modeloutput.sedi_export.file_path.absolute(),
-            # self.modeloutput.sewers_in.file_path.absolute(),
-            # self.modeloutput.ditches_in.file_path.absolute(),
-        ]
-        lst_names = [
-            "Erosion (kg)",
-            "Deposition (kg)",
-            "River (kg)",
-            # "Sewers (kg)",
-            # "Ditches (kg)",
-        ]
-
-        compute_statistics_rasters_per_polygon_vector(
-            lst_rasters,
-            Path(vct).absolute(),
-            vct_out.absolute(),
-            lst_names,
-            dict_operators,
-            normalize=True,
-            ton=False,
-        )
-
     def intersect_sedi_outparcels_with_subcatchments(
         self, rst_subcatchment_sinks, df_sedi_out_parcel
     ):
@@ -4480,6 +4495,28 @@ class PostProcess(Factory):
         df_summary.loc[index, "bekken_id"] = bekken_id
 
         return df_summary
+
+
+def _raster_values(arr, nodata):
+    """Return ``arr`` as float64 with nodata and non-finite values set to zero.
+
+    Parameters
+    ----------
+    arr: numpy.ndarray
+        Raster values.
+    nodata: float
+        Nodata value of the raster.
+
+    Returns
+    -------
+    numpy.ndarray
+        Raster values, zero for nodata and non-finite values.
+    """
+    arr = np.asarray(arr, dtype=np.float64)
+    invalid = ~np.isfinite(arr)
+    if not pd.isna(nodata):
+        invalid |= arr == nodata
+    return np.where(invalid, 0.0, arr)
 
 
 def _replace_infinite_values(gdf, column):
