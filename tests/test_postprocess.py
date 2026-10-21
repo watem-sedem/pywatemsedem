@@ -896,3 +896,85 @@ def test_identify_priority_areas(
         assert (cumperc >= 0).all()
         assert (cumperc <= 100).all()
         assert bool((cumperc > float(threshold)).any())
+
+
+def test_summarize_model_input_rasters(postprocess_obj, caplog):
+    """Test the summary computed with the model input rasters only."""
+    df = postprocess_obj.summarize_model_input()
+    assert "Could not compute: n_parcels_ntkerend" in caplog.text
+    assert "n_grass_strips (requires vct_grass_strips)" in caplog.text
+
+    pixel_area_ha = postprocess_obj.rp.resolution**2 / 10000.0
+    arr_mask = postprocess_obj.modelinput.mask.arr == 1
+    arr_landuse = postprocess_obj.modelinput.compositelanduse.arr[arr_mask]
+    arr_parcels = arr_landuse[arr_landuse > 0]
+
+    row = df.iloc[0]
+    np.testing.assert_allclose(row["catchment_area"], arr_mask.sum() * pixel_area_ha)
+    assert row["n_parcels"] == np.unique(arr_parcels).size
+    np.testing.assert_allclose(row["parcel_area"], arr_parcels.size * pixel_area_ha)
+    np.testing.assert_allclose(
+        row["rel_parcel_area"], row["parcel_area"] / row["catchment_area"] * 100
+    )
+    np.testing.assert_allclose(
+        row["grass_strip_area"], (arr_landuse == -6).sum() * pixel_area_ha
+    )
+    assert np.isnan(row["n_parcels_ntkerend"])
+    assert np.isnan(row["n_grass_strips"])
+
+    df_file = pd.read_csv(
+        postprocess_obj.postprocessing_folder / "model_input_summary.csv"
+    )
+    pd.testing.assert_frame_equal(df_file, df, check_dtype=False)
+
+
+def test_summarize_model_input_vectors(postprocess_obj, tmp_path, caplog):
+    """Test the summary computed with parcels and grass strips vectors."""
+    gdf_parcels = gpd.read_file(scenario_data.parcels)
+    gdf_parcels["ntkerend"] = np.nan
+    gdf_parcels.loc[gdf_parcels.index[:10], "ntkerend"] = 1
+    vct_parcels = tmp_path / "parcels_ntkerend.shp"
+    gdf_parcels.to_file(vct_parcels)
+
+    df = postprocess_obj.summarize_model_input(
+        vct_parcels=vct_parcels, vct_grass_strips=scenario_data.grass_strips
+    )
+    assert "Could not compute" not in caplog.text
+
+    # only the agricultural parcels (LANDUSE -9999) inside the catchment count
+    catchment = postprocess_obj.modelinput.vct_mask.geodata
+    gdf_parcels = gpd.clip(gdf_parcels, catchment)
+    gdf_parcels = gdf_parcels[
+        (gdf_parcels["LANDUSE"] == -9999) & (gdf_parcels.area > 0)
+    ]
+    gdf_grass_strips = gpd.clip(gpd.read_file(scenario_data.grass_strips), catchment)
+    gdf_grass_strips = gdf_grass_strips[gdf_grass_strips.area > 0]
+
+    row = df.iloc[0]
+    assert row["n_parcels"] == len(gdf_parcels)
+    np.testing.assert_allclose(row["parcel_area"], gdf_parcels.area.sum() / 10000)
+    np.testing.assert_allclose(
+        row["rel_parcel_area"], row["parcel_area"] / row["catchment_area"] * 100
+    )
+    assert row["n_parcels_ntkerend"] == (gdf_parcels["ntkerend"] == 1).sum()
+    assert row["n_grass_strips"] == len(gdf_grass_strips)
+    np.testing.assert_allclose(
+        row["grass_strip_area"], gdf_grass_strips.area.sum() / 10000
+    )
+
+
+def test_summarize_model_input_no_ntkerend(postprocess_obj, caplog):
+    """Test the warning when the parcels vector holds no 'ntkerend' column.
+
+    The warning is logged on every call, also when it is repeated.
+    """
+    postprocess_obj.vct_grass_strips = _copy_shapefile(
+        scenario_data.grass_strips, postprocess_obj.postprocessing_folder
+    )
+    for _ in range(2):
+        df = postprocess_obj.summarize_model_input(vct_parcels=scenario_data.parcels)
+    assert caplog.text.count("'ntkerend' not in vct_parcels") == 2
+
+    row = df.iloc[0]
+    assert np.isnan(row["n_parcels_ntkerend"])
+    assert row["n_grass_strips"] > 0

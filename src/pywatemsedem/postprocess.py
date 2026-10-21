@@ -3890,6 +3890,125 @@ class PostProcess(Factory):
 
         return df_balance
 
+    def summarize_model_input(self, vct_parcels=None, vct_grass_strips=None):
+        """Summarize the catchment and its landuse as used by the model.
+
+        By default, the statistics are computed with the model input rasters
+        (``self.modelinput.mask`` and ``self.modelinput.compositelanduse``).
+        If a parcels or grass strips vector is given, the parcel and grass
+        strip statistics are computed with the polygons clipped to the
+        catchment (``self.modelinput.vct_mask``), which is more precise than
+        counting pixels. Statistics that need attribute information are only
+        computed when the corresponding vector is given, otherwise they are NaN
+        and a warning is logged.
+
+        The summary is written to ``model_input_summary.csv`` in
+        ``self.postprocessing_folder``.
+
+        Parameters
+        ----------
+        vct_parcels: str or pathlib.Path, optional
+            Parcels vector file. Only polygons with ``LANDUSE`` -9999
+            (agricultural land) are considered parcels, if the column is
+            present. A ``ntkerend`` column (1 for parcels with non-inversion
+            tillage) is needed to compute *n_parcels_ntkerend*.
+        vct_grass_strips: str or pathlib.Path, optional
+            Grass strips vector file. Defaults to ``self.vct_grass_strips`` if
+            set.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Single row with the columns:
+
+            - *catchment_area* (float): area of the catchment (ha), from the
+              mask raster.
+            - *n_parcels* (int): number of agricultural parcels, from
+              ``vct_parcels`` if given, otherwise the number of parcel ids in
+              the composite landuse raster.
+            - *parcel_area* (float): area of the agricultural parcels (ha), from
+              ``vct_parcels`` if given, otherwise from the raster.
+            - *rel_parcel_area* (float): share of the agricultural parcels in
+              the catchment area (%).
+            - *n_parcels_ntkerend* (float): number of parcels with
+              non-inversion tillage, requires ``vct_parcels``.
+            - *n_grass_strips* (float): number of grass strips, requires
+              ``vct_grass_strips``.
+            - *grass_strip_area* (float): area of the grass strips (ha), from
+              ``vct_grass_strips`` if given, otherwise from the raster
+              (landuse -6).
+        """
+        pixel_area_ha = self.rp.resolution**2 / 10000.0
+        arr_mask = self.modelinput.mask.arr == 1
+        arr_landuse = self.modelinput.compositelanduse.arr[arr_mask]
+        arr_parcels = arr_landuse[arr_landuse > 0]
+
+        summary = {
+            "catchment_area": np.sum(arr_mask) * pixel_area_ha,
+            "n_parcels": np.unique(arr_parcels).size,
+            "parcel_area": arr_parcels.size * pixel_area_ha,
+            "rel_parcel_area": np.nan,
+            "n_parcels_ntkerend": np.nan,
+            "n_grass_strips": np.nan,
+            "grass_strip_area": np.sum(arr_landuse == -6) * pixel_area_ha,
+        }
+
+        missing = []
+        if vct_parcels is not None:
+            gdf_parcels = self._clip_to_catchment(gpd.read_file(vct_parcels))
+            if "LANDUSE" in gdf_parcels.columns:
+                gdf_parcels = gdf_parcels[gdf_parcels["LANDUSE"] == -9999]
+            summary["n_parcels"] = len(gdf_parcels)
+            summary["parcel_area"] = gdf_parcels.area.sum() / 10000.0
+            if "ntkerend" in gdf_parcels.columns:
+                summary["n_parcels_ntkerend"] = np.sum(gdf_parcels["ntkerend"] == 1)
+            else:
+                missing.append("n_parcels_ntkerend ('ntkerend' not in vct_parcels)")
+        else:
+            missing.append("n_parcels_ntkerend (requires vct_parcels)")
+        summary["rel_parcel_area"] = (
+            summary["parcel_area"] / summary["catchment_area"] * 100
+        )
+
+        if vct_grass_strips is not None:
+            gdf_grass_strips = gpd.read_file(vct_grass_strips)
+        elif self.vct_grass_strips is not None:
+            gdf_grass_strips = self.vct_grass_strips.geodata
+        else:
+            gdf_grass_strips = None
+            missing.append("n_grass_strips (requires vct_grass_strips)")
+        if gdf_grass_strips is not None:
+            gdf_grass_strips = self._clip_to_catchment(gdf_grass_strips)
+            summary["n_grass_strips"] = len(gdf_grass_strips)
+            summary["grass_strip_area"] = gdf_grass_strips.area.sum() / 10000.0
+
+        if missing:
+            logger.warning(f"Could not compute: {', '.join(missing)}.")
+
+        df = pd.DataFrame([summary])
+        df.to_csv(self.postprocessing_folder / "model_input_summary.csv", index=False)
+        return df
+
+    def _clip_to_catchment(self, gdf):
+        """Clip polygons to the catchment polygon (``self.modelinput.vct_mask``).
+
+        Polygons outside the catchment are removed.
+
+        Parameters
+        ----------
+        gdf: geopandas.GeoDataFrame
+            Polygon vector data.
+
+        Returns
+        -------
+        geopandas.GeoDataFrame
+            Polygons clipped to the catchment.
+        """
+        if gdf.crs is not None and gdf.crs.to_epsg() != int(self.epsg):
+            gdf = gdf.to_crs(epsg=int(self.epsg))
+        gdf = gpd.clip(gdf, self.modelinput.vct_mask.geodata)
+        return gdf[~gdf.is_empty & (gdf.area > 0)]
+
     # ========================================================================
     # TODO: PostProcess CLASS METHODS NOT YET USED BY postprocess.ipynb
     # ========================================================================
@@ -3903,7 +4022,6 @@ class PostProcess(Factory):
     # - identify_sinks_in_routing
     # - set_prckrt_nodata
     # - calculate_areas_prckrt
-    # - make_facts
     # - split_sewerin
     # - compute_statistics_rasters_per_polygon_vector
     # - intersect_sedi_outparcels_with_subcatchments
@@ -4176,49 +4294,6 @@ class PostProcess(Factory):
             f"opp_perceelskaart_{year}_{catchment_name}_" f"s{scenario_label}.csv"
         )
         df.to_csv(f, sep=";")
-
-    def make_facts(self, year, catchment_name, scenario_label):
-        """Make a textfile with a number of stats about the simulation.
-
-        Parameters
-        ----------
-        year : int
-            Simulation year (used for output file naming and content).
-        catchment_name : str
-            Name of the catchment (used for output file naming).
-        scenario_label : int or str
-            Scenario label (used for output file naming).
-        """
-        factsfile = self.postprocessing_folder / (
-            f"facts_{catchment_name}_s{scenario_label}.csv"
-        )
-        with open(factsfile, "w") as f:
-            f.write(f";{catchment_name}\n")
-
-            opp_catch = np.sum(
-                self.arr_bindomain[self.arr_bindomain != self.rp.nodata]
-            ) * (self.rp.resolution**2)
-            opp_catch_ha = opp_catch / 10000.0
-
-            f.write(f"Oppervlakte bekken (ha);{opp_catch_ha}\n")
-
-            df_parcel = gpd.read_file(self.files["vct_percelen"])
-            n_parcels = df_parcel.shape[0]
-            f.write(f"Aantal landbouwpercelen {year};{n_parcels}\n")
-            df_parcel["opp"] = df_parcel.area
-            opp_parcels = df_parcel.opp.sum()
-            opp_parcels_ha = opp_parcels / 10000.0
-            f.write(f"Oppervlakte landbouwpercelen (ha) {year};{opp_parcels_ha}\n")
-            # (SG/DR) share of agricultural parcels
-            aandeel_landbouw = (opp_parcels_ha / opp_catch_ha) * 100
-            f.write(f"relatieve opp landbouwpercelen (%) {year};{aandeel_landbouw}\n")
-
-            if "Lndgbrk" in df_parcel.columns:
-                n_nt_kerend = df_parcel[df_parcel.ntkerend == 1].shape[0]
-                f.write(f"Aantal nt-kerend bewerkte percelen {year};{n_nt_kerend}\n")
-            df_grass = gpd.read_file(self.files["vct_grass_strips"])
-            n_grass = df_grass.shape[0]
-            f.write(f"Aantal grasstroken {year};{n_grass}\n")
 
     def split_sewerin(self, scenario_label):
         """Split the sewerin raster with the sewer_id raster.
