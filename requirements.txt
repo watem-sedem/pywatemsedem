@@ -38,7 +38,7 @@ kiwisolver==1.5.1
     # via matplotlib
 matplotlib==3.11.1
     # via pywatemsedem (setup.py)
-numpy==2.5.3
+numpy==2.5.4
     # via
     #   contourpy
     #   geopandas
