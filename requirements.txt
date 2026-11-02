@@ -28,7 +28,7 @@ contourpy==1.4.0
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
-fonttools==4.63.0
+fonttools==4.68.0
     # via matplotlib
 geopandas==1.2.0
     # via pywatemsedem (setup.py)
