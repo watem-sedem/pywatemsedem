@@ -36,7 +36,7 @@ joblib==1.6.0
     # via scikit-learn
 kiwisolver==1.5.1
     # via matplotlib
-matplotlib==3.11.1
+matplotlib==3.11.2
     # via pywatemsedem (setup.py)
 numpy==2.5.4
     # via
