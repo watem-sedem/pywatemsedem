@@ -3,7 +3,12 @@ import pytest
 from conftest import geodata
 
 from pywatemsedem.geo.utils import get_geometry_type
-from pywatemsedem.geo.vectors import VectorFile, VectorMemory
+from pywatemsedem.geo.vectors import (
+    VectorFile,
+    VectorMemory,
+    delete_vector,
+    infer_id_column,
+)
 
 
 def test_vectorfile():
@@ -19,6 +24,108 @@ def test_vectorfile_clip():
     # clip
     vector = VectorFile(geodata.vct_example, vct_clip=geodata.catchment)
     assert len(vector.geodata) == 18
+
+
+def _copy_example_vector(folder, columns=None):
+    """Write (a column selection of) the example vector to ``folder``.
+
+    Parameters
+    ----------
+    folder: pathlib.Path
+        Output folder.
+    columns: list, default None
+        Columns to keep besides the geometry. If None, all are kept.
+
+    Returns
+    -------
+    pathlib.Path
+        File path of the written shapefile.
+    """
+    gdf = gpd.read_file(geodata.vct_example)
+    if columns is not None:
+        gdf = gdf[columns + ["geometry"]]
+    folder.mkdir(parents=True, exist_ok=True)
+    vct = folder / "vector.shp"
+    gdf.to_file(vct, spatial_index="YES")
+    return vct
+
+
+def test_vectorfile_relocate(tmp_path):
+    """Test moving a VectorFile to another folder, with renaming.
+
+    Parameters
+    ----------
+    tmp_path: pathlib.Path
+        Temporary folder.
+    """
+    vector = VectorFile(_copy_example_vector(tmp_path / "src"))
+    dst_dir = tmp_path / "dst"
+    dst_dir.mkdir()
+
+    new_path = vector.relocate(dst_dir, filename="moved.shp")
+
+    assert new_path == dst_dir / "moved.shp"
+    assert vector.file_path == new_path
+    assert not list((tmp_path / "src").iterdir())
+    assert len(gpd.read_file(new_path)) == len(vector.geodata)
+
+    # Relocating to the current location leaves the file untouched.
+    assert vector.relocate(dst_dir, filename="moved.shp") == new_path
+    assert new_path.exists()
+
+
+def test_vectorfile_ensure_id_column(tmp_path):
+    """Test adding an ``id`` column to a VectorFile, in memory and on disk.
+
+    Parameters
+    ----------
+    tmp_path: pathlib.Path
+        Temporary folder.
+    """
+    vct = _copy_example_vector(tmp_path, columns=[])
+    vector = VectorFile(vct)
+    assert "id" not in vector.geodata.columns
+
+    vector.ensure_id_column(persist=False)
+    assert vector.geodata["id"].tolist() == list(range(1, len(vector.geodata) + 1))
+    assert "id" not in gpd.read_file(vct).columns
+
+    vector = VectorFile(vct)
+    vector.ensure_id_column()
+    assert "id" in gpd.read_file(vct).columns
+
+
+def test_infer_id_column():
+    """Test inferring the id column of a GeoDataFrame."""
+    gdf = gpd.GeoDataFrame({"NR": [1], "ID": [2], "name": ["a"]}, geometry=[None])
+
+    assert infer_id_column(gdf) == "ID"
+    assert infer_id_column(gdf, requested="name") == "name"
+    assert infer_id_column(gdf[["name", "geometry"]]) is None
+
+    with pytest.raises(ValueError, match="Requested id column 'x' not found"):
+        infer_id_column(gdf, requested="x")
+    with pytest.raises(ValueError, match="No id column found"):
+        infer_id_column(gdf[["name", "geometry"]], required=True)
+
+
+def test_delete_vector(tmp_path):
+    """Test deleting a shapefile including its sidecar files.
+
+    Parameters
+    ----------
+    tmp_path: pathlib.Path
+        Temporary folder.
+    """
+    vct = _copy_example_vector(tmp_path)
+    other = tmp_path / "other.txt"
+    other.write_text("keep")
+
+    delete_vector(vct)
+
+    assert list(tmp_path.iterdir()) == [other]
+    # Deleting a non-existing vector is a no-op.
+    delete_vector(vct)
 
 
 @pytest.mark.parametrize("unknwon_type", ["Line", "CurvePolygon"])

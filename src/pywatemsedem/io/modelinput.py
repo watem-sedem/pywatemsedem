@@ -7,9 +7,9 @@ import pandas as pd
 from matplotlib import colors
 
 from pywatemsedem.geo.factory import Factory
+from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     check_raster_properties_raster_with_template,
-    get_rstparams,
     mask_array_with_val,
 )
 from pywatemsedem.io.ini import get_item_from_ini
@@ -106,12 +106,19 @@ class Modelinput(Factory):
             get_item_from_ini(ini, "Working directories", "input directory", str)
         )
 
-        rstparams, _ = get_rstparams(ini, epsg=epsg)
-        resolution = int(abs(rstparams["transform"][0]))
-        nodata = rstparams["nodata"]
+        template = self.modelinputfolder / get_item_from_ini(
+            ini, "Files", "p factor map filename", str
+        )
+        rp = RasterProperties.from_template(template, epsg=epsg)
+        resolution = rp.resolution
+        nodata = rp.nodata
 
         # apply factory and set mask
         super().__init__(resolution, epsg, nodata, self.modelinputfolder)
+
+        # Set rp AFTER super().__init__() since Factory.__init__ resets self._rp
+        self.rp = rp
+
         self.mask = self.modelinputfolder / get_item_from_ini(
             ini, "Files", "shapefile catchment", str
         )
@@ -713,11 +720,21 @@ class Modelinput(Factory):
         # checks
         valid_non_nan(self.compositelanduse.arr)
         valid_array_type(self.compositelanduse.arr, required_type=np.int16)
-        valid_boundaries(self.compositelanduse.arr, lower=-32757, upper=32757)
+        valid_boundaries(self.compositelanduse.arr, lower=-32767, upper=32767)
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plot the compositelanduse raster."""
+            """Plot the composite landuse raster with standardized colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._compositelanduse.arr, nodata, *args, **kwargs)
 
         self._compositelanduse.plot = plot
@@ -1116,7 +1133,23 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the tillagedirection raster."""
+            """Plot the tillagedirection raster.
+
+            Parameters
+            ----------
+            fig : matplotlib.figure.Figure, default None
+                If not given, defaults to generating a new figure.
+            ax : matplotlib.axes.Axes, default None
+                If not given, defaults to generating a new axis.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_continuous_raster`.
+
+            Returns
+            -------
+            fig : matplotlib.figure.Figure
+            ax : matplotlib.axes.Axes
+            """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(
                 self.tillagedirection.arr, self.mask.arr, self._nodata
@@ -1161,7 +1194,23 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the orientedroughness raster."""
+            """Plot the orientedroughness raster.
+
+            Parameters
+            ----------
+            fig : matplotlib.figure.Figure, default None
+                If not given, defaults to generating a new figure.
+            ax : matplotlib.axes.Axes, default None
+                If not given, defaults to generating a new axis.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_continuous_raster`.
+
+            Returns
+            -------
+            fig : matplotlib.figure.Figure
+            ax : matplotlib.axes.Axes
+            """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(
                 self.orientedroughness.arr, self.mask.arr, self._nodata
@@ -1360,7 +1409,23 @@ class Modelinput(Factory):
         check_raster_properties_raster_with_template(self.rp, raster, epsg=self.rp.epsg)
 
         def plot(fig=None, ax=None, *args, **kwargs):
-            """Plot the CN raster."""
+            """Plot the CN raster.
+
+            Parameters
+            ----------
+            fig : matplotlib.figure.Figure, default None
+                If not given, defaults to generating a new figure.
+            ax : matplotlib.axes.Axes, default None
+                If not given, defaults to generating a new axis.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_continuous_raster`.
+
+            Returns
+            -------
+            fig : matplotlib.figure.Figure
+            ax : matplotlib.axes.Axes
+            """
             fig, ax = axes_creator(fig, ax)
             arr = mask_array_with_val(self.cn.arr, self.mask.arr, self._nodata)
             fig, ax = plot_continuous_raster(

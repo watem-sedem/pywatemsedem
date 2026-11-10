@@ -64,7 +64,13 @@ class IniFile:
         self.choices = choices
 
     def write(self, ini):
-        """Write ini file to disk"""
+        """Write the assembled configuration to an ini-file on disk.
+
+        Parameters
+        ----------
+        ini : pathlib.Path or str
+            Target path of the ini-file to (over)write.
+        """
         with open(ini, "w") as f:
             self.cfg.write(f)
             f.close()

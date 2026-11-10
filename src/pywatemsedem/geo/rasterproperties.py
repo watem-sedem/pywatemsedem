@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -214,6 +215,57 @@ class RasterProperties:
             nodata=rasterio_profile["nodata"],
             epsg=epsg,
         )
+
+    @classmethod
+    def from_template(cls, template, epsg: int = None):
+        """Create RasterProperties from a template raster file.
+
+        Only ``.rst`` (IDRISI) templates are currently supported. That
+        format does not round-trip an EPSG code, so ``epsg`` must always
+        be given explicitly -- it can not be inferred from the template.
+
+        .. todo::
+            Broaden support to ``.sdat`` (SAGA) templates as well, since
+            that is also a possible WaTEM/SEDEM output raster format.
+
+        Parameters
+        ----------
+        template : pathlib.Path or str
+            File path to a template raster. Must be a ``.rst`` file.
+        epsg : int
+            EPSG code should be a numeric value, see https://epsg.io/.
+            Required.
+
+        Raises
+        ------
+        TypeError
+            If ``template`` is not a ``.rst`` file (names the file type that
+            was given instead), or if ``epsg`` is missing.
+        IOError
+            If ``template`` does not exist.
+        """
+        import rasterio
+
+        template_suffix = Path(template).suffix.lower() or "(no extension)"
+        if template_suffix != ".rst":
+            msg = (
+                "'from_template' currently only supports '.rst' templates, "
+                f"got a '{template_suffix}' file ('{template}')."
+            )
+            raise TypeError(msg)
+
+        if epsg is None:
+            msg = "'from_template' is missing the required argument 'epsg'."
+            raise TypeError(msg)
+
+        try:
+            with rasterio.open(template) as src:
+                rasterio_profile = src.profile
+        except IOError:
+            msg = f"Template file '{template}' not found for getting spatial metadata."
+            raise IOError(msg)
+
+        return cls.from_rasterio(rasterio_profile, epsg=epsg)
 
     @property
     def rasterio_profile(self) -> dict:

@@ -3,6 +3,7 @@ from pathlib import Path
 import geopandas as gpd
 import numpy as np
 
+from pywatemsedem.defaults import SUFFIXES_SHP
 from pywatemsedem.geo.rasterproperties import RasterProperties
 from pywatemsedem.geo.utils import (
     clean_up_tempfiles,
@@ -465,3 +466,120 @@ class VectorFile(AbstractVector):
         geodata = gpd.read_file(self.file_path, bbox=mask)
         geodata = gpd.clip(geodata, mask, keep_geom_type=True)
         return geodata
+
+    def relocate(self, target_dir, filename=None):
+        """Move the vector file to ``target_dir``, optionally renaming it.
+
+        Writes the in-memory geodata to the new location, removes the old
+        file and updates ``file_path``. Does nothing if the vector is already
+        at that location.
+
+        Parameters
+        ----------
+        target_dir : str or pathlib.Path
+            Folder to move the vector file to.
+        filename : str, default None
+            New file name. If None, the current file name is kept.
+
+        Returns
+        -------
+        pathlib.Path
+            New file path.
+        """
+        old_path = Path(self.file_path)
+        new_path = Path(target_dir) / (filename or old_path.name)
+        if new_path.resolve() != old_path.resolve():
+            delete_vector(new_path)
+            self._geodata.to_file(new_path, spatial_index="YES")
+            delete_vector(old_path)
+            self.file_path = new_path
+        return new_path
+
+    def ensure_id_column(self, persist=True):
+        """Add an integer ``id`` column (1..N) if the vector has none.
+
+        Parameters
+        ----------
+        persist : bool, default True
+            If True and the column was added, write the vector back to
+            ``file_path``.
+        """
+        if "id" in self._geodata.columns:
+            return
+
+        self._geodata = self._geodata.copy()
+        self._geodata["id"] = np.arange(1, len(self._geodata) + 1, dtype=np.int64)
+        if persist and not self._geodata.empty:
+            delete_vector(self.file_path)
+            self._geodata.to_file(self.file_path, spatial_index="YES")
+
+
+# Column names recognised as feature id, in order of preference.
+ID_COLUMN_CANDIDATES = [
+    "id",
+    "ID",
+    "target_id",
+    "poi_id",
+    "priority_id",
+    "priority_i",
+    "buffer_id",
+    "VALUE",
+    "NR",
+    "nr",
+]
+
+
+def infer_id_column(gdf, requested=None, required=False):
+    """Return the name of the feature id column of a GeoDataFrame.
+
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+        Vector data to inspect.
+    requested : str, default None
+        Column to use. Must exist in ``gdf``. If None, the first column of
+        :data:`ID_COLUMN_CANDIDATES` present in ``gdf`` is used.
+    required : bool, default False
+        Raise if no id column can be found.
+
+    Returns
+    -------
+    str or None
+        Name of the id column, or None if none is found and ``required`` is
+        False.
+
+    Raises
+    ------
+    ValueError
+        If ``requested`` is not a column of ``gdf``, or if ``required`` is
+        True and no id column is found.
+    """
+    if requested is not None:
+        if requested not in gdf.columns:
+            msg = f"Requested id column '{requested}' not found in vector."
+            raise ValueError(msg)
+        return requested
+
+    column = next((c for c in ID_COLUMN_CANDIDATES if c in gdf.columns), None)
+    if column is None and required:
+        msg = "No id column found in vector. Please provide 'id_column'."
+        raise ValueError(msg)
+    return column
+
+
+def delete_vector(vct_in):
+    """Delete a vector dataset, including all shapefile sidecar files.
+
+    Files that do not exist are ignored.
+
+    Parameters
+    ----------
+    vct_in : str or pathlib.Path
+        File path of the vector dataset to be deleted.
+    """
+    vct_in = Path(vct_in)
+    if vct_in.suffix.lower() == ".shp":
+        for suffix in SUFFIXES_SHP:
+            vct_in.with_suffix(suffix).unlink(missing_ok=True)
+    else:
+        vct_in.unlink(missing_ok=True)

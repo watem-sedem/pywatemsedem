@@ -15,14 +15,16 @@ Make sure to setup a new environment in either conda or venv (using tox):
 Using conda
 -----------
 
-When using conda, you can setup the environment using the ``environment.yml``
+When using conda, you can setup the environment using the ``requirements.txt``
 file included in this repository.
 
 .. code-block:: bash
 
-    conda env create -f environment.yml
+    conda create --name pywatemsedem python=3.13
 
     conda activate pywatemsedem
+
+    pip install -r requirements.txt
 
 Next, install the package from within the ``pywatemsedem`` folder in the terminal
 and with the (conda/virtualenv) environment activated:
@@ -42,12 +44,14 @@ developer dependencies as well (using pip):
 
     The `-no-deps` option does not search for the dependencies from pip, but
     only installs the package itself for development and assumes you already
-    have the dependencies installed yourself.
+    have the dependencies installed yourself with the requirements.txt file. This
+    option is preferred as it avoids to use the package with versions of dependencies
+    that are not tested with the package.
 
 .. note::
 
     If you wish to make use of hvplot, please manually install
-    `hvplot <https://hvplot.holoviz.org/>`_ with conda.
+    `hvplot <https://hvplot.holoviz.org/>`_ with conda and/or pip.
 
 Using venv
 ----------
@@ -116,3 +120,8 @@ In your scripts/notebooks, add following before importing pywatemsedem:
 
 When importing pywatemsedem, it will add the directories of saga and watem-sedem
 to your PATH envrionment variable.
+
+The python dependencies are listed in the ``requirements.txt`` file. The CI system
+tests the package with the pinned versions of the dependencies in this file.
+We recommend to install the dependencies from this file, or to use the ``tox -e dev``
+command which will create a virtual environment with the pinned dependencies installed.

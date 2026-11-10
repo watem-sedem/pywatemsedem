@@ -21,7 +21,6 @@ from pywatemsedem.geo.utils import (
     any_equal_element_in_vector,
     clean_up_tempfiles,
     create_filename,
-    create_spatial_index,
     define_extent_from_vct,
     execute_subprocess,
     read_rasterio_profile,
@@ -43,6 +42,10 @@ logger = logging.getLogger(__name__)
 
 def valid_dtm(func):
     """Decorator to check if a DTM is defined before executing the function.
+
+    Guard applied to :class:`Catchment` methods that require a digital terrain
+    model. The decorated method is only executed when a non-empty DTM raster is
+    available (see :attr:`~pywatemsedem.catchment.Catchment.dtm`).
 
     Parameters
     ----------
@@ -75,6 +78,10 @@ def valid_dtm(func):
 def valid_vct_river(func):
     """Decorator to check if a river vector is defined before executing the function.
 
+    Guard applied to :class:`Catchment` methods that require a river vector. The
+    decorated method is only executed when a non-empty river vector is available
+    (see :attr:`~pywatemsedem.catchment.Catchment.vct_river`).
+
     Parameters
     ----------
     func : callable
@@ -104,6 +111,11 @@ def valid_vct_river(func):
 
 def valid_vct_infra_line(func):
     """Decorator to check if infrastructure line vectors are defined.
+
+    Guard applied to :class:`Catchment` methods that require infrastructure line
+    features. The decorated method is only executed when a non-empty
+    infrastructure roads vector is available (see
+    :attr:`~pywatemsedem.catchment.Catchment.vct_infrastructure_roads`).
 
     Parameters
     ----------
@@ -135,6 +147,11 @@ def valid_vct_infra_line(func):
 def valid_vct_infra_poly(func):
     """Decorator to check if infrastructure polygon vectors are defined.
 
+    Guard applied to :class:`Catchment` methods that require infrastructure
+    polygon features. The decorated method is only executed when a non-empty
+    infrastructure buildings vector is available (see
+    :attr:`~pywatemsedem.catchment.Catchment.vct_infrastructure_buildings`).
+
     Parameters
     ----------
     func : callable
@@ -156,36 +173,6 @@ def valid_vct_infra_poly(func):
         """Execute wrapped function after validating infrastructure polygon vector."""
         if self._vct_infrastructure_buildings.is_empty():
             msg = "Please define non-empty infrastructure polygon vector!"
-            raise IOError(msg)
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
-def valid_vct_parcels(func):
-    """Decorator to check if parcel vectors are defined.
-
-    Parameters
-    ----------
-    func : callable
-        The function to wrap.
-
-    Returns
-    -------
-    callable
-        Wrapped function that checks for parcel vector definition.
-
-    Raises
-    ------
-    IOError
-        If the parcels vector is empty or not defined.
-    """
-
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        """Execute the wrapped function after validating parcels vector is defined."""
-        if self._vct_parcels.is_empty():
-            msg = "Please define non_empty parcels polygon vector!"
             raise IOError(msg)
         return func(self, *args, **kwargs)
 
@@ -551,45 +538,20 @@ class Catchment(Factory):
         )
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the landuse raster with standardized landuse colors.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; matching cells are masked (set to ``NaN``) before
+                plotting. When ``None`` no masking is applied.
+            *args, **kwargs
+                Additional arguments passed to
+                :func:`pywatemsedem.io.plots.plot_landuse`.
+            """
             plot_landuse(self._landuse.arr, nodata, *args, **kwargs)
 
         self._landuse.plot = plot
-
-    @staticmethod
-    def create_height_contours(rst_input, vct_output):
-        """Create height contours line vector based on a DTM raster
-
-        Parameters
-        ----------
-        rst_input: pathlib.Path
-            Input DTM raster
-        vct_output: pathlib.Path
-            Output height contour line vector
-        """
-        if rst_input is not None:
-            if not vct_output.exists():
-                cmd_args = ["saga_cmd", SAGA_FLAGS, "shapes_grid", "5"]
-                cmd_args += [
-                    "-GRID",
-                    str(rst_input),
-                    "-CONTOUR",
-                    str(vct_output),
-                    "-ZSTEP",
-                    "1",
-                ]
-                try:
-                    execute_subprocess(cmd_args)
-                except OSError as e:
-                    if "corrupted size vs. prev_size in fastbins" in str(e):
-                        try:
-                            pyogrio.read_info(vct_output)
-                        except pyogrio.errors.DataSourceError:
-                            raise IOError(e)
-                create_spatial_index(vct_output)
-        else:
-            msg = "Inputfile is not valid!"
-            raise FileNotFoundError(msg)
 
     @property
     def catchment_area(self):
@@ -1261,7 +1223,18 @@ class Catchment(Factory):
         self._infrastructure = RasterMemory(arr, self.rp)
 
         def plot(nodata=None, *args, **kwargs):
-            """Plotting fun"""
+            """Plot the infrastructure raster.
+
+            Parameters
+            ----------
+            nodata : int, optional
+                Nodata value; when given, cells are converted to a binary
+                infrastructure/no-infrastructure mask before plotting. When
+                ``None`` the raster is plotted as-is.
+            *args, **kwargs
+                Additional arguments passed to
+                ``matplotlib.axes.Axes.imshow``.
+            """
             fig, ax = plt.subplots(figsize=[10, 10])
             """Plot infrastructure"""
             arr_plot = self._infrastructure.arr.copy().astype(np.float32)
