@@ -229,7 +229,7 @@ class IniFile:
         self.cfg.set(
             "Parameters Extensions",
             "LS correction",
-            str(int(self.choices.extensionparameters.ls_correction.value)),
+            str(self.choices.extensionparameters.ls_correction.value),
         )
 
         self.cfg.set(
