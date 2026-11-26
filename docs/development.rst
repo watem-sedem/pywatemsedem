@@ -256,7 +256,7 @@ Package release
 ===============
 
 Before releasing, please check the pinned versions of the dependencies, and - if necessary-  adapt in the
-``environment.yml``-file. The CI will create sdist/wheels and publish these to gitea when git tags are
+``requirements.txt``-file. The CI will create sdist/wheels and publish these to pip when git tags are
 added, making releasing straight forward. In order to publish a new release,
 the following steps:
 
